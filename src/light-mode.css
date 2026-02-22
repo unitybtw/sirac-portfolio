@@ -1,0 +1,38 @@
+body.light-mode {
+    --bg-dark: #f0f0f5;
+    --bg-darker: #e5e5ea;
+    --bg-glass: rgba(255, 255, 255, 0.6);
+    --bg-glass-hover: rgba(255, 255, 255, 0.8);
+    --border-glass: rgba(0, 0, 0, 0.1);
+    --border-glass-glow: rgba(0, 0, 0, 0.2);
+    --text-main: #1d1d1f;
+    --text-muted: #515154;
+}
+
+body.light-mode .text-gradient {
+    background: linear-gradient(135deg, var(--text-main) 0%, rgba(0, 0, 0, 0.6) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.light-mode .cyber-bg {
+    background: radial-gradient(circle at 15% 50%, rgba(var(--accent-violet-rgb), 0.1), transparent 40%),
+        radial-gradient(circle at 85% 30%, rgba(var(--accent-cyan-rgb), 0.1), transparent 40%);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+}
+
+body.light-mode .skill-ring {
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .progress-ring circle.bg {
+    stroke: rgba(0, 0, 0, 0.05);
+}
+
+body.light-mode .tag {
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: var(--text-main);
+}
