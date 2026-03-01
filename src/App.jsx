@@ -5,6 +5,12 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import './index.css';
 import './light-mode.css';
 import './i18n';
+import AsteroidBlaster from "./AsteroidBlaster";
+import AimTrainer from "./AimTrainer";
+import CyberPaint from "./CyberPaint";
+import VoxelWorld from "./VoxelWorld";
+import CS16 from "./CS16";
+import GameLibrary from "./GameLibrary";
 
 // --- Web Audio Synthesizer (Zero Dependencies) ---
 let audioCtx = null;
@@ -364,6 +370,8 @@ function App() {
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
   const [showSecretGame, setShowSecretGame] = useState(false);
+  const [isArcadeOpen, setIsArcadeOpen] = useState(false);
+  const [activeArcadeGame, setActiveArcadeGame] = useState(null);
 
   // Konami Code Logic
   useEffect(() => {
@@ -458,7 +466,7 @@ function App() {
       tags: ['Unity', 'C#', 'Game Design', 'Itch.io'],
       glow: 'glow-violet',
       link: 'https://unitybtw.itch.io/legend-of-the-three-masks',
-      image: '/assets/masks.jpeg'
+      image: `${import.meta.env.BASE_URL}assets/masks.jpeg`
     },
     {
       id: 2,
@@ -467,7 +475,7 @@ function App() {
       tags: ['Unity', 'C#', '2D', 'Casual'],
       glow: 'glow-cyan',
       link: 'https://unitybtw.itch.io/flying-bird',
-      image: '/assets/bird.png'
+      image: `${import.meta.env.BASE_URL}assets/bird.png`
     }
   ];
 
@@ -565,7 +573,15 @@ function App() {
             <div className="nav-links" style={{ display: 'flex', alignItems: 'center' }}>
               <a href="#projects">{t('nav_work')}</a>
               <a href="#skills">{t('nav_skills')}</a>
+              <a href="#arcade">{t('nav_arcade') || 'Arcade'}</a>
               <a href="#contact">{t('nav_contact')}</a>
+              <button
+                onClick={() => setIsArcadeOpen(true)}
+                className="btn btn-outline glass-panel"
+                style={{ marginLeft: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-cyan)' }}
+              >
+                <Gamepad2 size={18} /> {t('arcade_button') || 'Arcade'}
+              </button>
 
               <div style={{ marginLeft: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-glass)', padding: '0.4rem 0.8rem', borderRadius: '20px', border: '1px solid var(--border-glass)' }}>
                 <Globe size={16} style={{ color: 'var(--text-muted)' }} />
@@ -644,7 +660,7 @@ function App() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
             >
-              <img src="/assets/hero.png" alt="Floating Game World" className="floating-island" />
+              <img src={`${import.meta.env.BASE_URL}assets/hero.png`} alt="Floating Game World" className="floating-island" />
             </motion.div>
           </section>
 
@@ -694,6 +710,22 @@ function App() {
             </div>
           </section>
 
+          {/* Arcade Section */}
+          <section id="arcade" style={{ padding: '0 5% 5rem', textAlign: 'center' }}>
+            <div className="section-header">
+              <h2 className="section-title text-gradient">ARCADE UNIVERSE</h2>
+              <p style={{ color: 'var(--text-muted)' }}>Mini oyunlar ve dijital deneyimler</p>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <GameLibrary
+                isOpen={isArcadeOpen}
+                setIsOpen={setIsArcadeOpen}
+                activeGameId={activeArcadeGame}
+                setActiveGameId={setActiveArcadeGame}
+              />
+            </div>
+          </section>
+
           {/* Tech Stack & Skills */}
           <motion.section
             id="skills"
@@ -740,7 +772,7 @@ function App() {
                     <Mail size={20} style={{ marginRight: '10px' }} /> {t('btn_transmit')}
                   </a>
                   {/* Retro Character Sitting on Button */}
-                  <img src="/assets/pixel_char.png" alt="Pixel Art Signature" className="pixel-character" />
+                  <img src={`${import.meta.env.BASE_URL}assets/pixel_char.png`} alt="Pixel Art Signature" className="pixel-character" />
                 </div>
               </div>
 

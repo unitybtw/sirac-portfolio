@@ -42,55 +42,111 @@ input {
 }
 
 /* Custom Cursor & Spotlight */
-.custom-cursor {
+/* Custom Cursor - High Precision Zero Lag */
+.custom-cursor-wrapper {
   position: fixed;
   top: 0;
   left: 0;
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--accent-cyan);
-  border-radius: 50%;
+  width: 1px;
+  height: 1px;
   pointer-events: none;
-  z-index: 9999;
+  z-index: 1000000;
+  will-change: transform;
 }
 
-.cursor-blink {
-  animation: blink 1s step-end infinite;
+.custom-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
 }
 
-@keyframes blink {
+.cursor-hud-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  border-radius: 50%;
+  transition: 0.3s;
+}
 
-  0%,
-  100% {
-    opacity: 1;
-  }
+.cursor-crosshair {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+}
 
-  50% {
-    opacity: 0;
-  }
+.cursor-crosshair::before,
+.cursor-crosshair::after {
+  content: '';
+  position: absolute;
+  background: var(--accent-cyan);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: background 0.3s ease, width 0.3s ease, height 0.3s ease;
+}
+
+.cursor-crosshair::before {
+  width: 1px;
+  height: 100%;
+}
+
+.cursor-crosshair::after {
+  width: 100%;
+  height: 1px;
 }
 
 .cursor-dot {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 8px;
-  height: 8px;
-  background: var(--text-main);
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #fff;
   border-radius: 50%;
-  pointer-events: none;
-  z-index: 10000;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px #fff;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover States */
+body.is-hovering .cursor-hud-ring {
+  width: 60px;
+  height: 60px;
+  border-color: #fff;
+  border-style: dashed;
+  animation: rotateHUD 10s linear infinite;
+}
+
+body.is-hovering .cursor-crosshair::before,
+body.is-hovering .cursor-crosshair::after {
+  background: #fff;
+}
+
+@keyframes rotateHUD {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .spotlight-effect {
   position: fixed;
   top: 0;
   left: 0;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(var(--accent-cyan-rgb), 0.05) 0%, transparent 60%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(var(--accent-cyan-rgb), 0.08) 0%, transparent 70%);
   pointer-events: none;
   z-index: -1;
+  will-change: transform;
 }
 
 /* Background Gradients */
