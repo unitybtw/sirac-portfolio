@@ -367,8 +367,6 @@ function App() {
   const { t, i18n } = useTranslation();
   const [theme, setTheme] = useState('dark');
   const [isAppLoaded, setIsAppLoaded] = useState(false);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isHovering, setIsHovering] = useState(false);
   const [showSecretGame, setShowSecretGame] = useState(false);
   const [isArcadeOpen, setIsArcadeOpen] = useState(false);
   const [activeArcadeGame, setActiveArcadeGame] = useState(null);
@@ -394,53 +392,7 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  useEffect(() => {
-    let hoveredCurrently = false; // Internal tracking to play hover sound only once
-    const handleMouseMove = (e) => {
-      setMousePos({ x: e.clientX, y: e.clientY });
-    };
 
-    const handleMouseOver = (e) => {
-      const target = e.target;
-      if (
-        target.tagName.toLowerCase() === 'button' ||
-        target.tagName.toLowerCase() === 'a' ||
-        target.closest('.project-card') ||
-        target.closest('.skill-ring')
-      ) {
-        if (!hoveredCurrently) {
-          playHoverSound();
-          hoveredCurrently = true;
-        }
-        setIsHovering(true);
-      } else {
-        hoveredCurrently = false;
-        setIsHovering(false);
-      }
-    };
-
-    const handleMouseClick = (e) => {
-      const target = e.target;
-      if (
-        target.tagName.toLowerCase() === 'button' ||
-        target.tagName.toLowerCase() === 'a' ||
-        target.closest('.project-card') ||
-        target.closest('button') ||
-        target.closest('a')
-      ) {
-        playClickSound();
-      }
-    };
-
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseover', handleMouseOver);
-    window.addEventListener('click', handleMouseClick);
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseover', handleMouseOver);
-      window.removeEventListener('click', handleMouseClick);
-    };
-  }, []);
 
   useEffect(() => {
     if (theme === 'light') {
@@ -479,35 +431,7 @@ function App() {
     }
   ];
 
-  const cursorVariants = {
-    default: {
-      x: mousePos.x - 16,
-      y: mousePos.y - 16,
-      scale: 1,
-      opacity: 1
-    },
-    hover: {
-      x: mousePos.x - 24,
-      y: mousePos.y - 24,
-      scale: 1.5,
-      backgroundColor: "rgba(0, 240, 255, 0.1)",
-      border: "1px solid rgba(0, 240, 255, 0.8)",
-      opacity: 1
-    }
-  };
 
-  const cursorDotVariants = {
-    default: {
-      x: mousePos.x - 4,
-      y: mousePos.y - 4,
-      opacity: 1
-    },
-    hover: {
-      x: mousePos.x - 4,
-      y: mousePos.y - 4,
-      opacity: 0
-    }
-  };
 
   const { scrollY } = useScroll();
   const parallax1 = useTransform(scrollY, [0, 1000], [0, -150]);
@@ -541,34 +465,12 @@ function App() {
             </motion.div>
           </div>
 
-          {/* Custom Cursor */}
-          <motion.div
-            className="custom-cursor"
-            variants={cursorVariants}
-            animate={isHovering ? "hover" : "default"}
-            transition={{ type: "spring", stiffness: 500, damping: 28, mass: 0.5 }}
-          />
-          <motion.div
-            className="cursor-dot"
-            variants={cursorDotVariants}
-            animate={isHovering ? "hover" : "default"}
-            transition={{ type: "spring", stiffness: 1000, damping: 40 }}
-          />
 
-          {/* Spotlight Effect that follows mouse */}
-          <motion.div
-            className="spotlight-effect"
-            animate={{
-              x: mousePos.x - 250,
-              y: mousePos.y - 250
-            }}
-            transition={{ type: "tween", ease: "backOut", duration: 0.1 }}
-          />
 
           {/* Navigation */}
           <nav className="glass-panel" style={{ border: 'none', borderRadius: '0', borderBottom: '1px solid var(--border-glass)' }}>
             <div className="nav-logo">
-              <h1 className="text-gradient">SİRAÇ GÖKTUĞ ŞİMŞEK.</h1>
+              <h1 className="text-gradient">{t('nav_name') || 'SIRAÇ GÖKTUĞ ŞİMŞEK.'}</h1>
             </div>
             <div className="nav-links" style={{ display: 'flex', alignItems: 'center' }}>
               <a href="#projects">{t('nav_work')}</a>
@@ -713,8 +615,8 @@ function App() {
           {/* Arcade Section */}
           <section id="arcade" style={{ padding: '0 5% 5rem', textAlign: 'center' }}>
             <div className="section-header">
-              <h2 className="section-title text-gradient">ARCADE UNIVERSE</h2>
-              <p style={{ color: 'var(--text-muted)' }}>Mini oyunlar ve dijital deneyimler</p>
+              <h2 className="section-title text-gradient">{t('arcade_section_title') || 'ARCADE UNIVERSE'}</h2>
+              <p style={{ color: 'var(--text-muted)' }}>{t('arcade_section_subtitle')}</p>
             </div>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <GameLibrary

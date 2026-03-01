@@ -4,6 +4,7 @@ import { initReactI18next } from 'react-i18next';
 const resources = {
     en: {
         translation: {
+            "nav_name": "SIRAÇ GÖKTUĞ ŞİMŞEK.",
             "nav_work": "Work",
             "nav_skills": "Skills",
             "nav_arcade": "Arcade",
@@ -38,6 +39,8 @@ const resources = {
             "arcade_save_continue": "AUTHORIZE & CONNECT",
             "arcade_scoreboard": "HALL OF FAME",
             "arcade_games": "LIBRARY",
+            "arcade_section_title": "ARCADE UNIVERSE",
+            "arcade_section_subtitle": "Mini-games and digital interactive modules.",
 
             "drone_m_morning": "Good morning! Time to code.",
             "drone_m_afternoon": "Good afternoon! System is stable.",
@@ -81,6 +84,7 @@ const resources = {
     },
     tr: {
         translation: {
+            "nav_name": "SİRAÇ GÖKTUĞ ŞİMŞEK.",
             "nav_work": "Projeler",
             "nav_skills": "Yetenekler",
             "nav_arcade": "Oyunlar",
@@ -115,6 +119,8 @@ const resources = {
             "arcade_save_continue": "YETKİLENDİR VE BAĞLAN",
             "arcade_scoreboard": "ONUR TABLOSU",
             "arcade_games": "KÜTÜPHANE",
+            "arcade_section_title": "OYUN EVRENİ",
+            "arcade_section_subtitle": "Mini oyunlar ve dijital etkileşimler.",
 
             "drone_m_morning": "Günaydın! Kodlama vakti.",
             "drone_m_afternoon": "İyi öğleden sonraları! Sistem stabil.",
