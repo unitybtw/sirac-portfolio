@@ -79,7 +79,7 @@ const VoxelWorld = ({ onGameOver }) => {
                             </button>
 
                             <button
-                                onClick={() => window.open(`${import.meta.env.BASE_URL}minecraft_1_8_8_singleplayer.html`, "_blank")}
+                                onClick={() => window.open(`${import.meta.env.BASE_URL}minecraft.html`, "_blank")}
                                 style={{ width: '100%', padding: '0.8rem', background: 'transparent', border: '1px solid #444', color: '#888', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', fontSize: '0.9rem' }}
                             >
                                 <ExternalLink size={16} /> HARİCİ PENCEREDE AÇ
@@ -91,7 +91,7 @@ const VoxelWorld = ({ onGameOver }) => {
                 <div style={{ flex: 1, position: 'relative' }}>
                     <iframe
                         ref={iframeRef}
-                        src={`${import.meta.env.BASE_URL}minecraft_1_8_8_singleplayer.html`}
+                        src={`${import.meta.env.BASE_URL}minecraft.html`}
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Minecraft WebRTC"
                         allow="keyboard-map *; pointer-lock *; fullscreen *"
