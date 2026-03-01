@@ -65,8 +65,8 @@ const VoxelWorld = ({ onGameOver }) => {
                         <h2 className="text-gradient" style={{ fontSize: '1.8rem', marginBottom: '1rem', color: '#1ba51b' }}>MINECRAFT 1.5.2</h2>
 
                         <div style={{ background: 'rgba(27, 165, 27, 0.05)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(27, 165, 27, 0.2)', marginBottom: '1.5rem', textAlign: 'left', fontSize: '0.85rem' }}>
-                            <p style={{ color: '#1ba51b', fontWeight: 'bold', marginBottom: '0.3rem' }}>🎮 Singleplayer (Offline):</p>
-                            <p style={{ color: '#bbb' }}>Bu sürüm tamamen <strong>Offline (Singleplayer)</strong> desteklidir. İnternet olmadan da kendi dünyanı yaratıp oynayabilirsin.</p>
+                            <p style={{ color: '#1ba51b', fontWeight: 'bold', marginBottom: '0.3rem' }}>🎮 Klavyeyi Aktif Etmek İçin:</p>
+                            <p style={{ color: '#bbb' }}>Oyun açıldıktan sonra klavyenin çalışması için <strong>oyun ekranına bir kez tıklaman</strong> yeterlidir.</p>
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
@@ -100,6 +100,7 @@ const VoxelWorld = ({ onGameOver }) => {
                         onLoad={() => {
                             if (iframeRef.current) iframeRef.current.focus();
                         }}
+                        onPointerEnter={(e) => e.target.focus()}
                     />
                 </div>
             )}
