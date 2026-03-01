@@ -54,7 +54,6 @@ import NeonPac from './NeonPac';
 import CyberMatch from './CyberMatch';
 import NeonSlicer from './NeonSlicer';
 import VoxelWorld from './VoxelWorld';
-import CS16 from './CS16';
 import Doom from './Doom';
 import Slope from './Slope';
 import Quake3 from './Quake3';
@@ -78,7 +77,6 @@ const gamesList = [
     { id: 'diablo', title: 'Diablo I', icon: <Ghost size={24} />, color: '#8b0000', comp: Diablo },
     { id: 'drift', title: 'Drift Hunters', icon: <Navigation size={24} />, color: '#ff4400', comp: DriftHunters },
     { id: 'doom', title: 'DOOM (Classic)', icon: <Activity size={24} />, color: '#ff0000', comp: Doom },
-    { id: 'cs16', title: 'Counter-Strike 1.6', icon: <Crosshair size={24} />, color: '#ff9900', comp: CS16 },
     { id: 'asteroid', title: 'Asteroid Blaster', icon: <Rocket size={24} />, color: 'var(--accent-cyan)', comp: AsteroidBlaster },
     { id: 'runner', title: 'Cyber Jumper', icon: <Zap size={24} />, color: 'var(--accent-violet)', comp: NeonRunner },
     { id: 'pong', title: 'Cyber Pong', icon: <Activity size={24} />, color: '#00f0ff', comp: CyberPong },
