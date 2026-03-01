@@ -30,44 +30,7 @@ export default function CS16({ onGameOver }) {
     return (
         <div id="cs-game-wrapper" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', background: '#000', position: 'relative' }}>
 
-            {/* Minimal Header inside the game area */}
-            <div style={{
-                padding: '8px 15px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                background: '#111',
-                borderBottom: '1px solid #ff9900'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Info size={14} color="#ff9900" />
-                    <span style={{ fontSize: '0.75rem', color: '#888', fontStyle: 'italic' }}>Play-CS Browser Edition</span>
-                </div>
 
-                <div style={{ display: 'flex', gap: '10px' }}>
-                    {started && (
-                        <button
-                            onClick={() => { setStarted(false); setTimeout(() => setStarted(true), 50); }}
-                            style={{
-                                background: 'transparent', color: '#ff9900', border: 'none',
-                                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.8rem'
-                            }}
-                        >
-                            <RotateCcw size={14} /> RESTART
-                        </button>
-                    )}
-
-                    <button
-                        onClick={toggleFullScreen}
-                        style={{
-                            background: 'transparent', color: '#fff', border: 'none',
-                            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.8rem'
-                        }}
-                    >
-                        <Maximize size={14} /> FULLSCREEN
-                    </button>
-                </div>
-            </div>
 
             {!started ? (
                 <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px', background: '#050508' }}>

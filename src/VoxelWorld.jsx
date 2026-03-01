@@ -29,32 +29,7 @@ const VoxelWorld = ({ onGameOver }) => {
     return (
         <div id="minecraft-game-wrapper" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', background: '#000', position: 'relative' }}>
 
-            {/* Minimal Header inside the game area */}
-            <div style={{
-                padding: '8px 15px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                background: '#111',
-                borderBottom: '1px solid #1ba51b'
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Info size={14} color="#1ba51b" />
-                    <span style={{ fontSize: '0.75rem', color: '#888', fontStyle: 'italic' }}>Minecraft 1.5.2 Offline Edition</span>
-                </div>
 
-                <div style={{ display: 'flex', gap: '10px' }}>
-                    <button
-                        onClick={toggleFullScreen}
-                        style={{
-                            background: 'transparent', color: '#fff', border: 'none',
-                            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.8rem'
-                        }}
-                    >
-                        <Maximize size={14} /> FULLSCREEN
-                    </button>
-                </div>
-            </div>
 
             {!started ? (
                 <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px', background: '#050508' }}>
