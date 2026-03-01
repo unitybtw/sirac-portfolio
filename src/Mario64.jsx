@@ -40,12 +40,11 @@ export default function Mario64() {
                                 <Gamepad2 size={16} /> KONTROLLER:
                             </p>
                             <ul style={{ color: '#bbb', margin: 0, paddingLeft: '1.2rem', fontSize: '0.8rem', lineHeight: '1.4' }}>
+                                <li><strong>Enter:</strong> START (Menüleri Geçer)</li>
                                 <li><strong>WASD / Ok Tuşları:</strong> Hareket</li>
-                                <li><strong>J:</strong> A (Zıplama)</li>
-                                <li><strong>K:</strong> B (Vurma)</li>
-                                <li><strong>L:</strong> R</li>
-                                <li><strong>Z / X:</strong> Z / L</li>
-                                <li><strong>Enter:</strong> Start</li>
+                                <li><strong>Space / X:</strong> Zıplama (A)</li>
+                                <li><strong>C:</strong> Vurma (B)</li>
+                                <li><strong>Z / L:</strong> Kamera / Eğilme</li>
                             </ul>
                         </div>
                         <button
@@ -61,11 +60,11 @@ export default function Mario64() {
                 <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
                     <iframe
                         ref={iframeRef}
-                        src="https://arkshocer.github.io/sm64/"
+                        src="https://64.js.org/"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Super Mario 64"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
-                        allow="keyboard-map *; pointer-lock *; fullscreen *"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-popups"
+                        allow="keyboard-map *; pointer-lock *; fullscreen *; keyboard-lock *"
                         allowFullScreen
                         onLoad={() => {
                             if (iframeRef.current) iframeRef.current.focus();
