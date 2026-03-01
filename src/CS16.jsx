@@ -64,11 +64,16 @@ export default function CS16({ onGameOver }) {
                     </motion.div>
                 </div>
             ) : (
-                <div style={{ flex: 1, position: 'relative' }}>
+                <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: '#000' }}>
                     <iframe
                         ref={iframeRef}
                         src="https://play-cs.com/en/"
-                        style={{ width: '100%', height: '100%', border: 'none' }}
+                        style={{
+                            width: '100%',
+                            height: 'calc(100% + 15px)', // Small crop for play-cs
+                            border: 'none',
+                            marginTop: '-5px'
+                        }}
                         title="Counter Strike 1.6"
                         sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
                         allow="keyboard-map *; pointer-lock *; fullscreen *"
@@ -78,6 +83,8 @@ export default function CS16({ onGameOver }) {
                             if (iframeRef.current) iframeRef.current.focus();
                         }}
                     />
+                    {/* Fixed bottom cover to hide site labels */}
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '10px', background: '#000', zIndex: 5 }}></div>
                 </div>
             )}
         </div>

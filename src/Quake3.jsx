@@ -58,11 +58,16 @@ export default function Quake3() {
                     </motion.div>
                 </div>
             ) : (
-                <div style={{ flex: 1, position: 'relative' }}>
+                <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: '#000' }}>
                     <iframe
                         ref={iframeRef}
                         src="https://www.gameflare.com/embed/quake-3-arena/"
-                        style={{ width: '100%', height: '100%', border: 'none' }}
+                        style={{
+                            width: '100%',
+                            height: 'calc(100% + 120px)', // Gameflare has larger header/footer
+                            border: 'none',
+                            marginTop: '-60px' // Shift up to hide header
+                        }}
                         title="Quake 3 Web"
                         sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
                         allow="keyboard-map *; pointer-lock *; fullscreen *"
@@ -71,6 +76,8 @@ export default function Quake3() {
                             if (iframeRef.current) iframeRef.current.focus();
                         }}
                     />
+                    {/* Defensive mask to cover bottom of external site */}
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '60px', background: '#000', zIndex: 10 }}></div>
                     <button
                         onClick={toggleFullScreen}
                         style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', padding: '5px', borderRadius: '5px', cursor: 'pointer', zIndex: 100 }}

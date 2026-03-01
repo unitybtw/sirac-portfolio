@@ -51,11 +51,16 @@ export default function Slope() {
                     </motion.div>
                 </div>
             ) : (
-                <div style={{ flex: 1, position: 'relative' }}>
+                <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: '#000' }}>
                     <iframe
                         ref={iframeRef}
                         src="https://tr.y8.com/embed/slope"
-                        style={{ width: '100%', height: '100%', border: 'none' }}
+                        style={{
+                            width: '100%',
+                            height: 'calc(100% + 40px)',
+                            border: 'none',
+                            marginTop: '-40px' // Upper crop if needed, but Y8 usually has footer
+                        }}
                         title="SLOPE"
                         sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
                         allow="keyboard-map *; pointer-lock *; fullscreen *"
@@ -64,6 +69,8 @@ export default function Slope() {
                             if (iframeRef.current) iframeRef.current.focus();
                         }}
                     />
+                    {/* Defensive footer mask to ensure external site link is hidden */}
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '40px', background: '#000', zIndex: 5 }}></div>
                     <button
                         onClick={toggleFullScreen}
                         style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', padding: '5px', borderRadius: '5px', cursor: 'pointer' }}
