@@ -60,11 +60,19 @@ import Slope from './Slope';
 import Quake3 from './Quake3';
 import Diablo from './Diablo';
 import DriftHunters from './DriftHunters';
+import Mario64 from './Mario64';
+import HalfLife from './HalfLife';
+import GeometryDash from './GeometryDash';
+import SubwaySurfers from './SubwaySurfers';
 
 
 
 
 const gamesList = [
+    { id: 'mario64', title: 'Super Mario 64', icon: <Trophy size={24} />, color: '#ffcc00', comp: Mario64 },
+    { id: 'hl1', title: 'Half-Life', icon: <Target size={24} />, color: '#ff9900', comp: HalfLife },
+    { id: 'geodash', title: 'Geometry Dash', icon: <Zap size={24} />, color: '#ffcc00', comp: GeometryDash },
+    { id: 'subway', title: 'Subway Surfers', icon: <Activity size={24} />, color: '#ffec00', comp: SubwaySurfers },
     { id: 'slope', title: 'Slope', icon: <Activity size={24} />, color: '#00ff00', comp: Slope },
     { id: 'quake3', title: 'Quake III', icon: <Target size={24} />, color: '#ffcc00', comp: Quake3 },
     { id: 'diablo', title: 'Diablo I', icon: <Ghost size={24} />, color: '#8b0000', comp: Diablo },
