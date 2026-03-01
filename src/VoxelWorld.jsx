@@ -40,7 +40,7 @@ const VoxelWorld = ({ onGameOver }) => {
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Info size={14} color="#1ba51b" />
-                    <span style={{ fontSize: '0.75rem', color: '#888', fontStyle: 'italic' }}>Minecraft 1.8.8 WebRTC Edition</span>
+                    <span style={{ fontSize: '0.75rem', color: '#888', fontStyle: 'italic' }}>Minecraft 1.5.2 Offline Edition</span>
                 </div>
 
                 <div style={{ display: 'flex', gap: '10px' }}>
@@ -62,11 +62,11 @@ const VoxelWorld = ({ onGameOver }) => {
                         initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                         style={{ textAlign: 'center', maxWidth: '400px' }}
                     >
-                        <h2 className="text-gradient" style={{ fontSize: '1.8rem', marginBottom: '1rem', color: '#1ba51b' }}>MINECRAFT 1.8.8</h2>
+                        <h2 className="text-gradient" style={{ fontSize: '1.8rem', marginBottom: '1rem', color: '#1ba51b' }}>MINECRAFT 1.5.2</h2>
 
                         <div style={{ background: 'rgba(27, 165, 27, 0.05)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(27, 165, 27, 0.2)', marginBottom: '1.5rem', textAlign: 'left', fontSize: '0.85rem' }}>
-                            <p style={{ color: '#1ba51b', fontWeight: 'bold', marginBottom: '0.3rem' }}>🎮 Multiplayer:</p>
-                            <p style={{ color: '#bbb' }}>ESC menüsünden <strong>"Invite"</strong> diyerek kod oluşturabilir ve arkadaşlarınla beraber oynayabilirsin.</p>
+                            <p style={{ color: '#1ba51b', fontWeight: 'bold', marginBottom: '0.3rem' }}>🎮 Singleplayer (Offline):</p>
+                            <p style={{ color: '#bbb' }}>Bu sürüm tamamen <strong>Offline (Singleplayer)</strong> desteklidir. İnternet olmadan da kendi dünyanı yaratıp oynayabilirsin.</p>
                         </div>
 
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
@@ -79,7 +79,7 @@ const VoxelWorld = ({ onGameOver }) => {
                             </button>
 
                             <button
-                                onClick={() => window.open(`${import.meta.env.BASE_URL}minecraft.html`, "_blank")}
+                                onClick={() => window.open(`${import.meta.env.BASE_URL}minecraft_1_5_2.html`, "_blank")}
                                 style={{ width: '100%', padding: '0.8rem', background: 'transparent', border: '1px solid #444', color: '#888', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', fontSize: '0.9rem' }}
                             >
                                 <ExternalLink size={16} /> HARİCİ PENCEREDE AÇ
@@ -91,9 +91,9 @@ const VoxelWorld = ({ onGameOver }) => {
                 <div style={{ flex: 1, position: 'relative' }}>
                     <iframe
                         ref={iframeRef}
-                        src={`${import.meta.env.BASE_URL}minecraft.html`}
+                        src={`${import.meta.env.BASE_URL}minecraft_1_5_2.html`}
                         style={{ width: '100%', height: '100%', border: 'none' }}
-                        title="Minecraft WebRTC"
+                        title="Minecraft 1.5.2"
                         allow="keyboard-map *; pointer-lock *; fullscreen *"
                         allowFullScreen
                         tabIndex="0"
