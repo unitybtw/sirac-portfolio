@@ -54,12 +54,11 @@ export default function DriftHunters() {
                 <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: '#000' }}>
                     <iframe
                         ref={iframeRef}
-                        src="https://geometry-dash.co/drift-hunters"
+                        src="https://htmlxm.github.io/h/drift-hunters/"
                         style={{
                             width: '100%',
-                            height: 'calc(100% + 120px)', // Site has branding at bottom
+                            height: '100%',
                             border: 'none',
-                            marginTop: '-10px' // Slight shift if top branding exists
                         }}
                         title="Drift Hunters"
                         sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
@@ -69,11 +68,9 @@ export default function DriftHunters() {
                             if (iframeRef.current) iframeRef.current.focus();
                         }}
                     />
-                    {/* Defensive footer mask to block branding */}
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '110px', background: '#000', zIndex: 5 }}></div>
                     <button
                         onClick={toggleFullScreen}
-                        style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', padding: '5px', borderRadius: '5px', cursor: 'pointer' }}
+                        style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', padding: '5px', borderRadius: '5px', cursor: 'pointer', zIndex: 10 }}
                     >
                         <Maximize size={16} />
                     </button>
