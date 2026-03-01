@@ -61,7 +61,7 @@ export default function Quake3() {
                 <div style={{ flex: 1, position: 'relative' }}>
                     <iframe
                         ref={iframeRef}
-                        src="https://www.netquake.io/q3"
+                        src="https://www.gameflare.com/embed/quake-3-arena/"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Quake 3 Web"
                         allow="keyboard-map *; pointer-lock *; fullscreen *"

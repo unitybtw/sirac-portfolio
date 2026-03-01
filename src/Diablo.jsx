@@ -54,7 +54,7 @@ export default function Diablo() {
                 <div style={{ flex: 1, position: 'relative' }}>
                     <iframe
                         ref={iframeRef}
-                        src="https://d1.web.app/"
+                        src="https://d07riv.github.io/diabloweb/"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Diablo 1 Web"
                         allow="keyboard-map *; pointer-lock *; fullscreen *"

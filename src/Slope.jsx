@@ -54,7 +54,7 @@ export default function Slope() {
                 <div style={{ flex: 1, position: 'relative' }}>
                     <iframe
                         ref={iframeRef}
-                        src="https://slopegame.io/slope-game.embed"
+                        src="https://tr.y8.com/embed/slope"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="SLOPE"
                         allow="keyboard-map *; pointer-lock *; fullscreen *"
