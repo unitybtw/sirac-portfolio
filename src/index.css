@@ -31,123 +31,9 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  cursor: none;
-  /* Disable default cursor */
 }
 
-a,
-button,
-input {
-  cursor: none !important;
-}
 
-/* Custom Cursor & Spotlight */
-/* Custom Cursor - High Precision Zero Lag */
-.custom-cursor-wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 1px;
-  height: 1px;
-  pointer-events: none;
-  z-index: 1000000;
-  will-change: transform;
-}
-
-.custom-cursor {
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: translate(-50%, -50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 40px;
-  height: 40px;
-}
-
-.cursor-hud-ring {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border: 1px solid rgba(0, 240, 255, 0.4);
-  border-radius: 50%;
-  transition: 0.3s;
-}
-
-.cursor-crosshair {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-}
-
-.cursor-crosshair::before,
-.cursor-crosshair::after {
-  content: '';
-  position: absolute;
-  background: var(--accent-cyan);
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  transition: background 0.3s ease, width 0.3s ease, height 0.3s ease;
-}
-
-.cursor-crosshair::before {
-  width: 1px;
-  height: 100%;
-}
-
-.cursor-crosshair::after {
-  width: 100%;
-  height: 1px;
-}
-
-.cursor-dot {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background: #fff;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0 0 10px #fff;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Hover States */
-body.is-hovering .cursor-hud-ring {
-  width: 60px;
-  height: 60px;
-  border-color: #fff;
-  border-style: dashed;
-  animation: rotateHUD 10s linear infinite;
-}
-
-body.is-hovering .cursor-crosshair::before,
-body.is-hovering .cursor-crosshair::after {
-  background: #fff;
-}
-
-@keyframes rotateHUD {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.spotlight-effect {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(var(--accent-cyan-rgb), 0.08) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: -1;
-  will-change: transform;
-}
 
 /* Background Gradients */
 .cyber-bg {
@@ -719,19 +605,7 @@ nav {
     text-align: center;
   }
 
-  /* Disable Custom Cursor on Touch Devices/Mobile */
-  .custom-cursor,
-  .cursor-dot,
-  .spotlight-effect {
-    display: none !important;
-  }
 
-  body,
-  a,
-  button,
-  input {
-    cursor: auto !important;
-  }
 }
 
 @media (max-width: 480px) {
