@@ -57,6 +57,7 @@ export default function Diablo() {
                         src="https://d07riv.github.io/diabloweb/"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Diablo 1 Web"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
                         allow="keyboard-map *; pointer-lock *; fullscreen *"
                         allowFullScreen
                         onLoad={() => {

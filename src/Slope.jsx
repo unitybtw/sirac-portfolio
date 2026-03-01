@@ -57,6 +57,7 @@ export default function Slope() {
                         src="https://tr.y8.com/embed/slope"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="SLOPE"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
                         allow="keyboard-map *; pointer-lock *; fullscreen *"
                         allowFullScreen
                         onLoad={() => {

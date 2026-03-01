@@ -70,6 +70,7 @@ export default function CS16({ onGameOver }) {
                         src="https://play-cs.com/en/"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Counter Strike 1.6"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
                         allow="keyboard-map *; pointer-lock *; fullscreen *"
                         allowFullScreen
                         tabIndex="0"

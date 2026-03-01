@@ -68,6 +68,7 @@ export default function Doom() {
                         src="https://wasm.continuation-labs.com/doom/"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="DOOM WASM"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
                         allow="keyboard-map *; pointer-lock *; fullscreen *"
                         allowFullScreen
                         onLoad={() => {
