@@ -9,7 +9,6 @@ import AsteroidBlaster from "./AsteroidBlaster";
 import AimTrainer from "./AimTrainer";
 import CyberPaint from "./CyberPaint";
 import VoxelWorld from "./VoxelWorld";
-import CS16 from "./CS16";
 import GameLibrary from "./GameLibrary";
 
 // --- Web Audio Synthesizer (Zero Dependencies) ---
