@@ -171,6 +171,18 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
         if (isOpen) fetchGlobalScores();
     }, [isOpen]);
 
+    // Prevent background scroll when modal is open
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isOpen]);
+
     const handleGameOver = useCallback(async (score, gameId) => {
         const id = gameId || activeGameId;
         if (!id) return;
