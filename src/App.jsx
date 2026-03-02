@@ -1,15 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Terminal, Github, Linkedin, Mail, ArrowRight, Code, Layers, Smartphone, Box, Gamepad2, Compass, Globe, Moon, Sun } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import './index.css';
 import './light-mode.css';
 import './i18n';
-import AsteroidBlaster from "./AsteroidBlaster";
-import AimTrainer from "./AimTrainer";
-import CyberPaint from "./CyberPaint";
-import VoxelWorld from "./VoxelWorld";
-import GameLibrary from "./GameLibrary";
+const GameLibrary = lazy(() => import("./GameLibrary"));
 
 // --- Web Audio Synthesizer (Zero Dependencies) ---
 let audioCtx = null;
@@ -209,7 +205,7 @@ const MatrixBackground = ({ theme }) => {
       }
     };
 
-    const interval = setInterval(draw, 33);
+    const interval = setInterval(draw, 40); // Slightly slower for CPU efficiency (25fps is enough)
 
     const handleResize = () => {
       canvas.width = window.innerWidth;
@@ -547,10 +543,10 @@ function App() {
                 <a href="#projects" className="btn btn-primary glass-panel">
                   {t('btn_explore')} <ArrowRight size={18} style={{ marginLeft: '8px' }} />
                 </a>
-                <a href="https://github.com/unitybtw" target="_blank" rel="noreferrer" className="btn btn-outline glass-panel">
+                <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn btn-outline glass-panel">
                   <Github size={18} style={{ marginRight: '8px' }} /> {t('btn_repos')}
                 </a>
-                <a href="https://unitybtw.itch.io/" target="_blank" rel="noreferrer" className="btn btn-outline glass-panel" style={{ color: 'var(--accent-cyan)' }}>
+                <a href="https://unitybtw.itch.io/" target="_blank" rel="noopener noreferrer" className="btn btn-outline glass-panel" style={{ color: 'var(--accent-cyan)' }}>
                   <Gamepad2 size={18} style={{ marginRight: '8px' }} /> Itch.io
                 </a>
               </div>
@@ -618,12 +614,14 @@ function App() {
               <p style={{ color: 'var(--text-muted)' }}>{t('arcade_section_subtitle')}</p>
             </div>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <GameLibrary
-                isOpen={isArcadeOpen}
-                setIsOpen={setIsArcadeOpen}
-                activeGameId={activeArcadeGame}
-                setActiveGameId={setActiveArcadeGame}
-              />
+              <Suspense fallback={<div className="glass-panel" style={{ padding: '1rem 3rem', color: 'var(--accent-cyan)' }}>INITIALIZING ARCADE...</div>}>
+                <GameLibrary
+                  isOpen={isArcadeOpen}
+                  setIsOpen={setIsArcadeOpen}
+                  activeGameId={activeArcadeGame}
+                  setActiveGameId={setActiveArcadeGame}
+                />
+              </Suspense>
             </div>
           </section>
 
@@ -678,8 +676,8 @@ function App() {
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginTop: '3rem' }}>
-                <a href="https://github.com/unitybtw" target="_blank" rel="noreferrer" style={{ color: 'var(--text-muted)' }}><Github size={24} /></a>
-                <a href="https://unitybtw.itch.io/" target="_blank" rel="noreferrer" style={{ color: 'var(--text-muted)' }}><Gamepad2 size={24} /></a>
+                <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)' }}><Github size={24} /></a>
+                <a href="https://unitybtw.itch.io/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)' }}><Gamepad2 size={24} /></a>
                 <a href="#" style={{ color: 'var(--text-muted)' }}><Linkedin size={24} /></a>
               </div>
             </div>

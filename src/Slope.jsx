@@ -61,8 +61,8 @@ export default function Slope() {
                             border: 'none',
                         }}
                         title="SLOPE"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
-                        allow="keyboard-map *; pointer-lock *; fullscreen *"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-popups"
+                        allow="autoplay; fullscreen; keyboard-lock; pointer-lock"
                         allowFullScreen
                         onLoad={() => {
                             if (iframeRef.current) iframeRef.current.focus();

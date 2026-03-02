@@ -1,68 +1,68 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { X, Gamepad2, Rocket, Zap, Navigation, Shield, Ghost, Crosshair, Target, Activity, Box, Trophy, User, Save, List } from 'lucide-react';
 
-import AsteroidBlaster from './AsteroidBlaster';
-import NeonRunner from './NeonRunner';
-import CyberPong from './CyberPong';
-import BrickBreaker from './BrickBreaker';
-import FlappyNeon from './FlappyNeon';
-import NeonSnakeGame from './NeonSnakeGame';
-import SpaceDefenders from './SpaceDefenders';
-import NeonDodger from './NeonDodger';
-import NeonRacer from './NeonRacer';
-import BeraatQuest from './BeraatQuest';
-import AimTrainer from './AimTrainer';
-import NeonHelicopter from './NeonHelicopter';
-import GravityFlip from './GravityFlip';
-import WhackAMole from './WhackAMole';
-import NeonDarts from './NeonDarts';
-import ColorMatcher from './ColorMatcher';
-import SimonSays from './SimonSays';
-import NeonStacker from './NeonStacker';
-import TypingDefender from './TypingDefender';
-import NeonJumper from './NeonJumper';
-import SpaceLander from './SpaceLander';
-import MathDefender from './MathDefender';
-import NeonFrogger from './NeonFrogger';
-import NeonTetris from './NeonTetris';
-import NeonSurvive from './NeonSurvive';
-import NeonMinesweeper from './NeonMinesweeper';
-import NeonPlinko from './NeonPlinko';
-import NeonBounce from './NeonBounce';
-import NeonDraw from './NeonDraw';
-import NeonClicker from './NeonClicker';
-import CyberAirHockey from './CyberAirHockey';
-import Neon2048 from './Neon2048';
-import CyberGolf from './CyberGolf';
-import NeonRhythm from './NeonRhythm';
-import CyberFishing from './CyberFishing';
-import NeonSokoban from './NeonSokoban';
-import NeonMemory from './NeonMemory';
-import NeonTicTacToe from './NeonTicTacToe';
-import NeonBowling from './NeonBowling';
-import CyberPiano from './CyberPiano';
-import CyberInvaders from './CyberInvaders';
-import NeonClimb from './NeonClimb';
-import CyberPaint from './CyberPaint';
-import NeonTurret from './NeonTurret';
-import CyberSort from './CyberSort';
-import NeonBalance from './NeonBalance';
-import CyberGlide from './CyberGlide';
-import NeonPac from './NeonPac';
-import CyberMatch from './CyberMatch';
-import NeonSlicer from './NeonSlicer';
-import VoxelWorld from './VoxelWorld';
-import Doom from './Doom';
-import Slope from './Slope';
-import Quake3 from './Quake3';
-import Diablo from './Diablo';
-import DriftHunters from './DriftHunters';
-import Mario64 from './Mario64';
-import HalfLife from './HalfLife';
-import GeometryDash from './GeometryDash';
-import SubwaySurfers from './SubwaySurfers';
+const AsteroidBlaster = lazy(() => import('./AsteroidBlaster'));
+const NeonRunner = lazy(() => import('./NeonRunner'));
+const CyberPong = lazy(() => import('./CyberPong'));
+const BrickBreaker = lazy(() => import('./BrickBreaker'));
+const FlappyNeon = lazy(() => import('./FlappyNeon'));
+const NeonSnakeGame = lazy(() => import('./NeonSnakeGame'));
+const SpaceDefenders = lazy(() => import('./SpaceDefenders'));
+const NeonDodger = lazy(() => import('./NeonDodger'));
+const NeonRacer = lazy(() => import('./NeonRacer'));
+const BeraatQuest = lazy(() => import('./BeraatQuest'));
+const AimTrainer = lazy(() => import('./AimTrainer'));
+const NeonHelicopter = lazy(() => import('./NeonHelicopter'));
+const GravityFlip = lazy(() => import('./GravityFlip'));
+const WhackAMole = lazy(() => import('./WhackAMole'));
+const NeonDarts = lazy(() => import('./NeonDarts'));
+const ColorMatcher = lazy(() => import('./ColorMatcher'));
+const SimonSays = lazy(() => import('./SimonSays'));
+const NeonStacker = lazy(() => import('./NeonStacker'));
+const TypingDefender = lazy(() => import('./TypingDefender'));
+const NeonJumper = lazy(() => import('./NeonJumper'));
+const SpaceLander = lazy(() => import('./SpaceLander'));
+const MathDefender = lazy(() => import('./MathDefender'));
+const NeonFrogger = lazy(() => import('./NeonFrogger'));
+const NeonTetris = lazy(() => import('./NeonTetris'));
+const NeonSurvive = lazy(() => import('./NeonSurvive'));
+const NeonMinesweeper = lazy(() => import('./NeonMinesweeper'));
+const NeonPlinko = lazy(() => import('./NeonPlinko'));
+const NeonBounce = lazy(() => import('./NeonBounce'));
+const NeonDraw = lazy(() => import('./NeonDraw'));
+const NeonClicker = lazy(() => import('./NeonClicker'));
+const CyberAirHockey = lazy(() => import('./CyberAirHockey'));
+const Neon2048 = lazy(() => import('./Neon2048'));
+const CyberGolf = lazy(() => import('./CyberGolf'));
+const NeonRhythm = lazy(() => import('./NeonRhythm'));
+const CyberFishing = lazy(() => import('./CyberFishing'));
+const NeonSokoban = lazy(() => import('./NeonSokoban'));
+const NeonMemory = lazy(() => import('./NeonMemory'));
+const NeonTicTacToe = lazy(() => import('./NeonTicTacToe'));
+const NeonBowling = lazy(() => import('./NeonBowling'));
+const CyberPiano = lazy(() => import('./CyberPiano'));
+const CyberInvaders = lazy(() => import('./CyberInvaders'));
+const NeonClimb = lazy(() => import('./NeonClimb'));
+const CyberPaint = lazy(() => import('./CyberPaint'));
+const NeonTurret = lazy(() => import('./NeonTurret'));
+const CyberSort = lazy(() => import('./CyberSort'));
+const NeonBalance = lazy(() => import('./NeonBalance'));
+const CyberGlide = lazy(() => import('./CyberGlide'));
+const NeonPac = lazy(() => import('./NeonPac'));
+const CyberMatch = lazy(() => import('./CyberMatch'));
+const NeonSlicer = lazy(() => import('./NeonSlicer'));
+const VoxelWorld = lazy(() => import('./VoxelWorld'));
+const Doom = lazy(() => import('./Doom'));
+const Slope = lazy(() => import('./Slope'));
+const Quake3 = lazy(() => import('./Quake3'));
+const Diablo = lazy(() => import('./Diablo'));
+const DriftHunters = lazy(() => import('./DriftHunters'));
+const Mario64 = lazy(() => import('./Mario64'));
+const HalfLife = lazy(() => import('./HalfLife'));
+const GeometryDash = lazy(() => import('./GeometryDash'));
+const SubwaySurfers = lazy(() => import('./SubwaySurfers'));
 
 
 
@@ -144,9 +144,10 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
     const activeGame = gamesList.find(g => g.id === activeGameId);
 
     const saveNickname = () => {
-        if (tempName.trim().length >= 3) {
-            setNickname(tempName.trim());
-            localStorage.setItem('arcade_nickname', tempName.trim());
+        const trimmed = tempName.trim();
+        if (trimmed.length >= 3) {
+            setNickname(trimmed);
+            localStorage.setItem('arcade_nickname', trimmed);
         }
     };
 
@@ -416,8 +417,21 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                             </button>
                                         </div>
 
-                                        <div style={{ flex: 1, width: '100%', maxWidth: '800px', borderRadius: '16px', overflow: 'hidden', border: `2px solid ${activeGame.color}`, boxShadow: `0 0 30px ${activeGame.color}44` }}>
-                                            {activeGame.comp && <activeGame.comp onGameOver={(score) => handleGameOver(score, activeGame.id)} />}
+                                        <div style={{ flex: 1, width: '100%', maxWidth: '800px', borderRadius: '16px', overflow: 'hidden', border: `2px solid ${activeGame.color}`, boxShadow: `0 0 30px ${activeGame.color}44`, background: '#000' }}>
+                                            <Suspense fallback={
+                                                <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: activeGame.color }}>
+                                                    <motion.div
+                                                        animate={{ rotate: 360 }}
+                                                        transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                                                        style={{ marginBottom: '1rem' }}
+                                                    >
+                                                        <Gamepad2 size={40} />
+                                                    </motion.div>
+                                                    <p style={{ fontFamily: 'monospace', letterSpacing: '2px' }}>LOADING UNIVERSE...</p>
+                                                </div>
+                                            }>
+                                                {activeGame.comp && <activeGame.comp onGameOver={(score) => handleGameOver(score, activeGame.id)} />}
+                                            </Suspense>
                                         </div>
                                     </motion.div>
                                 )}

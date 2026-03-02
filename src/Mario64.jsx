@@ -64,7 +64,7 @@ export default function Mario64() {
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Super Mario 64"
                         sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-popups"
-                        allow="keyboard-map *; pointer-lock *; fullscreen *; keyboard-lock *"
+                        allow="autoplay; fullscreen; keyboard-lock; pointer-lock"
                         allowFullScreen
                         onLoad={() => {
                             if (iframeRef.current) iframeRef.current.focus();
