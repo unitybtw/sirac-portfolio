@@ -68,7 +68,7 @@ export default function Quake3() {
                             border: 'none',
                         }}
                         title="Quake 3 Web"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-popups"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals"
                         allow="autoplay; fullscreen; keyboard-lock; pointer-lock"
                         allowFullScreen
                         onLoad={() => {

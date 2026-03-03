@@ -62,7 +62,7 @@ export default function GeometryDash() {
                         src="https://3kh0.github.io/projects/geodash/index.html"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Geometry Dash"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-popups"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals"
                         allow="autoplay; fullscreen; keyboard-lock; pointer-lock"
                         allowFullScreen
                         onLoad={() => {

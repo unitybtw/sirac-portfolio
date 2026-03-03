@@ -68,7 +68,7 @@ export default function Ultrakill() {
                         src="https://raw.githack.com/genizy/web-port/main/ultrakill/index.html"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Ultrakill Web"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-popups blob: *"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals blob: *"
                         allow="autoplay; fullscreen; keyboard-lock; pointer-lock"
                         allowFullScreen
                         onLoad={() => {

@@ -63,7 +63,7 @@ export default function HalfLife() {
                         src="https://x8bitrain.github.io/webXash/"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Half-Life Web"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-popups"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals"
                         allow="autoplay; fullscreen; keyboard-lock; pointer-lock"
                         allowFullScreen
                         onLoad={() => {

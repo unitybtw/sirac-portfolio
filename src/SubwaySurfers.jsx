@@ -62,7 +62,7 @@ export default function SubwaySurfers() {
                         src="https://staticquasar931.github.io/SubwaySurfers/"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Subway Surfers"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-popups"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals"
                         allow="autoplay; fullscreen; keyboard-lock; pointer-lock"
                         allowFullScreen
                         onLoad={() => {

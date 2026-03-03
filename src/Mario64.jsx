@@ -63,7 +63,7 @@ export default function Mario64() {
                         src="https://64.js.org/"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Super Mario 64"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-popups"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals"
                         allow="autoplay; fullscreen; keyboard-lock; pointer-lock"
                         allowFullScreen
                         onLoad={() => {

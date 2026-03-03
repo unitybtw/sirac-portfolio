@@ -149,7 +149,7 @@ export default function HollowKnight() {
 </html>`}
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Hollow Knight"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-popups blob: *"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals blob: *"
                         allow="autoplay; fullscreen; keyboard-lock; pointer-lock"
                         allowFullScreen
                         onLoad={() => {

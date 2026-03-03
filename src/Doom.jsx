@@ -68,7 +68,7 @@ export default function Doom() {
                         src="https://diekmann.github.io/wasm-fizzbuzz/doom/"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="DOOM WASM"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-popups"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals"
                         allow="autoplay; fullscreen; keyboard-lock; pointer-lock"
                         allowFullScreen
                         onLoad={() => {
