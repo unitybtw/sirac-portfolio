@@ -63,10 +63,93 @@ export default function HollowKnight() {
                 <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
                     <iframe
                         ref={iframeRef}
-                        src="https://cdn.jsdelivr.net/gh/web-ports/hollow-knight@latest/index.html"
+                        srcDoc={`<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <title>Hollow Knight | Web Port</title>
+    <style>
+        html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; color: white; display: flex; justify-content: center; align-items: center; font-family: cursive; }
+        #loading-text { font-size: 24px; text-align: center; }
+        canvas { width: 100% !important; height: 100% !important; display: none; }
+    </style>
+</head>
+<body>
+    <div id="loading-text">YÜKLENİYOR... 0.00 MB / 860.36 MB</div>
+    <canvas id="unity-canvas"></canvas>
+
+    <script>
+        const baseUrl = "https://cdn.jsdelivr.net/gh/web-ports/hollow-knight@latest/";
+        const loadingText = document.querySelector("#loading-text");
+        let loadedBytes = 0;
+
+        async function fetchWithProgress(url) {
+            const response = await fetch(baseUrl + url);
+            const reader = response.body.getReader();
+            let chunks = [];
+            let received = 0;
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                received += value.length;
+                loadedBytes += value.length;
+                chunks.push(value);
+                loadingText.textContent = \`YÜKLENİYOR... \${(loadedBytes / (1024 * 1024)).toFixed(2)} MB / 860.36 MB\`;
+            }
+            let fullBuffer = new Uint8Array(received);
+            let offset = 0;
+            for (let chunk of chunks) {
+                fullBuffer.set(chunk, offset);
+                offset += chunk.length;
+            }
+            return fullBuffer.buffer;
+        }
+
+        async function mergeFiles(prefix, count) {
+            const parts = Array.from({length: count}, (_, i) => \`\${prefix}.part\${i+1}\`);
+            const buffers = await Promise.all(parts.map(fetchWithProgress));
+            return URL.createObjectURL(new Blob(buffers));
+        }
+
+        (async () => {
+            try {
+                const [dataUrl, wasmUrl] = await Promise.all([
+                    mergeFiles("Build/hk.data", 42),
+                    mergeFiles("Build/hk.wasm", 2)
+                ]);
+
+                const config = {
+                    dataUrl: dataUrl,
+                    frameworkUrl: baseUrl + "Build/hk.framework.js",
+                    codeUrl: wasmUrl,
+                    streamingAssetsUrl: baseUrl + "StreamingAssets",
+                    companyName: "Team Cherry",
+                    productName: "Hollow Knight",
+                    productVersion: "1.0",
+                };
+
+                const script = document.createElement("script");
+                script.src = baseUrl + "Build/hk.loader.js";
+                script.onload = () => {
+                    createUnityInstance(document.querySelector("#unity-canvas"), config, (progress) => {
+                        loadingText.textContent = \`OYUN BAŞLATILIYOR... \${Math.round(progress * 100)}%\`;
+                    }).then(() => {
+                        loadingText.style.display = "none";
+                        document.querySelector("#unity-canvas").style.display = "block";
+                    });
+                };
+                document.body.appendChild(script);
+            } catch (err) {
+                loadingText.textContent = "Yükleme hatası. Lütfen sayfayı yenileyin.";
+                console.error(err);
+            }
+        })();
+    </script>
+</body>
+</html>`}
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Hollow Knight"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-popups"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-popups blob: *"
                         allow="autoplay; fullscreen; keyboard-lock; pointer-lock"
                         allowFullScreen
                         onLoad={() => {
