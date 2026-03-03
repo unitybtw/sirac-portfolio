@@ -111,6 +111,7 @@ const BeraatQuest = ({ onGameOver }) => {
             ctx.shadowBlur = 10; ctx.shadowColor = '#00f0ff';
             ctx.fillRect(p.x, p.y, p.w, p.h);
 
+
             ctx.fillStyle = '#000';
             ctx.font = 'bold 12px monospace';
             ctx.shadowBlur = 0;
@@ -179,7 +180,7 @@ const BeraatQuest = ({ onGameOver }) => {
         }
     }, [isJumpscare]);
 
-    
+
     // --- Score Persistence ---
     const scoreRef = useRef(0);
     useEffect(() => { scoreRef.current = score; }, [score]);

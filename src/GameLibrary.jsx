@@ -63,11 +63,13 @@ const Mario64 = lazy(() => import('./Mario64'));
 const HalfLife = lazy(() => import('./HalfLife'));
 const GeometryDash = lazy(() => import('./GeometryDash'));
 const SubwaySurfers = lazy(() => import('./SubwaySurfers'));
+const HollowKnight = lazy(() => import('./HollowKnight'));
 
 
 
 
 const gamesList = [
+    { id: 'hollowknight', title: 'Hollow Knight', icon: <Ghost size={24} />, color: '#aab8c2', comp: HollowKnight },
     { id: 'mario64', title: 'Super Mario 64', icon: <Trophy size={24} />, color: '#ffcc00', comp: Mario64 },
     { id: 'hl1', title: 'Half-Life', icon: <Target size={24} />, color: '#ff9900', comp: HalfLife },
     { id: 'geodash', title: 'Geometry Dash', icon: <Zap size={24} />, color: '#ffcc00', comp: GeometryDash },
