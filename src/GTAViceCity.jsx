@@ -65,7 +65,7 @@ export default function GTAViceCity() {
                 <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
                     <iframe
                         ref={iframeRef}
-                        src="https://script.google.com/macros/s/AKfycbxjL1dXRpsB3hVcnPpO9-FkJwFwGMHUo_eOgEOGZLkCwpgizuA1r-9nkuqJVDO5d8XwUA/exec"
+                        src="https://cdn.jsdelivr.net/gh/web-ports/vice-city@796678be4ed26a13c1256be98781ca9b90beb981/index.html"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="GTA Vice City Web"
                         sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
