@@ -68,7 +68,7 @@ export default function GTAViceCity() {
                         src="https://script.google.com/macros/s/AKfycbxjL1dXRpsB3hVcnPpO9-FkJwFwGMHUo_eOgEOGZLkCwpgizuA1r-9nkuqJVDO5d8XwUA/exec"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="GTA Vice City Web"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals allow-popups blob: *"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
                         allow="autoplay; fullscreen; keyboard-lock; pointer-lock"
                         allowFullScreen
                         onLoad={() => {
