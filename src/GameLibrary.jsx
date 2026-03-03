@@ -65,11 +65,13 @@ const GeometryDash = lazy(() => import('./GeometryDash'));
 const SubwaySurfers = lazy(() => import('./SubwaySurfers'));
 const HollowKnight = lazy(() => import('./HollowKnight'));
 const Ultrakill = lazy(() => import('./Ultrakill'));
+const GTAViceCity = lazy(() => import('./GTAViceCity'));
 
 
 
 
 const gamesList = [
+    { id: 'gtavicecity', title: 'GTA Vice City', icon: <Gem size={24} />, color: '#ff66b2', comp: GTAViceCity },
     { id: 'ultrakill', title: 'ULTRAKILL', icon: <Crosshair size={24} />, color: '#ff3300', comp: Ultrakill },
     { id: 'hollowknight', title: 'Hollow Knight', icon: <Ghost size={24} />, color: '#aab8c2', comp: HollowKnight },
     { id: 'mario64', title: 'Super Mario 64', icon: <Trophy size={24} />, color: '#ffcc00', comp: Mario64 },
