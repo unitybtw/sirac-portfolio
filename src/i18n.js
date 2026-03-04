@@ -79,6 +79,39 @@ const resources = {
                 "m_title": "Legend of the Three Masks",
                 "m_desc": "An immersive 3D adventure game published on itch.io where you explore levels to find ancient masks and uncover mysteries.",
                 "fb_desc": "A fun, challenging classic arcade-style game testing reflexes with high-score tracking and quick gameplay loops."
+            },
+            "game_common": {
+                "controls": "CONTROLS:",
+                "loading": "LOADING...",
+                "downloading": "DOWNLOADING...",
+                "start": "START",
+                "launch": "LAUNCH GAME",
+                "enter": "ENTER THE VOID",
+                "back": "BACK",
+                "fullscreen": "FULLSCREEN"
+            },
+            "game_launch": {
+                "doom_btn": "ENTER HELL",
+                "doom_note": "Click START when game loads.",
+                "doom_wasd": "Move",
+                "doom_fire": "Fire",
+                "doom_open": "Open Doors",
+                "doom_weapon": "Change Weapon",
+                "vc_downloading": "DOWNLOADING GAME FILES... (800MB)",
+                "vc_btn": "START GAME",
+                "vc_wasd": "Move / Drive",
+                "vc_mouse": "Look / Aim",
+                "vc_lmb": "Fire / Attack",
+                "vc_f": "Enter / Exit Vehicle",
+                "vc_space": "Jump / Handbrake",
+                "vc_climb": "Climb",
+                "subway_mouse": "Drag to Move & Jump",
+                "subway_space": "Hoverboard",
+                "hl_wasd": "Move",
+                "hl_lmb": "Fire",
+                "hl_r": "Reload",
+                "hl_space": "Jump",
+                "hl_ctrl": "Crouch"
             }
         }
     },
@@ -159,6 +192,39 @@ const resources = {
                 "m_title": "Üç Maskenin Efsanesi",
                 "m_desc": "itch.io üzerinde yayınlanmış, eski maskeleri bulup gizemleri çözmek için bölümleri keşfettiğiniz sürükleyici 3D macera oyunu.",
                 "fb_desc": "Hızlı oyun döngüsü ve yüksek skor takibi ile refleksleri test eden, eğlenceli, zorlu klasik atari tarzı oyun."
+            },
+            "game_common": {
+                "controls": "KONTROLLER:",
+                "loading": "YÜKLENİYOR...",
+                "downloading": "İNDİRİLİYOR...",
+                "start": "BAŞLAT",
+                "launch": "OYUNU BAŞLAT",
+                "enter": "BOŞLUĞA GİR",
+                "back": "GERİ",
+                "fullscreen": "TAM EKRAN"
+            },
+            "game_launch": {
+                "doom_btn": "CEHENNEME GİR",
+                "doom_note": "Oyun yüklendiğinde START butonuna tıkla.",
+                "doom_wasd": "Hareket",
+                "doom_fire": "Ateş Etme",
+                "doom_open": "Kapıları Açma",
+                "doom_weapon": "Silah Değiştirme",
+                "vc_downloading": "OYUN DOSYALARI İNDİRİLİYOR... (800MB)",
+                "vc_btn": "OYUNU BAŞLAT",
+                "vc_wasd": "Hareket / Sürüş",
+                "vc_mouse": "Bakış / Nişan",
+                "vc_lmb": "Ateş / Saldırı",
+                "vc_f": "Araca Bin / İn",
+                "vc_space": "Zıpla / El Freni",
+                "vc_climb": "Tırman",
+                "subway_mouse": "Sürükleyerek Hareket Et & Zıpla",
+                "subway_space": "Kaykay",
+                "hl_wasd": "Hareket",
+                "hl_lmb": "Ateş",
+                "hl_r": "Şarjör Yenile",
+                "hl_space": "Zıpla",
+                "hl_ctrl": "Eğil"
             }
         }
     }

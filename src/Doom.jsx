@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Maximize, RotateCcw, Info, MousePointer2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function Doom() {
+    const { t } = useTranslation();
     const [started, setStarted] = useState(false);
     const iframeRef = useRef(null);
 
@@ -41,14 +43,14 @@ export default function Doom() {
 
                         <div style={{ background: 'rgba(255, 0, 0, 0.05)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255, 0, 0, 0.2)', marginBottom: '1.5rem', textAlign: 'left', fontSize: '0.9rem' }}>
                             <p style={{ color: '#ff0000', fontWeight: 'bold', marginBottom: '0.8rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <MousePointer2 size={16} /> KONTROLLER:
+                                <MousePointer2 size={16} /> {t('game_common.controls')}
                             </p>
                             <ul style={{ color: '#bbb', margin: 0, paddingLeft: '1.2rem', fontSize: '0.8rem', lineHeight: '1.6' }}>
-                                <li>Oyun başladığında <strong>START</strong> butonuna tıkla.</li>
-                                <li><strong>WASD / Ok Tuşları:</strong> Hareket</li>
-                                <li><strong>ENTER:</strong> Ateş Etme</li>
-                                <li><strong>SPACE:</strong> Kapıları Açma</li>
-                                <li><strong>Sayılar (1-7):</strong> Silah Değiştirme</li>
+                                <li>{t('game_launch.doom_note')}</li>
+                                <li><strong>WASD / {t('game_common.controls').includes('K') ? 'Ok Tuşları' : 'Arrow Keys'}:</strong> {t('game_launch.doom_wasd')}</li>
+                                <li><strong>ENTER:</strong> {t('game_launch.doom_fire')}</li>
+                                <li><strong>SPACE:</strong> {t('game_launch.doom_open')}</li>
+                                <li><strong>Sayılar (1-7):</strong> {t('game_launch.doom_weapon')}</li>
                             </ul>
                         </div>
 
@@ -57,7 +59,7 @@ export default function Doom() {
                             className="btn btn-primary"
                             style={{ width: '100%', padding: '1rem', fontSize: '1.1rem', background: '#ff0000', color: '#fff', fontWeight: 'bold', borderRadius: '12px', border: 'none', boxShadow: '0 0 20px rgba(230, 0, 0, 0.3)' }}
                         >
-                            CEHENNEME GİR
+                            {t('game_launch.doom_btn')}
                         </button>
                     </motion.div>
                 </div>

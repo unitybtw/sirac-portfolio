@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Maximize, Map, Car } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function GTAViceCity() {
+    const { t } = useTranslation();
     const [started, setStarted] = useState(false);
     const iframeRef = useRef(null);
 
@@ -38,18 +40,18 @@ export default function GTAViceCity() {
                         <p style={{ color: '#fff', fontSize: '0.9rem', marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '4px' }}>Welcome to the 80s</p>
                         <div style={{ background: 'rgba(255, 102, 178, 0.05)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255, 102, 178, 0.2)', marginBottom: '1.5rem', textAlign: 'left', fontSize: '0.9rem' }}>
                             <p style={{ color: '#ff66b2', fontWeight: 'bold', marginBottom: '0.3rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <Map size={16} /> BİLGİ & KONTROLLER:
+                                <Map size={16} /> {t('game_common.controls')}
                             </p>
                             <p style={{ color: '#ffcc00', fontSize: '0.8rem', fontStyle: 'italic', marginBottom: '1rem' }}>
-                                ⚠️ Uyarı: Oyun ilk açılışta yaklaşık 800MB veri indirecektir. (İnternet hızınıza göre 1-3 dk sürebilir). Siyah ekranda kalırsa lütfen bekleyin.
+                                ⚠️ {t('game_launch.vc_downloading')}
                             </p>
                             <ul style={{ color: '#bbb', margin: 0, paddingLeft: '1.2rem', fontSize: '0.8rem' }}>
-                                <li><strong>Ekrana tıklayarak</strong> fareyi oyun içine kilitleyin.</li>
-                                <li><strong>WASD:</strong> Yürüme / Araç Kullanma</li>
-                                <li><strong>Fare:</strong> Kamera Yönü / Nişan</li>
-                                <li><strong>Sol Tık:</strong> Ateş Et / Yumruk At</li>
-                                <li><strong>F / Enter:</strong> Araca Bin / İkincil Etkileşim</li>
-                                <li><strong>ESC:</strong> Menü / Duraklat</li>
+                                <li><strong>{t('game_common.controls').includes('K') ? 'Ekrana tıklayarak' : 'Click the screen'}</strong> {t('game_common.controls').includes('K') ? 'fareyi oyun içine kilitleyin.' : 'to lock mouse in game.'}</li>
+                                <li><strong>WASD:</strong> {t('game_launch.vc_wasd')}</li>
+                                <li><strong>{t('game_common.controls').includes('K') ? 'Fare' : 'Mouse'}:</strong> {t('game_launch.vc_mouse')}</li>
+                                <li><strong>{t('game_common.controls').includes('K') ? 'Sol Tık' : 'LMB'}:</strong> {t('game_launch.vc_lmb')}</li>
+                                <li><strong>F / Enter:</strong> {t('game_launch.vc_f')}</li>
+                                <li><strong>ESC:</strong> {t('game_common.controls').includes('K') ? 'Menü / Duraklat' : 'Menu / Pause'}</li>
                             </ul>
                         </div>
                         <button
@@ -57,7 +59,7 @@ export default function GTAViceCity() {
                             className="btn btn-primary"
                             style={{ width: '100%', padding: '1.2rem', fontSize: '1.2rem', background: 'linear-gradient(45deg, #ff66b2, #00f0ff)', color: '#fff', fontWeight: 'bold', borderRadius: '8px', border: 'none', boxShadow: '0 0 20px rgba(255,102,178,0.5)', textTransform: 'uppercase' }}
                         >
-                            <Car size={20} style={{ display: 'inline', marginRight: '8px' }} /> OYUNU BAŞLAT
+                            <Car size={20} style={{ display: 'inline', marginRight: '8px' }} /> {t('game_launch.vc_btn')}
                         </button>
                     </motion.div>
                 </div>
@@ -99,7 +101,7 @@ export default function GTAViceCity() {
     data-state-scope-mode="0"
     data-state-scope-gun="0"
 >
-    <div id="loading-text" style="color: white; font-size: 24px; font-family: monospace; text-align: center; margin-top: 40vh; letter-spacing: 2px;"> OYUN DOSYALARI iNDiRiLiYOR... (800MB) </div>
+    <div id="loading-text" style="color: white; font-size: 24px; font-family: monospace; text-align: center; margin-top: 40vh; letter-spacing: 2px;"> ${t('game_common.loading')} </div>
     <div class="wasted-container" hidden>
 
     </div>
@@ -213,7 +215,7 @@ async function fetchWithCache(name, url) {
 
         let mbDone = (loadedBytes / (1024 * 1024)).toFixed(2);
         let mbTotal = '633.45';
-        loadingText.textContent = \`YUKLENiYOR... \${mbDone} MB / \${mbTotal} MB\`;
+        loadingText.textContent = \`\${'${t('game_common.loading')}'} \${mbDone} MB / \${mbTotal} MB\`;
     }
 
     let fullBuffer = new Uint8Array(received);
