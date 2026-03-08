@@ -365,6 +365,7 @@ function App() {
   const [showSecretGame, setShowSecretGame] = useState(false);
   const [isArcadeOpen, setIsArcadeOpen] = useState(false);
   const [activeArcadeGame, setActiveArcadeGame] = useState(null);
+  const [isStealthMode, setIsStealthMode] = useState(false);
 
   // Konami Code Logic
   useEffect(() => {
@@ -385,6 +386,17 @@ function App() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Stealth Mode (Boss Key) Logic - Triggers with 'Escape'
+  useEffect(() => {
+    const handleStealthKey = (e) => {
+      if (e.key === 'Escape') {
+        setIsStealthMode(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleStealthKey);
+    return () => window.removeEventListener('keydown', handleStealthKey);
   }, []);
 
 
@@ -436,6 +448,20 @@ function App() {
   return (
     <AnimatePresence mode="wait">
       {showSecretGame && <KonamiGame onClose={() => setShowSecretGame(false)} />}
+
+      {/* Stealth Mode Overlay (Boss Key) */}
+      <AnimatePresence>
+        {isStealthMode && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ zIndex: 999999, position: 'fixed', inset: 0 }}
+          >
+            <StealthOverlay onExit={() => setIsStealthMode(false)} />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {!isAppLoaded ? (
         <LoadingScreen key="loading" onComplete={() => setIsAppLoaded(true)} />
@@ -690,5 +716,92 @@ function App() {
     </AnimatePresence>
   );
 }
+
+const StealthOverlay = ({ onExit }) => {
+  return (
+    <div style={{
+      position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+      background: '#1e1e1e', zIndex: 999999, color: '#d4d4d4',
+      fontFamily: 'Consolas, "Courier New", monospace', fontSize: '14px',
+      overflow: 'hidden', display: 'flex', flexDirection: 'column'
+    }}>
+      {/* VS Code Header Simulation */}
+      <div style={{ background: '#323233', padding: '10px 20px', display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
+        <span>App.jsx - DenemeApp1 - Visual Studio Code</span>
+        <div style={{ display: 'flex', gap: '15px' }}>
+          <span style={{ cursor: 'pointer', color: '#858585' }}>—</span>
+          <span style={{ cursor: 'pointer', color: '#858585' }}>▢</span>
+          <span style={{ cursor: 'pointer' }} onClick={onExit}>✕</span>
+        </div>
+      </div>
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+        {/* Sidebar */}
+        <div style={{ width: '220px', background: '#252526', borderRight: '1px solid #3c3c3c', padding: '20px 10px', userSelect: 'none' }}>
+          <div style={{ color: '#858585', marginBottom: '10px', fontSize: '11px', fontWeight: 'bold' }}>EXPLORER</div>
+          <div style={{ color: '#e1e1e1', display: 'flex', alignItems: 'center', gap: '5px' }}><span>▼</span> DENEMEAPP1</div>
+          <div style={{ paddingLeft: '15px', color: '#c5c5c5' }}>
+            <div style={{ color: '#e1e1e1' }}><span>▼</span> src</div>
+            <div style={{ paddingLeft: '15px', display: 'flex', flexDirection: 'column', gap: '5px', marginTop: '5px' }}>
+              <div style={{ color: '#51ce8d' }}>JS App.jsx</div>
+              <div>JS GameLibrary.jsx</div>
+              <div>CSS index.css</div>
+              <div>JS i18n.js</div>
+            </div>
+          </div>
+        </div>
+        {/* Code Content */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          {/* Tabs */}
+          <div style={{ background: '#2d2d2d', display: 'flex', height: '35px', alignItems: 'center' }}>
+            <div style={{ background: '#1e1e1e', padding: '0 20px', height: '100%', display: 'flex', alignItems: 'center', borderTop: '1px solid #007acc', color: '#e1e1e1' }}>App.jsx ✕</div>
+            <div style={{ padding: '0 20px', color: '#858585' }}>index.css</div>
+          </div>
+          {/* Editor Area */}
+          <div style={{ flex: 1, padding: '20px', overflowY: 'auto', background: '#1e1e1e' }}>
+            <div style={{ display: 'flex', gap: '20px' }}>
+              <div style={{ color: '#858585', textAlign: 'right', minWidth: '35px', userSelect: 'none', lineHeight: '1.6' }}>
+                {Array.from({ length: 50 }).map((_, i) => <div key={i}>{i + 1}</div>)}
+              </div>
+              <pre style={{ margin: 0, color: '#d4d4d4', lineHeight: '1.6' }}>
+                {`<span style="color: #c586c0">import</span> <span style="color: #9cdcfe">React</span>, { <span style="color: #9cdcfe">useState</span>, <span style="color: #9cdcfe">useEffect</span> } <span style="color: #c586c0">from</span> <span style="color: #ce9178">'react'</span>;
+<span style="color: #c586c0">import</span> { <span style="color: #9cdcfe">motion</span> } <span style="color: #c586c0">from</span> <span style="color: #ce9178">'framer-motion'</span>;
+
+<span style="color: #6a9955">// TODO: Refactor legacy game logic for multi-threading</span>
+<span style="color: #569cd6">const</span> <span style="color: #dcdcaa">GameSyncEngine</span> = () => {
+    <span style="color: #569cd6">const</span> [<span style="color: #9cdcfe">engineState</span>, <span style="color: #dcdcaa">setEngineState</span>] = <span style="color: #dcdcaa">useState</span>(<span style="color: #ce9178">'IDLE'</span>);
+
+    <span style="color: #dcdcaa">useEffect</span>(() => {
+        <span style="color: #c586c0">if</span> (window.PerformanceNavigationTiming) {
+            <span style="color: #dcdcaa">initializeBootSequence</span>();
+        }
+    }, []);
+
+    <span style="color: #569cd6">const</span> <span style="color: #dcdcaa">initializeBootSequence</span> = () => {
+        <span style="color: #dcdcaa">console</span>.<span style="color: #dcdcaa">log</span>(<span style="color: #ce9178">"Starting kernel boot..."</span>);
+        <span style="color: #dcdcaa">setEngineState</span>(<span style="color: #ce9178">'ACTIVE'</span>);
+    };
+
+    <span style="color: #c586c0">return</span> (
+        &lt;<span style="color: #569cd6">div</span> <span style="color: #9cdcfe">className</span>=<span style="color: #ce9178">"engine-overlay"</span>&gt;
+            &lt;<span style="color: #569cd6">h1</span>&gt;<span style="color: #9cdcfe">{</span><span style="color: #9cdcfe">engineState</span><span style="color: #9cdcfe">}</span>&lt;/<span style="color: #569cd6">h1</span>&gt;
+        &lt;/<span style="color: #569cd6">div</span>&gt;
+    );
+};
+
+<span style="color: #c586c0">export default</span> <span style="color: #dcdcaa">GameSyncEngine</span>;`}
+              </pre>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* Status Bar */}
+      <div style={{ background: '#007acc', height: '22px', padding: '0 10px', display: 'flex', alignItems: 'center', fontSize: '12px', color: 'white', userSelect: 'none' }}>
+        <span>✔ Main*</span>
+        <span style={{ marginLeft: '20px' }}>0 ⚠ 0 ⓧ</span>
+        <span style={{ marginLeft: 'auto' }}>Ln 24, Col 1 | Spaces: 4 | UTF-8 | Javascript React</span>
+      </div>
+    </div>
+  );
+};
 
 export default App;
