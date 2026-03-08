@@ -5,13 +5,6 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import './index.css';
 import './light-mode.css';
 import './i18n';
-
-// Optimized Components
-import MatrixBackground from './components/MatrixBackground';
-import LoadingScreen from './components/LoadingScreen';
-import TypewriterTitle from './components/TypewriterTitle';
-import KonamiGame from './components/KonamiGame';
-
 const GameLibrary = lazy(() => import("./GameLibrary"));
 
 // --- Web Audio Synthesizer (Zero Dependencies) ---
@@ -117,10 +110,253 @@ const SkillRing = ({ icon, label, percent, delay }) => {
   );
 };
 
+const LoadingScreen = ({ onComplete }) => {
+  const [progress, setProgress] = useState(0);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setTimeout(onComplete, 500); // Wait a bit before hiding after 100%
+          return 100;
+        }
+        return prev + Math.floor(Math.random() * 15) + 5;
+      });
+    }, 150);
+    return () => clearInterval(interval);
+  }, [onComplete]);
 
+  return (
+    <motion.div
+      className="loading-screen"
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0, y: -50, filter: "blur(10px)" }}
+      transition={{ duration: 0.8, ease: "easeInOut" }}
+    >
+      <div className="loading-content">
+        <motion.div
+          animate={{ rotate: 360 }}
+          transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+          style={{ marginBottom: '2rem', color: 'var(--accent-cyan)' }}
+        >
+          <Box size={50} />
+        </motion.div>
+
+        <div className="loading-bar-container">
+          <motion.div
+            className="loading-bar-fill"
+            style={{ width: `${Math.min(progress, 100)}%` }}
+          />
+        </div>
+
+        <div className="loading-text" style={{ fontFamily: 'monospace', color: 'var(--accent-cyan)' }}>
+          SYSTEM INITIALIZING... {Math.min(progress, 100)}%
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+const MatrixBackground = ({ theme }) => {
+  useEffect(() => {
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Set canvas to full window size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=<>?/\\';
+    characters = characters.split('');
+
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = [];
+
+    for (let x = 0; x < columns; x++) {
+      drops[x] = 1;
+    }
+
+    const draw = () => {
+      // Create trailing fade effect based on theme
+      const fadeColor = theme === 'dark' ? 'rgba(10, 10, 12, 0.05)' : 'rgba(240, 240, 245, 0.1)';
+      ctx.fillStyle = fadeColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.font = fontSize + 'px monospace';
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = characters[Math.floor(Math.random() * characters.length)];
+
+        // Dynamic colors: Random choice between cyan and violet tones
+        const isCyan = Math.random() > 0.5;
+        const color = theme === 'dark'
+          ? (isCyan ? 'rgba(0, 240, 255, 0.15)' : 'rgba(138, 43, 226, 0.15)')
+          : (isCyan ? 'rgba(0, 150, 255, 0.1)' : 'rgba(100, 43, 200, 0.1)');
+
+        ctx.fillStyle = color;
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    };
+
+    const interval = setInterval(draw, 40); // Slightly slower for CPU efficiency (25fps is enough)
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [theme]);
+
+  // Styling matrix to sit completely behind everything with no pointer events
+  return (
+    <canvas
+      id="matrix-canvas"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: -5,
+        pointerEvents: 'none'
+      }}
+    />
+  );
+};
+
+const TypewriterTitle = ({ title1, title2 }) => {
+  const [text, setText] = useState('');
+  const [phase, setPhase] = useState(0); // 0: typing, 1: erasing, 2: final
+  const codeString = "public class GameDev {\n  string title = \"ARCHITECT\";\n}";
+
+  useEffect(() => {
+    if (phase === 0) {
+      if (text.length < codeString.length) {
+        const timeout = setTimeout(() => {
+          setText(codeString.slice(0, text.length + 1));
+        }, Math.random() * 40 + 20); // random typing speed
+        return () => clearTimeout(timeout);
+      } else {
+        const timeout = setTimeout(() => setPhase(1), 1000); // pause reading
+        return () => clearTimeout(timeout);
+      }
+    } else if (phase === 1) {
+      if (text.length > 0) {
+        const timeout = setTimeout(() => {
+          setText(text.slice(0, -1));
+        }, 15); // delete speed
+        return () => clearTimeout(timeout);
+      } else {
+        setPhase(2);
+      }
+    }
+  }, [text, phase]);
+
+  if (phase === 2) {
+    return (
+      <motion.h1
+        className="hero-title"
+        initial={{ opacity: 0, filter: 'blur(10px)', scale: 0.9 }}
+        animate={{ opacity: 1, filter: 'blur(0px)', scale: 1 }}
+        transition={{ duration: 0.8, type: 'spring' }}
+      >
+        <span className="text-gradient">{title1}</span><br />
+        <span className="text-accent-gradient">{title2}</span>
+      </motion.h1>
+    );
+  }
+
+  return (
+    <div style={{ minHeight: '160px', display: 'flex', alignItems: 'center' }}>
+      <h1 style={{ fontFamily: 'monospace', fontSize: 'clamp(1rem, 2.5vw, 1.8rem)', textAlign: 'left', color: 'var(--accent-cyan)', whiteSpace: 'pre-wrap', lineHeight: '1.4', margin: 0 }}>
+        {text}<span className="cursor-blink">|</span>
+      </h1>
+    </div>
+  );
+};
 
 // --- Retro Snake Minigame (Konami Easter Egg) ---
+const KonamiGame = ({ onClose }) => {
+  const [snake, setSnake] = useState([[10, 10]]);
+  const [food, setFood] = useState([15, 15]);
+  const [dir, setDir] = useState([0, -1]);
+  const [gameOver, setGameOver] = useState(false);
+  const [score, setScore] = useState(0);
+
+  useEffect(() => {
+    const handleKey = (e) => {
+      // Prevent default scrolling for arrow keys
+      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].indexOf(e.code) > -1) {
+        e.preventDefault();
+      }
+      switch (e.key) {
+        case 'ArrowUp': if (dir[1] === 0) setDir([0, -1]); break;
+        case 'ArrowDown': if (dir[1] === 0) setDir([0, 1]); break;
+        case 'ArrowLeft': if (dir[0] === 0) setDir([-1, 0]); break;
+        case 'ArrowRight': if (dir[0] === 0) setDir([1, 0]); break;
+        default: break;
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [dir]);
+
+  useEffect(() => {
+    if (gameOver) return;
+    const interval = setInterval(() => {
+      setSnake(s => {
+        const h = s[0];
+        const newH = [h[0] + dir[0], h[1] + dir[1]];
+        // Wall collision
+        if (newH[0] < 0 || newH[0] >= 30 || newH[1] < 0 || newH[1] >= 30) {
+          setGameOver(true); return s;
+        }
+        // Self collision
+        if (s.some(seg => seg[0] === newH[0] && seg[1] === newH[1])) {
+          setGameOver(true); return s;
+        }
+        const newSnake = [newH, ...s];
+        // Food check
+        if (newH[0] === food[0] && newH[1] === food[1]) {
+          setScore(sc => sc + 10);
+          setFood([Math.floor(Math.random() * 30), Math.floor(Math.random() * 30)]);
+        } else {
+          newSnake.pop();
+        }
+        return newSnake;
+      });
+    }, 100);
+    return () => clearInterval(interval);
+  }, [dir, food, gameOver]);
+
+  return (
+    <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.95)', zIndex: 100000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+      <h1 style={{ color: '#0f0', fontFamily: 'monospace', textShadow: '0 0 10px #0f0' }}>NEON SNAKE</h1>
+      <p style={{ color: '#0f0', fontFamily: 'monospace' }}>SCORE: {score}</p>
+      <div style={{ width: '300px', height: '300px', border: '2px solid #0f0', position: 'relative', boxShadow: '0 0 20px #0f0' }}>
+        {snake.map((seg, i) => (
+          <div key={i} style={{ position: 'absolute', left: `${seg[0] * 10}px`, top: `${seg[1] * 10}px`, width: '10px', height: '10px', background: i === 0 ? '#fff' : '#0f0', boxShadow: '0 0 5px #0f0' }} />
+        ))}
+        <div style={{ position: 'absolute', left: `${food[0] * 10}px`, top: `${food[1] * 10}px`, width: '10px', height: '10px', background: '#f0f', boxShadow: '0 0 10px #f0f' }} />
+      </div>
+      {gameOver && <h2 style={{ color: 'red', fontFamily: 'monospace', marginTop: '1rem' }}>GAME OVER</h2>}
+      <button onClick={onClose} style={{ marginTop: '2rem', padding: '0.5rem 1rem', background: 'transparent', border: '1px solid #0f0', color: '#0f0', fontFamily: 'monospace', cursor: 'pointer' }}>EXIT SIMULATION</button>
+    </div>
+  );
+};
 
 function App() {
   const { t, i18n } = useTranslation();
