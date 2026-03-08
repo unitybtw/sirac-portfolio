@@ -249,68 +249,73 @@ function getParts(file, start, end) {
     return parts;
 }
 
-// Start fetching and caching
-Promise.all([
-    mergeFiles(getParts("index.data", 1, 7), "index.data"),
-    mergeFiles(getParts("audio/emotion.adf", 1, 3), "emotion.adf"),
-    mergeFiles(getParts("audio/espant.adf", 1, 3), "espant.adf"),
-    mergeFiles(getParts("audio/fever.adf", 1, 3), "fever.adf"),
-    mergeFiles(getParts("audio/flash.adf", 1, 3), "flash.adf"),
-    mergeFiles(getParts("audio/kchat.adf", 1, 3), "kchat.adf"),
-    mergeFiles(getParts("audio/vcpr.adf", 1, 2), "vcpr.adf"),
-    mergeFiles(getParts("audio/vrock.adf", 1, 4), "vrock.adf"),
-    mergeFiles(getParts("audio/wave.adf", 1, 4), "wave.adf"),
-    mergeFiles(getParts("audio/wild.adf", 1, 4), "wild.adf"),
-]).then(([indexdataurl, EMOTIONadfurl, ESPANTadfurl, FEVERadfurl, FLASHadfurl, KCHATadfurl, VCPRadfurl, VROCKadfurl, WAVEadfurl, WILDadfurl]) => {
-    
-    // Override fetch to use cached URLs
-    const originalFetch = window.fetch;
-    window.fetch = async function(input, init) {
-        let urlString = input instanceof Request ? input.url : String(input);
+// Start fetching and caching SEQUENTIALLY to save memory
+async function loadGameData() {
+    try {
+        const indexdataurl = await mergeFiles(getParts("index.data", 1, 7), "index.data");
+        const EMOTIONadfurl = await mergeFiles(getParts("audio/emotion.adf", 1, 3), "emotion.adf");
+        const ESPANTadfurl = await mergeFiles(getParts("audio/espant.adf", 1, 3), "espant.adf");
+        const FEVERadfurl = await mergeFiles(getParts("audio/fever.adf", 1, 3), "fever.adf");
+        const FLASHadfurl = await mergeFiles(getParts("audio/flash.adf", 1, 3), "flash.adf");
+        const KCHATadfurl = await mergeFiles(getParts("audio/kchat.adf", 1, 3), "kchat.adf");
+        const VCPRadfurl = await mergeFiles(getParts("audio/vcpr.adf", 1, 2), "vcpr.adf");
+        const VROCKadfurl = await mergeFiles(getParts("audio/vrock.adf", 1, 4), "vrock.adf");
+        const WAVEadfurl = await mergeFiles(getParts("audio/wave.adf", 1, 4), "wave.adf");
+        const WILDadfurl = await mergeFiles(getParts("audio/wild.adf", 1, 4), "wild.adf");
 
-        if (urlString.toLowerCase().includes("index.data".toLowerCase())) input = indexdataurl;
-        else if (urlString.toLowerCase().includes("emotion.adf".toLowerCase())) input = EMOTIONadfurl;
-        else if (urlString.toLowerCase().includes("espant.adf".toLowerCase())) input = ESPANTadfurl;
-        else if (urlString.toLowerCase().includes("fever.adf".toLowerCase())) input = FEVERadfurl;
-        else if (urlString.toLowerCase().includes("flash.adf".toLowerCase())) input = FLASHadfurl;
-        else if (urlString.toLowerCase().includes("kchat.adf".toLowerCase())) input = KCHATadfurl;
-        else if (urlString.toLowerCase().includes("VCPR.adf".toLowerCase())) input = VCPRadfurl;
-        else if (urlString.toLowerCase().includes("VROCK.adf".toLowerCase())) input = VROCKadfurl;
-        else if (urlString.toLowerCase().includes("WAVE.adf".toLowerCase())) input = WAVEadfurl;
-        else if (urlString.toLowerCase().includes("WILD.adf".toLowerCase())) input = WILDadfurl;
+        // Override fetch to use cached URLs
+        const originalFetch = window.fetch;
+        window.fetch = async function(input, init) {
+            let urlString = input instanceof Request ? input.url : String(input);
+            let target = null;
+            if (urlString.toLowerCase().includes("index.data".toLowerCase())) target = indexdataurl;
+            else if (urlString.toLowerCase().includes("emotion.adf".toLowerCase())) target = EMOTIONadfurl;
+            else if (urlString.toLowerCase().includes("espant.adf".toLowerCase())) target = ESPANTadfurl;
+            else if (urlString.toLowerCase().includes("fever.adf".toLowerCase())) target = FEVERadfurl;
+            else if (urlString.toLowerCase().includes("flash.adf".toLowerCase())) target = FLASHadfurl;
+            else if (urlString.toLowerCase().includes("kchat.adf".toLowerCase())) target = KCHATadfurl;
+            else if (urlString.toLowerCase().includes("vcpr.adf".toLowerCase())) target = VCPRadfurl;
+            else if (urlString.toLowerCase().includes("vrock.adf".toLowerCase())) target = VROCKadfurl;
+            else if (urlString.toLowerCase().includes("wave.adf".toLowerCase())) target = WAVEadfurl;
+            else if (urlString.toLowerCase().includes("wild.adf".toLowerCase())) target = WILDadfurl;
+            
+            if (target) return originalFetch(target, init);
+            return originalFetch(input, init);
+        };
 
-        return originalFetch(input, init);
-    };
+        // Similarly override XHR
+        const originalOpen = XMLHttpRequest.prototype.open;
+        XMLHttpRequest.prototype.open = function(method, url, ...rest) {
+            let u = url.toLowerCase();
+            if (u.includes("https://cdn.dos.zone/vcsky/fetched/".toLowerCase())) url = url.replace("https://cdn.dos.zone/vcsky/fetched/", "")
+            if (u.includes("index.data".toLowerCase())) url = indexdataurl;
+            else if (u.includes("emotion.adf".toLowerCase())) url = EMOTIONadfurl;
+            else if (u.includes("espant.adf".toLowerCase())) url = ESPANTadfurl;
+            else if (u.includes("fever.adf".toLowerCase())) url = FEVERadfurl;
+            else if (u.includes("flash.adf".toLowerCase())) url = FLASHadfurl;
+            else if (u.includes("kchat.adf".toLowerCase())) url = KCHATadfurl;
+            else if (u.includes("vcpr.adf".toLowerCase())) url = VCPRadfurl;
+            else if (u.includes("vrock.adf".toLowerCase())) url = VROCKadfurl;
+            else if (u.includes("wave.adf".toLowerCase())) url = WAVEadfurl;
+            else if (u.includes("wild.adf".toLowerCase())) url = WILDadfurl;
+            return originalOpen.call(this, method, url, ...rest);
+        };
 
-    // Similarly override XHR
-    const originalOpen = XMLHttpRequest.prototype.open;
-    XMLHttpRequest.prototype.open = function(method, url, ...rest) {
-        if (url.includes("https://cdn.dos.zone/vcsky/fetched/".toLowerCase())) url = url.replace("https://cdn.dos.zone/vcsky/fetched/", "")
-        if (url.toLowerCase().includes("index.data".toLowerCase())) url = indexdataurl;
-        else if (url.toLowerCase().includes("emotion.adf".toLowerCase())) url = EMOTIONadfurl;
-        else if (url.toLowerCase().includes("espant.adf".toLowerCase())) url = ESPANTadfurl;
-        else if (url.toLowerCase().includes("fever.adf".toLowerCase())) url = FEVERadfurl;
-        else if (url.toLowerCase().includes("flash.adf".toLowerCase())) url = FLASHadfurl;
-        else if (url.toLowerCase().includes("KCHAT.adf".toLowerCase())) url = KCHATadfurl;
-        else if (url.toLowerCase().includes("VCPR.adf".toLowerCase())) url = VCPRadfurl;
-        else if (url.toLowerCase().includes("VROCK.adf".toLowerCase())) url = VROCKadfurl;
-        else if (url.toLowerCase().includes("WAVE.adf".toLowerCase())) url = WAVEadfurl;
-        else if (url.toLowerCase().includes("WILD.adf".toLowerCase())) url = WILDadfurl;
-        return originalOpen.call(this, method, url, ...rest);
-    };
+        // Load game scripts
+        ["gamepademulator.js", "idbfs.js", "game.js"].forEach(src => {
+            const script = document.createElement("script");
+            script.src = src;
+            document.body.appendChild(script);
+        });
 
-    // Load game scripts
-    ["gamepademulator.js", "idbfs.js", "game.js"].forEach(src => {
-        const script = document.createElement("script");
-        script.src = src;
-        document.body.appendChild(script);
-    });
+        if(loadingText) loadingText.remove();
+    } catch(err) {
+        if(loadingText) loadingText.textContent = "Yukleme Basarisiz (OOM veya Baglanti): " + err.message;
+        console.error(err);
+    }
+}
 
-    if(loadingText) loadingText.remove();
-}).catch(err => {
-   if(loadingText) loadingText.textContent = "Yukleme Basarisiz: " + err.message;
-   console.error(err);
-});
+loadGameData();
 </script>
 
 </body>

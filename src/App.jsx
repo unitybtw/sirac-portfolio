@@ -159,8 +159,9 @@ const LoadingScreen = ({ onComplete }) => {
   );
 };
 
-const MatrixBackground = ({ theme }) => {
+const MatrixBackground = ({ theme, isPaused }) => {
   useEffect(() => {
+    if (isPaused) return;
     const canvas = document.getElementById('matrix-canvas');
     const ctx = canvas.getContext('2d');
 
@@ -219,7 +220,7 @@ const MatrixBackground = ({ theme }) => {
       clearInterval(interval);
       window.removeEventListener('resize', handleResize);
     };
-  }, [theme]);
+  }, [theme, isPaused]);
 
   // Styling matrix to sit completely behind everything with no pointer events
   return (
@@ -452,7 +453,7 @@ function App() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, ease: "easeOut" }}
         >
-          <MatrixBackground theme={theme} />
+          <MatrixBackground theme={theme} isPaused={isArcadeOpen} />
           <div className="cyber-bg">
             {/* Parallax Floating Icons */}
             <motion.div style={{ position: 'absolute', top: '15%', left: '10%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax1 }}>
