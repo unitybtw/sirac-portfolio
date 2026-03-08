@@ -722,68 +722,129 @@ const StealthOverlay = ({ onExit }) => {
     <div style={{
       position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
       background: '#1e1e1e', zIndex: 999999, color: '#d4d4d4',
-      fontFamily: 'Consolas, "Courier New", monospace', fontSize: '14px',
-      overflow: 'hidden', display: 'flex', flexDirection: 'column'
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+      fontSize: '13px', overflow: 'hidden', display: 'flex', flexDirection: 'column'
     }}>
-      {/* VS Code Header Simulation */}
-      <div style={{ background: '#323233', padding: '10px 20px', display: 'flex', justifyContent: 'space-between', fontSize: '12px' }}>
-        <span>App.jsx - DenemeApp1 - Visual Studio Code</span>
-        <div style={{ display: 'flex', gap: '15px' }}>
-          <span style={{ cursor: 'pointer', color: '#858585' }}>—</span>
-          <span style={{ cursor: 'pointer', color: '#858585' }}>▢</span>
-          <span style={{ cursor: 'pointer' }} onClick={onExit}>✕</span>
+      {/* VS Code Title Bar (Mac Style) */}
+      <div style={{
+        background: '#323233', height: '35px', display: 'flex', alignItems: 'center',
+        justifyContent: 'center', position: 'relative', borderBottom: '1px solid #2b2b2b',
+        userSelect: 'none'
+      }}>
+        {/* Mac Window Controls */}
+        <div style={{ position: 'absolute', left: '12px', display: 'flex', gap: '8px' }}>
+          <div onClick={onExit} style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56', cursor: 'pointer' }}></div>
+          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e' }}></div>
+          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f' }}></div>
         </div>
+        <span style={{ color: '#cccccc', fontSize: '12px' }}>App.jsx — sirac-portfolio — Visual Studio Code</span>
       </div>
+
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* Sidebar */}
-        <div style={{ width: '220px', background: '#252526', borderRight: '1px solid #3c3c3c', padding: '20px 10px', userSelect: 'none' }}>
-          <div style={{ color: '#858585', marginBottom: '10px', fontSize: '11px', fontWeight: 'bold' }}>EXPLORER</div>
-          <div style={{ color: '#e1e1e1', display: 'flex', alignItems: 'center', gap: '5px' }}><span>▼</span> DENEMEAPP1</div>
-          <div style={{ paddingLeft: '15px', color: '#c5c5c5' }}>
-            <div style={{ color: '#e1e1e1' }}><span>▼</span> src</div>
-            <div style={{ paddingLeft: '15px', display: 'flex', flexDirection: 'column', gap: '5px', marginTop: '5px' }}>
-              <div style={{ color: '#51ce8d' }}>JS App.jsx</div>
-              <div>JS GameLibrary.jsx</div>
-              <div>CSS index.css</div>
-              <div>JS i18n.js</div>
+        {/* Activity Bar (Extreme Left) */}
+        <div style={{
+          width: '48px', background: '#333333', display: 'flex', flexDirection: 'column',
+          alignItems: 'center', padding: '10px 0', gap: '20px', borderRight: '1px solid #2b2b2b'
+        }}>
+          <div style={{ color: 'white', opacity: 1 }}><Code size={24} /></div>
+          <div style={{ color: 'white', opacity: 0.4 }}><Layers size={21} /></div>
+          <div style={{ color: 'white', opacity: 0.4 }}><Smartphone size={21} /></div>
+          <div style={{ color: 'white', opacity: 0.4 }}><Box size={21} /></div>
+          <div style={{ marginTop: 'auto', color: 'white', opacity: 0.4, paddingBottom: '10px' }}><Mail size={21} /></div>
+        </div>
+
+        {/* Sidebar (Explorer) */}
+        <div style={{ width: '240px', background: '#252526', borderRight: '1px solid #2b2b2b', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ padding: '10px 20px', fontSize: '11px', color: '#bbbbbb', fontWeight: 'bold', letterSpacing: '0.5px' }}>EXPLORER</div>
+          <div style={{ overflowY: 'auto', flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', padding: '5px 20px', background: '#37373d', color: '#ffffff' }}>
+              <span style={{ marginRight: '6px', fontSize: '10px' }}>▼</span> <strong>SIRAC-PORTFOLIO</strong>
+            </div>
+            <div style={{ paddingLeft: '35px', marginTop: '5px' }}>
+              <div style={{ color: '#cccccc', display: 'flex', alignItems: 'center', padding: '3px 0' }}>
+                <span style={{ marginRight: '6px', fontSize: '8px' }}>▼</span> src
+              </div>
+              <div style={{ paddingLeft: '15px' }}>
+                <div style={{ color: '#4ec9b0', padding: '3px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span style={{ color: '#51ce8d', fontSize: '10px' }}>JS</span> App.jsx
+                </div>
+                <div style={{ color: '#cccccc', padding: '3px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span style={{ color: '#51ce8d', fontSize: '10px' }}>JS</span> GameLibrary.jsx
+                </div>
+                <div style={{ color: '#cccccc', padding: '3px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span style={{ color: '#4fc1ff', fontSize: '10px' }}>#</span> index.css
+                </div>
+                <div style={{ color: '#cccccc', padding: '3px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span style={{ color: '#51ce8d', fontSize: '10px' }}>JS</span> i18n.js
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        {/* Code Content */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+
+        {/* Editor Wrapper */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#1e1e1e' }}>
           {/* Tabs */}
-          <div style={{ background: '#2d2d2d', display: 'flex', height: '35px', alignItems: 'center' }}>
-            <div style={{ background: '#1e1e1e', padding: '0 20px', height: '100%', display: 'flex', alignItems: 'center', borderTop: '1px solid #007acc', color: '#e1e1e1' }}>App.jsx ✕</div>
-            <div style={{ padding: '0 20px', color: '#858585' }}>index.css</div>
+          <div style={{ background: '#2d2d2d', display: 'flex', height: '35px' }}>
+            <div style={{
+              background: '#1e1e1e', padding: '0 15px', display: 'flex', alignItems: 'center',
+              borderRight: '1px solid #252526', color: '#ffffff', minWidth: '120px'
+            }}>
+              <span style={{ marginRight: '8px', color: '#51ce8d', fontSize: '10px' }}>JS</span>
+              App.jsx <span style={{ marginLeft: '10px', fontSize: '10px', opacity: 0.5 }}>✕</span>
+            </div>
+            <div style={{
+              padding: '0 15px', display: 'flex', alignItems: 'center',
+              borderRight: '1px solid #252526', color: '#969696', minWidth: '120px'
+            }}>
+              <span style={{ marginRight: '8px', color: '#4fc1ff', fontSize: '10px' }}>#</span>
+              index.css
+            </div>
           </div>
+
+          {/* Breadcrumbs */}
+          <div style={{ height: '22px', background: '#1e1e1e', display: 'flex', alignItems: 'center', padding: '0 15px', color: '#888888', fontSize: '12px' }}>
+            src <span style={{ margin: '0 5px' }}>›</span> App.jsx <span style={{ margin: '0 5px' }}>›</span> <span style={{ color: '#4ec9b0' }}>App</span>
+          </div>
+
           {/* Editor Area */}
-          <div style={{ flex: 1, padding: '20px', overflowY: 'auto', background: '#1e1e1e' }}>
-            <div style={{ display: 'flex', gap: '20px' }}>
-              <div style={{ color: '#858585', textAlign: 'right', minWidth: '35px', userSelect: 'none', lineHeight: '1.6' }}>
-                {Array.from({ length: 50 }).map((_, i) => <div key={i}>{i + 1}</div>)}
-              </div>
-              <pre style={{ margin: 0, color: '#d4d4d4', lineHeight: '1.6' }}>
+          <div style={{ flex: 1, overflowY: 'auto', display: 'flex' }}>
+            <div style={{
+              padding: '10px 0', color: '#858585', textAlign: 'right',
+              minWidth: '45px', userSelect: 'none', lineHeight: '1.8',
+              fontSize: '12px', borderRight: '1px solid #2b2b2b', marginRight: '15px'
+            }}>
+              {Array.from({ length: 60 }).map((_, i) => <div key={i} style={{ paddingRight: '10px' }}>{i + 1}</div>)}
+            </div>
+            <div style={{ padding: '10px 0', flex: 1 }}>
+              <pre style={{
+                margin: 0, color: '#d4d4d4', lineHeight: '1.8',
+                fontFamily: 'Consolas, "Courier New", monospace', fontSize: '14px'
+              }}>
                 {`<span style="color: #c586c0">import</span> <span style="color: #9cdcfe">React</span>, { <span style="color: #9cdcfe">useState</span>, <span style="color: #9cdcfe">useEffect</span> } <span style="color: #c586c0">from</span> <span style="color: #ce9178">'react'</span>;
 <span style="color: #c586c0">import</span> { <span style="color: #9cdcfe">motion</span> } <span style="color: #c586c0">from</span> <span style="color: #ce9178">'framer-motion'</span>;
 
-<span style="color: #6a9955">// TODO: Refactor legacy game logic for multi-threading</span>
+<span style="color: #6a9955">// Performance Optimization Logic for Production</span>
 <span style="color: #569cd6">const</span> <span style="color: #dcdcaa">GameSyncEngine</span> = () => {
-    <span style="color: #569cd6">const</span> [<span style="color: #9cdcfe">engineState</span>, <span style="color: #dcdcaa">setEngineState</span>] = <span style="color: #dcdcaa">useState</span>(<span style="color: #ce9178">'IDLE'</span>);
+    <span style="color: #569cd6">const</span> [<span style="color: #9cdcfe">engineState</span>, <span style="color: #dcdcaa">setEngineState</span>] = <span style="color: #dcdcaa">useState</span>(<span style="color: #ce9178">'INITIALIZING'</span>);
 
     <span style="color: #dcdcaa">useEffect</span>(() => {
-        <span style="color: #c586c0">if</span> (window.PerformanceNavigationTiming) {
-            <span style="color: #dcdcaa">initializeBootSequence</span>();
-        }
+        <span style="color: #c586c0">const</span> <span style="color: #dcdcaa">init</span> = <span style="color: #569cd6">async</span> () => {
+            <span style="color: #c586c0">try</span> {
+                <span style="color: #569cd6">const</span> <span style="color: #9cdcfe">res</span> = <span style="color: #c586c0">await</span> <span style="color: #dcdcaa">fetch</span>(<span style="color: #ce9178">'/api/kernel/status'</span>);
+                <span style="color: #c586c0">if</span> (<span style="color: #9cdcfe">res</span>.<span style="color: #9cdcfe">ok</span>) <span style="color: #dcdcaa">setEngineState</span>(<span style="color: #ce9178">'STABLE'</span>);
+            } <span style="color: #c586c0">catch</span> (<span style="color: #9cdcfe">err</span>) {
+                <span style="color: #dcdcaa">console</span>.<span style="color: #dcdcaa">error</span>(<span style="color: #9cdcfe">err</span>);
+            }
+        };
+        <span style="color: #dcdcaa">init</span>();
     }, []);
-
-    <span style="color: #569cd6">const</span> <span style="color: #dcdcaa">initializeBootSequence</span> = () => {
-        <span style="color: #dcdcaa">console</span>.<span style="color: #dcdcaa">log</span>(<span style="color: #ce9178">"Starting kernel boot..."</span>);
-        <span style="color: #dcdcaa">setEngineState</span>(<span style="color: #ce9178">'ACTIVE'</span>);
-    };
 
     <span style="color: #c586c0">return</span> (
         &lt;<span style="color: #569cd6">div</span> <span style="color: #9cdcfe">className</span>=<span style="color: #ce9178">"engine-overlay"</span>&gt;
-            &lt;<span style="color: #569cd6">h1</span>&gt;<span style="color: #9cdcfe">{</span><span style="color: #9cdcfe">engineState</span><span style="color: #9cdcfe">}</span>&lt;/<span style="color: #569cd6">h1</span>&gt;
+            &lt;<span style="color: #569cd6">h2</span> <span style="color: #9cdcfe">style</span>={<span style="color: #9cdcfe">{ color: 'cyan' }</span>}&gt;
+                System Status: <span style="color: #9cdcfe">{</span><span style="color: #9cdcfe">engineState</span><span style="color: #9cdcfe">}</span>
+            &lt;/<span style="color: #569cd6">h2</span>&gt;
         &lt;/<span style="color: #569cd6">div</span>&gt;
     );
 };
@@ -794,11 +855,27 @@ const StealthOverlay = ({ onExit }) => {
           </div>
         </div>
       </div>
+
       {/* Status Bar */}
-      <div style={{ background: '#007acc', height: '22px', padding: '0 10px', display: 'flex', alignItems: 'center', fontSize: '12px', color: 'white', userSelect: 'none' }}>
-        <span>✔ Main*</span>
-        <span style={{ marginLeft: '20px' }}>0 ⚠ 0 ⓧ</span>
-        <span style={{ marginLeft: 'auto' }}>Ln 24, Col 1 | Spaces: 4 | UTF-8 | Javascript React</span>
+      <div style={{
+        background: '#007acc', height: '22px', padding: '0 10px', display: 'flex',
+        alignItems: 'center', fontSize: '12px', color: 'white', userSelect: 'none'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <span>⊞ Layout</span>
+          <span>✔ Main*</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <span style={{ fontSize: '10px' }}>ⓧ</span> 0
+            <span style={{ fontSize: '10px' }}>⚠</span> 0
+          </span>
+        </div>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: '15px' }}>
+          <span>Ln 24, Col 1</span>
+          <span>Spaces: 4</span>
+          <span>UTF-8</span>
+          <span>Javascript React</span>
+          <span>Prettier: ✔</span>
+        </div>
       </div>
     </div>
   );
