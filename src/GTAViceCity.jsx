@@ -148,6 +148,23 @@ export default function GTAViceCity() {
     </div>
 
 <script>
+var Module = {
+    preRun: [],
+    postRun: [],
+    print: (function() { return function(text) { console.log(text); }; })(),
+    canvas: (function() {
+        var canvas = document.getElementById('canvas');
+        canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+        return canvas;
+    })(),
+    statusElement: document.getElementById('status'),
+    activeAudioContext: null,
+    // Try to prevent OOM
+    TOTAL_MEMORY: 536870912, // 512MB
+    // Performance tuning for heavy games
+    arguments: ["-f", "60"], // Force 60fps limit to prevent runaway CPU
+};
+
 const loadingText = document.querySelector("#loading-text");
 let loadedBytes = 0;
 const DB_NAME = "gameFilesDB_VC";
