@@ -718,6 +718,128 @@ function App() {
 }
 
 const StealthOverlay = ({ onExit }) => {
+  const [charIndex, setCharIndex] = React.useState(0);
+  const editorRef = React.useRef(null);
+
+  const codeScript = `using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[RequireComponent(typeof(Rigidbody))]
+public class PlayerMovement : MonoBehaviour
+{
+    [Header("Movement Settings")]
+    public float moveSpeed = 12f;
+    public float sprintMultiplier = 1.5f;
+    public float jumpForce = 5f;
+    public float gravity = -9.81f;
+
+    [Header("Ground Detection")]
+    public Transform groundCheck;
+    public float groundDistance = 0.4f;
+    public LayerMask groundMask;
+
+    private Rigidbody rb;
+    private Vector3 moveDirection;
+    private bool isGrounded;
+
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true;
+    }
+
+    void Update()
+    {
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+
+        float x = Input.GetAxisRaw("Horizontal");
+        float z = Input.GetAxisRaw("Vertical");
+
+        moveDirection = transform.right * x + transform.forward * z;
+
+        if (Input.GetButtonDown("Jump") && isGrounded)
+        {
+            Jump();
+        }
+    }
+
+    void FixedUpdate()
+    {
+        MovePlayer();
+    }
+
+    private void MovePlayer()
+    {
+        float currentSpeed = moveSpeed;
+        if (Input.GetKey(KeyCode.LeftShift) && isGrounded)
+        {
+            currentSpeed *= sprintMultiplier;
+        }
+
+        Vector3 targetVelocity = moveDirection.normalized * currentSpeed;
+        Vector3 velocityChange = targetVelocity - rb.velocity;
+        
+        velocityChange.x = Mathf.Clamp(velocityChange.x, -currentSpeed, currentSpeed);
+        velocityChange.z = Mathf.Clamp(velocityChange.z, -currentSpeed, currentSpeed);
+        velocityChange.y = 0;
+
+        rb.AddForce(velocityChange, ForceMode.VelocityChange);
+        
+        // Apply custom gravity for snappier fall
+        rb.AddForce(Vector3.up * gravity * rb.mass);
+    }
+
+    private void Jump()
+    {
+        rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+    }
+}
+`;
+
+  React.useEffect(() => {
+    const handleTyping = (e) => {
+      // Ignore Escape, it handles exit in App component
+      if (['Escape', 'Shift', 'Control', 'Alt', 'Meta', 'CapsLock', 'Tab'].includes(e.key)) return;
+
+      e.preventDefault();
+
+      // Advance by 3 to 7 characters per keypress for fast typing
+      setCharIndex(prev => {
+        const next = prev + Math.floor(Math.random() * 5) + 3;
+        return next > codeScript.length ? codeScript.length : next;
+      });
+    };
+
+    window.addEventListener('keydown', handleTyping);
+    return () => window.removeEventListener('keydown', handleTyping);
+  }, [codeScript.length]);
+
+  React.useEffect(() => {
+    if (editorRef.current) {
+      editorRef.current.scrollTop = editorRef.current.scrollHeight;
+    }
+  }, [charIndex]);
+
+  const visibleCode = codeScript.slice(0, charIndex);
+
+  const getHighlightedCode = (text) => {
+    // Basic regex-based syntax highlighting for C#
+    let html = text
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/\b(public|private|protected|class|void|float|bool|string|Vector3|Transform|Rigidbody|MonoBehaviour|new|if|else|typeof|true|false)\b/g, '<span style="color: #569cd6">$1</span>')
+      .replace(/\b(using|System|UnityEngine|Collections|Generic|Mathf|Input|ForceMode|KeyCode|LayerMask)\b/g, '<span style="color: #4ec9b0">$1</span>')
+      .replace(/\b(Start|Update|FixedUpdate|Awake|GetComponent|AddForce|GetAxisRaw|GetButtonDown|GetKey|CheckSphere|Clamp|Jump|MovePlayer)\b/g, '<span style="color: #dcdcaa">$1</span>')
+      .replace(/(\".*?\")/g, '<span style="color: #ce9178">$1</span>')
+      .replace(/(\/\/.*)/g, '<span style="color: #6a9955">$1</span>');
+    return { __html: html + '<span style="animation: blink 1s step-end infinite; color: #d4d4d4">|</span>' };
+  };
+
+  const lineCount = visibleCode.split('\n').length;
+
   return (
     <div style={{
       position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
@@ -725,6 +847,13 @@ const StealthOverlay = ({ onExit }) => {
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
       fontSize: '13px', overflow: 'hidden', display: 'flex', flexDirection: 'column'
     }}>
+      <style>
+        {`
+          @keyframes blink {
+            50% { opacity: 0; }
+          }
+        `}
+      </style>
       {/* VS Code Title Bar (Mac Style) */}
       <div style={{
         background: '#323233', height: '35px', display: 'flex', alignItems: 'center',
@@ -737,7 +866,7 @@ const StealthOverlay = ({ onExit }) => {
           <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e' }}></div>
           <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f' }}></div>
         </div>
-        <span style={{ color: '#cccccc', fontSize: '12px' }}>App.jsx — sirac-portfolio — Visual Studio Code</span>
+        <span style={{ color: '#cccccc', fontSize: '12px' }}>PlayerMovement.cs — Untiled Project — Visual Studio Code</span>
       </div>
 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
@@ -758,24 +887,31 @@ const StealthOverlay = ({ onExit }) => {
           <div style={{ padding: '10px 20px', fontSize: '11px', color: '#bbbbbb', fontWeight: 'bold', letterSpacing: '0.5px' }}>EXPLORER</div>
           <div style={{ overflowY: 'auto', flex: 1 }}>
             <div style={{ display: 'flex', alignItems: 'center', padding: '5px 20px', background: '#37373d', color: '#ffffff' }}>
-              <span style={{ marginRight: '6px', fontSize: '10px' }}>▼</span> <strong>SIRAC-PORTFOLIO</strong>
+              <span style={{ marginRight: '6px', fontSize: '10px' }}>▼</span> <strong>MYSUPERGAME</strong>
             </div>
             <div style={{ paddingLeft: '35px', marginTop: '5px' }}>
               <div style={{ color: '#cccccc', display: 'flex', alignItems: 'center', padding: '3px 0' }}>
-                <span style={{ marginRight: '6px', fontSize: '8px' }}>▼</span> src
+                <span style={{ marginRight: '6px', fontSize: '8px' }}>▼</span> Assets
               </div>
               <div style={{ paddingLeft: '15px' }}>
-                <div style={{ color: '#4ec9b0', padding: '3px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ color: '#51ce8d', fontSize: '10px' }}>JS</span> App.jsx
-                </div>
                 <div style={{ color: '#cccccc', padding: '3px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ color: '#51ce8d', fontSize: '10px' }}>JS</span> GameLibrary.jsx
+                  <span style={{ marginRight: '6px', fontSize: '8px' }}>▼</span> Scripts
                 </div>
-                <div style={{ color: '#cccccc', padding: '3px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ color: '#4fc1ff', fontSize: '10px' }}>#</span> index.css
-                </div>
-                <div style={{ color: '#cccccc', padding: '3px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ color: '#51ce8d', fontSize: '10px' }}>JS</span> i18n.js
+                <div style={{ paddingLeft: '15px' }}>
+                  <div style={{ color: '#cccccc', padding: '3px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <span style={{ marginRight: '6px', fontSize: '8px' }}>▼</span> Player
+                  </div>
+                  <div style={{ paddingLeft: '15px' }}>
+                    <div style={{ color: '#4ec9b0', padding: '3px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <span style={{ color: '#51ce8d', fontSize: '10px' }}>C#</span> PlayerMovement.cs
+                    </div>
+                    <div style={{ color: '#cccccc', padding: '3px 0', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                      <span style={{ color: '#51ce8d', fontSize: '10px' }}>C#</span> PlayerHealth.cs
+                    </div>
+                  </div>
+                  <div style={{ color: '#cccccc', padding: '3px 0', display: 'flex', alignItems: 'center', gap: '5px', marginTop: '5px' }}>
+                    <span style={{ color: '#51ce8d', fontSize: '10px' }}>C#</span> GameManager.cs
+                  </div>
                 </div>
               </div>
             </div>
@@ -790,67 +926,41 @@ const StealthOverlay = ({ onExit }) => {
               background: '#1e1e1e', padding: '0 15px', display: 'flex', alignItems: 'center',
               borderRight: '1px solid #252526', color: '#ffffff', minWidth: '120px'
             }}>
-              <span style={{ marginRight: '8px', color: '#51ce8d', fontSize: '10px' }}>JS</span>
-              App.jsx <span style={{ marginLeft: '10px', fontSize: '10px', opacity: 0.5 }}>✕</span>
+              <span style={{ marginRight: '8px', color: '#51ce8d', fontSize: '10px' }}>C#</span>
+              PlayerMovement.cs <span style={{ marginLeft: '10px', fontSize: '10px', opacity: 0.5 }}>✕</span>
             </div>
             <div style={{
               padding: '0 15px', display: 'flex', alignItems: 'center',
               borderRight: '1px solid #252526', color: '#969696', minWidth: '120px'
             }}>
-              <span style={{ marginRight: '8px', color: '#4fc1ff', fontSize: '10px' }}>#</span>
-              index.css
+              <span style={{ marginRight: '8px', color: '#51ce8d', fontSize: '10px' }}>C#</span>
+              GameManager.cs
             </div>
           </div>
 
           {/* Breadcrumbs */}
           <div style={{ height: '22px', background: '#1e1e1e', display: 'flex', alignItems: 'center', padding: '0 15px', color: '#888888', fontSize: '12px' }}>
-            src <span style={{ margin: '0 5px' }}>›</span> App.jsx <span style={{ margin: '0 5px' }}>›</span> <span style={{ color: '#4ec9b0' }}>App</span>
+            Assets <span style={{ margin: '0 5px' }}>›</span> Scripts <span style={{ margin: '0 5px' }}>›</span> Player <span style={{ margin: '0 5px' }}>›</span> PlayerMovement.cs <span style={{ margin: '0 5px' }}>›</span> <span style={{ color: '#4ec9b0' }}>PlayerMovement</span>
           </div>
 
           {/* Editor Area */}
-          <div style={{ flex: 1, overflowY: 'auto', display: 'flex' }}>
+          <div ref={editorRef} style={{ flex: 1, overflowY: 'auto', display: 'flex', paddingBottom: '50px' }}>
             <div style={{
               padding: '10px 0', color: '#858585', textAlign: 'right',
               minWidth: '45px', userSelect: 'none', lineHeight: '1.8',
               fontSize: '12px', borderRight: '1px solid #2b2b2b', marginRight: '15px'
             }}>
-              {Array.from({ length: 60 }).map((_, i) => <div key={i} style={{ paddingRight: '10px' }}>{i + 1}</div>)}
+              {Array.from({ length: Math.max(20, lineCount) }).map((_, i) => <div key={i} style={{ paddingRight: '10px' }}>{i + 1}</div>)}
             </div>
             <div style={{ padding: '10px 0', flex: 1 }}>
-              <pre style={{
-                margin: 0, color: '#d4d4d4', lineHeight: '1.8',
-                fontFamily: 'Consolas, "Courier New", monospace', fontSize: '14px'
-              }}>
-                {`<span style="color: #c586c0">import</span> <span style="color: #9cdcfe">React</span>, { <span style="color: #9cdcfe">useState</span>, <span style="color: #9cdcfe">useEffect</span> } <span style="color: #c586c0">from</span> <span style="color: #ce9178">'react'</span>;
-<span style="color: #c586c0">import</span> { <span style="color: #9cdcfe">motion</span> } <span style="color: #c586c0">from</span> <span style="color: #ce9178">'framer-motion'</span>;
-
-<span style="color: #6a9955">// Performance Optimization Logic for Production</span>
-<span style="color: #569cd6">const</span> <span style="color: #dcdcaa">GameSyncEngine</span> = () => {
-    <span style="color: #569cd6">const</span> [<span style="color: #9cdcfe">engineState</span>, <span style="color: #dcdcaa">setEngineState</span>] = <span style="color: #dcdcaa">useState</span>(<span style="color: #ce9178">'INITIALIZING'</span>);
-
-    <span style="color: #dcdcaa">useEffect</span>(() => {
-        <span style="color: #c586c0">const</span> <span style="color: #dcdcaa">init</span> = <span style="color: #569cd6">async</span> () => {
-            <span style="color: #c586c0">try</span> {
-                <span style="color: #569cd6">const</span> <span style="color: #9cdcfe">res</span> = <span style="color: #c586c0">await</span> <span style="color: #dcdcaa">fetch</span>(<span style="color: #ce9178">'/api/kernel/status'</span>);
-                <span style="color: #c586c0">if</span> (<span style="color: #9cdcfe">res</span>.<span style="color: #9cdcfe">ok</span>) <span style="color: #dcdcaa">setEngineState</span>(<span style="color: #ce9178">'STABLE'</span>);
-            } <span style="color: #c586c0">catch</span> (<span style="color: #9cdcfe">err</span>) {
-                <span style="color: #dcdcaa">console</span>.<span style="color: #dcdcaa">error</span>(<span style="color: #9cdcfe">err</span>);
-            }
-        };
-        <span style="color: #dcdcaa">init</span>();
-    }, []);
-
-    <span style="color: #c586c0">return</span> (
-        &lt;<span style="color: #569cd6">div</span> <span style="color: #9cdcfe">className</span>=<span style="color: #ce9178">"engine-overlay"</span>&gt;
-            &lt;<span style="color: #569cd6">h2</span> <span style="color: #9cdcfe">style</span>={<span style="color: #9cdcfe">{ color: 'cyan' }</span>}&gt;
-                System Status: <span style="color: #9cdcfe">{</span><span style="color: #9cdcfe">engineState</span><span style="color: #9cdcfe">}</span>
-            &lt;/<span style="color: #569cd6">h2</span>&gt;
-        &lt;/<span style="color: #569cd6">div</span>&gt;
-    );
-};
-
-<span style="color: #c586c0">export default</span> <span style="color: #dcdcaa">GameSyncEngine</span>;`}
-              </pre>
+              <pre
+                style={{
+                  margin: 0, color: '#d4d4d4', lineHeight: '1.8',
+                  fontFamily: 'Consolas, "Courier New", monospace', fontSize: '14px',
+                  whiteSpace: 'pre-wrap', wordBreak: 'break-all'
+                }}
+                dangerouslySetInnerHTML={getHighlightedCode(visibleCode)}
+              />
             </div>
           </div>
         </div>
@@ -863,18 +973,18 @@ const StealthOverlay = ({ onExit }) => {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
           <span>⊞ Layout</span>
-          <span>✔ Main*</span>
+          <span>✔ Master*</span>
           <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <span style={{ fontSize: '10px' }}>ⓧ</span> 0
             <span style={{ fontSize: '10px' }}>⚠</span> 0
           </span>
         </div>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: '15px' }}>
-          <span>Ln 24, Col 1</span>
+          <span>Ln {lineCount}, Col 1</span>
           <span>Spaces: 4</span>
           <span>UTF-8</span>
-          <span>Javascript React</span>
-          <span>Prettier: ✔</span>
+          <span>C#</span>
+          <span>OmniSharp: Ready</span>
         </div>
       </div>
     </div>
