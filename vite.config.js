@@ -9,7 +9,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor-react': ['react', 'react-dom', 'react-router-dom', 'react-i18next', 'i18next'],
+          'vendor-react': ['react', 'react-dom', 'react-i18next', 'i18next'],
           'vendor-motion': ['framer-motion'],
           'vendor-icons': ['lucide-react']
         }
