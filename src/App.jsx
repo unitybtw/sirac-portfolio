@@ -6,6 +6,7 @@ import './index.css';
 import './light-mode.css';
 import './i18n';
 const GameLibrary = lazy(() => import("./GameLibrary"));
+import CompanionDrone from './CompanionDrone';
 
 // --- Web Audio Synthesizer (Zero Dependencies) ---
 let audioCtx = null;
@@ -690,6 +691,8 @@ function App() {
               &copy; {new Date().getFullYear()} {t('footer_copyright')}
             </div>
           </footer>
+          {/* Interactive Companion Drone */}
+          <CompanionDrone activeGameId={activeArcadeGame} isArcadeOpen={isArcadeOpen} />
         </motion.div>
       )}
     </AnimatePresence>
