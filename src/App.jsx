@@ -159,8 +159,85 @@ const LoadingScreen = ({ onComplete }) => {
   );
 };
 
-import PhysicsBackground from './PhysicsBackground';
+const MatrixBackground = ({ theme, isPaused }) => {
+  useEffect(() => {
+    if (isPaused) return;
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
 
+    // Set canvas to full window size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()_+-=<>?/\\';
+    characters = characters.split('');
+
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = [];
+
+    for (let x = 0; x < columns; x++) {
+      drops[x] = 1;
+    }
+
+    const draw = () => {
+      // Create trailing fade effect based on theme
+      const fadeColor = theme === 'dark' ? 'rgba(10, 10, 12, 0.05)' : 'rgba(240, 240, 245, 0.1)';
+      ctx.fillStyle = fadeColor;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.font = fontSize + 'px monospace';
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = characters[Math.floor(Math.random() * characters.length)];
+
+        // Dynamic colors: Random choice between cyan and violet tones
+        const isCyan = Math.random() > 0.5;
+        const color = theme === 'dark'
+          ? (isCyan ? 'rgba(0, 240, 255, 0.15)' : 'rgba(138, 43, 226, 0.15)')
+          : (isCyan ? 'rgba(0, 150, 255, 0.1)' : 'rgba(100, 43, 200, 0.1)');
+
+        ctx.fillStyle = color;
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    };
+
+    const interval = setInterval(draw, 40); // Slightly slower for CPU efficiency (25fps is enough)
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [theme, isPaused]);
+
+  // Styling matrix to sit completely behind everything with no pointer events
+  return (
+    <canvas
+      id="matrix-canvas"
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        zIndex: -5,
+        pointerEvents: 'none'
+      }}
+    />
+  );
+};
 
 const TypewriterTitle = ({ title1, title2 }) => {
   const [text, setText] = useState('');
@@ -376,7 +453,7 @@ function App() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, ease: "easeOut" }}
         >
-          <PhysicsBackground theme={theme} isPaused={isArcadeOpen} />
+          <MatrixBackground theme={theme} isPaused={isArcadeOpen} />
           <div className="cyber-bg">
             {/* Parallax Floating Icons */}
             <motion.div style={{ position: 'absolute', top: '15%', left: '10%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax1 }}>
