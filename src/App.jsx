@@ -683,8 +683,6 @@ function App() {
                   <a href="mailto:sgoktug34@gmail.com" className="btn btn-primary glass-panel" style={{ fontSize: '1.2rem', padding: '1.2rem 3rem' }}>
                     <Mail size={20} style={{ marginRight: '10px' }} /> {t('btn_transmit')}
                   </a>
-                  {/* Retro Character Sitting on Button */}
-                  <img src={`${import.meta.env.BASE_URL}assets/pixel_char.png`} alt="Pixel Art Signature" className="pixel-character" />
                 </div>
               </div>
 
