@@ -82,32 +82,36 @@ const BlenderIcon = () => (
   </svg>
 );
 
-const SkillRing = ({ icon, label, percent, delay }) => {
-  const [offset, setOffset] = useState(440);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const targetOffset = 440 - (440 * percent) / 100;
-      setOffset(targetOffset);
-    }, delay);
-    return () => clearTimeout(timer);
-  }, [percent, delay]);
-
+const SkillCard = ({ icon, label, percent, delay }) => {
   return (
-    <div className="skill-ring">
-      <svg className="progress-ring" viewBox="0 0 150 150">
-        <defs>
-          <linearGradient id={`gradient-${label}`} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#00f0ff" />
-            <stop offset="100%" stopColor="#8a2be2" />
-          </linearGradient>
-        </defs>
-        <circle className="bg" cx="75" cy="75" r="70" />
-        <circle className="fg" cx="75" cy="75" r="70" style={{ strokeDashoffset: offset, stroke: `url(#gradient-${label})` }} />
-      </svg>
-      <div className="skill-icon">{icon}</div>
-      <div className="skill-label text-gradient">{label}</div>
-    </div>
+    <motion.div
+      className="skill-card glass-panel"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.5, delay: delay / 2000 }} // Scale down delay
+      whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(0,240,255,0.1)' }}
+      style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div style={{ color: 'var(--text-main)', opacity: 0.8, background: 'rgba(255,255,255,0.05)', padding: '10px', borderRadius: '12px' }}>
+          {icon}
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+          <span style={{ fontWeight: '600', fontSize: '1.1rem', color: '#fff' }}>{label}</span>
+          <span style={{ fontSize: '0.85rem', color: 'var(--accent-cyan)', fontFamily: 'monospace' }}>{percent}% Proficiency</span>
+        </div>
+      </div>
+      <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden' }}>
+        <motion.div
+          style={{ height: '100%', background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))', borderRadius: '10px' }}
+          initial={{ width: 0 }}
+          whileInView={{ width: `${percent}%` }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.5, delay: 0.2 + (delay / 3000), ease: "easeOut" }}
+        />
+      </div>
+    </motion.div>
   );
 };
 
@@ -690,11 +694,11 @@ function App() {
               <p style={{ color: 'var(--text-muted)' }}>{t('skills_subtitle')}</p>
             </div>
 
-            <div className="skills-container">
-              <SkillRing icon={<UnityIcon />} label="Unity & C#" percent={90} delay={500} />
-              <SkillRing icon={<SwiftIcon />} label="SwiftUI / ARKit" percent={75} delay={700} />
-              <SkillRing icon={<BlenderIcon />} label="Blender 3D" percent={85} delay={900} />
-              <SkillRing icon={<Terminal size={40} />} label={t('skill_sys')} percent={80} delay={1100} />
+            <div className="skills-container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '2rem' }}>
+              <SkillCard icon={<UnityIcon />} label="Unity & C#" percent={95} delay={500} />
+              <SkillCard icon={<SwiftIcon />} label="SwiftUI & Mobile" percent={85} delay={700} />
+              <SkillCard icon={<BlenderIcon />} label="3D Modeling (Blender)" percent={80} delay={900} />
+              <SkillCard icon={<Terminal size={32} />} label={t('skill_sys')} percent={90} delay={1100} />
             </div>
           </motion.section>
 
