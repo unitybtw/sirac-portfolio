@@ -470,7 +470,7 @@ function App() {
 
 
           {/* Navigation */}
-          <nav className="glass-panel" style={{ border: 'none', borderRadius: '0', borderBottom: '1px solid var(--border-glass)' }}>
+          <nav className="glass-panel">
             <div className="nav-logo">
               <h1 className="text-gradient">{t('nav_name') || 'SIRAÇ GÖKTUĞ ŞİMŞEK.'}</h1>
             </div>
