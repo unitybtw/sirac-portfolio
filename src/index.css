@@ -142,7 +142,8 @@ nav {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  padding: 0 5%;
+  padding: 8rem 5% 0 5%;
+  /* Added top padding to prevent nav bar overlap */
   position: relative;
   overflow: hidden;
 }
