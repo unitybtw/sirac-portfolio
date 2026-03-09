@@ -697,7 +697,9 @@ function App() {
             </div>
           </footer>
           {/* Interactive Companion Drone */}
-          <CompanionDrone activeGameId={activeArcadeGame} isArcadeOpen={isArcadeOpen} />
+          <div className="desktop-only">
+            <CompanionDrone activeGameId={activeArcadeGame} isArcadeOpen={isArcadeOpen} />
+          </div>
         </motion.div>
       )}
     </AnimatePresence>
