@@ -39,6 +39,12 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
 
     const messageRef = useRef("");
     const isHoveringRef = useRef(false);
+    const [isPatrolling, setIsPatrolling] = useState(false);
+    const [patrolTarget, setPatrolTarget] = useState({ x: 0, y: 0 });
+    const [isScanning, setIsScanning] = useState(false);
+    const [scanProgress, setScanProgress] = useState(0);
+    const [activeScanData, setActiveScanData] = useState([]);
+    const lastMouseMoveRef = useRef(Date.now());
 
     useEffect(() => {
         messageRef.current = message;
@@ -58,6 +64,7 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
     useEffect(() => {
         const handleMouseMove = (e) => {
             setMousePos({ x: e.clientX, y: e.clientY });
+            lastMouseMoveRef.current = Date.now();
 
             const target = e.target;
             const tagName = target.tagName ? target.tagName.toLowerCase() : "";
@@ -67,6 +74,10 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
             if (tagName === 'a' || tagName === 'button' || target.closest('.game-card') || target.closest('.project-card')) {
                 if (!isHoveringRef.current) {
                     isHoveringRef.current = true;
+                    // Interrupt patrol if mouse interacts
+                    setIsPatrolling(false);
+                    setIsScanning(false);
+
                     if (Math.random() > 0.5 && !messageRef.current) {
                         setEmotion('happy');
                         if (text.toLowerCase().includes('github')) setMessage(t('drone_c_github'));
@@ -100,7 +111,15 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
         window.addEventListener('scroll', handleScroll);
 
         const interval = setInterval(() => {
-            if (Math.random() > 0.7 && !isHoveringRef.current && !messageRef.current) {
+            const timeSinceLastMove = Date.now() - lastMouseMoveRef.current;
+
+            // If idle for 15s, start patrol
+            if (timeSinceLastMove > 15000 && !isPatrolling && !isScanning && !activeGameId) {
+                setIsPatrolling(true);
+                return;
+            }
+
+            if (Math.random() > 0.7 && !isHoveringRef.current && !messageRef.current && !isPatrolling) {
                 setEmotion('normal');
                 let arr = t('drone_idle', { returnObjects: true });
                 if (Array.isArray(arr)) {
@@ -108,14 +127,67 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
                 }
                 setTimeout(() => setMessage(""), 5000);
             }
-        }, 12000);
+        }, 8000);
 
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('scroll', handleScroll);
             clearInterval(interval);
         };
-    }, [t]);
+    }, [t, isPatrolling, isScanning, activeGameId]);
+
+    // Update patrol target
+    useEffect(() => {
+        if (isPatrolling && !isScanning) {
+            const moveInterval = setInterval(() => {
+                const newX = Math.random() * (window.innerWidth - 200) + 100;
+                const newY = Math.random() * (window.innerHeight - 200) + 100;
+                setPatrolTarget({ x: newX, y: newY });
+
+                // 30% chance to start scanning at destination
+                if (Math.random() > 0.6) {
+                    setTimeout(() => {
+                        setIsScanning(true);
+                        setMessage(t('drone_scan_start'));
+                        setScanProgress(0);
+                    }, 2000);
+                }
+            }, 5000);
+            return () => clearInterval(moveInterval);
+        }
+    }, [isPatrolling, isScanning, t]);
+
+    // Handle Scanning Logic
+    useEffect(() => {
+        let timer;
+        if (isScanning) {
+            timer = setInterval(() => {
+                setScanProgress(prev => {
+                    if (prev >= 100) {
+                        clearInterval(timer);
+                        setIsScanning(false);
+                        const techData = [
+                            "CORE: React 18.2",
+                            "FPS: 60 (STABLE)",
+                            "ENGINE: Framer Motion",
+                            "SENSORS: Operational",
+                            `PILOT: ${localStorage.getItem('arcade_nickname') || 'Guest'}`,
+                            "STATUS: Optimized"
+                        ];
+                        setActiveScanData(techData);
+                        setMessage(t('drone_scan_complete'));
+                        setTimeout(() => {
+                            setMessage("");
+                            setActiveScanData([]);
+                        }, 4000);
+                        return 100;
+                    }
+                    return prev + 2;
+                });
+            }, 50);
+        }
+        return () => clearInterval(timer);
+    }, [isScanning, t]);
 
     useEffect(() => {
         if (activeGameId) {
@@ -251,10 +323,20 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
             }}
             dragElastic={0.1}
             whileDrag={{ scale: 1.1, cursor: "grabbing" }}
+            animate={isPatrolling ? {
+                x: patrolTarget.x - (window.innerWidth - 80),
+                y: patrolTarget.y - (window.innerHeight - 80),
+                bottom: 'auto',
+                right: 'auto',
+                position: 'fixed',
+                top: 0,
+                left: 0
+            } : {}}
+            transition={{ type: "spring", damping: 20, stiffness: 50 }}
             style={{
                 position: 'fixed',
-                bottom: '40px',
-                right: '40px',
+                bottom: isPatrolling ? 'auto' : '40px',
+                right: isPatrolling ? 'auto' : '40px',
                 zIndex: 999999,
                 display: 'flex',
                 flexDirection: 'column',
@@ -265,7 +347,7 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
         >
             {/* Dimensional Hologram Bubble */}
             <AnimatePresence>
-                {message && !isShattered && (
+                {(message || activeScanData.length > 0) && !isShattered && (
                     <motion.div
                         initial={{ opacity: 0, y: 10, scale: 0.8, filter: 'blur(10px)' }}
                         animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
@@ -276,34 +358,79 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
                             bottom: bubbleFlip ? 'auto' : '100px',
                             top: bubbleFlip ? '100px' : 'auto',
                             right: '0',
-                            background: 'rgba(10, 10, 15, 0.8)',
-                            backdropFilter: 'blur(12px)',
-                            border: '1px solid rgba(0, 240, 255, 0.3)',
+                            background: 'rgba(10, 10, 15, 0.9)',
+                            backdropFilter: 'blur(15px)',
+                            border: `1px solid ${isScanning ? 'var(--accent-red)' : 'rgba(0, 240, 255, 0.3)'}`,
                             padding: '12px 20px',
-                            borderRadius: '20px',
+                            borderRadius: '16px',
                             color: '#e0faff',
                             fontFamily: '"Fira Code", monospace',
                             fontSize: '0.8rem',
-                            width: 'max-content',
-                            maxWidth: '240px',
+                            minWidth: '200px',
+                            maxWidth: '300px',
                             textAlign: 'left',
-                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 15px rgba(0, 240, 255, 0.1)',
+                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 240, 255, 0.1)',
                             zIndex: 10,
                             pointerEvents: 'none',
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: '4px'
+                            gap: '6px'
                         }}
                     >
-                        <div style={{ fontSize: '0.6rem', color: 'var(--accent-cyan)', opacity: 0.6, letterSpacing: '1px', textTransform: 'uppercase' }}>
-                            Assistant_V3.0
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            fontSize: '0.6rem',
+                            color: isScanning ? '#ff003c' : 'var(--accent-cyan)',
+                            opacity: 0.8,
+                            letterSpacing: '1px',
+                            textTransform: 'uppercase',
+                            fontWeight: 'bold'
+                        }}>
+                            <span>{isScanning ? 'CRITICAL_SCAN' : (isPatrolling ? 'PATROL_MODE' : 'ASSISTANT_V3.0')}</span>
+                            {isScanning && <span>{Math.floor(scanProgress)}%</span>}
                         </div>
-                        <div style={{ lineHeight: '1.4' }}>{message}</div>
-                        {/* Hologram scanline effect */}
+
+                        <div style={{ lineHeight: '1.4' }}>
+                            {message}
+                        </div>
+
+                        {activeScanData.length > 0 && (
+                            <div style={{
+                                marginTop: '8px',
+                                padding: '8px',
+                                background: 'rgba(0,0,0,0.4)',
+                                borderRadius: '8px',
+                                borderLeft: '2px solid var(--accent-cyan)',
+                                fontSize: '0.7rem'
+                            }}>
+                                {activeScanData.map((d, i) => (
+                                    <motion.div
+                                        key={i}
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: i * 0.1 }}
+                                        style={{ fontFamily: 'monospace' }}
+                                    >
+                                        {`> ${d}`}
+                                    </motion.div>
+                                ))}
+                            </div>
+                        )}
+
+                        {isScanning && (
+                            <div style={{ width: '100%', height: '2px', background: 'rgba(255,255,255,0.1)', marginTop: '4px' }}>
+                                <motion.div
+                                    style={{ height: '100%', background: '#ff003c', width: `${scanProgress}%` }}
+                                />
+                            </div>
+                        )}
+
                         <div style={{
                             position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-                            background: 'linear-gradient(transparent 50%, rgba(0, 240, 255, 0.05) 50%)',
-                            backgroundSize: '100% 4px', pointerEvents: 'none', borderRadius: '20px'
+                            background: 'linear-gradient(transparent 50%, rgba(0, 240, 255, 0.03) 50%)',
+                            backgroundSize: '100% 4px', pointerEvents: 'none', borderRadius: '16px'
                         }} />
                     </motion.div>
                 )}
@@ -396,8 +523,8 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
                                     width: `${eyeSize}px`,
                                     height: `${eyeSize}px`,
                                     borderRadius: '50%',
-                                    background: pupilColor,
-                                    boxShadow: `0 0 12px ${pupilColor}, 0 0 24px ${pupilColor}88`,
+                                    background: isScanning ? '#ff003c' : pupilColor,
+                                    boxShadow: `0 0 12px ${isScanning ? '#ff003c' : pupilColor}, 0 0 24px ${isScanning ? '#ff003c' : pupilColor}88`,
                                     position: 'relative',
                                     zIndex: 2,
                                     transition: 'background 0.3s, width 0.3s, height 0.3s'
@@ -408,6 +535,26 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
                                     <div style={{ color: 'white', fontSize: '10px', fontWeight: 'bold' }}>X</div>
                                 )}
                             </motion.div>
+
+                            {/* Scanning Laser Beam */}
+                            <AnimatePresence>
+                                {isScanning && (
+                                    <motion.div
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: [0.2, 0.8, 0.4], height: 300 }}
+                                        exit={{ opacity: 0, height: 0 }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '100%',
+                                            width: '100px',
+                                            background: 'linear-gradient(to bottom, rgba(255,0,60,0.4), transparent)',
+                                            clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+                                            pointerEvents: 'none',
+                                            transformOrigin: 'top center'
+                                        }}
+                                    />
+                                )}
+                            </AnimatePresence>
                         </div>
                     </div>
 
