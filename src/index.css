@@ -1,20 +1,20 @@
 :root {
-  --bg-dark: #0a0a0c;
-  --bg-darker: #050506;
-  --bg-glass: rgba(20, 20, 25, 0.45);
-  --bg-glass-hover: rgba(30, 30, 40, 0.55);
-  --border-glass: rgba(255, 255, 255, 0.08);
-  --border-glass-glow: rgba(0, 240, 255, 0.3);
-  --accent-cyan: #00f0ff;
-  --accent-violet: #8a2be2;
-  --accent-cyan-rgb: 0, 240, 255;
-  --accent-violet-rgb: 138, 43, 226;
+  --bg-dark: #070709;
+  --bg-darker: #030304;
+  --bg-glass: rgba(15, 15, 20, 0.6);
+  --bg-glass-hover: rgba(25, 25, 30, 0.8);
+  --border-glass: rgba(255, 255, 255, 0.12);
+  --border-glass-glow: rgba(0, 200, 255, 0.4);
+  --accent-cyan: #00e5ff;
+  --accent-violet: #7b2cbf;
+  --accent-cyan-rgb: 0, 229, 255;
+  --accent-violet-rgb: 123, 44, 191;
 
   --text-main: #f5f5f7;
-  --text-muted: #86868b;
-  --font-sf: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  --text-muted: #8e8e93;
+  --font-sf: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
 
-  --glass-blur: blur(24px);
+  --glass-blur: blur(30px);
 }
 
 * {
@@ -43,12 +43,11 @@ body {
   width: 100vw;
   height: 100vh;
   z-index: -1;
-  background: radial-gradient(circle at 15% 50%, rgba(var(--accent-violet-rgb), 0.15), transparent 40%),
-    radial-gradient(circle at 85% 30%, rgba(var(--accent-cyan-rgb), 0.15), transparent 40%);
+  background: radial-gradient(circle at 15% 50%, rgba(var(--accent-violet-rgb), 0.08), transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(var(--accent-cyan-rgb), 0.08), transparent 50%);
   /* Scanline overlay */
-  background-image: linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
-  background-size: 20px 20px;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 100% 4px;
 }
 
 /* Utility Classes */
@@ -57,8 +56,9 @@ body {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-glass);
-  border-radius: 20px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 24px;
+  box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .text-gradient {
@@ -301,13 +301,13 @@ nav {
 }
 
 .project-card.glow-cyan:hover {
-  box-shadow: 0 15px 40px rgba(var(--accent-cyan-rgb), 0.2), 0 0 20px rgba(var(--accent-cyan-rgb), 0.1) inset;
-  border: 1px solid rgba(var(--accent-cyan-rgb), 0.5);
+  box-shadow: 0 20px 50px rgba(var(--accent-cyan-rgb), 0.25), 0 0 20px rgba(var(--accent-cyan-rgb), 0.15) inset;
+  border: 1px solid rgba(var(--accent-cyan-rgb), 0.6);
 }
 
 .project-card.glow-violet:hover {
-  box-shadow: 0 15px 40px rgba(var(--accent-violet-rgb), 0.2), 0 0 20px rgba(var(--accent-violet-rgb), 0.1) inset;
-  border: 1px solid rgba(var(--accent-violet-rgb), 0.5);
+  box-shadow: 0 20px 50px rgba(var(--accent-violet-rgb), 0.25), 0 0 20px rgba(var(--accent-violet-rgb), 0.15) inset;
+  border: 1px solid rgba(var(--accent-violet-rgb), 0.6);
 }
 
 .project-tags {
