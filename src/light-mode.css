@@ -82,3 +82,23 @@ body.light-mode .arcade-score-row {
     border-color: rgba(0, 0, 0, 0.1) !important;
     color: var(--text-main) !important;
 }
+
+/* Fix Arcade text and titles in Light Mode */
+body.light-mode .arcade-modal-overlay h2,
+body.light-mode .arcade-modal-overlay h3,
+body.light-mode .arcade-modal-overlay h4,
+body.light-mode .arcade-modal-overlay span {
+    color: var(--text-main) !important;
+}
+
+/* Ensure colorful icons/accents still pop in light mode */
+body.light-mode .arcade-modal-overlay .btn-outline {
+    color: var(--text-main) !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Keep active game highlight bright */
+body.light-mode .arcade-modal-overlay [style*="color: white"],
+body.light-mode .arcade-modal-overlay [style*="color: '#fff'"] {
+    color: var(--text-main) !important;
+}
