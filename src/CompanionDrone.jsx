@@ -44,6 +44,8 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
     const [isScanning, setIsScanning] = useState(false);
     const [scanProgress, setScanProgress] = useState(0);
     const [activeScanData, setActiveScanData] = useState([]);
+    const [battery, setBattery] = useState(100);
+    const [isCharging, setIsCharging] = useState(false);
     const lastMouseMoveRef = useRef(Date.now());
 
     useEffect(() => {
@@ -113,13 +115,24 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
         const interval = setInterval(() => {
             const timeSinceLastMove = Date.now() - lastMouseMoveRef.current;
 
-            // If idle for 15s, start patrol
-            if (timeSinceLastMove > 15000 && !isPatrolling && !isScanning && !activeGameId) {
+            // Battery drain simulation
+            setBattery(prev => {
+                const next = prev - (isScanning ? 0.5 : 0.05);
+                if (next <= 15 && !isCharging && !messageRef.current) {
+                    setMessage(t('drone_battery_low'));
+                    setEmotion('confused');
+                }
+                return Math.max(0, next);
+            });
+
+            // If idle for 15s and enough battery, start patrol
+            if (timeSinceLastMove > 15000 && !isPatrolling && !isScanning && !activeGameId && battery > 10) {
                 setIsPatrolling(true);
                 return;
             }
 
-            if (Math.random() > 0.7 && !isHoveringRef.current && !messageRef.current && !isPatrolling) {
+            // Random idle chat
+            if (Math.random() > 0.7 && !isHoveringRef.current && !messageRef.current && !isPatrolling && battery > 20) {
                 setEmotion('normal');
                 let arr = t('drone_idle', { returnObjects: true });
                 if (Array.isArray(arr)) {
@@ -134,7 +147,7 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
             window.removeEventListener('scroll', handleScroll);
             clearInterval(interval);
         };
-    }, [t, isPatrolling, isScanning, activeGameId]);
+    }, [t, isPatrolling, isScanning, activeGameId, battery, isCharging]);
 
     // Update patrol target
     useEffect(() => {
@@ -166,19 +179,26 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
                     if (prev >= 100) {
                         clearInterval(timer);
                         setIsScanning(false);
+
+                        // Smarter Data Generation
+                        const connections = ["WebSocket: OK", "PeerJS: Ready", "LocalDB: Synced"];
+                        const engineDetails = ["Three.js r183", "Framer Motion v12", "React v19"];
                         const techData = [
-                            "CORE: React 18.2",
-                            "FPS: 60 (STABLE)",
-                            "ENGINE: Framer Motion",
+                            `CORE: ${engineDetails[Math.floor(Math.random() * engineDetails.length)]}`,
+                            `NET: ${connections[Math.floor(Math.random() * connections.length)]}`,
+                            `MEM: ${(Math.random() * 500 + 200).toFixed(1)}MB USAGE`,
                             "SENSORS: Operational",
                             `PILOT: ${localStorage.getItem('arcade_nickname') || 'Guest'}`,
-                            "STATUS: Optimized"
                         ];
+
                         setActiveScanData(techData);
                         setMessage(t('drone_scan_complete'));
+                        setEmotion('happy');
+
                         setTimeout(() => {
                             setMessage("");
                             setActiveScanData([]);
+                            setEmotion('normal');
                         }, 4000);
                         return 100;
                     }
@@ -262,6 +282,13 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
         } else if (clickCount === 2) {
             setEmotion('normal');
             setMessage(t('drone_click_2'));
+            // Secret recharge
+            setIsCharging(true);
+            setTimeout(() => {
+                setBattery(100);
+                setIsCharging(false);
+                setMessage("SYSTEMS OVERCHARGED! 100% ENERGY.");
+            }, 2000);
         } else if (clickCount === 5) {
             setEmotion('confused');
             setMessage(t('drone_click_3'));
@@ -377,14 +404,17 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             fontSize: '0.6rem',
-                            color: isScanning ? '#ff003c' : 'var(--accent-cyan)',
+                            color: isScanning ? '#ff003c' : (isCharging ? '#00ff00' : 'var(--accent-cyan)'),
                             opacity: 0.8,
                             letterSpacing: '1px',
                             textTransform: 'uppercase',
                             fontWeight: 'bold'
                         }}>
-                            <span>{isScanning ? 'CRITICAL_SCAN' : (isPatrolling ? 'PATROL_MODE' : 'ASSISTANT_V3.0')}</span>
-                            {isScanning && <span>{Math.floor(scanProgress)}%</span>}
+                            <span>{isCharging ? 'ENERGY_REFILL' : (isScanning ? 'CRITICAL_SCAN' : (isPatrolling ? 'PATROL_MODE' : 'ASSISTANT_V3.0'))}</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                <span style={{ fontSize: '0.5rem', opacity: 0.6 }}>BAT:</span>
+                                <span>{Math.floor(battery)}%</span>
+                            </div>
                         </div>
 
                         <div style={{ lineHeight: '1.4' }}>
