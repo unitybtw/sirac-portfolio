@@ -547,6 +547,10 @@ nav {
 
 /* Animations & Responsive */
 @media (max-width: 968px) {
+  .desktop-only {
+    display: none !important;
+  }
+
   nav {
     flex-direction: column;
     padding: 1rem;

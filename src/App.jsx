@@ -477,11 +477,11 @@ function App() {
             <div className="nav-links" style={{ display: 'flex', alignItems: 'center' }}>
               <a href="#projects">{t('nav_work')}</a>
               <a href="#skills">{t('nav_skills')}</a>
-              <a href="#arcade">{t('nav_arcade') || 'Arcade'}</a>
+              <a href="#arcade" className="desktop-only">{t('nav_arcade') || 'Arcade'}</a>
               <a href="#contact">{t('nav_contact')}</a>
               <button
                 onClick={() => setIsArcadeOpen(true)}
-                className="btn btn-outline glass-panel"
+                className="btn btn-outline glass-panel desktop-only"
                 style={{ marginLeft: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-cyan)' }}
               >
                 <Gamepad2 size={18} /> {t('arcade_button') || 'Arcade'}
@@ -615,7 +615,7 @@ function App() {
           </section>
 
           {/* Arcade Section */}
-          <section id="arcade" style={{ padding: '0 5% 5rem', textAlign: 'center' }}>
+          <section id="arcade" className="desktop-only" style={{ padding: '0 5% 5rem', textAlign: 'center' }}>
             <div className="section-header">
               <h2 className="section-title text-gradient">{t('arcade_section_title') || 'ARCADE UNIVERSE'}</h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('arcade_section_subtitle')}</p>
