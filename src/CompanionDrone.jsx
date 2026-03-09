@@ -263,124 +263,182 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
                 pointerEvents: 'none'
             }}
         >
-            {/* Chat Bubble - Smart Positioning */}
+            {/* Dimensional Hologram Bubble */}
             <AnimatePresence>
                 {message && !isShattered && (
                     <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.8 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.8 }}
+                        initial={{ opacity: 0, y: 10, scale: 0.8, filter: 'blur(10px)' }}
+                        animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
+                        exit={{ opacity: 0, y: 10, scale: 0.8, filter: 'blur(10px)' }}
                         className="drone-bubble"
                         style={{
                             position: 'absolute',
-                            bottom: bubbleFlip ? 'auto' : '80px',
-                            top: bubbleFlip ? '80px' : 'auto',
-                            // Smart alignment to prevent bleeding off right edge
-                            right: '-10px',
-                            background: 'rgba(5, 5, 8, 0.9)',
-                            border: '1px solid #00f0ff',
-                            padding: '10px 15px',
-                            borderRadius: bubbleFlip ? '0 15px 15px 15px' : '15px 15px 0 15px',
-                            color: '#00f0ff',
-                            fontFamily: 'monospace',
-                            fontSize: '0.85rem',
+                            bottom: bubbleFlip ? 'auto' : '100px',
+                            top: bubbleFlip ? '100px' : 'auto',
+                            right: '0',
+                            background: 'rgba(10, 10, 15, 0.8)',
+                            backdropFilter: 'blur(12px)',
+                            border: '1px solid rgba(0, 240, 255, 0.3)',
+                            padding: '12px 20px',
+                            borderRadius: '20px',
+                            color: '#e0faff',
+                            fontFamily: '"Fira Code", monospace',
+                            fontSize: '0.8rem',
                             width: 'max-content',
-                            maxWidth: '220px',
-                            textAlign: 'right',
-                            boxShadow: '0 0 15px rgba(0, 240, 255, 0.3)',
-                            backdropFilter: 'blur(5px)',
+                            maxWidth: '240px',
+                            textAlign: 'left',
+                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 15px rgba(0, 240, 255, 0.1)',
                             zIndex: 10,
-                            whiteSpace: 'normal',
-                            pointerEvents: 'none'
+                            pointerEvents: 'none',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '4px'
                         }}
                     >
-                        {!bubbleFlip && <div style={{ position: 'absolute', bottom: '-10px', right: '15px', borderLeft: '10px solid transparent', borderTop: '10px solid #00f0ff' }}></div>}
-                        {bubbleFlip && <div style={{ position: 'absolute', top: '-10px', right: '15px', borderLeft: '10px solid transparent', borderBottom: '10px solid #00f0ff' }}></div>}
-                        {message}
+                        <div style={{ fontSize: '0.6rem', color: 'var(--accent-cyan)', opacity: 0.6, letterSpacing: '1px', textTransform: 'uppercase' }}>
+                            Assistant_V3.0
+                        </div>
+                        <div style={{ lineHeight: '1.4' }}>{message}</div>
+                        {/* Hologram scanline effect */}
+                        <div style={{
+                            position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+                            background: 'linear-gradient(transparent 50%, rgba(0, 240, 255, 0.05) 50%)',
+                            backgroundSize: '100% 4px', pointerEvents: 'none', borderRadius: '20px'
+                        }} />
                     </motion.div>
                 )}
             </AnimatePresence>
 
-            {/* Drone Body or Shattered Fragments */}
+            {/* Detailed Drone Body */}
             {!isShattered ? (
                 <motion.div
-                    animate={{ y: [0, -15, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    animate={{
+                        y: [0, -12, 0],
+                        rotate: [0, 2, -2, 0]
+                    }}
+                    transition={{
+                        duration: 5,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                    }}
                     style={{
-                        width: '60px',
-                        height: '60px',
+                        width: '70px',
+                        height: '70px',
+                        position: 'relative',
+                        pointerEvents: 'auto',
+                        cursor: 'grab'
+                    }}
+                    onClick={handleDroneClick}
+                >
+                    {/* Rotating Outer Ring */}
+                    <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+                        style={{
+                            position: 'absolute',
+                            top: '-5px', left: '-5px', right: '-5px', bottom: '-5px',
+                            border: '1px dashed rgba(0, 240, 255, 0.4)',
+                            borderRadius: '50%',
+                            boxShadow: '0 0 15px rgba(0, 240, 255, 0.1)'
+                        }}
+                    />
+
+                    {/* Main Spherical Shell */}
+                    <div style={{
+                        width: '100%',
+                        height: '100%',
                         borderRadius: '50%',
-                        background: 'radial-gradient(circle at 30% 30%, #333, #0a0a0f)',
-                        border: '2px solid #00f0ff',
-                        boxShadow: `0 0 20px ${emotion === 'angry' ? '#ff003c' : 'rgba(0, 240, 255, 0.4)'}, inset 0 0 10px rgba(0,0,0,0.8)`,
+                        background: 'linear-gradient(135deg, #1a1a20 0%, #050508 100%)',
+                        border: '2px solid rgba(255, 255, 255, 0.1)',
+                        boxShadow: `0 0 25px ${emotion === 'angry' ? '#ff003c66' : 'rgba(0, 240, 255, 0.3)'}, inset 0 0 15px rgba(0,0,0,0.9)`,
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
                         position: 'relative',
-                        pointerEvents: 'auto',
-                        cursor: 'pointer'
-                    }}
-                    onClick={handleDroneClick}
-                >
-                    {/* Antennas */}
-                    <div style={{ position: 'absolute', top: '-15px', width: '2px', height: '15px', background: '#00f0ff', left: '20px' }}>
-                        <div style={{ position: 'absolute', top: '-4px', left: '-3px', width: '8px', height: '8px', borderRadius: '50%', background: '#ff003c', boxShadow: '0 0 8px #ff003c' }} />
-                    </div>
-                    <div style={{ position: 'absolute', top: '-10px', width: '2px', height: '10px', background: '#00f0ff', right: '20px' }} />
+                        overflow: 'hidden'
+                    }}>
+                        {/* Tech details/Greebles on shell */}
+                        <div style={{ position: 'absolute', top: '10%', left: '20%', width: '4px', height: '4px', background: '#00f0ff', borderRadius: '50%', opacity: 0.5 }} />
+                        <div style={{ position: 'absolute', bottom: '15%', right: '25%', width: '2px', height: '10px', background: '#ffffff22', transform: 'rotate(45deg)' }} />
 
-                    {/* Eye Background */}
-                    <div
-                        ref={eyeRef}
-                        style={{
-                            width: '30px',
-                            height: '30px',
-                            borderRadius: '50%',
-                            background: '#050508',
-                            border: '1px solid #222',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            overflow: 'hidden'
-                        }}
-                    >
-                        {/* Pupil */}
-                        <motion.div
-                            animate={{ x: pupilX, y: pupilY }}
-                            transition={{ type: "tween", duration: 0.1 }}
+                        {/* Camera Lens Eye Container */}
+                        <div
+                            ref={eyeRef}
                             style={{
-                                width: `${eyeSize}px`,
-                                height: `${eyeSize}px`,
+                                width: '34px',
+                                height: '34px',
                                 borderRadius: '50%',
-                                background: pupilColor,
-                                boxShadow: `0 0 10px ${pupilColor}, 0 0 20px ${pupilColor}`,
+                                background: '#000',
+                                border: `2px solid ${emotion === 'angry' ? '#ff003c' : 'rgba(255,255,255,0.1)'}`,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
                                 position: 'relative',
-                                transition: 'background 0.3s, width 0.3s, height 0.3s'
+                                transition: 'border-color 0.3s'
                             }}
                         >
-                            {/* Inner pupil glint */}
-                            <div style={{ position: 'absolute', top: '2px', right: '2px', width: '3px', height: '3px', background: 'white', borderRadius: '50%' }} />
-                        </motion.div>
+                            {/* Inner Digital Iris */}
+                            <motion.div
+                                animate={{ scale: [1, 1.05, 1] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                style={{
+                                    width: '100%', height: '100%', position: 'absolute', top: 0, left: 0,
+                                    background: `radial-gradient(circle at center, transparent 40%, ${pupilColor}11 100%)`,
+                                    borderRadius: '50%'
+                                }}
+                            />
+
+                            {/* Main Pupil */}
+                            <motion.div
+                                animate={{ x: pupilX, y: pupilY }}
+                                transition={{ type: "spring", stiffness: 150, damping: 15 }}
+                                style={{
+                                    width: `${eyeSize}px`,
+                                    height: `${eyeSize}px`,
+                                    borderRadius: '50%',
+                                    background: pupilColor,
+                                    boxShadow: `0 0 12px ${pupilColor}, 0 0 24px ${pupilColor}88`,
+                                    position: 'relative',
+                                    zIndex: 2,
+                                    transition: 'background 0.3s, width 0.3s, height 0.3s'
+                                }}
+                            >
+                                <div style={{ position: 'absolute', top: '20%', left: '25%', width: '30%', height: '30%', background: 'white', borderRadius: '50%', opacity: 0.8 }} />
+                                {emotion === 'dead' && (
+                                    <div style={{ color: 'white', fontSize: '10px', fontWeight: 'bold' }}>X</div>
+                                )}
+                            </motion.div>
+                        </div>
                     </div>
 
-                    {/* Side Thrusters */}
-                    <div style={{ position: 'absolute', bottom: '-2px', left: '5px', width: '10px', height: '10px', borderRadius: '50%', border: '2px solid #ffaa00', borderBottomColor: 'transparent', borderTopColor: 'transparent', transform: 'rotate(45deg)', opacity: 0.7 }} />
-                    <div style={{ position: 'absolute', bottom: '-2px', right: '5px', width: '10px', height: '10px', borderRadius: '50%', border: '2px solid #ffaa00', borderBottomColor: 'transparent', borderTopColor: 'transparent', transform: 'rotate(-45deg)', opacity: 0.7 }} />
-
-                    {/* Engine Glow Underneath */}
+                    {/* Side Floating Fins/stabilizers */}
                     <motion.div
-                        animate={{ scale: [1, 1.2, 1], opacity: [0.5, 0.8, 0.5] }}
-                        transition={{ duration: 0.5, repeat: Infinity }}
-                        style={{
-                            position: 'absolute',
-                            bottom: '-15px',
-                            width: '20px',
-                            height: '10px',
-                            background: emotion === 'angry' ? '#ff003c' : '#ffaa00',
-                            filter: 'blur(8px)',
-                            borderRadius: '50%',
-                            zIndex: -1
-                        }}
+                        animate={{ x: [-2, 2, -2] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                        style={{ position: 'absolute', left: '-15px', top: '50%', width: '12px', height: '2px', background: 'var(--accent-cyan)', boxShadow: '0 0 10px var(--accent-cyan)' }}
                     />
+                    <motion.div
+                        animate={{ x: [2, -2, 2] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                        style={{ position: 'absolute', right: '-15px', top: '50%', width: '12px', height: '2px', background: 'var(--accent-cyan)', boxShadow: '0 0 10px var(--accent-cyan)' }}
+                    />
+
+                    {/* Bottom Engine Exhaust */}
+                    <div style={{ position: 'absolute', bottom: '-10px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '8px' }}>
+                        {[0, 1].map(i => (
+                            <motion.div
+                                key={i}
+                                animate={{ height: [4, 12, 4], opacity: [0.6, 1, 0.6] }}
+                                transition={{ duration: 0.2, repeat: Infinity, delay: i * 0.1 }}
+                                style={{
+                                    width: '4px',
+                                    background: emotion === 'angry' ? '#ff003c' : 'var(--accent-cyan)',
+                                    borderRadius: '0 0 4px 4px',
+                                    boxShadow: `0 0 10px ${emotion === 'angry' ? '#ff003c' : 'var(--accent-cyan)'}`
+                                }}
+                            />
+                        ))}
+                    </div>
                 </motion.div>
             ) : (
                 <div style={{ position: 'relative', width: '60px', height: '60px' }}>
