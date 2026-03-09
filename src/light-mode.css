@@ -70,3 +70,15 @@ body.light-mode.is-hovering .cursor-dot {
 body.light-mode section#arcade {
     background: transparent;
 }
+
+/* Fix Arcade Modal Background for Light Mode */
+body.light-mode .arcade-modal-overlay {
+    background: rgba(255, 255, 255, 0.95) !important;
+}
+
+body.light-mode .arcade-input,
+body.light-mode .arcade-score-row {
+    background: rgba(0, 0, 0, 0.05) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: var(--text-main) !important;
+}

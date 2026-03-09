@@ -249,6 +249,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
+                        className="arcade-modal-overlay"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
