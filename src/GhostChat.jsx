@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 // This is a shared endpoint for the Ghost Chat. 
 // Note: In a production app, use Firebase/Supabase for real-time.
-const CHAT_BIN_URL = 'https://api.npoint.io/6f3ca88476651917fecd';
+const CHAT_BIN_URL = 'https://api.npoint.io/18462ec747790767d5f0';
 
 const GhostChat = ({ isOpen, onClose }) => {
     const { t } = useTranslation();
