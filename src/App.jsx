@@ -560,11 +560,54 @@ function App() {
             </motion.div>
             <motion.div
               className="hero-visual"
-              initial={{ opacity: 0, scale: 0.8, y: 50 }}
+              initial={{ opacity: 0, scale: 0.9, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
             >
-              <img src={`${import.meta.env.BASE_URL}assets/hero.png`} alt="Floating Game World" className="floating-island" />
+              <div className="glass-panel code-terminal" style={{
+                width: '100%', maxWidth: '500px', borderRadius: '16px', overflow: 'hidden',
+                border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
+                textAlign: 'left', background: 'rgba(10, 10, 15, 0.8)', backdropFilter: 'blur(40px)'
+              }}>
+                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '12px 20px', display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56' }} />
+                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e' }} />
+                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f' }} />
+                  </div>
+                  <div style={{ flex: 1, textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)', fontFamily: 'var(--font-sf)', letterSpacing: '1px' }}>
+                    sirac@iku: ~/portfolio
+                  </div>
+                </div>
+                <div style={{ padding: '24px', fontFamily: '"Fira Code", monospace, SFMono-Regular', fontSize: '0.9rem', color: '#e5e5e5', lineHeight: '1.7' }}>
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
+                    <span style={{ color: '#ff7b72' }}>const</span> <span style={{ color: '#79c0ff' }}>developer</span> <span style={{ color: '#ff7b72' }}>=</span> {'{'}
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.5 }} style={{ paddingLeft: '24px' }}>
+                    <span style={{ color: '#d2a8ff' }}>name</span>: <span style={{ color: '#a5d6ff' }}>'Siraç Göktuğ Şimşek'</span>,
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 2.0 }} style={{ paddingLeft: '24px' }}>
+                    <span style={{ color: '#d2a8ff' }}>role</span>: <span style={{ color: '#a5d6ff' }}>'Game Developer & UI Engineer'</span>,
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 2.5 }} style={{ paddingLeft: '24px' }}>
+                    <span style={{ color: '#d2a8ff' }}>skills</span>: [<span style={{ color: '#a5d6ff' }}>'Unity'</span>, <span style={{ color: '#a5d6ff' }}>'C#'</span>, <span style={{ color: '#a5d6ff' }}>'SwiftUI'</span>, <span style={{ color: '#a5d6ff' }}>'React'</span>],
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 3.0 }} style={{ paddingLeft: '24px' }}>
+                    <span style={{ color: '#d2a8ff' }}>passion</span>: <span style={{ color: '#a5d6ff' }}>'Building Digital Realities'</span>,
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 3.5 }} style={{ paddingLeft: '24px' }}>
+                    <span style={{ color: '#d2a8ff' }}>status</span>: <span style={{ color: '#7ee787' }}>'Compiling the future...'</span>
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 4.0 }}>
+                    {'}'};
+                  </motion.div>
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 4.5 }} style={{ marginTop: '16px', display: 'flex', alignItems: 'center' }}>
+                    <span style={{ color: '#7ee787', marginRight: '8px' }}>➜</span>
+                    <span style={{ color: '#79c0ff', marginRight: '8px' }}>~</span>
+                    <motion.span animate={{ opacity: [1, 0] }} transition={{ repeat: Infinity, duration: 0.8 }} style={{ width: '10px', height: '18px', background: '#e5e5e5', display: 'inline-block' }} />
+                  </motion.div>
+                </div>
+              </div>
             </motion.div>
           </section>
 
