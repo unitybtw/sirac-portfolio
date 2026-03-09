@@ -662,6 +662,19 @@ nav {
     margin-top: 1rem;
   }
 
+  .hero-cta {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-cta .btn {
+    width: 100%;
+  }
+
+  .project-card {
+    padding: 1rem;
+  }
+
   .skills-container {
     grid-template-columns: 1fr;
   }
