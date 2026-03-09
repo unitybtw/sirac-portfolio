@@ -99,12 +99,22 @@ nav {
 .nav-logo h1 {
   font-size: 1.5rem;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
+  /* Reduced from 2px to save space */
+  white-space: nowrap;
+}
+
+.nav-logo {
+  flex: 1;
+  margin-right: 2rem;
+  /* Minimum breathing room */
 }
 
 .nav-links {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
+  /* Reduced from 2rem to pull buttons together and away from name */
+  align-items: center;
 }
 
 .nav-links a {
