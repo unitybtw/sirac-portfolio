@@ -7,6 +7,8 @@ import './light-mode.css';
 import './i18n';
 const GameLibrary = lazy(() => import("./GameLibrary"));
 import CompanionDrone from './CompanionDrone';
+import GhostChat from './GhostChat';
+import { MessageSquare } from 'lucide-react';
 
 // --- Web Audio Synthesizer (Zero Dependencies) ---
 let audioCtx = null;
@@ -367,6 +369,7 @@ function App() {
   const [showSecretGame, setShowSecretGame] = useState(false);
   const [isArcadeOpen, setIsArcadeOpen] = useState(false);
   const [activeArcadeGame, setActiveArcadeGame] = useState(null);
+  const [isGhostChatOpen, setIsGhostChatOpen] = useState(false);
 
   // Konami Code Logic
   useEffect(() => {
@@ -694,6 +697,26 @@ function App() {
           </footer>
           {/* Interactive Companion Drone */}
           <CompanionDrone activeGameId={activeArcadeGame} isArcadeOpen={isArcadeOpen} />
+
+          {/* Ghost Chat for University Students */}
+          <GhostChat isOpen={isGhostChatOpen} onClose={() => setIsGhostChatOpen(false)} />
+
+          <motion.button
+            onClick={() => setIsGhostChatOpen(true)}
+            whileHover={{ scale: 1.1, x: 5 }}
+            whileTap={{ scale: 0.9 }}
+            className="glass-panel"
+            style={{
+              position: 'fixed', left: '25px', bottom: '25px',
+              width: '50px', height: '50px', borderRadius: '15px',
+              display: 'flex', justifyContent: 'center', alignItems: 'center',
+              color: 'var(--accent-cyan)', cursor: 'pointer', zIndex: 9999,
+              border: '1px solid var(--accent-cyan)', background: 'rgba(0, 240, 255, 0.05)'
+            }}
+          >
+            <MessageSquare size={24} />
+            <div style={{ position: 'absolute', top: -5, right: -5, width: 12, height: 12, background: '#ff3b3b', borderRadius: '50%', border: '2px solid #000', fontSize: '8px', color: '#fff', display: 'flex', justifyContent: 'center', alignItems: 'center', fontWeight: 'bold' }}>!</div>
+          </motion.button>
         </motion.div>
       )}
     </AnimatePresence>
