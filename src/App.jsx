@@ -581,11 +581,11 @@ function App() {
                   className={`project-card glass-panel ${project.glow}`}
                   onClick={() => window.open(project.link, '_blank')}
                   style={{ padding: 0 }}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
-                  transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  whileHover={{ y: -10, scale: 1.02 }}
+                  initial={{ opacity: 0, y: 80, scale: 0.95 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.6, delay: idx * 0.15, type: 'spring', stiffness: 100 }}
+                  whileHover={{ y: -15, scale: 1.03, boxShadow: '0 20px 40px rgba(0, 240, 255, 0.2)' }}
                 >
                   {project.image && (
                     <div style={{ height: '180px', overflow: 'hidden', borderBottom: '1px solid var(--border-glass)' }}>
@@ -637,10 +637,10 @@ function App() {
             id="skills"
             className="skills-section glass-panel"
             style={{ margin: '0 5%', borderRadius: '40px' }}
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, scale: 0.9, y: 100 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, type: 'spring', bounce: 0.4 }}
           >
             <div className="section-header">
               <h2 className="section-title text-gradient">{t('skills_title')}</h2>
@@ -668,7 +668,13 @@ function App() {
               </div>
             </div>
 
-            <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+            <motion.div
+              style={{ textAlign: 'center', marginBottom: '3rem' }}
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6 }}
+            >
               <h3 className="text-gradient" style={{ fontSize: '2rem', marginBottom: '1rem' }}>{t('footer_title')}</h3>
               <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>{t('footer_subtitle')}</p>
 
@@ -687,7 +693,7 @@ function App() {
                 <a href="https://unitybtw.itch.io/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)' }}><Gamepad2 size={24} /></a>
                 <a href="#" style={{ color: 'var(--text-muted)' }}><Linkedin size={24} /></a>
               </div>
-            </div>
+            </motion.div>
             <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', borderTop: '1px solid var(--border-glass)', paddingTop: '2rem', marginTop: '2rem' }}>
               &copy; {new Date().getFullYear()} {t('footer_copyright')}
             </div>
