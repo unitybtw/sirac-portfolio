@@ -324,19 +324,14 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
             dragElastic={0.1}
             whileDrag={{ scale: 1.1, cursor: "grabbing" }}
             animate={isPatrolling ? {
-                x: patrolTarget.x - (window.innerWidth - 80),
-                y: patrolTarget.y - (window.innerHeight - 80),
-                bottom: 'auto',
-                right: 'auto',
-                position: 'fixed',
-                top: 0,
-                left: 0
-            } : {}}
+                x: patrolTarget.x - window.innerWidth + 75,
+                y: patrolTarget.y - window.innerHeight + 75,
+            } : { x: 0, y: 0 }}
             transition={{ type: "spring", damping: 20, stiffness: 50 }}
             style={{
                 position: 'fixed',
-                bottom: isPatrolling ? 'auto' : '40px',
-                right: isPatrolling ? 'auto' : '40px',
+                bottom: '40px',
+                right: '40px',
                 zIndex: 999999,
                 display: 'flex',
                 flexDirection: 'column',
