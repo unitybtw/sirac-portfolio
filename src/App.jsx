@@ -457,19 +457,21 @@ function App() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, ease: "easeOut" }}
         >
-          <MatrixBackground theme={theme} isPaused={isArcadeOpen} />
-          <div className="cyber-bg">
-            {/* Parallax Floating Icons */}
-            <motion.div style={{ position: 'absolute', top: '15%', left: '10%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax1 }}>
-              <Code size={60} />
-            </motion.div>
-            <motion.div style={{ position: 'absolute', top: '45%', right: '10%', opacity: 0.15, color: 'var(--accent-violet)', y: parallax2 }}>
-              <Layers size={80} />
-            </motion.div>
-            <motion.div style={{ position: 'absolute', top: '75%', left: '15%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax3 }}>
-              <Box size={70} />
-            </motion.div>
-          </div>
+          {isAppLoaded && <MatrixBackground theme={theme} isPaused={isArcadeOpen} />}
+          {isAppLoaded && (
+            <div className="cyber-bg">
+              {/* Parallax Floating Icons */}
+              <motion.div style={{ position: 'absolute', top: '15%', left: '10%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax1 }}>
+                <Code size={60} />
+              </motion.div>
+              <motion.div style={{ position: 'absolute', top: '45%', right: '10%', opacity: 0.15, color: 'var(--accent-violet)', y: parallax2 }}>
+                <Layers size={80} />
+              </motion.div>
+              <motion.div style={{ position: 'absolute', top: '75%', left: '15%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax3 }}>
+                <Box size={70} />
+              </motion.div>
+            </div>
+          )}
 
 
 
