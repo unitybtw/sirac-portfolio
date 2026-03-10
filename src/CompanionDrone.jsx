@@ -46,6 +46,12 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
     const [activeScanData, setActiveScanData] = useState([]);
     const [battery, setBattery] = useState(100);
     const [isCharging, setIsCharging] = useState(false);
+
+    // Chat System State
+    const [isListening, setIsListening] = useState(false);
+    const [userInput, setUserInput] = useState("");
+    const [isProcessing, setIsProcessing] = useState(false);
+
     const lastMouseMoveRef = useRef(Date.now());
 
     useEffect(() => {
@@ -147,7 +153,91 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
             window.removeEventListener('scroll', handleScroll);
             clearInterval(interval);
         };
-    }, [t, isPatrolling, isScanning, activeGameId, battery, isCharging]);
+    }, [t, isPatrolling, isScanning, activeGameId, battery, isCharging, isListening]);
+
+    // Internal Knowledge Base (AI Simulation)
+    const askDrone = (query) => {
+        setIsProcessing(true);
+        setEmotion('confused');
+        setMessage("Processing query...");
+
+        setTimeout(() => {
+            setIsProcessing(false);
+            setEmotion('normal');
+            const q = query.toLowerCase();
+            let response = "";
+
+            if (q.includes("who are you") || q.includes("name")) {
+                response = "I am Assistant V3.0, built by Siraç Göktuğ Şimşek to guide you through his digital realm.";
+                setEmotion('happy');
+            } else if (q.includes("skills") || q.includes("languages") || q.includes("tech")) {
+                response = "Siraç is highly proficient in Unity, C#, React, and Swift. He's a versatile architect.";
+            } else if (q.includes("contact") || q.includes("hire") || q.includes("job")) {
+                response = "He is definitely open to taking on new quests! Check the 'Contact' section at the bottom.";
+                setEmotion('happy');
+            } else if (q.includes("game") || q.includes("play")) {
+                response = "There are 50 games in the Arcade. 'Legend of the Three Masks' is his standalone masterpiece.";
+            } else if (q.includes("battery") || q.includes("energy") || q.includes("charge")) {
+                response = `My current energy level is ${Math.floor(battery)}%. Keep clicking me if you want to overcharge my systems.`;
+            } else if (q.includes("hello") || q.includes("hi")) {
+                response = "Greetings, human! How can I assist your navigation today?";
+                setEmotion('happy');
+            } else if (q.includes("joke") || q.includes("funny")) {
+                response = "Why do programmers prefer dark mode? Because light bugs them!";
+                setEmotion('happy');
+            } else {
+                response = "My databanks don't have a specific answer for that. Try asking about Siraç's skills or games!";
+            }
+
+            setMessage(response);
+            setUserInput("");
+
+            setTimeout(() => {
+                if (isListening) setMessage("Listening... (Type anything or press ESC)");
+                else setMessage("");
+            }, 6000);
+
+        }, 1500); // Simulate "thinking" time
+    };
+
+    // Keyboard Event Listener for Chat
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (!isListening) return;
+
+            if (e.key === 'Escape') {
+                setIsListening(false);
+                setUserInput("");
+                setMessage("Chat mode deactivated.");
+                setEmotion('normal');
+                setTimeout(() => setMessage(""), 2000);
+                return;
+            }
+
+            if (e.key === 'Enter') {
+                if (userInput.trim() !== "") {
+                    askDrone(userInput);
+                }
+                return;
+            }
+
+            if (e.key === 'Backspace') {
+                setUserInput(prev => prev.slice(0, -1));
+            } else if (e.key.length === 1) { // Normal character
+                setUserInput(prev => (prev + e.key).substring(0, 40)); // Max 40 chars
+            }
+        };
+
+        if (isListening) {
+            window.addEventListener('keydown', handleKeyDown);
+            // Don't overwrite message if processing
+            if (!isProcessing && !messageRef.current.startsWith("Processing")) {
+                setMessage(`> ${userInput}${Date.now() % 1000 < 500 ? '_' : ' '}`);
+            }
+        }
+
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isListening, userInput, isProcessing, battery]);
 
     // Update patrol target
     useEffect(() => {
@@ -242,6 +332,8 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
     const handleDroneClick = () => {
         if (isShattered) return;
 
+        // Double click logic for activating Chat Mode (if using fast clicks)
+        // Alternatively, we use click count. Let's make 3 clicks activate chat.
         setClickCount(c => c + 1);
 
         if (clickCount === 19) {
@@ -281,17 +373,35 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
             setMessage(t('drone_click_1'));
         } else if (clickCount === 2) {
             setEmotion('normal');
-            setMessage(t('drone_click_2'));
-            // Secret recharge
+
+            // Check if user is repeatedly clicking really fast, we activate chat instead of normal recharge if we want a new feature, 
+            // but let's keep recharge on 2, and add chat logic to a specific condition or just make it an explicit mode.
+            // Let's make Chat Mode accessible by double-clicking the drone fast, but React handles that via onDoubleClick usually.
+            // Since we use onClick, let's just make clickCount === 3 activate chat mode.
+
+        } else if (clickCount === 3) {
+            if (!isListening) {
+                setIsListening(true);
+                setUserInput("");
+                setIsPatrolling(false);
+                setIsScanning(false);
+                setEmotion('happy');
+                setMessage("Systems open. Type your question! (ESC to cancel)");
+            } else {
+                setIsListening(false);
+                setMessage("Chat mode deactivated.");
+            }
+        } else if (clickCount === 5) {
+            setEmotion('confused');
+            setMessage(t('drone_click_3'));
+        } else if (clickCount === 8) {
+            // Secret recharge moved to 8 clicks
             setIsCharging(true);
             setTimeout(() => {
                 setBattery(100);
                 setIsCharging(false);
                 setMessage("SYSTEMS OVERCHARGED! 100% ENERGY.");
             }, 2000);
-        } else if (clickCount === 5) {
-            setEmotion('confused');
-            setMessage(t('drone_click_3'));
         } else if (clickCount === 10) {
             setEmotion('angry');
             setMessage(t('drone_click_4'));
@@ -299,10 +409,15 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
             setEmotion('angry');
             setMessage(t('drone_click_5'));
         } else {
-            setEmotion('happy');
-            setMessage("Beep!");
+            if (!isListening) {
+                setEmotion('happy');
+                setMessage("Beep!");
+            }
         }
-        setTimeout(() => { if (!isShattered) { setMessage(""); setEmotion('normal'); } }, 3000);
+
+        if (!isListening && clickCount !== 3) {
+            setTimeout(() => { if (!isShattered && !isListening) { setMessage(""); setEmotion('normal'); } }, 3000);
+        }
     };
 
     let pupilX = 0;
@@ -404,13 +519,13 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             fontSize: '0.6rem',
-                            color: isScanning ? '#ff003c' : (isCharging ? '#00ff00' : 'var(--accent-cyan)'),
+                            color: isListening ? '#ffaa00' : (isScanning ? '#ff003c' : (isCharging ? '#00ff00' : 'var(--accent-cyan)')),
                             opacity: 0.8,
                             letterSpacing: '1px',
                             textTransform: 'uppercase',
                             fontWeight: 'bold'
                         }}>
-                            <span>{isCharging ? 'ENERGY_REFILL' : (isScanning ? 'CRITICAL_SCAN' : (isPatrolling ? 'PATROL_MODE' : 'ASSISTANT_V3.0'))}</span>
+                            <span>{isListening ? 'COMMS_OPEN (TYPE NOW)' : (isCharging ? 'ENERGY_REFILL' : (isScanning ? 'CRITICAL_SCAN' : (isPatrolling ? 'PATROL_MODE' : 'ASSISTANT_V3.0')))}</span>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                                 <span style={{ fontSize: '0.5rem', opacity: 0.6 }}>BAT:</span>
                                 <span>{Math.floor(battery)}%</span>
