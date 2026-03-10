@@ -651,7 +651,7 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
                             borderBottom: `1px solid ${isListening ? '#ffaa00' : 'rgba(255,255,255,0.1)'}`,
                             paddingBottom: '4px'
                         }}>
-                            <span>{isListening ? 'ROOT_TERMINAL_V1' : (isCharging ? 'ENERGY_REFILL' : (isScanning ? 'CRITICAL_SCAN' : (activeMiniGame ? 'MINI_GAME_ENGINE' : `SYS_MODE: ${droneMode.toUpperCase()}`))))}</span>
+                            <span>{isListening ? 'ROOT_TERMINAL_V1' : (isCharging ? 'ENERGY_REFILL' : (isScanning ? 'CRITICAL_SCAN' : (activeMiniGame ? 'MINI_GAME_ENGINE' : `SYS_MODE: ${droneMode.toUpperCase()}`)))}</span>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                                 <span style={{ fontSize: '0.5rem', opacity: 0.6 }}>BAT:</span>
                                 <span>{Math.floor(battery)}%</span>
