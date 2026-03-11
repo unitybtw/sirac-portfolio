@@ -116,48 +116,105 @@ const SkillCard = ({ icon, label, percent, delay }) => {
 };
 
 const LoadingScreen = ({ onComplete }) => {
+  const { t } = useTranslation();
   const [progress, setProgress] = useState(0);
+  const [logs, setLogs] = useState([]);
+  const [isFinished, setIsFinished] = useState(false);
+
+  const logSequence = [
+    { key: 'boot.mounting', delay: 200 },
+    { key: 'boot.matrix', delay: 800 },
+    { key: 'boot.graphics', delay: 1500 },
+    { key: 'boot.arcade', delay: 2200 },
+    { key: 'boot.drone', delay: 3000 },
+    { key: 'boot.ready', delay: 3800 }
+  ];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress(prev => {
         if (prev >= 100) {
           clearInterval(interval);
-          setTimeout(onComplete, 500); // Wait a bit before hiding after 100%
+          setTimeout(() => setIsFinished(true), 500);
           return 100;
         }
-        return prev + Math.floor(Math.random() * 15) + 5;
+        return prev + Math.floor(Math.random() * 8) + 2;
       });
-    }, 150);
+    }, 100);
+
+    logSequence.forEach((log, index) => {
+      setTimeout(() => {
+        setLogs(prev => [...prev, { text: t(log.key), id: index }]);
+      }, log.delay);
+    });
+
     return () => clearInterval(interval);
-  }, [onComplete]);
+  }, [t]);
 
   return (
     <motion.div
       className="loading-screen"
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0, y: -50, filter: "blur(10px)" }}
-      transition={{ duration: 0.8, ease: "easeInOut" }}
+      exit={{ opacity: 0, filter: "blur(20px)", scale: 1.1 }}
+      transition={{ duration: 1.2, ease: [0.43, 0.13, 0.23, 0.96] }}
     >
       <div className="loading-content">
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
-          style={{ marginBottom: '2rem', color: 'var(--accent-cyan)' }}
-        >
-          <Box size={50} />
-        </motion.div>
+        <div className="loading-terminal">
+          <AnimatePresence>
+            {logs.map((log) => (
+              <motion.div
+                key={log.id}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="terminal-line"
+              >
+                <span style={{ color: 'rgba(var(--accent-cyan-rgb), 0.5)' }}>[{new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}]</span>
+                <span>{log.text}</span>
+                <span className="status" style={{ marginLeft: 'auto', color: '#0f0' }}>OK</span>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+          {progress < 100 && (
+            <motion.div
+              animate={{ opacity: [1, 0] }}
+              transition={{ repeat: Infinity, duration: 0.8 }}
+              style={{ width: '8px', height: '15px', background: 'var(--accent-cyan)', marginTop: '5px' }}
+            />
+          )}
+        </div>
 
         <div className="loading-bar-container">
           <motion.div
             className="loading-bar-fill"
-            style={{ width: `${Math.min(progress, 100)}%` }}
+            initial={{ width: 0 }}
+            animate={{ width: `${progress}%` }}
           />
         </div>
 
-        <div className="loading-text" style={{ fontFamily: 'monospace', color: 'var(--accent-cyan)' }}>
-          SYSTEM INITIALIZING... {Math.min(progress, 100)}%
+        <div className="loading-text">
+          {progress < 100 ? `${t('game_common.loading')} ${progress}%` : t('boot.ready')}
         </div>
+
+        {isFinished && (
+          <motion.button
+            className="access-granted-btn"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            whileHover={{ scale: 1.05, letterSpacing: '8px' }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              playClickSound();
+              onComplete();
+            }}
+          >
+            {t('boot.access')}
+          </motion.button>
+        )}
+      </div>
+
+      {/* Decorative Matrix overlay during load */}
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: -1, opacity: 0.1 }}>
+        <MatrixBackground theme="dark" isPaused={false} />
       </div>
     </motion.div>
   );

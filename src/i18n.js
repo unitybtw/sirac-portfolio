@@ -115,6 +115,15 @@ const resources = {
                 "hl_r": "Reload",
                 "hl_space": "Jump",
                 "hl_ctrl": "Crouch"
+            },
+            "boot": {
+                "mounting": "MOUNTING SYSTEM KERNEL...",
+                "arcade": "LOADING ARCADE MODULES...",
+                "drone": "WAKING UP COMPANION DRONE...",
+                "matrix": "INITIALIZING MATRIX BACKGROUND...",
+                "graphics": "OPTIMIZING GRAPHICS ENGINE...",
+                "ready": "SYSTEM OPERATIONAL.",
+                "access": "ACCESS GRANTED"
             }
         }
     },
@@ -231,6 +240,15 @@ const resources = {
                 "hl_r": "Şarjör Yenile",
                 "hl_space": "Zıpla",
                 "hl_ctrl": "Eğil"
+            },
+            "boot": {
+                "mounting": "SİSTEM ÇEKİRDEĞİ YÜKLENİYOR...",
+                "arcade": "ARCADE MODÜLLERİ HAZIRLANIYOR...",
+                "drone": "REFAKATÇİ DRONE UYANDIRILIYOR...",
+                "matrix": "MATRİS ARKAPLANI BAŞLATILIYOR...",
+                "graphics": "GRAFİK MOTORU OPTİMİZE EDİLİYOR...",
+                "ready": "SİSTEM AKTİF.",
+                "access": "ERİŞİM ONAYLANDI"
             }
         }
     }
