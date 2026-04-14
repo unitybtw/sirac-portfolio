@@ -488,7 +488,6 @@ function App() {
               <a href="#timeline">{t('timeline_title') || 'Timeline'}</a>
               <a href="#projects">{t('nav_work')}</a>
               <a href="#skills">{t('nav_skills')}</a>
-              <a href="#arcade" className="desktop-only">{t('nav_arcade') || 'Arcade'}</a>
               <a href="#contact">{t('nav_contact')}</a>
               <button
                 onClick={() => setIsArcadeOpen(true)}
