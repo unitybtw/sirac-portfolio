@@ -449,6 +449,15 @@ function App() {
   const { t, i18n } = useTranslation();
   const [theme, setTheme] = useState('dark');
   const [showSecretGame, setShowSecretGame] = useState(false);
+
+  // Force scroll to top on refresh
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    // For some specialized browsers/mobile
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+  }, []);
   const [isArcadeOpen, setIsArcadeOpen] = useState(false);
   const [activeArcadeGame, setActiveArcadeGame] = useState(null);
 
