@@ -300,6 +300,35 @@ const MatrixBackground = ({ theme, isPaused }) => {
   );
 };
 
+const CursorGlow = () => {
+  const [mousePosition, setMousePosition] = useState({ x: -1000, y: -1000 });
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      // Use requestAnimationFrame for smooth 60fps tracking without killing React
+      requestAnimationFrame(() => {
+        setMousePosition({ x: e.clientX, y: e.clientY });
+      });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  return (
+    <div className="cursor-glow-wrapper">
+      <motion.div
+        className="cursor-glow"
+        animate={{
+          x: mousePosition.x,
+          y: mousePosition.y,
+        }}
+        transition={{ type: "spring", stiffness: 100, damping: 25, mass: 0.5 }}
+      />
+    </div>
+  );
+};
+
 const TypewriterTitle = ({ title1, title2 }) => {
   const [text, setText] = useState('');
   const [phase, setPhase] = useState(0); // 0: typing, 1: erasing, 2: final
@@ -329,15 +358,43 @@ const TypewriterTitle = ({ title1, title2 }) => {
   }, [text, phase]);
 
   if (phase === 2) {
+    const words1 = title1.split(" ");
+    const words2 = title2.split(" ");
+    
+    const container = {
+      hidden: { opacity: 0 },
+      show: {
+        opacity: 1,
+        transition: { staggerChildren: 0.1, delayChildren: 0.2 }
+      }
+    };
+    
+    const item = {
+      hidden: { opacity: 0, y: 20, filter: 'blur(10px)' },
+      show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { type: "spring", stiffness: 100 } }
+    };
+
     return (
       <motion.h1
         className="hero-title"
-        initial={{ opacity: 0, filter: 'blur(10px)', scale: 0.9 }}
-        animate={{ opacity: 1, filter: 'blur(0px)', scale: 1 }}
-        transition={{ duration: 0.8, type: 'spring' }}
+        variants={container}
+        initial="hidden"
+        animate="show"
       >
-        <span className="text-gradient">{title1}</span><br />
-        <span className="text-accent-gradient">{title2}</span>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          {words1.map((word, i) => (
+            <motion.span key={i} variants={item} className="text-gradient">
+              {word}
+            </motion.span>
+          ))}
+        </div>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          {words2.map((word, i) => (
+            <motion.span key={i} variants={item} className="text-accent-gradient">
+              {word}
+            </motion.span>
+          ))}
+        </div>
       </motion.h1>
     );
   }
@@ -514,6 +571,7 @@ function App() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, ease: "easeOut" }}
         >
+          {isAppLoaded && <CursorGlow />}
           {isAppLoaded && <MatrixBackground theme={theme} isPaused={isArcadeOpen} />}
           {isAppLoaded && (
             <div className="cyber-bg">
@@ -680,18 +738,30 @@ function App() {
               <h2 className="section-title text-gradient">{t('archives_title')}</h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('archives_subtitle')}</p>
             </div>
-            <div className="masonry-grid">
+            <motion.div 
+              className="masonry-grid"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.15 }
+                }
+              }}
+            >
               {projects.map((project, idx) => (
                 <motion.div
                   key={project.id}
                   className={`project-card glass-panel ${project.glow}`}
                   onClick={() => window.open(project.link, '_blank')}
                   style={{ padding: 0 }}
-                  initial={{ opacity: 0, y: 80, scale: 0.95 }}
-                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.6, delay: idx * 0.15, type: 'spring', stiffness: 100 }}
-                  whileHover={{ y: -15, scale: 1.03, boxShadow: '0 20px 40px rgba(0, 240, 255, 0.2)' }}
+                  variants={{
+                    hidden: { opacity: 0, y: 60, scale: 0.95 },
+                    visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 80, damping: 20 } }
+                  }}
+                  whileHover={{ y: -8, scale: 1.015, boxShadow: '0 20px 40px rgba(0, 240, 255, 0.15)' }}
                 >
                   {project.image && (
                     <div style={{ height: '180px', overflow: 'hidden', borderBottom: '1px solid var(--border-glass)' }}>
@@ -699,8 +769,8 @@ function App() {
                         src={project.image}
                         alt={project.title}
                         style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ duration: 0.4 }}
+                        whileHover={{ scale: 1.08 }}
+                        transition={{ duration: 0.6, ease: "easeOut" }}
                       />
                     </div>
                   )}
@@ -717,7 +787,7 @@ function App() {
                   </div>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
           </section>
 
           {/* Arcade Section */}
