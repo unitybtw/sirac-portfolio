@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, Gamepad2, Rocket, Zap, Navigation, Shield, Ghost, Crosshair, Target, Activity, Box, Trophy, User, Save, List, Gem, Compass } from 'lucide-react';
+import { X, Gamepad2, Rocket, Zap, Navigation, Shield, Ghost, Crosshair, Target, Activity, Box, Trophy, User, Save, List, Gem, Compass, Eye } from 'lucide-react';
 
 const AsteroidBlaster = lazy(() => import('./AsteroidBlaster'));
 const NeonRunner = lazy(() => import('./NeonRunner'));
@@ -68,10 +68,12 @@ const Ultrakill = lazy(() => import('./Ultrakill'));
 const GTAViceCity = lazy(() => import('./GTAViceCity'));
 const LaleSavascilari = lazy(() => import('./LaleSavascilari'));
 const CS16 = lazy(() => import('./CS16'));
+const FNAF1 = lazy(() => import('./FNAF1'));
 
 
 
 const gamesList = [
+    { id: 'fnaf1', title: "Five Nights at Freddy's", icon: <Eye size={24} />, color: '#ff2200', comp: FNAF1 },
     { id: 'cs16', title: 'Kirka.io (CSGO Web)', icon: <Target size={24} />, color: '#ffd700', comp: CS16 },
     { id: 'lale_savascilari', title: 'İst.Efsaneleri: Lale Savaşçıları', icon: <Compass size={24} />, color: '#00ff00', comp: LaleSavascilari },
     { id: 'gtavicecity', title: 'GTA Vice City', icon: <Gem size={24} />, color: '#ff66b2', comp: GTAViceCity },
