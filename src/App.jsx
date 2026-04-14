@@ -1,6 +1,6 @@
 import React, { useEffect, useState, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Terminal, Github, Linkedin, Mail, ArrowRight, Code, Layers, Smartphone, Box, Gamepad2, Compass, Globe, Moon, Sun } from 'lucide-react';
+import { Terminal, Github, Linkedin, Mail, ArrowRight, Code, Layers, Smartphone, Box, Gamepad2, Compass, Globe, Moon, Sun, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Float, Stage, PresentationControls } from '@react-three/drei';
@@ -204,6 +204,12 @@ const Model = ({ path }) => {
 };
 
 const ThreeDViewer = ({ t }) => {
+  const models = ["model.glb", "model2.glb", "model3.glb"];
+  const [currentModelIndex, setCurrentModelIndex] = useState(0);
+
+  const nextModel = () => setCurrentModelIndex((prev) => (prev + 1) % models.length);
+  const prevModel = () => setCurrentModelIndex((prev) => (prev - 1 + models.length) % models.length);
+
   return (
     <motion.section
       id="3d-viewer"
@@ -219,10 +225,19 @@ const ThreeDViewer = ({ t }) => {
 
       <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', marginBottom: '2rem' }}>
         <h2 className="section-title text-gradient">{t('viewer_title')}</h2>
-        <p style={{ color: 'var(--text-muted)' }}>{t('viewer_subtitle')}</p>
+        <p style={{ color: 'var(--text-muted)' }}>{t('viewer_subtitle')} ({currentModelIndex + 1}/{models.length})</p>
       </div>
 
       <div style={{ height: '500px', width: '100%', position: 'relative', zIndex: 1, borderRadius: '24px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.05)' }}>
+        
+        {/* Navigation Buttons */}
+        <button onClick={prevModel} style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--text-main)', backdropFilter: 'blur(10px)' }}>
+          <ChevronLeft size={24} />
+        </button>
+        <button onClick={nextModel} style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--text-main)', backdropFilter: 'blur(10px)' }}>
+          <ChevronRight size={24} />
+        </button>
+
         <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'var(--accent-cyan)', fontFamily: 'monospace' }}>INITIALIZING 3D ENGINE...</div>}>
           <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 4], fov: 45 }}>
             <color attach="background" args={['#050508']} />
@@ -233,7 +248,7 @@ const ThreeDViewer = ({ t }) => {
             <PresentationControls speed={1.5} global zoom={0.7} polar={[-0.1, Math.PI / 4]}>
               <Stage environment="city" intensity={0.6} contactShadow={false}>
                 <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-                  <Model path={`${import.meta.env.BASE_URL}model.glb`} />
+                  <Model path={`${import.meta.env.BASE_URL}${models[currentModelIndex]}`} />
                 </Float>
               </Stage>
             </PresentationControls>
