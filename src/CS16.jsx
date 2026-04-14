@@ -79,10 +79,9 @@ export default function CS16() {
                 <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
                     <iframe
                         ref={iframeRef}
-                        src="https://play-cs.com/en/"
+                        src="https://play-cs.com"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="CS 1.6 Web"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-popups"
                         allow="autoplay; fullscreen; microphone; camera; keyboard-lock; pointer-lock"
                         allowFullScreen
                         onLoad={() => {
