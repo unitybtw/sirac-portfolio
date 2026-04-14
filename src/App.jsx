@@ -358,8 +358,8 @@ const TypewriterTitle = ({ title1, title2 }) => {
   }, [text, phase]);
 
   if (phase === 2) {
-    const words1 = title1.split(" ");
-    const words2 = title2.split(" ");
+    const words1 = (title1 || "").split(" ");
+    const words2 = (title2 || "").split(" ");
     
     const container = {
       hidden: { opacity: 0 },
