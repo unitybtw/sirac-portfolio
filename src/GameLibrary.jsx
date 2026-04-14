@@ -261,7 +261,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                     transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
                 }}
             >
-                <div style={{ position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%', background: 'radial-gradient(circle at center, rgba(0, 240, 255, 0.1) 0%, transparent 60%)', zIndex: 0, pointerEvents: 'none', animation: 'spin 20s linear infinite' }} />
+                <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 40, ease: 'linear' }} style={{ position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%', background: 'radial-gradient(circle at center, rgba(0, 240, 255, 0.08) 0%, transparent 60%)', zIndex: 0, pointerEvents: 'none' }} />
                 
                 <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <div style={{ width: '80px', height: '80px', borderRadius: '24px', background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-violet))', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', boxShadow: '0 10px 30px rgba(0, 240, 255, 0.3)' }}>
@@ -285,8 +285,9 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                         exit={{ opacity: 0 }}
                         style={{
                             position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-                            background: 'rgba(5, 5, 8, 0.95)', backdropFilter: 'blur(10px)',
-                            zIndex: 100000, display: 'flex', flexDirection: 'column', overflow: 'hidden'
+                            background: 'rgba(5, 5, 8, 0.99)',
+                            zIndex: 100000, display: 'flex', flexDirection: 'column', overflow: 'hidden',
+                            willChange: 'opacity'
                         }}
                     >
                         {/* Header */}
@@ -432,7 +433,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                             hidden: { opacity: 0 },
                                             visible: {
                                                 opacity: 1,
-                                                transition: { staggerChildren: 0.05 }
+                                                transition: { staggerChildren: 0.02, delayChildren: 0.1 }
                                             }
                                         }}
                                         style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '1.5rem', width: '100%', maxWidth: '1200px', margin: '0 auto', paddingBottom: '3rem' }}
@@ -441,24 +442,23 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                             <motion.div
                                                 key={game.id}
                                                 variants={{
-                                                    hidden: { opacity: 0, y: 30, scale: 0.9 },
-                                                    visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 120, damping: 20 } }
+                                                    hidden: { opacity: 0, y: 15 },
+                                                    visible: { opacity: 1, y: 0, transition: { duration: 0.2, ease: "easeOut" } }
                                                 }}
-                                                whileHover={{ y: -6, scale: 1.02, boxShadow: `0 15px 35px -10px ${game.color}66`, borderColor: `rgba(255,255,255,0.2)` }}
+                                                whileHover={{ y: -4, scale: 1.02, boxShadow: `0 10px 25px -5px ${game.color}66`, borderColor: `rgba(255,255,255,0.2)` }}
                                                 onClick={() => setActiveGameId(game.id)}
                                                 style={{
-                                                    background: 'rgba(20, 20, 30, 0.4)', 
-                                                    backdropFilter: 'blur(20px)',
+                                                    background: 'rgba(20, 20, 30, 0.85)', 
                                                     border: '1px solid rgba(255,255,255,0.06)',
                                                     borderRadius: '20px', padding: '1.5rem 1rem', cursor: 'pointer',
                                                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem',
                                                     justifyContent: 'space-between',
                                                     position: 'relative', overflow: 'hidden',
-                                                    transition: 'border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+                                                    willChange: 'transform, opacity'
                                                 }}
                                             >
                                                 {/* Ambient game color background glow */}
-                                                <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', height: '50px', background: `radial-gradient(ellipse at top, ${game.color}33 0%, transparent 70%)`, pointerEvents: 'none' }} />
+                                                <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', height: '50px', background: `radial-gradient(ellipse at top, ${game.color}22 0%, transparent 70%)`, pointerEvents: 'none' }} />
                                                 
                                                 <div style={{ color: game.color, filter: `drop-shadow(0 0 16px ${game.color}88)`, background: 'rgba(0,0,0,0.2)', padding: '15px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.05)' }}>
                                                     {game.icon}
