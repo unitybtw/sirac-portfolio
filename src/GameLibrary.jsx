@@ -237,15 +237,44 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
 
     return (
         <>
-            <motion.button
+            <motion.div
                 onClick={() => setIsOpen(true)}
-                className="btn btn-primary glass-panel"
-                whileHover={{ scale: 1.05, boxShadow: '0 0 20px rgba(0, 240, 255, 0.4)' }}
-                whileTap={{ scale: 0.95 }}
-                style={{ padding: '1rem 3rem', fontSize: '1.2rem', gap: '10px', display: 'flex', alignItems: 'center' }}
+                className="arcade-portal-card"
+                whileHover={{ scale: 1.02, y: -10, boxShadow: '0 30px 60px -15px rgba(0, 240, 255, 0.3)' }}
+                whileTap={{ scale: 0.98 }}
+                style={{ 
+                    cursor: 'pointer',
+                    width: '100%', 
+                    maxWidth: '900px', 
+                    margin: '0 auto',
+                    borderRadius: '32px',
+                    padding: '4rem 2rem',
+                    background: 'linear-gradient(135deg, rgba(20,20,30,0.8) 0%, rgba(10,10,15,0.9) 100%)',
+                    backdropFilter: 'blur(40px)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '1.5rem',
+                    transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+                }}
             >
-                <Gamepad2 size={24} /> {t('arcade_btn')}
-            </motion.button>
+                <div style={{ position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%', background: 'radial-gradient(circle at center, rgba(0, 240, 255, 0.1) 0%, transparent 60%)', zIndex: 0, pointerEvents: 'none', animation: 'spin 20s linear infinite' }} />
+                
+                <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div style={{ width: '80px', height: '80px', borderRadius: '24px', background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-violet))', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', boxShadow: '0 10px 30px rgba(0, 240, 255, 0.3)' }}>
+                        <Gamepad2 size={40} color="#fff" />
+                    </div>
+                    <h3 style={{ fontSize: '2.5rem', fontWeight: 800, margin: 0, letterSpacing: '-0.03em', background: 'linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.7) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                        {t('arcade_btn') || 'Launch Arcade'}
+                    </h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', marginTop: '0.5rem', maxWidth: '400px' }}>
+                        Over 50 retro and modern simulations. Compete on global leaderboards.
+                    </p>
+                </div>
+            </motion.div>
 
             <AnimatePresence>
                 {isOpen && (
