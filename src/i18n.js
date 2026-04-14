@@ -71,6 +71,10 @@ const resources = {
             "timeline_event_4_title": "Advanced Systems",
             "timeline_event_4_desc": "Mastering High-end UI (SwiftUI/React) and advanced interactive systems design.",
 
+            "viewer_title": "Interactive 3D Workspace",
+            "viewer_subtitle": "Real-time exploration of my latest Blender artifacts.",
+            "viewer_hint": "Drag to rotate | Scroll to zoom",
+
             "drone_m_morning": "Good morning! Time to code.",
             "drone_m_afternoon": "Good afternoon! System is stable.",
             "drone_m_evening": "Good evening! Still working hard?",
@@ -224,6 +228,10 @@ const resources = {
             "timeline_event_4_year": "2024",
             "timeline_event_4_title": "İleri Seviye Sistemler",
             "timeline_event_4_desc": "High-end UI (SwiftUI/React) ve ileri seviye etkileşimli sistemler üzerine yoğunlaştı.",
+
+            "viewer_title": "Etkileşimli 3D Çalışma Alanı",
+            "viewer_subtitle": "En son Blender çalışmalarımın gerçek zamanlı keşfi.",
+            "viewer_hint": "Döndürmek için sürükle | Yakınlaştırmak için kaydır",
 
             "drone_m_morning": "Günaydın! Kodlama vakti.",
             "drone_m_afternoon": "İyi öğleden sonraları! Sistem stabil.",

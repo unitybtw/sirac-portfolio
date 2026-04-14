@@ -2,6 +2,8 @@ import React, { useEffect, useState, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Terminal, Github, Linkedin, Mail, ArrowRight, Code, Layers, Smartphone, Box, Gamepad2, Compass, Globe, Moon, Sun } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, useGLTF, Float, Stage, PresentationControls } from '@react-three/drei';
 import './index.css';
 import './light-mode.css';
 import './i18n';
@@ -192,6 +194,59 @@ const MatrixBackground = ({ theme, isPaused }) => {
         pointerEvents: 'none'
       }}
     />
+  );
+};
+
+// --- 3D Model Viewer Component ---
+const Model = ({ path }) => {
+  const { scene } = useGLTF(path);
+  return <primitive object={scene} />;
+};
+
+const ThreeDViewer = ({ t }) => {
+  return (
+    <motion.section
+      id="3d-viewer"
+      className="viewer-section glass-panel"
+      style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', borderRadius: '40px', padding: '3rem', border: '1px solid rgba(255,255,255,0.05)', position: 'relative', overflow: 'hidden' }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+    >
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 0, opacity: 0.2 }}>
+        <div style={{ position: 'absolute', top: '10%', left: '10%', width: '400px', height: '400px', background: 'radial-gradient(circle, var(--accent-cyan) 0%, transparent 70%)', filter: 'blur(100px)' }} />
+      </div>
+
+      <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', marginBottom: '2rem' }}>
+        <h2 className="section-title text-gradient">{t('viewer_title')}</h2>
+        <p style={{ color: 'var(--text-muted)' }}>{t('viewer_subtitle')}</p>
+      </div>
+
+      <div style={{ height: '500px', width: '100%', position: 'relative', zIndex: 1, borderRadius: '24px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.05)' }}>
+        <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'var(--accent-cyan)', fontFamily: 'monospace' }}>INITIALIZING 3D ENGINE...</div>}>
+          <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 4], fov: 45 }}>
+            <color attach="background" args={['#050508']} />
+            <ambientLight intensity={0.5} />
+            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
+            <pointLight position={[-10, -10, -10]} />
+            
+            <PresentationControls speed={1.5} global zoom={0.7} polar={[-0.1, Math.PI / 4]}>
+              <Stage environment="city" intensity={0.6} contactShadow={false}>
+                <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
+                  <Model path="/model.glb" />
+                </Float>
+              </Stage>
+            </PresentationControls>
+            
+            <OrbitControls enableZoom={true} enablePan={false} makeDefault />
+          </Canvas>
+        </Suspense>
+        
+        <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.6)', padding: '8px 16px', borderRadius: '100px', fontSize: '0.75rem', color: 'var(--text-muted)', border: '1px solid rgba(255,255,255,0.1)', pointerEvents: 'none', letterSpacing: '1px', textTransform: 'uppercase' }}>
+          {t('viewer_hint')}
+        </div>
+      </div>
+    </motion.section>
   );
 };
 
@@ -627,6 +682,8 @@ function App() {
               </motion.div>
             </motion.div>
           </section>
+
+          <ThreeDViewer t={t} />
 
           {/* About Section */}
           <motion.section
