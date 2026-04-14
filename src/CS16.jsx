@@ -82,6 +82,7 @@ export default function CS16() {
                         src="https://kirka.io/"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Kirka Web FPS"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
                         allow="autoplay; fullscreen; microphone; camera; keyboard-lock; pointer-lock"
                         allowFullScreen
                         onLoad={() => {
