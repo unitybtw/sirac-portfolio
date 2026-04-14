@@ -698,8 +698,6 @@ function App() {
             </motion.div>
           </section>
 
-          <ThreeDViewer t={t} />
-
           {/* About Section */}
           <motion.section
             id="about"
@@ -902,6 +900,8 @@ function App() {
               <SkillCard icon={<Terminal size={32} />} label={t('skill_sys')} percent={90} delay={1100} />
             </div>
           </motion.section>
+
+          <ThreeDViewer t={t} />
 
           {/* Interactive Footer */}
           <footer id="contact" className="footer">
