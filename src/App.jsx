@@ -1,7 +1,7 @@
 import React, { useEffect, useState, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Terminal, Github, Linkedin, Mail, ArrowRight, Code, Layers, Smartphone, Box, Gamepad2, Compass, Globe, Moon, Sun } from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
 import './index.css';
 import './light-mode.css';
 import './i18n';
@@ -91,7 +91,7 @@ const SkillCard = ({ icon, label, percent, delay }) => {
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.5, delay: delay / 2000 }} // Scale down delay
       whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(0,240,255,0.1)' }}
-      style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}
+      style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', willChange: 'transform, opacity' }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <div style={{ color: 'var(--text-main)', opacity: 0.8, background: 'rgba(255,255,255,0.05)', padding: '10px', borderRadius: '12px' }}>
@@ -196,29 +196,31 @@ const MatrixBackground = ({ theme, isPaused }) => {
 };
 
 const CursorGlow = () => {
-  const [mousePosition, setMousePosition] = useState({ x: -1000, y: -1000 });
+  const mouseX = useMotionValue(-1000);
+  const mouseY = useMotionValue(-1000);
+  
+  const springConfig = { damping: 25, stiffness: 150, mass: 0.5 };
+  const smoothX = useSpring(mouseX, springConfig);
+  const smoothY = useSpring(mouseY, springConfig);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
-      // Use requestAnimationFrame for smooth 60fps tracking without killing React
-      requestAnimationFrame(() => {
-        setMousePosition({ x: e.clientX, y: e.clientY });
-      });
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
     return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+  }, [mouseX, mouseY]);
 
   return (
     <div className="cursor-glow-wrapper">
       <motion.div
         className="cursor-glow"
-        animate={{
-          x: mousePosition.x,
-          y: mousePosition.y,
+        style={{
+          x: smoothX,
+          y: smoothY,
         }}
-        transition={{ type: "spring", stiffness: 100, damping: 25, mass: 0.5 }}
       />
     </div>
   );
@@ -465,13 +467,13 @@ function App() {
           <MatrixBackground theme={theme} isPaused={isArcadeOpen} />
           <div className="cyber-bg">
             {/* Parallax Floating Icons */}
-              <motion.div style={{ position: 'absolute', top: '15%', left: '10%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax1 }}>
+              <motion.div style={{ position: 'absolute', top: '15%', left: '10%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax1, willChange: 'transform' }}>
                 <Code size={60} />
               </motion.div>
-              <motion.div style={{ position: 'absolute', top: '45%', right: '10%', opacity: 0.15, color: 'var(--accent-violet)', y: parallax2 }}>
+              <motion.div style={{ position: 'absolute', top: '45%', right: '10%', opacity: 0.15, color: 'var(--accent-violet)', y: parallax2, willChange: 'transform' }}>
                 <Layers size={80} />
               </motion.div>
-              <motion.div style={{ position: 'absolute', top: '75%', left: '15%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax3 }}>
+              <motion.div style={{ position: 'absolute', top: '75%', left: '15%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax3, willChange: 'transform' }}>
                 <Box size={70} />
               </motion.div>
           </div>
@@ -580,7 +582,8 @@ function App() {
                 style={{
                   width: '100%', maxWidth: '500px', borderRadius: '16px', overflow: 'hidden',
                   border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.8)',
-                  textAlign: 'left', background: 'rgba(10, 10, 15, 0.75)', backdropFilter: 'blur(50px)'
+                  textAlign: 'left', background: 'rgba(10, 10, 15, 0.75)', backdropFilter: 'blur(10px)',
+                  willChange: 'transform, box-shadow'
                 }}
               >
                 <div style={{ background: 'rgba(255,255,255,0.02)', padding: '12px 20px', display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
@@ -753,12 +756,12 @@ function App() {
                   key={project.id}
                   className={`project-card glass-panel ${project.glow}`}
                   onClick={() => window.open(project.link, '_blank')}
-                  style={{ padding: 0 }}
+                  style={{ padding: 0, willChange: 'transform, opacity' }}
                   variants={{
-                    hidden: { opacity: 0, y: 60, scale: 0.95 },
-                    visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 80, damping: 20 } }
+                    hidden: { opacity: 0, y: 30 },
+                    visible: { opacity: 1, y: 0, transition: { type: 'tween', ease: "easeOut", duration: 0.4 } }
                   }}
-                  whileHover={{ y: -8, scale: 1.015, boxShadow: '0 20px 40px rgba(0, 240, 255, 0.15)' }}
+                  whileHover={{ y: -6, scale: 1.02, boxShadow: '0 20px 40px rgba(0, 240, 255, 0.15)' }}
                 >
                   {project.image && (
                     <div style={{ height: '180px', overflow: 'hidden', borderBottom: '1px solid var(--border-glass)' }}>
@@ -809,11 +812,11 @@ function App() {
           <motion.section
             id="skills"
             className="skills-section glass-panel"
-            style={{ margin: '0 5%', borderRadius: '40px' }}
-            initial={{ opacity: 0, scale: 0.9, y: 100 }}
+            style={{ margin: '0 5%', borderRadius: '40px', willChange: 'transform, opacity' }}
+            initial={{ opacity: 0, scale: 0.95, y: 50 }}
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, type: 'spring', bounce: 0.4 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <div className="section-header">
               <h2 className="section-title text-gradient">{t('skills_title')}</h2>
