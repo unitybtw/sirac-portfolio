@@ -484,6 +484,7 @@ function App() {
               <h1 className="text-gradient">{t('nav_name') || 'SIRAÇ GÖKTUĞ ŞİMŞEK.'}</h1>
             </div>
             <div className="nav-links" style={{ display: 'flex', alignItems: 'center' }}>
+              <a href="#about">{t('nav_about') || 'About'}</a>
               <a href="#projects">{t('nav_work')}</a>
               <a href="#skills">{t('nav_skills')}</a>
               <a href="#arcade" className="desktop-only">{t('nav_arcade') || 'Arcade'}</a>
@@ -623,6 +624,47 @@ function App() {
               </motion.div>
             </motion.div>
           </section>
+
+          {/* About Section */}
+          <motion.section
+            id="about"
+            className="about-section glass-panel"
+            style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', borderRadius: '40px', padding: '4rem 5%', display: 'flex', gap: '4rem', alignItems: 'center', flexWrap: 'wrap', border: '1px solid rgba(255,255,255,0.05)', boxShadow: '0 20px 60px -10px rgba(0,0,0,0.4)', position: 'relative', overflow: 'hidden' }}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+          >
+            {/* Background flourish inside About */}
+            <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '300px', height: '300px', background: 'radial-gradient(circle at center, rgba(var(--accent-violet-rgb), 0.15) 0%, transparent 60%)', filter: 'blur(40px)', zIndex: 0 }} />
+            
+            <div style={{ flex: '1 1 400px', position: 'relative', zIndex: 1 }}>
+              <div className="section-header" style={{ alignItems: 'flex-start', textAlign: 'left', marginBottom: '2rem' }}>
+                <h2 className="section-title text-gradient" style={{ letterSpacing: '-0.02em' }}>{t('about_title')}</h2>
+                <p style={{ color: 'var(--accent-cyan)', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', fontSize: '0.85rem' }}>{t('about_subtitle')}</p>
+              </div>
+              <p style={{ color: 'var(--text-main)', fontSize: '1.2rem', lineHeight: 1.8, marginBottom: '1.5rem', fontWeight: 500 }}>
+                {t('about_text_1')}
+              </p>
+              <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: 1.8 }}>
+                {t('about_text_2')}
+              </p>
+            </div>
+            
+            <div style={{ flex: '1 1 350px', display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', position: 'relative', zIndex: 1 }}>
+              {[1, 2, 3, 4].map((num) => (
+                <motion.div 
+                  key={num} 
+                  className="glass-panel" 
+                  whileHover={{ y: -5, boxShadow: '0 10px 20px rgba(0,0,0,0.3)', borderColor: 'rgba(255,255,255,0.1)' }}
+                  style={{ padding: '1.5rem', borderRadius: '16px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.03)', transition: 'border-color 0.3s' }}
+                >
+                  <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.8rem' }}>{t(`about_stat_${num}`)}</div>
+                  <div style={{ color: 'var(--text-main)', fontSize: '1.1rem', fontWeight: 700 }}>{t(`about_stat_${num}_val`)}</div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.section>
 
           {/* Projects Timeline (Gallery) */}
           <section id="projects" className="gallery-section">
