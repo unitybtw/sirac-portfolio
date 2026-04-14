@@ -685,16 +685,20 @@ function App() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
             >
-              <div className="glass-panel code-terminal" style={{
-                width: '100%', maxWidth: '500px', borderRadius: '16px', overflow: 'hidden',
-                border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
-                textAlign: 'left', background: 'rgba(10, 10, 15, 0.8)', backdropFilter: 'blur(40px)'
-              }}>
-                <div style={{ background: 'rgba(255,255,255,0.05)', padding: '12px 20px', display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+              <motion.div 
+                className="glass-panel code-terminal" 
+                whileHover={{ y: -5, boxShadow: '0 35px 70px -15px rgba(0,240,255,0.15)' }}
+                style={{
+                  width: '100%', maxWidth: '500px', borderRadius: '16px', overflow: 'hidden',
+                  border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.8)',
+                  textAlign: 'left', background: 'rgba(10, 10, 15, 0.75)', backdropFilter: 'blur(50px)'
+                }}
+              >
+                <div style={{ background: 'rgba(255,255,255,0.02)', padding: '12px 20px', display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                   <div style={{ display: 'flex', gap: '8px' }}>
-                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56' }} />
-                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e' }} />
-                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f' }} />
+                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56', boxShadow: '0 0 5px #ff5f56' }} />
+                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e', boxShadow: '0 0 5px #ffbd2e' }} />
+                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f', boxShadow: '0 0 5px #27c93f' }} />
                   </div>
                   <div style={{ flex: 1, textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)', fontFamily: 'var(--font-sf)', letterSpacing: '1px' }}>
                     sirac@iku: ~/portfolio
@@ -728,7 +732,7 @@ function App() {
                     <motion.span animate={{ opacity: [1, 0] }} transition={{ repeat: Infinity, duration: 0.8 }} style={{ width: '10px', height: '18px', background: '#e5e5e5', display: 'inline-block' }} />
                   </motion.div>
                 </div>
-              </div>
+              </motion.div>
             </motion.div>
           </section>
 
