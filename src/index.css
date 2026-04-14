@@ -791,3 +791,27 @@ nav {
   color: #000;
   box-shadow: 0 0 40px var(--accent-cyan);
 }
+
+/* Timeline Mobile Optimization */
+@media (max-width: 768px) {
+  .timeline-container > div > div {
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    padding-left: 30px;
+  }
+  
+  .timeline-container > div > div > .glass-panel {
+    width: 100% !important;
+    text-align: left !important;
+  }
+  
+  .timeline-container > div > div > div:nth-child(1) { /* The dot */
+    left: 0 !important;
+    transform: none !important;
+  }
+  
+  .timeline-container > div:nth-child(1) { /* The pipe */
+    left: 7px !important;
+    transform: none !important;
+  }
+}

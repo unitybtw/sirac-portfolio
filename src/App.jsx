@@ -485,6 +485,7 @@ function App() {
             </div>
             <div className="nav-links" style={{ display: 'flex', alignItems: 'center' }}>
               <a href="#about">{t('nav_about') || 'About'}</a>
+              <a href="#timeline">{t('timeline_title') || 'Timeline'}</a>
               <a href="#projects">{t('nav_work')}</a>
               <a href="#skills">{t('nav_skills')}</a>
               <a href="#arcade" className="desktop-only">{t('nav_arcade') || 'Arcade'}</a>
@@ -665,6 +666,69 @@ function App() {
               ))}
             </div>
           </motion.section>
+
+          {/* Timeline Section */}
+          <section id="timeline" style={{ padding: '0 5% 5rem', position: 'relative' }}>
+            <div className="section-header">
+              <h2 className="section-title text-gradient">{t('timeline_title')}</h2>
+              <p style={{ color: 'var(--text-muted)' }}>{t('timeline_subtitle')}</p>
+            </div>
+            
+            <div className="timeline-container" style={{ maxWidth: '900px', margin: '3rem auto 0', position: 'relative' }}>
+              {/* Central Pipe */}
+              <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', top: 0, bottom: 0, width: '2px', background: 'linear-gradient(to bottom, transparent, var(--accent-cyan), var(--accent-violet), transparent)', opacity: 0.3 }} />
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4rem' }}>
+                {[1, 2, 3, 4].map((num) => (
+                  <motion.div 
+                    key={num}
+                    initial={{ opacity: 0, x: num % 2 === 0 ? 50 : -50 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.6, delay: num * 0.1 }}
+                    style={{ 
+                      display: 'flex', 
+                      justifyContent: num % 2 === 0 ? 'flex-start' : 'flex-end',
+                      flexDirection: num % 2 === 0 ? 'row-reverse' : 'row',
+                      alignItems: 'center',
+                      width: '100%',
+                      position: 'relative'
+                    }}
+                  >
+                    {/* Node Dot */}
+                    <div style={{ 
+                      position: 'absolute', left: '50%', transform: 'translateX(-50%)', 
+                      width: '16px', height: '16px', borderRadius: '50%', 
+                      background: num > 2 ? 'var(--accent-violet)' : 'var(--accent-cyan)',
+                      boxShadow: `0 0 15px ${num > 2 ? 'var(--accent-violet)' : 'var(--accent-cyan)'}`,
+                      zIndex: 2,
+                      border: '4px solid #050508'
+                    }} />
+
+                    {/* Content Card */}
+                    <div className="glass-panel" style={{ 
+                      width: '42%', 
+                      padding: '1.5rem', 
+                      borderRadius: '24px', 
+                      background: 'rgba(255,255,255,0.02)',
+                      textAlign: num % 2 === 0 ? 'left' : 'right',
+                      border: '1px solid rgba(255,255,255,0.05)'
+                    }}>
+                      <div style={{ fontSize: '0.8rem', fontWeight: 800, color: num > 2 ? 'var(--accent-violet)' : 'var(--accent-cyan)', marginBottom: '0.5rem', letterSpacing: '1px' }}>
+                        {t(`timeline_event_${num}_year`)}
+                      </div>
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 0.5rem 0', color: '#fff' }}>
+                        {t(`timeline_event_${num}_title`)}
+                      </h3>
+                      <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.6', margin: 0 }}>
+                        {t(`timeline_event_${num}_desc`)}
+                      </p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </section>
 
           {/* Projects Timeline (Gallery) */}
           <section id="projects" className="gallery-section">
