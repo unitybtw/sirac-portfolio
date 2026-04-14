@@ -499,7 +499,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                             </button>
                                         </div>
 
-                                        <div style={{ flex: 1, width: '100%', maxWidth: '800px', borderRadius: '16px', overflow: 'hidden', border: `2px solid ${activeGame.color}`, boxShadow: `0 0 30px ${activeGame.color}44`, background: '#000' }}>
+                                        <div style={{ flex: 1, width: '100%', maxWidth: '800px', minHeight: '600px', borderRadius: '16px', overflow: 'hidden', border: `2px solid ${activeGame.color}`, boxShadow: `0 0 30px ${activeGame.color}44`, background: '#000' }}>
                                             <Suspense fallback={
                                                 <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: activeGame.color }}>
                                                     <motion.div

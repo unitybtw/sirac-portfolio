@@ -29,7 +29,7 @@ export default function CS16() {
     }, [started]);
 
     return (
-        <div id="cs16-game-wrapper" style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', background: '#000', position: 'relative' }}>
+        <div id="cs16-game-wrapper" style={{ width: '100%', height: '100%', minHeight: '600px', display: 'flex', flexDirection: 'column', background: '#000', position: 'relative' }}>
             {!started ? (
                 <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px', background: '#0a0f0a' }}>
                     <motion.div
@@ -71,7 +71,7 @@ export default function CS16() {
                             className="btn btn-primary"
                             style={{ width: '100%', padding: '1.2rem', fontSize: '1.2rem', background: 'linear-gradient(45deg, #cc9900, #ffcc00)', color: '#000', fontWeight: 'bold', borderRadius: '8px', border: 'none', boxShadow: '0 0 20px rgba(255,204,0,0.5)', textTransform: 'uppercase' }}
                         >
-                            CONNECT TO SERVER
+                            PLAY (CONNECT TO SERVER)
                         </button>
                     </motion.div>
                 </div>
