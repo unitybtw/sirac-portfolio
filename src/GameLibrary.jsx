@@ -67,10 +67,12 @@ const HollowKnight = lazy(() => import('./HollowKnight'));
 const Ultrakill = lazy(() => import('./Ultrakill'));
 const GTAViceCity = lazy(() => import('./GTAViceCity'));
 const LaleSavascilari = lazy(() => import('./LaleSavascilari'));
+const CS16 = lazy(() => import('./CS16'));
 
 
 
 const gamesList = [
+    { id: 'cs16', title: 'Counter-Strike 1.6', icon: <Target size={24} />, color: '#ffd700', comp: CS16 },
     { id: 'lale_savascilari', title: 'İst.Efsaneleri: Lale Savaşçıları', icon: <Compass size={24} />, color: '#00ff00', comp: LaleSavascilari },
     { id: 'gtavicecity', title: 'GTA Vice City', icon: <Gem size={24} />, color: '#ff66b2', comp: GTAViceCity },
     { id: 'ultrakill', title: 'ULTRAKILL', icon: <Crosshair size={24} />, color: '#ff3300', comp: Ultrakill },
