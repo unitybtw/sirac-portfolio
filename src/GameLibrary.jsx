@@ -261,11 +261,11 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                         }}
                     >
                         {/* Header */}
-                        <div style={{ padding: '1.5rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+                        <div style={{ padding: '2rem 3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', background: 'rgba(0,0,0,0.2)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
                                 <div>
-                                    <h2 className="text-gradient" style={{ fontSize: '2rem', margin: 0 }}>{t('arcade_inside_title')}</h2>
-                                    {nickname && <p style={{ color: 'var(--accent-cyan)', fontFamily: 'monospace', margin: 0 }}>[ ACTIVE USER: {nickname} ]</p>}
+                                    <h2 className="text-gradient" style={{ fontSize: '1.8rem', margin: 0, letterSpacing: '-0.02em', fontWeight: 800 }}>{t('arcade_inside_title')}</h2>
+                                    {nickname && <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0.2rem 0 0 0' }}>Connected as <span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold' }}>{nickname}</span></p>}
                                 </div>
                                 {nickname && !activeGameId && (
                                     <div style={{ display: 'flex', gap: '1rem' }}>
@@ -282,9 +282,11 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                             </div>
                             <button
                                 onClick={() => { setIsOpen(false); setActiveGameId(null); setShowScoreboard(false); }}
-                                style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.2)', padding: '0.5rem', borderRadius: '50%', color: 'white', cursor: 'pointer' }}
+                                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '0.6rem', borderRadius: '50%', color: 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.3s' }}
+                                onMouseOver={(e) => { e.currentTarget.style.color = 'white'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
+                                onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
                             >
-                                <X size={28} />
+                                <X size={24} />
                             </button>
                         </div>
 
@@ -294,31 +296,38 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                     /* Nickname Entry View */
                                     <motion.div
                                         key="nickname"
-                                        initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
-                                        style={{ maxWidth: '400px', margin: '10vh auto', textAlign: 'center' }}
+                                        initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -20 }}
+                                        style={{ maxWidth: '450px', margin: '8vh auto', textAlign: 'center' }}
                                     >
-                                        <div className="glass-panel" style={{ padding: '3rem', borderRadius: '24px', border: '1px solid var(--accent-cyan)' }}>
-                                            <User size={60} color="var(--accent-cyan)" style={{ marginBottom: '1.5rem' }} />
-                                            <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>{t('arcade_set_nickname')}</h3>
+                                        <div className="glass-panel" style={{ padding: '3.5rem 2.5rem', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(20,20,25,0.6)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
+                                            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-violet))', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem auto', boxShadow: '0 10px 20px rgba(0, 240, 255, 0.2)' }}>
+                                                <User size={40} color="#fff" />
+                                            </div>
+                                            <h3 style={{ fontSize: '1.6rem', marginBottom: '0.5rem', letterSpacing: '-0.02em', fontWeight: 700 }}>{t('arcade_set_nickname')}</h3>
+                                            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>Choose your identity to save your scores globally.</p>
                                             <input
                                                 type="text"
                                                 placeholder="Enter username..."
                                                 value={tempName}
                                                 onChange={(e) => setTempName(e.target.value)}
                                                 style={{
-                                                    width: '100%', padding: '1rem', background: 'rgba(0,0,0,0.3)',
-                                                    border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px',
-                                                    color: '#fff', marginBottom: '1.5rem', textAlign: 'center', fontSize: '1.1rem'
+                                                    width: '100%', padding: '1.2rem', background: 'rgba(0,0,0,0.4)',
+                                                    border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px',
+                                                    color: '#fff', marginBottom: '1.5rem', textAlign: 'center', fontSize: '1.1rem',
+                                                    outline: 'none', transition: 'border-color 0.3s'
                                                 }}
+                                                onFocus={(e) => e.target.style.borderColor = 'var(--accent-cyan)'}
+                                                onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+                                                maxLength={16}
                                                 autoFocus
                                             />
                                             <button
                                                 onClick={saveNickname}
                                                 className="btn btn-primary"
-                                                style={{ width: '100%', padding: '1rem' }}
+                                                style={{ width: '100%', padding: '1.2rem', fontSize: '1.05rem' }}
                                                 disabled={tempName.trim().length < 3}
                                             >
-                                                <Save size={18} style={{ marginRight: '8px' }} /> {t('arcade_save_continue')}
+                                                <Save size={20} style={{ marginRight: '8px' }} /> {t('arcade_save_continue')}
                                             </button>
                                         </div>
                                     </motion.div>
@@ -326,56 +335,56 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                     /* Scoreboard View */
                                     <motion.div
                                         key="scoreboard"
-                                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
-                                        style={{ maxWidth: '800px', margin: '0 auto' }}
+                                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
+                                        style={{ maxWidth: '900px', margin: '0 auto' }}
                                     >
-                                        <div className="glass-panel" style={{ padding: '2rem', borderRadius: '16px' }}>
-                                            <h3 style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '2rem' }}>
-                                                <Trophy color="gold" /> GLOBAL HALL OF FAME
+                                        <div className="glass-panel" style={{ padding: '3rem', borderRadius: '24px', background: 'rgba(20,20,30,0.4)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                            <h3 style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '2.5rem', fontSize: '1.8rem', letterSpacing: '-0.02em' }}>
+                                                <Trophy color="gold" size={28} /> Global Hall of Fame
                                             </h3>
 
-                                            <div style={{ display: 'grid', gap: '2rem' }}>
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '4rem' }}>
                                                 {/* Global Scores from Cloud */}
-                                                <div style={{ display: 'grid', gap: '0.8rem' }}>
-                                                    <h4 style={{ color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '0.5rem' }}>Top 10 Global Records</h4>
+                                                <div style={{ display: 'grid', gap: '0.8rem', alignContent: 'start' }}>
+                                                    <h4 style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>Top 10 Global Records</h4>
                                                     {globalScores.length === 0 ? (
                                                         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontStyle: 'italic' }}>Syncing with cloud database...</p>
                                                     ) : (
                                                         globalScores.slice(0, 10).map((s, idx) => (
                                                             <div key={`global-${idx}`} style={{
-                                                                display: 'flex', justifyContent: 'space-between', padding: '0.8rem 1.2rem',
-                                                                background: s.name === nickname ? 'rgba(0, 240, 255, 0.15)' : 'rgba(255,255,255,0.03)',
-                                                                border: s.name === nickname ? '1px solid var(--accent-cyan)' : '1px solid rgba(255,255,255,0.05)',
-                                                                borderRadius: '8px',
-                                                                animation: 'fadeIn 0.5s ease-out'
+                                                                display: 'flex', justifyContent: 'space-between', padding: '0.8rem 1rem',
+                                                                background: s.name === nickname ? 'rgba(0, 240, 255, 0.08)' : 'transparent',
+                                                                borderBottom: '1px solid rgba(255,255,255,0.05)',
+                                                                animation: 'fadeIn 0.5s ease-out',
+                                                                alignItems: 'center'
                                                             }}>
                                                                 <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                                                                    <span style={{ color: 'var(--text-muted)', width: '20px' }}>{idx + 1}.</span>
-                                                                    <span style={{ color: 'white', fontWeight: 'bold' }}>{s.name}</span>
-                                                                    <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>{gamesList.find(g => g.id === s.gameId)?.title || s.gameId}</span>
+                                                                    <span style={{ color: 'var(--text-muted)', width: '20px', fontWeight: 600 }}>{idx + 1}.</span>
+                                                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                                        <span style={{ color: 'white', fontWeight: s.name === nickname ? 700 : 500 }}>{s.name}</span>
+                                                                        <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>{gamesList.find(g => g.id === s.gameId)?.title || s.gameId}</span>
+                                                                    </div>
                                                                 </div>
-                                                                <div style={{ color: 'var(--accent-cyan)', fontWeight: 'bold', fontFamily: 'monospace' }}>{s.score.toLocaleString()}</div>
+                                                                <div style={{ color: 'var(--text-main)', fontWeight: 600, fontSize: '1.1rem' }}>{s.score.toLocaleString()}</div>
                                                             </div>
                                                         ))
                                                     )}
                                                 </div>
 
-                                                <div style={{ height: '1px', background: 'rgba(255,255,255,0.1)', width: '100%' }} />
-
                                                 {/* Local High Scores */}
-                                                <div style={{ display: 'grid', gap: '0.8rem' }}>
-                                                    <h4 style={{ color: 'var(--text-muted)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '0.5rem' }}>Your Best Performances</h4>
+                                                <div style={{ display: 'grid', gap: '0.8rem', alignContent: 'start' }}>
+                                                    <h4 style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>Your Best Performances</h4>
                                                     {Object.entries(localScores).length === 0 ? (
                                                         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No local records yet.</p>
                                                     ) : (
                                                         Object.entries(localScores)
                                                             .sort((a, b) => b[1] - a[1])
                                                             .map(([gameId, score]) => (
-                                                                <div key={`local-${gameId}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.8rem 1.2rem', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
+                                                                <div key={`local-${gameId}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.8rem 1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', alignItems: 'center' }}>
                                                                     <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                                                                        <span style={{ color: 'var(--accent-cyan)' }}>{gamesList.find(g => g.id === gameId)?.title}</span>
+                                                                        <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{gamesList.find(g => g.id === gameId)?.title}</span>
                                                                     </div>
-                                                                    <div style={{ fontWeight: 'bold', fontFamily: 'monospace' }}>{score.toLocaleString()}</div>
+                                                                    <div style={{ fontWeight: 600, color: 'var(--accent-cyan)' }}>{score.toLocaleString()}</div>
                                                                 </div>
                                                             ))
                                                     )}
@@ -387,32 +396,54 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                     /* Games Grid View */
                                     <motion.div
                                         key="grid"
-                                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
-                                        style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '2rem', maxWidth: '1200px', margin: '0 auto' }}
+                                        initial="hidden"
+                                        animate="visible"
+                                        exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
+                                        variants={{
+                                            hidden: { opacity: 0 },
+                                            visible: {
+                                                opacity: 1,
+                                                transition: { staggerChildren: 0.05 }
+                                            }
+                                        }}
+                                        style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '1.5rem', width: '100%', maxWidth: '1200px', margin: '0 auto', paddingBottom: '3rem' }}
                                     >
-                                        {gamesList.map((game, i) => (
+                                        {gamesList.map((game) => (
                                             <motion.div
                                                 key={game.id}
-                                                initial={{ opacity: 0, scale: 0.8 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                transition={{ delay: i * 0.05 }}
-                                                whileHover={{ y: -10, boxShadow: `0 15px 30px ${game.color}33`, borderColor: game.color }}
+                                                variants={{
+                                                    hidden: { opacity: 0, y: 30, scale: 0.9 },
+                                                    visible: { opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 120, damping: 20 } }
+                                                }}
+                                                whileHover={{ y: -6, scale: 1.02, boxShadow: `0 15px 35px -10px ${game.color}66`, borderColor: `rgba(255,255,255,0.2)` }}
                                                 onClick={() => setActiveGameId(game.id)}
                                                 style={{
-                                                    background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)',
-                                                    borderRadius: '16px', padding: '2rem', cursor: 'pointer',
+                                                    background: 'rgba(20, 20, 30, 0.4)', 
+                                                    backdropFilter: 'blur(20px)',
+                                                    border: '1px solid rgba(255,255,255,0.06)',
+                                                    borderRadius: '20px', padding: '1.5rem 1rem', cursor: 'pointer',
                                                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem',
-                                                    transition: 'border-color 0.3s'
+                                                    justifyContent: 'space-between',
+                                                    position: 'relative', overflow: 'hidden',
+                                                    transition: 'border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
                                                 }}
                                             >
-                                                <div style={{ color: game.color, filter: `drop-shadow(0 0 10px ${game.color})` }}>
+                                                {/* Ambient game color background glow */}
+                                                <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', height: '50px', background: `radial-gradient(ellipse at top, ${game.color}33 0%, transparent 70%)`, pointerEvents: 'none' }} />
+                                                
+                                                <div style={{ color: game.color, filter: `drop-shadow(0 0 16px ${game.color}88)`, background: 'rgba(0,0,0,0.2)', padding: '15px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.05)' }}>
                                                     {game.icon}
                                                 </div>
-                                                <h3 style={{ color: 'white', fontSize: '1.1rem', margin: 0, textAlign: 'center' }}>{game.title}</h3>
-                                                {localScores[game.id] && (
-                                                    <span style={{ fontSize: '0.7rem', color: 'var(--accent-cyan)', fontFamily: 'monospace' }}>BEST: {localScores[game.id]}</span>
-                                                )}
-                                                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontFamily: 'monospace', background: 'rgba(255,255,255,0.1)', padding: '0.2rem 0.5rem', borderRadius: '4px' }}>{t('arcade_play')}</span>
+                                                <div style={{ textAlign: 'center', width: '100%' }}>
+                                                    <h3 style={{ color: 'white', fontSize: '1rem', fontWeight: 600, margin: '0 0 0.5rem 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{game.title}</h3>
+                                                    {localScores[game.id] ? (
+                                                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '4px 8px', borderRadius: '6px', display: 'inline-block' }}>
+                                                            BEST <span style={{ color: game.color, fontWeight: 700 }}>{localScores[game.id]}</span>
+                                                        </div>
+                                                    ) : (
+                                                        <div style={{ fontSize: '0.75rem', color: 'transparent', padding: '4px 8px' }}>-</div>
+                                                    )}
+                                                </div>
                                             </motion.div>
                                         ))}
                                     </motion.div>
