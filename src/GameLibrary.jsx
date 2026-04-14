@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { X, Gamepad2, Rocket, Zap, Navigation, Shield, Ghost, Crosshair, Target, Activity, Box, Trophy, User, Save, List, Gem } from 'lucide-react';
+import { X, Gamepad2, Rocket, Zap, Navigation, Shield, Ghost, Crosshair, Target, Activity, Box, Trophy, User, Save, List, Gem, Compass } from 'lucide-react';
 
 const AsteroidBlaster = lazy(() => import('./AsteroidBlaster'));
 const NeonRunner = lazy(() => import('./NeonRunner'));
@@ -66,11 +66,12 @@ const SubwaySurfers = lazy(() => import('./SubwaySurfers'));
 const HollowKnight = lazy(() => import('./HollowKnight'));
 const Ultrakill = lazy(() => import('./Ultrakill'));
 const GTAViceCity = lazy(() => import('./GTAViceCity'));
-
+const LaleSavascilari = lazy(() => import('./LaleSavascilari'));
 
 
 
 const gamesList = [
+    { id: 'lale_savascilari', title: 'İst.Efsaneleri: Lale Savaşçıları', icon: <Compass size={24} />, color: '#00ff00', comp: LaleSavascilari },
     { id: 'gtavicecity', title: 'GTA Vice City', icon: <Gem size={24} />, color: '#ff66b2', comp: GTAViceCity },
     { id: 'ultrakill', title: 'ULTRAKILL', icon: <Crosshair size={24} />, color: '#ff3300', comp: Ultrakill },
     { id: 'hollowknight', title: 'Hollow Knight', icon: <Ghost size={24} />, color: '#aab8c2', comp: HollowKnight },
