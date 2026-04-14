@@ -36,8 +36,8 @@ export default function CS16() {
                         initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                         style={{ textAlign: 'center', maxWidth: '450px' }}
                     >
-                        <h2 className="text-gradient" style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: '#ffd700', fontFamily: 'monospace', letterSpacing: '1px', textShadow: '0 0 10px #ffd700' }}>CS 1.6 Web</h2>
-                        <p style={{ color: '#fff', fontSize: '0.9rem', marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '4px' }}>Multiplayer / LAN Port</p>
+                        <h2 className="text-gradient" style={{ fontSize: '2.5rem', marginBottom: '0.5rem', color: '#ffd700', fontFamily: 'monospace', letterSpacing: '1px', textShadow: '0 0 10px #ffd700' }}>Kirka.io (CS:GO)</h2>
+                        <p style={{ color: '#fff', fontSize: '0.9rem', marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '4px' }}>Multiplayer Web Shooter</p>
                         
                         <div style={{ background: 'rgba(255, 215, 0, 0.05)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(255, 215, 0, 0.2)', marginBottom: '1.5rem', textAlign: 'left', fontSize: '0.9rem' }}>
                             <p style={{ color: '#ffd700', fontWeight: 'bold', marginBottom: '0.3rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -62,7 +62,7 @@ export default function CS16() {
                                 <Wifi size={16} /> NETWORK PLAY
                             </p>
                             <p style={{ color: '#ccc', margin: 0, lineHeight: '1.5' }}>
-                                This emulator supports full real-time multiplayer. You can join existing web servers or create your own custom lobbies to play with friends natively in the browser.
+                                A highly competitive, CS:GO inspired FPS game running natively in your browser. Join millions of players worldwide, create clans, or set up private matches.
                             </p>
                         </div>
 
@@ -79,9 +79,9 @@ export default function CS16() {
                 <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
                     <iframe
                         ref={iframeRef}
-                        src="https://play-cs.com"
+                        src="https://kirka.io/"
                         style={{ width: '100%', height: '100%', border: 'none' }}
-                        title="CS 1.6 Web"
+                        title="Kirka Web FPS"
                         allow="autoplay; fullscreen; microphone; camera; keyboard-lock; pointer-lock"
                         allowFullScreen
                         onLoad={() => {
