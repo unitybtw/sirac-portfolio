@@ -181,7 +181,7 @@ export default function PresencePanel() {
       </AnimatePresence>
 
       {/* Panel */}
-      <div style={{ position: 'fixed', bottom: '100px', right: '24px', zIndex: 9997, fontFamily: 'monospace' }}>
+      <div style={{ position: 'fixed', bottom: '100px', right: '24px', zIndex: 99999, fontFamily: 'monospace' }}>
         <AnimatePresence>
           {isExpanded && (
             <motion.div
