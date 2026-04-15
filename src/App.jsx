@@ -532,6 +532,7 @@ function App() {
   const parallax3 = useTransform(scrollY, [0, 1000], [0, -100]);
 
   return (
+    <>
     <AnimatePresence mode="wait">
       {showSecretGame && <KonamiGame onClose={() => setShowSecretGame(false)} />}
 
@@ -962,6 +963,7 @@ function App() {
       </div>
     </AnimatePresence>
     <PresencePanel />
+    </>
   );
 }
 
