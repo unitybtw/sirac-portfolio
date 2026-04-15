@@ -9,6 +9,7 @@ import './light-mode.css';
 import './i18n';
 const GameLibrary = lazy(() => import("./GameLibrary"));
 import CompanionDrone from './CompanionDrone';
+import PresencePanel from './PresencePanel';
 
 // --- Web Audio Synthesizer (Zero Dependencies) ---
 let audioCtx = null;
@@ -959,6 +960,7 @@ function App() {
           </div>
         </motion.div>
       </div>
+      <PresencePanel />
     </AnimatePresence>
   );
 }
