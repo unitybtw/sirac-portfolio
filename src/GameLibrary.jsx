@@ -163,15 +163,20 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
     };
 
     const [globalScores, setGlobalScores] = useState([]);
-    const DB_URL = 'https://api.npoint.io/3acbc3b9d1e79276cfab';
+    const FIREBASE_DB = 'https://sirac-portfolio-default-rtdb.europe-west1.firebasedatabase.app';
 
-    // Fetch Global Scores
+    // Fetch Global Scores from Firebase
     const fetchGlobalScores = async () => {
         try {
-            const res = await fetch(DB_URL);
+            const res = await fetch(`${FIREBASE_DB}/scores.json`);
             const data = await res.json();
-            if (data && data.scores) {
-                setGlobalScores(data.scores);
+            if (data) {
+                // Firebase stores objects, convert to sorted array
+                const scoresArray = Object.values(data);
+                scoresArray.sort((a, b) => b.score - a.score);
+                setGlobalScores(scoresArray.slice(0, 100)); // Keep top 100
+            } else {
+                setGlobalScores([]);
             }
         } catch (e) {
             console.error("Score fetch failed", e);
@@ -199,11 +204,9 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
         if (!id) return;
 
         // 1. Local Save
-        let isImproved = false;
         setLocalScores(prev => {
             const currentBest = prev[id] || 0;
             if (score > currentBest) {
-                isImproved = true;
                 const newScores = { ...prev, [id]: score };
                 localStorage.setItem('arcade_scores', JSON.stringify(newScores));
                 return newScores;
@@ -211,28 +214,25 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
             return prev;
         });
 
-        // 2. Global Sync (If it's a valid score)
+        // 2. Global Firebase Sync
         if (score > 0) {
             try {
-                const res = await fetch(DB_URL);
-                const data = await res.json();
-                let scores = data.scores || [];
+                // Key format: nick_gameId to update existing scores instead of duplicating
+                const scoreKey = `${nickname}_${id}`.replace(/[.#$[\]]/g, '_'); 
+                const scoreData = {
+                    name: nickname,
+                    gameId: id,
+                    score: score,
+                    date: new Date().toISOString()
+                };
 
-                // Remove existing entry for this user and game
-                scores = scores.filter(s => !(s.name === nickname && s.gameId === id));
-
-                // Add new score
-                scores.push({ name: nickname, gameId: id, score: score, date: new Date().toISOString() });
-
-                // Sort and Limit to top 100
-                scores.sort((a, b) => b.score - a.score);
-                scores = scores.slice(0, 100);
-
-                await fetch(DB_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ scores })
+                await fetch(`${FIREBASE_DB}/scores/${scoreKey}.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(scoreData)
                 });
-                setGlobalScores(scores);
+                
+                fetchGlobalScores(); // Refresh list
             } catch (e) {
                 console.error("Cloud sync failed", e);
             }
