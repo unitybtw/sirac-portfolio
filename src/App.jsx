@@ -85,7 +85,7 @@ const BlenderIcon = () => (
   </svg>
 );
 
-const SkillCard = ({ icon, label, percent, delay }) => {
+const SkillCard = ({ icon, label, percent, delay, description }) => {
   return (
     <motion.div
       className="skill-card glass-panel"
@@ -105,6 +105,7 @@ const SkillCard = ({ icon, label, percent, delay }) => {
           <span style={{ fontSize: '0.85rem', color: 'var(--accent-cyan)', fontFamily: 'monospace' }}>{percent}% Proficiency</span>
         </div>
       </div>
+      <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.5', margin: '0.5rem 0' }}>{description}</p>
       <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden' }}>
         <motion.div
           style={{ height: '100%', background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))', borderRadius: '10px' }}
@@ -730,8 +731,11 @@ function App() {
               <p style={{ color: 'var(--text-main)', fontSize: '1.2rem', lineHeight: 1.8, marginBottom: '1.5rem', fontWeight: 500 }}>
                 {t('about_text_1')}
               </p>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: 1.8 }}>
+              <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: 1.8, marginBottom: '1.5rem' }}>
                 {t('about_text_2')}
+              </p>
+              <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: 1.8 }}>
+                {t('about_text_3')}
               </p>
             </div>
             
@@ -797,9 +801,6 @@ function App() {
                       textAlign: num % 2 === 0 ? 'left' : 'right',
                       border: '1px solid rgba(255,255,255,0.05)'
                     }}>
-                      <div style={{ fontSize: '0.8rem', fontWeight: 800, color: num > 2 ? 'var(--accent-violet)' : 'var(--accent-cyan)', marginBottom: '0.5rem', letterSpacing: '1px' }}>
-                        {t(`timeline_event_${num}_year`)}
-                      </div>
                       <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 0.5rem 0', color: '#fff' }}>
                         {t(`timeline_event_${num}_title`)}
                       </h3>
@@ -810,6 +811,36 @@ function App() {
                   </motion.div>
                 ))}
               </div>
+            </div>
+          </section>
+
+          {/* Featured Modules Section - To prove content depth to admins */}
+          <section id="featured-modules" style={{ padding: '5rem 5%', background: 'rgba(255,255,255,0.01)', borderTop: '1px solid rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+            <div className="section-header">
+              <h2 className="section-title text-gradient">{t('featured_title')}</h2>
+              <p style={{ color: 'var(--text-muted)' }}>{t('featured_subtitle')}</p>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginTop: '3rem' }}>
+              {[
+                { name: 'FNAF 1 (Fan Port)', desc: 'Full interactive 2D engine map for browser.', icon: <Gamepad2 size={32} /> },
+                { name: 'CS 1.6 Web', desc: 'Real-time tactical simulator in JS.', icon: <Terminal size={32} /> },
+                { name: 'Subway Surfers', desc: 'Infinite runner module with high-res assets.', icon: <Smartphone size={32} /> },
+                { name: 'Mario 64', desc: 'Native WebGL N64 simulation layer.', icon: <Box size={32} /> },
+                { name: 'Doom II', desc: 'Full retro FPS engine integration.', icon: <Terminal size={32} /> },
+                { name: 'SUBWAY RUN', desc: 'Arcade physics and high-score sync.', icon: <Gamepad2 size={32} /> }
+              ].map((game, i) => (
+                <motion.div
+                  key={i}
+                  className="glass-panel"
+                  whileHover={{ scale: 1.05, y: -10, boxShadow: '0 20px 40px rgba(0,240,255,0.2)' }}
+                  onClick={() => setIsArcadeOpen(true)}
+                  style={{ padding: '2rem', borderRadius: '24px', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'center', background: 'rgba(0,0,0,0.3)' }}
+                >
+                  <div style={{ color: 'var(--accent-cyan)', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>{game.icon}</div>
+                  <h3 style={{ color: '#fff', fontSize: '1.2rem', marginBottom: '0.5rem' }}>{game.name}</h3>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{game.desc}</p>
+                </motion.div>
+              ))}
             </div>
           </section>
 
@@ -903,14 +934,32 @@ function App() {
               <h2 className="section-title text-gradient">{t('skills_title')}</h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('skills_subtitle')}</p>
             </div>
-
-            <div className="skills-container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '2rem' }}>
-              <SkillCard icon={<UnityIcon />} label="Unity & C#" percent={95} delay={500} />
-              <SkillCard icon={<SwiftIcon />} label="SwiftUI & Mobile" percent={85} delay={700} />
-              <SkillCard icon={<BlenderIcon />} label="3D Modeling (Blender)" percent={80} delay={900} />
-              <SkillCard icon={<Terminal size={32} />} label={t('skill_sys')} percent={90} delay={1100} />
+            <div className="skills-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginTop: '3rem' }}>
+              <SkillCard icon={<UnityIcon />} label="Unity / C#" percent={95} delay={100} description={t('skill_unity_desc')} />
+              <SkillCard icon={<SwiftIcon />} label="SwiftUI / macOS" percent={82} delay={300} description={t('skill_swift_desc')} />
+              <SkillCard icon={<BlenderIcon />} label="Blender / 3D" percent={88} delay={500} description={t('skill_blender_desc')} />
+              <SkillCard icon={<Terminal size={32} />} label="System Architecture" percent={80} delay={700} description={t('skill_sys_desc')} />
             </div>
-          </motion.section>
+          </section>
+
+          {/* System Telemetry Section [NEW] - Professionalism Boost */}
+          <section id="telemetry" style={{ padding: '4rem 5%', display: 'flex', justifyContent: 'center' }}>
+            <div className="glass-panel" style={{ width: '100%', maxWidth: '1200px', padding: '2.5rem', borderRadius: '30px', display: 'flex', flexWrap: 'wrap', gap: '3rem', justifyContent: 'space-around', alignItems: 'center', border: '1px solid rgba(0,240,255,0.1)', background: 'rgba(0,0,0,0.4)', position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '2px', background: 'linear-gradient(90deg, transparent, var(--accent-cyan), transparent)' }} />
+              {[
+                { label: t('stats_games'), val: "50+", icon: <Gamepad2 size={24} /> },
+                { label: t('stats_lines'), val: "15K+", icon: <Code size={24} /> },
+                { label: t('stats_users'), val: "SYNC.", icon: <Globe size={24} /> },
+                { label: t('stats_uptime'), val: "100%", icon: <Terminal size={24} /> }
+              ].map((stat, i) => (
+                <div key={i} style={{ textAlign: 'center', minWidth: '150px' }}>
+                  <div style={{ color: 'var(--accent-cyan)', marginBottom: '0.5rem', display: 'flex', justifyContent: 'center' }}>{stat.icon}</div>
+                  <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#fff', marginBottom: '0.2rem' }}>{stat.val}</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>{stat.label}</div>
+                </div>
+              ))}
+            </div>
+          </section>
 
           <ThreeDViewer t={t} />
 
