@@ -940,7 +940,7 @@ function App() {
               <SkillCard icon={<BlenderIcon />} label="Blender / 3D" percent={88} delay={500} description={t('skill_blender_desc')} />
               <SkillCard icon={<Terminal size={32} />} label="System Architecture" percent={80} delay={700} description={t('skill_sys_desc')} />
             </div>
-          </section>
+          </motion.section>
 
           {/* System Telemetry Section [NEW] - Professionalism Boost */}
           <section id="telemetry" style={{ padding: '4rem 5%', display: 'flex', justifyContent: 'center' }}>
