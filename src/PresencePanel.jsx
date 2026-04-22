@@ -76,15 +76,15 @@ export default function PresencePanel() {
 
   const fetchVisitors = async () => {
     try {
-      const res = await fetch(`${DB_URL}/visitors.json`);
+      const cutoff = Date.now() - 75000;
+      // Fetch only active visitors from the server directly to save bandwidth
+      const res = await fetch(`${DB_URL}/visitors.json?orderBy="lastSeen"&startAt=${cutoff}`);
       const data = await res.json();
-      if (!data) { setVisitors({}); return; }
-      const now = Date.now();
-      const active = {};
-      Object.entries(data).forEach(([id, v]) => {
-        if (now - v.lastSeen < 75000) active[id] = v;
-      });
-      setVisitors(active);
+      
+      if (!data || data.error) { setVisitors({}); return; }
+      
+      // Since server filtered it, we just set the data directly
+      setVisitors(data);
     } catch (_) {}
   };
 
@@ -141,7 +141,7 @@ export default function PresencePanel() {
       registerPresence();
       fetchVisitors();
       fetchReactions();
-    }, 8000);
+    }, 15000); // Reduced polling frequency to save battery and network
 
     window.addEventListener('beforeunload', removePresence);
     return () => {

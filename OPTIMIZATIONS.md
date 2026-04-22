@@ -1,118 +1,139 @@
-# Optimization Audit: VoxelWorld.jsx
+# Optimization Audit Report
 
-## 1) Optimization Summary
+### 1) Optimization Summary
 
-* **Current Optimization Health:** The `VoxelWorld` component is currently functioning but suffers from a few critical performance bottlenecks, particularly regarding how physics and rendering intertwine in the WebGL/React-Three-Fiber context. The current implementation heavily couples object creation and React state, which leads to immense performance drops on larger maps or during continuous building.
+* **Optimization Health:** The application has a rich, premium interactive UI (Framer Motion, Canvas, Three.JS), but it struggles with severe runtime performance bottlenecks due to aggressive client-side polling, unbounded DB queries, and excessive React re-renders tied to global event listeners. 
 * **Top 3 Highest-Impact Improvements:**
-  1.  **InstancedMesh for Voxels:** The most vital optimization is converting the rendering of individual `VoxelItem` meshes into a single `InstancedMesh`. Currently, every single cube triggers a separate draw call and creates its own physics body, destroying performance.
-  2.  **Physics Optimization (Heightfield/Trimesh instead of individual boxes):** Creating a static box collider for every cube overwhelms the Cannon.js physics engine. Merging geometry or using a single heightmap for terrain will vastly reduce CPU collision checks.
-  3.  **Texture Atlas:** We are generating 9 unique canvas textures. Combining these into a single Texture Atlas will reduce state changes in WebGL and improve rendering throughput.
-* **Biggest risk if no changes are made:** As the user places more blocks or if the map size is increased, the browser will likely crash due to exceeding memory limits or frame rates will drop into the single digits due to thousands of draw calls and physics bodies.
+  1. Stop unbounded data fetching in `PresencePanel` (currently downloads the entire visitors history every 8 seconds).
+  2. Implement native Firebase WebSockets (`onValue`) instead of REST API polling for multiplayer features.
+  3. Decouple Canvas & Mouse events from React state (partially fixed, but architectural refactoring is better).
+* **Biggest risk if no changes are made:** **Cost & Memory Exhaustion.** As more visitors are recorded in the Firebase DB, the `fetch(DB_URL/visitors.json)` payload will grow indefinitely. 100 idle users downloading a 5MB JSON every 8 seconds will rapidly exceed Firebase Free Tier bandwidth, rate limiting the app, and causing browser Out-of-Memory (OOM) crashes.
 
 ---
 
-## 2) Findings (Prioritized)
+### 2) Findings (Prioritized)
 
-### The Draw Call Explosion (Critical)
-* **Category:** Render I/O / Algorithmic
+#### A. Unbounded Firebase Polling (OOM & Cost Risk)
+* **Category:** Network / DB / Cost
 * **Severity:** Critical
-* **Impact:** Drastic increase in Framerate (FPS), lower CPU/GPU overhead.
-* **Evidence:** Lines 229-232: `<VoxelGroup>` maps over the `cubes` array, returning a distinct `<VoxelItem>` for each. Each `VoxelItem` renders an independent `<mesh>`. For a 25x25 grid, this is easily 1000+ meshes.
-* **Why it’s inefficient:** WebGL handles drawing multiple copies of the exact same geometry (cubes) very efficiently if told to do so via "Instancing" (drawing them all in one command). Calling `drawElements` 1000 times for 1000 identical boxes blocks the CPU and stalls the GPU pipeline.
-* **Recommended fix:** Replace the mapping logic with React Three Fiber's `<InstancedMesh>`. We update a `THREE.InstancedBufferAttribute` with the positions of the cubes.
-* **Tradeoffs / Risks:** Instancing makes adding/removing individual cubes slightly more complex (requires updating the buffer matrix at specific indices rather than just changing React state), but the performance gain is mandatory for voxel games.
-* **Expected impact estimate:** 10x-50x framerate improvement on large maps.
-* **Removal Safety:** Needs Refactoring.
-* **Reuse Scope:** Local file.
+* **Impact:** Bandwidth, Latency, API Cost, Client Memory
+* **Evidence:** `PresencePanel.jsx` Line 79: `const res = await fetch(DB_URL/visitors.json);`
+* **Why it’s inefficient:** This performs a full table scan over REST. It downloads *every visitor who has ever visited* exactly every 8 seconds, forcing the client to loop through all of them just to filter `now - v.lastSeen < 75000`. As the database grows, payload size grows linearly. 
+* **Recommended fix:** Migrate to the official Firebase JS SDK and use `.orderByChild("lastSeen").startAt(Date.now() - 75000)` to query specifically for active users. 
+* **Tradeoffs / Risks:** Requires adding `firebase` to `package.json` and changing auth/init logic vs lightweight REST approach.
+* **Expected impact estimate:** 99% reduction in network payload sizes over time.
+* **Removal Safety:** Safe (Logic update only)
+* **Reuse Scope:** Service-wide (Presence Panel)
 
-### Physics Overload (Critical)
-* **Category:** CPU / Concurrency
-* **Severity:** Critical
-* **Impact:** Reduced CPU usage, elimination of physics stutter, correct movement.
-* **Evidence:** Lines 235-242 in `VoxelItem`: `useBox(() => ({ type: 'Static', position: pos ...}))`. Every single rendered cube generates an independent static collider in the Cannon.js engine.
-* **Why it’s inefficient:** The physics engine has to compute bounding boxes and broadphase collision detection against hundreds or thousands of static bodies every frame. 
-* **Recommended fix:** 
-    * *Option A (Best Performance):* Implement an Octree or custom AABB (Axis-Aligned Bounding Box) collision system purely for the player instead of running a full physics engine like Cannon.js, since Minecraft physics are very simplistic (kinematic character controller against grid).
-    * *Option B (Cannon.js way):* Instead of individual boxes, chunk the terrain into a single merged `Trimesh` or `Heightfield`.
-* **Tradeoffs / Risks:** Option A requires ditching Cannon.js for custom math, but is how actual voxel games work. Option B requires expensive recalculations when a block is broken/placed.
-* **Expected impact estimate:** Halves CPU processing time per frame. Massive reduction in latency.
-* **Removal Safety:** Needs Refactoring.
-* **Reuse Scope:** Local file.
-
-### Texture Generation Overhead
-* **Category:** Memory / Startup Time
-* **Severity:** Medium
-* **Impact:** Faster initial loading, less VRAM usage, fewer WebGL state bindings.
-* **Evidence:** Lines 10-61: `generateTexture()` creates numerous distinct canvases and creates `new THREE.CanvasTexture` for each block face type. `mats` object holds multiple distinct materials.
-* **Why it’s inefficient:** While `CanvasTexture` is fine for quick prototypes, assigning multiple distinct materials to Instanced meshes requires grouping. A single Texture Atlas (one big image holding all block textures) passed to a single Material is standard.
-* **Recommended fix:** Create one large HTML5 Canvas. Draw all face textures onto different sections of it. Feed that single canvas into one `MeshStandardMaterial`. Use UV mapping on the geometries to point to the correct sector of the atlas.
-* **Tradeoffs / Risks:** UV mapping logic adds complexity to the geometry definition.
-* **Expected impact estimate:** 10-20% boost in render performance due to fewer WebGL material switches; lower memory footprint.
-* **Removal Safety:** Safe.
-* **Reuse Scope:** Local file.
-
-### React State for Game Loop Hooks
-* **Category:** Frontend / Architecture
+#### B. Reaction Sync via REST Polling
+* **Category:** Network / Architecture
 * **Severity:** High
-* **Impact:** Prevents stuttering and input lag, fixes "stale closure" bugs causing movement issues.
-* **Evidence:** Handling of `points`, `activeBlockType`, `cubes` inside `useEffect` and `useCallback` reacting to keystrokes.
-* **Why it’s inefficient:** React state updates (`setCubes`, `setPoints`) are asynchronous and batch-processed. Game loops (`useFrame`) run synchronously 60/144 times a second. Triggering React state updates rapidly causes unnecessary re-renders of the root component, interrupting the game loop.
-* **Recommended fix:** Use Global state (like Zustand) which allows reading state outside of the React render cycle without triggering a global re-render, or stick strictly to `useRef` (which is correctly being started for `playerPos` and `keyboard`). The `cubes` array should ideally be a mutable structure updated directly. 
-* **Tradeoffs / Risks:** Deviates from pure React patterns, but necessary for WebGL games.
-* **Expected impact estimate:** Fixes input unresponsiveness.
-* **Removal Safety:** Likely Safe.
-* **Reuse Scope:** Game-wide.
+* **Impact:** Latency, CPU
+* **Evidence:** `PresencePanel.jsx` Line 91: `fetch(DB_URL/reactions.json)` running every 8 seconds.
+* **Why it’s inefficient:** Emojis are meant to be real-time (floating across screens). Catching them via an 8-second polling interval means users will miss most reactions or see them delayed up to 8 seconds. Like visitors, it fetches the *entire* reactions table to filter fresh ones.
+* **Recommended fix:** Use Firebase WebSockets (`onChildAdded(ref('reactions'))`) so the client is *pushed* the reaction immediately without polling.
+* **Tradeoffs / Risks:** Same as above, requires Firebase SDK.
+* **Expected impact estimate:** Zero-delay real-time reactions and 100x fewer HTTP requests.
+* **Removal Safety:** Safe
+* **Reuse Scope:** Service-wide
+
+#### C. React State Triggers on Window MouseMove
+* **Category:** Frontend / CPU
+* **Severity:** High (Patched locally, but architecture is risky)
+* **Impact:** CPU, Frame Drops, Battery Drain
+* **Evidence:** `CompanionDrone.jsx` previously called `setMousePos` on every `mousemove`. 
+* **Why it’s inefficient:** Linking `mousemove` directly to a core React `useState` causes the Virtual DOM to recalculate and diff the entire `CompanionDrone` component tree (including heavy SVG/framer-motion wrappers) up to 120 times per second (120Hz displays).
+* **Recommended fix:** Use Framer Motion's `useMotionValue` for `mousePos` or throttle the update. *(Note: I have already applied a 50ms throttle to the live code via previous interaction).*
+* **Tradeoffs / Risks:** Throttling creates a slightly less responsive eye-tracking feel for the drone.
+* **Expected impact estimate:** Fixes the bulk of the "site lagging" complaints.
+* **Removal Safety:** Safe
+* **Reuse Scope:** Local file
+
+#### D. Object & String Allocation in Canvas Loop
+* **Category:** Memory / CPU
+* **Severity:** Medium
+* **Impact:** Garbage Collection Stutters
+* **Evidence:** `App.jsx` (Lines 156-158): `const color = theme === 'dark' ? (isCyan ? 'rgba(...)' : 'rgba(...)') : ...` is executed *inside* the `for (let i = 0; i < drops.length; i++)` loop, which is called every 80ms.
+* **Why it’s inefficient:** This creates thousands of new string bindings per second, triggering constant Garbage Collection. 
+* **Recommended fix:** Pre-define the 4 color strings outside the `draw` function and reference them.
+* **Tradeoffs / Risks:** None.
+* **Expected impact estimate:** Fewer micro-stutters.
+* **Removal Safety:** Very Safe
+* **Reuse Scope:** Local file
 
 ---
 
-## 3) Quick Wins (Do First)
+### 3) Quick Wins (Do First)
 
-1. **Memoize the `generateMap` call better:** `useState(generateMap)` calls the generator *once* during initialization, but keeping large arrays in React state (`cubes`) is slowing down every render. Move `cubes` to a `useRef` and only pass the ref to the rendering component.
-2. **Remove Hover Meshes:** Lines 259-265 create a secondary transparent mesh *just* for the hover effect. This effectively doubles the polygon count of the world. Instead of creating a new mesh inside the `VoxelItem`, pass the `hoveredId` to a single, separate `<Box>` that snaps to the position of the currently hovered block.
-
----
-
-## 4) Deeper Optimizations (Do Next)
-
-* **Implement Chunking & InstancedMesh:** Rewrite the `VoxelGroup` to use `THREE.InstancedMesh`. Group the world into 16x16x16 sections so you only update the instance buffer for a chunk when a block inside it changes, rather than rewriting the entire array.
-* **Custom Character Controller:** Ditch `@react-three/cannon` entirely. Voxel collisions are grid-based AABB checks. Implementing a custom `useFrame` check like `if (world[Math.floor(player.x)][Math.floor(player.y - 1)][Math.floor(player.z)] === BLOCK)` is 1000x faster than full rigid body physics.
+1. **Fix Canvas Allocations:** Extract the `rgba(...)` color assignments outside the rendering loop in `App.jsx`.
+2. **REST Query Rules:** If you refuse to use the Firebase SDK, at least append query parameters to your REST call: `fetch(DB_URL + '/visitors.json?orderBy="lastSeen"&startAt=' + (Date.now() - 75000))`. (Requires setting `.indexOn: ["lastSeen"]` in Firebase Database Rules).
+3. **Throttle `fetch` Intervals:** Change the 8-second `setInterval` in `PresencePanel.jsx` to 15 seconds to halve API load instantly.
 
 ---
 
-## 5) Validation Plan
+### 4) Deeper Optimizations (Do Next)
 
-* **Profiling Strategy:** Use the Chrome DevTools Performance tab. Record 10 seconds of jumping and placing blocks.
-    * Current state will show excessive time spent in `Cannon.js` step functions and `WebGLRenderer.render` (due to draw calls).
-* **Metrics:**
-    * Measure `gl.info.render.calls` count (should ideally be < 10 for the whole terrain).
-    * Measure baseline FPS on a standard laptop (aim: 60fps stable).
+* **Refactor Presence to Firebase SDK:** Replace the raw REST interactions (`fetch()`) with the official `firebase/database` web SDK. This provides WebSocket real-time connections, solving both the payload issue and the reaction delay issue natively.
+* **React Three Fiber (Canvas) Culling:** The 3D viewer in `App.jsx` continues to render even when scrolled completely out of view. Implement a component like `IntersectionObserver` or `@react-three/drei`'s `<BakeShadows>` / `performance` tools to pause the render loop when invisible.
 
 ---
 
-## 6) Optimized Code / Patch (Sneak Peek at Instancing)
+### 5) Validation Plan
 
-*Instead of mapping `VoxelItem`, use `InstancedMesh`. Here is the conceptual approach for the VoxelGroup replacement:*
+* **Benchmarks & Profiling:**
+  1. Open Chrome DevTools -> Performance Tab. 
+  2. Record a 10-second trace while moving the mouse rapidly.
+  3. **Metric to Compare:** Before optimizations, "Scripting" time will be extremely high. After, "Scripting" should be <10% of total time.
+* **Network Throttling Check:**
+  1. Open Network Tab -> Filter by `XHR/Fetch`.
+  2. Verify payload size of `visitors.json` over 5 minutes. If it stays under 2KB, optimization is successful.
+* **Memory Leaks:** Open Chrome Task Manager (`Shift+Esc`) and leave the site open for 1 hour. Watch the JS Memory. If it stabilizes, caching/polling fixes hold.
 
-```jsx
-const VoxelInstancedGroup = ({ cubes }) => {
-    const meshRef = useRef();
-    
-    useEffect(() => {
-        const dummy = new THREE.Object3D();
-        cubes.forEach((cube, i) => {
-            dummy.position.set(...cube.pos);
-            dummy.updateMatrix();
-            meshRef.current.setMatrixAt(i, dummy.matrix);
-        });
-        meshRef.current.instanceMatrix.needsUpdate = true;
-    }, [cubes]);
+---
 
-    return (
-        <instancedMesh ref={meshRef} args={[null, null, cubes.length]}>
-            <boxGeometry args={[1, 1, 1]} />
-            <meshStandardMaterial color="white" />
-        </instancedMesh>
-    );
-};
+### 6) Optimized Code / Patch
+
+**Fixing the Unbounded Firebase REST Call (PresencePanel.jsx)**
+*Requires updating your Firebase Realtime DB Rules to allow indexing on `lastSeen`.*
+
+```javascript
+  // OLD (PresencePanel.jsx Line 79):
+  // const res = await fetch(`${DB_URL}/visitors.json`);
+
+  // NEW (Optimized):
+  const fetchVisitors = async () => {
+    try {
+      const cutoff = Date.now() - 75000;
+      // Using Firebase REST query parameters
+      const url = `${DB_URL}/visitors.json?orderBy="lastSeen"&startAt=${cutoff}`;
+      const res = await fetch(url);
+      const data = await res.json();
+      
+      if (!data) { setVisitors({}); return; }
+      
+      setVisitors(data); // No local filtering needed anymore!
+    } catch (_) {}
+  };
 ```
-*Note: This basic snippet lacks per-instance textures or physics, which require Texture Atlases and array-based collision maps to implement fully.*
+
+**Fixing the Canvas Object Churn (App.jsx Matrix Background)**
+
+```javascript
+  // Move this OUTSIDE the draw loop (App.jsx)
+  const colorsDark = ['rgba(0, 240, 255, 0.15)', 'rgba(138, 43, 226, 0.15)'];
+  const colorsLight = ['rgba(0, 150, 255, 0.1)', 'rgba(100, 43, 200, 0.1)'];
+
+  const draw = () => {
+      // ... loop
+      for (let i = 0; i < drops.length; i++) {
+        const text = characters[Math.floor(Math.random() * characters.length)];
+        
+        // No new string allocations!
+        const palette = theme === 'dark' ? colorsDark : colorsLight;
+        ctx.fillStyle = palette[Math.random() > 0.5 ? 0 : 1];
+        
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        // ...
+      }
+  };
+```

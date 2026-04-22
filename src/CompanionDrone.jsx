@@ -175,13 +175,20 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
 
     // Global Events (Mouse & Scroll)
     useEffect(() => {
+        let lastStateUpdate = 0;
         const handleMouseMove = (e) => {
-            setMousePos({ x: e.clientX, y: e.clientY });
-            lastMouseMoveRef.current = Date.now();
+            const now = Date.now();
+            lastMouseMoveRef.current = now;
+            
+            // Throttle state update to ~20FPS instead of every pixel (saves huge CPU)
+            if (now - lastStateUpdate > 50) {
+                setMousePos({ x: e.clientX, y: e.clientY });
+                lastStateUpdate = now;
+            }
 
             const target = e.target;
-            const tagName = target.tagName ? target.tagName.toLowerCase() : "";
-            const text = target.innerText || "";
+            const tagName = target && target.tagName ? target.tagName.toLowerCase() : "";
+            const text = target && target.innerText ? target.innerText : "";
 
             // Smart contextual hovering only when not in special modes
             if (!activeMiniGame && !isListening && droneMode === 'default') {
