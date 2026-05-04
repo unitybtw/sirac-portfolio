@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import React, { useState, useRef, useEffect } from 'react';
 import { Maximize, Target, Wifi } from 'lucide-react';
 

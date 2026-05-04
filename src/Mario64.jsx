@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import React, { useState, useRef, useEffect } from 'react';
 import { Maximize, Info, Gamepad2 } from 'lucide-react';
 

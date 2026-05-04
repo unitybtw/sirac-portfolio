@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import React, { useState, useRef, useEffect } from 'react';
 import { Maximize, Map, Car } from 'lucide-react';
 import { useTranslation } from 'react-i18next';

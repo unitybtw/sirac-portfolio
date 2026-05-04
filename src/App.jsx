@@ -1161,10 +1161,12 @@ function App() {
               &copy; {new Date().getFullYear()} {t('footer_copyright')}
             </div>
           </footer>
-          {/* Interactive Companion Drone */}
+          {/* Interactive Companion Drone Disabled */}
+          {/* 
           <div className="desktop-only">
             <CompanionDrone activeGameId={activeArcadeGame} isArcadeOpen={isArcadeOpen} />
           </div>
+          */}
         </motion.div>
       </div>
     </AnimatePresence>
