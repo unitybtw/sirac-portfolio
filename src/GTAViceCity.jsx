@@ -254,7 +254,7 @@ async function mergeAndCache(fileParts, finalName) {
 
     const buffers = [];
     for (let i = 0; i < fileParts.length; i++) {
-        const buffer = await fetchWithCache(`${finalName}.part${i+1}`, fileParts[i]);
+        const buffer = await fetchWithCache(\`\${finalName}.part\${i+1}\`, fileParts[i]);
         buffers.push(buffer);
     }
     let totalLength = buffers.reduce((acc, b) => acc + b.byteLength, 0);
@@ -309,26 +309,31 @@ async function loadGameData() {
         const originalSend = XMLHttpRequest.prototype.send;
         
         XMLHttpRequest.prototype.open = function(method, url, ...rest) {
-            this._url = url;
-            return originalOpen.call(this, method, url, ...rest);
+            // Fix: Restore the redirection for dos.zone URLs
+            let u = url.toString();
+            if (u.toLowerCase().includes("https://cdn.dos.zone/vcsky/fetched/".toLowerCase())) {
+                u = u.replace("https://cdn.dos.zone/vcsky/fetched/", "");
+            }
+            this._url = u;
+            return originalOpen.call(this, method, u, ...rest);
         };
         
         XMLHttpRequest.prototype.send = async function(body) {
             const fileName = this._url.split('/').pop().split('?')[0];
-            const cached = await getFile(fileName);
             
+            // Try to serve from IndexedDB cache
+            const cached = await getFile(fileName);
             if (cached) {
-                // We hijack the response by using a blob URL only for this specific request
                 const blob = new Blob([cached]);
                 const blobUrl = URL.createObjectURL(blob);
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 30000); // 30s buffer
                 
-                // Revoke the blob URL after a short delay to free memory
-                setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
-                
-                // Re-open with the local URL
+                // Re-open with the local blob URL
                 originalOpen.call(this, 'GET', blobUrl, true);
                 return originalSend.call(this);
             }
+            
+            // Fallback to original send if not in cache
             return originalSend.call(this, body);
         };
 
