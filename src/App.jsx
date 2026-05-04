@@ -11,6 +11,33 @@ const GameLibrary = lazy(() => import("./GameLibrary"));
 import CompanionDrone from './CompanionDrone';
 import PresencePanel from './PresencePanel';
 
+const PageProgress = () => {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
+  return (
+    <motion.div
+      className="page-progress-bar"
+      style={{
+        scaleX,
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '4px',
+        background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))',
+        transformOrigin: '0%',
+        zIndex: 10001,
+        boxShadow: '0 0 10px var(--accent-cyan)'
+      }}
+    />
+  );
+};
+
 // --- Web Audio Synthesizer (Zero Dependencies) ---
 let audioCtx = null;
 const initAudio = () => {
@@ -106,14 +133,20 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
         </div>
       </div>
       <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.5', margin: '0.5rem 0' }}>{description}</p>
-      <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden' }}>
+      <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden', position: 'relative' }}>
         <motion.div
-          style={{ height: '100%', background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))', borderRadius: '10px' }}
+          style={{ height: '100%', background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))', borderRadius: '10px', position: 'relative' }}
           initial={{ width: 0 }}
           whileInView={{ width: `${percent}%` }}
           viewport={{ once: true }}
           transition={{ duration: 1.5, delay: 0.2 + (delay / 3000), ease: "easeOut" }}
-        />
+        >
+          <motion.div 
+            style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '20px', background: '#fff', filter: 'blur(10px)', opacity: 0.5 }}
+            animate={{ x: ['-100%', '1000%'] }}
+            transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+          />
+        </motion.div>
       </div>
     </motion.div>
   );
@@ -143,7 +176,18 @@ const MatrixBackground = ({ theme, isPaused }) => {
     const colorsDark = ['rgba(0, 240, 255, 0.15)', 'rgba(138, 43, 226, 0.15)'];
     const colorsLight = ['rgba(0, 150, 255, 0.1)', 'rgba(100, 43, 200, 0.1)'];
 
-    const draw = () => {
+    let lastDrawTime = 0;
+    const fps = 12;
+    const interval = 1000 / fps;
+    let animationFrameId;
+
+    const draw = (timestamp) => {
+      if (timestamp - lastDrawTime < interval) {
+        animationFrameId = requestAnimationFrame(draw);
+        return;
+      }
+      lastDrawTime = timestamp;
+
       ctx.fillStyle = theme === 'dark' ? 'rgba(5, 5, 8, 0.1)' : 'rgba(255, 255, 255, 0.1)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -163,9 +207,10 @@ const MatrixBackground = ({ theme, isPaused }) => {
         }
         drops[i]++;
       }
+      animationFrameId = requestAnimationFrame(draw);
     };
 
-    const interval = setInterval(draw, 80); // Throttled for maximum CPU efficiency (~12fps)
+    animationFrameId = requestAnimationFrame(draw);
 
     const handleResize = () => {
       canvas.width = window.innerWidth;
@@ -175,7 +220,7 @@ const MatrixBackground = ({ theme, isPaused }) => {
     window.addEventListener('resize', handleResize);
 
     return () => {
-      clearInterval(interval);
+      cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
     };
   }, [theme, isPaused]);
@@ -239,10 +284,10 @@ const ThreeDViewer = ({ t }) => {
         </button>
 
         <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'var(--accent-cyan)', fontFamily: 'monospace' }}>INITIALIZING 3D ENGINE...</div>}>
-          <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 4], fov: 45 }}>
+          <Canvas dpr={[1, 1.5]} performance={{ min: 0.5 }} camera={{ position: [0, 0, 4], fov: 45 }}>
             <color attach="background" args={['#050508']} />
             <ambientLight intensity={0.5} />
-            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
+            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} castShadow />
             <pointLight position={[-10, -10, -10]} />
             
             <PresentationControls speed={1.5} global zoom={0.7} polar={[-0.1, Math.PI / 4]}>
@@ -445,10 +490,104 @@ const KonamiGame = ({ onClose }) => {
   );
 };
 
+// --- 3D Tilt Card Effect ---
+const TiltCard = ({ children, className }) => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x);
+  const mouseYSpring = useSpring(y);
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
+
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const xPct = mouseX / width - 0.5;
+    const yPct = mouseY / height - 0.5;
+    x.set(xPct);
+    y.set(yPct);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        rotateY,
+        rotateX,
+        transformStyle: "preserve-3d",
+        perspective: "1000px"
+      }}
+      className={className}
+    >
+      <div style={{ transform: "translateZ(30px)", transformStyle: "preserve-3d", height: '100%' }}>
+        {children}
+      </div>
+    </motion.div>
+  );
+};
+
+// --- Magnetic Effect for Interactive Elements ---
+const Magnetic = ({ children }) => {
+  const ref = React.useRef(null);
+  const [position, setPosition] = React.useState({ x: 0, y: 0 });
+
+  const handleMouse = (e) => {
+    const { clientX, clientY } = e;
+    const { height, width, left, top } = ref.current.getBoundingClientRect();
+    const middleX = clientX - (left + width / 2);
+    const middleY = clientY - (top + height / 2);
+    setPosition({ x: middleX * 0.25, y: middleY * 0.25 });
+  };
+
+  const reset = () => {
+    setPosition({ x: 0, y: 0 });
+  };
+
+  const { x, y } = position;
+  return (
+    <motion.div
+      style={{ position: "relative" }}
+      ref={ref}
+      onMouseMove={handleMouse}
+      onMouseLeave={reset}
+      animate={{ x, y }}
+      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
 function App() {
   const { t, i18n } = useTranslation();
   const [theme, setTheme] = useState('dark');
   const [showSecretGame, setShowSecretGame] = useState(false);
+
+  // Mouse Tracking for Parallax
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springX = useSpring(mouseX, { stiffness: 50, damping: 20 });
+  const springY = useSpring(mouseY, { stiffness: 50, damping: 20 });
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, [mouseX, mouseY]);
 
   // Force scroll to top on refresh
   useEffect(() => {
@@ -530,12 +669,18 @@ function App() {
   const parallax2 = useTransform(scrollY, [0, 1000], [0, 200]);
   const parallax3 = useTransform(scrollY, [0, 1000], [0, -100]);
 
+  // Mouse-driven transforms
+  const terminalX = useTransform(springX, [0, 1920], [-15, 15]);
+  const terminalY = useTransform(springY, [0, 1080], [-15, 15]);
+  const bgIconX = useTransform(springX, [0, 1920], [20, -20]);
+  const bgIconY = useTransform(springY, [0, 1080], [20, -20]);
+
   return (
     <>
     <AnimatePresence mode="wait">
       {showSecretGame && <KonamiGame onClose={() => setShowSecretGame(false)} />}
 
-
+      <PageProgress />
       <div className={`app-container ${theme}-mode`}>
         <motion.div
           key="main-app"
@@ -547,13 +692,13 @@ function App() {
           <MatrixBackground theme={theme} isPaused={isArcadeOpen} />
           <div className="cyber-bg">
             {/* Parallax Floating Icons */}
-              <motion.div style={{ position: 'absolute', top: '15%', left: '10%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax1, willChange: 'transform' }}>
+              <motion.div style={{ position: 'absolute', top: '15%', left: '10%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax1, x: bgIconX, willChange: 'transform' }}>
                 <Code size={60} />
               </motion.div>
-              <motion.div style={{ position: 'absolute', top: '45%', right: '10%', opacity: 0.15, color: 'var(--accent-violet)', y: parallax2, willChange: 'transform' }}>
+              <motion.div style={{ position: 'absolute', top: '45%', right: '10%', opacity: 0.15, color: 'var(--accent-violet)', y: parallax2, x: bgIconY, willChange: 'transform' }}>
                 <Layers size={80} />
               </motion.div>
-              <motion.div style={{ position: 'absolute', top: '75%', left: '15%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax3, willChange: 'transform' }}>
+              <motion.div style={{ position: 'absolute', top: '75%', left: '15%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax3, x: bgIconX, willChange: 'transform' }}>
                 <Box size={70} />
               </motion.div>
           </div>
@@ -566,18 +711,21 @@ function App() {
               <h1 className="text-gradient">{t('nav_name') || 'SIRAÇ GÖKTUĞ ŞİMŞEK.'}</h1>
             </div>
             <div className="nav-links" style={{ display: 'flex', alignItems: 'center' }}>
-              <a href="#about">{t('nav_about') || 'About'}</a>
-              <a href="#timeline">{t('timeline_title') || 'Timeline'}</a>
-              <a href="#projects">{t('nav_work')}</a>
-              <a href="#skills">{t('nav_skills')}</a>
-              <a href="#contact">{t('nav_contact')}</a>
-              <button
-                onClick={() => setIsArcadeOpen(true)}
-                className="btn btn-outline glass-panel desktop-only"
-                style={{ marginLeft: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-cyan)' }}
-              >
-                <Gamepad2 size={18} /> {t('arcade_button') || 'Arcade'}
-              </button>
+              <Magnetic><a href="#about">{t('nav_about') || 'About'}</a></Magnetic>
+              <Magnetic><a href="#timeline">{t('timeline_title') || 'Timeline'}</a></Magnetic>
+              <Magnetic><a href="#projects">{t('nav_work')}</a></Magnetic>
+              <Magnetic><a href="#skills">{t('nav_skills')}</a></Magnetic>
+              <Magnetic><a href="#contact">{t('nav_contact')}</a></Magnetic>
+              
+              <Magnetic>
+                <button
+                  onClick={() => setIsArcadeOpen(true)}
+                  className="btn btn-outline glass-panel desktop-only"
+                  style={{ marginLeft: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-cyan)' }}
+                >
+                  <Gamepad2 size={18} /> {t('arcade_button') || 'Arcade'}
+                </button>
+              </Magnetic>
 
               <div style={{ marginLeft: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-glass)', padding: '0.4rem 0.8rem', borderRadius: '20px', border: '1px solid var(--border-glass)' }}>
                 <Globe size={16} style={{ color: 'var(--text-muted)' }} />
@@ -586,38 +734,40 @@ function App() {
                 <motion.button whileHover={{ scale: 1.1, color: "var(--accent-cyan)" }} whileTap={{ scale: 0.9 }} onClick={() => changeLanguage('tr')} style={{ background: 'transparent', border: 'none', color: i18n.language === 'tr' ? 'var(--accent-cyan)' : 'var(--text-muted)', cursor: 'pointer', fontWeight: 600, padding: '0.2rem' }}>TR</motion.button>
               </div>
 
-              <motion.button
-                onClick={toggleTheme}
-                style={{ marginLeft: '0.5rem', background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--text-main)', position: 'relative', overflow: 'hidden' }}
-                whileHover={{ scale: 1.1, boxShadow: '0 0 10px var(--accent-cyan)' }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <AnimatePresence mode="wait" initial={false}>
-                  {theme === 'dark' ? (
-                    <motion.div
-                      key="moon"
-                      initial={{ y: -30, opacity: 0, rotate: -90 }}
-                      animate={{ y: 0, opacity: 1, rotate: 0 }}
-                      exit={{ y: 30, opacity: 0, rotate: 90 }}
-                      transition={{ duration: 0.3 }}
-                      style={{ position: 'absolute' }}
-                    >
-                      <Moon size={20} />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="sun"
-                      initial={{ y: -30, opacity: 0, rotate: -90 }}
-                      animate={{ y: 0, opacity: 1, rotate: 0 }}
-                      exit={{ y: 30, opacity: 0, rotate: 90 }}
-                      transition={{ duration: 0.3 }}
-                      style={{ position: 'absolute' }}
-                    >
-                      <Sun size={20} />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.button>
+              <Magnetic>
+                <motion.button
+                  onClick={toggleTheme}
+                  style={{ marginLeft: '0.5rem', background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--text-main)', position: 'relative', overflow: 'hidden' }}
+                  whileHover={{ scale: 1.1, boxShadow: '0 0 10px var(--accent-cyan)' }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    {theme === 'dark' ? (
+                      <motion.div
+                        key="moon"
+                        initial={{ y: -30, opacity: 0, rotate: -90 }}
+                        animate={{ y: 0, opacity: 1, rotate: 0 }}
+                        exit={{ y: 30, opacity: 0, rotate: 90 }}
+                        transition={{ duration: 0.3 }}
+                        style={{ position: 'absolute' }}
+                      >
+                        <Moon size={20} />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="sun"
+                        initial={{ y: -30, opacity: 0, rotate: -90 }}
+                        animate={{ y: 0, opacity: 1, rotate: 0 }}
+                        exit={{ y: 30, opacity: 0, rotate: 90 }}
+                        transition={{ duration: 0.3 }}
+                        style={{ position: 'absolute' }}
+                      >
+                        <Sun size={20} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
+              </Magnetic>
             </div>
           </nav>
 
@@ -663,7 +813,9 @@ function App() {
                   width: '100%', maxWidth: '500px', borderRadius: '16px', overflow: 'hidden',
                   border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.8)',
                   textAlign: 'left', background: 'rgba(10, 10, 15, 0.75)', backdropFilter: 'blur(10px)',
-                  willChange: 'transform, box-shadow'
+                  willChange: 'transform, box-shadow',
+                  x: terminalX,
+                  y: terminalY
                 }}
               >
                 <div style={{ background: 'rgba(255,255,255,0.02)', padding: '12px 20px', display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
@@ -862,40 +1014,39 @@ function App() {
               }}
             >
               {projects.map((project, idx) => (
-                <motion.div
-                  key={project.id}
-                  className={`project-card glass-panel ${project.glow}`}
-                  onClick={() => window.open(project.link, '_blank')}
-                  style={{ padding: 0, willChange: 'transform, opacity' }}
-                  variants={{
-                    hidden: { opacity: 0, y: 30 },
-                    visible: { opacity: 1, y: 0, transition: { type: 'tween', ease: "easeOut", duration: 0.4 } }
-                  }}
-                  whileHover={{ y: -6, scale: 1.02, boxShadow: '0 20px 40px rgba(0, 240, 255, 0.15)' }}
-                >
-                  {project.image && (
-                    <div style={{ height: '180px', overflow: 'hidden', borderBottom: '1px solid var(--border-glass)' }}>
-                      <motion.img
-                        src={project.image}
-                        alt={project.title}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        whileHover={{ scale: 1.08 }}
-                        transition={{ duration: 0.6, ease: "easeOut" }}
-                      />
+                <TiltCard key={project.id} className={`project-card glass-panel ${project.glow}`}>
+                  <motion.div
+                    onClick={() => window.open(project.link, '_blank')}
+                    style={{ padding: 0, willChange: 'transform, opacity' }}
+                    variants={{
+                      hidden: { opacity: 0, y: 30 },
+                      visible: { opacity: 1, y: 0, transition: { type: 'tween', ease: "easeOut", duration: 0.4 } }
+                    }}
+                  >
+                    {project.image && (
+                      <div style={{ height: '180px', overflow: 'hidden', borderBottom: '1px solid var(--border-glass)', borderRadius: '20px 20px 0 0' }}>
+                        <motion.img
+                          src={project.image}
+                          alt={project.title}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          whileHover={{ scale: 1.08 }}
+                          transition={{ duration: 0.6, ease: "easeOut" }}
+                        />
+                      </div>
+                    )}
+                    <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                      <div className="project-tags">
+                        {project.tags.map((tag, idx) => (
+                          <span key={idx} className="tag">{tag}</span>
+                        ))}
+                      </div>
+                      <div className="project-info">
+                        <h3 className="project-title text-gradient">{project.title}</h3>
+                        <p className="project-desc">{project.desc}</p>
+                      </div>
                     </div>
-                  )}
-                  <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                    <div className="project-tags">
-                      {project.tags.map((tag, idx) => (
-                        <span key={idx} className="tag">{tag}</span>
-                      ))}
-                    </div>
-                    <div className="project-info">
-                      <h3 className="project-title text-gradient">{project.title}</h3>
-                      <p className="project-desc">{project.desc}</p>
-                    </div>
-                  </div>
-                </motion.div>
+                  </motion.div>
+                </TiltCard>
               ))}
             </motion.div>
           </section>
