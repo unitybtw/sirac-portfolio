@@ -93,7 +93,8 @@ body {
   border-radius: 50%;
   background: radial-gradient(circle, rgba(var(--accent-cyan-rgb), 0.15) 0%, rgba(var(--accent-violet-rgb), 0.05) 50%, transparent 70%);
   filter: blur(80px);
-  transform: translate(-50%, -50%);
+  margin-top: -300px;
+  margin-left: -300px;
   will-change: transform;
 }
 

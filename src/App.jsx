@@ -142,9 +142,13 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
           transition={{ duration: 1.5, delay: 0.2 + (delay / 3000), ease: "easeOut" }}
         >
           <motion.div 
-            style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: '20px', background: '#fff', filter: 'blur(10px)', opacity: 0.5 }}
-            animate={{ x: ['-100%', '1000%'] }}
-            transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
+            style={{ 
+              position: 'absolute', top: 0, left: 0, bottom: 0, width: '30%', 
+              background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)', 
+              opacity: 0.8 
+            }}
+            animate={{ x: ['-200%', '400%'] }}
+            transition={{ repeat: Infinity, duration: 2.5, ease: "linear" }}
           />
         </motion.div>
       </div>
@@ -215,6 +219,10 @@ const MatrixBackground = ({ theme, isPaused }) => {
     const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      const newColumns = Math.floor(canvas.width / fontSize);
+      while (drops.length < newColumns) {
+        drops.push(1);
+      }
     };
 
     window.addEventListener('resize', handleResize);
@@ -351,17 +359,17 @@ const TypewriterTitle = ({ title1, title2 }) => {
       if (text.length < codeString.length) {
         const timeout = setTimeout(() => {
           setText(codeString.slice(0, text.length + 1));
-        }, Math.random() * 40 + 20); // random typing speed
+        }, Math.random() * 10 + 10); // Super fast typing
         return () => clearTimeout(timeout);
       } else {
-        const timeout = setTimeout(() => setPhase(1), 1000); // pause reading
+        const timeout = setTimeout(() => setPhase(1), 300); // Short pause
         return () => clearTimeout(timeout);
       }
     } else if (phase === 1) {
       if (text.length > 0) {
         const timeout = setTimeout(() => {
-          setText(text.slice(0, -1));
-        }, 15); // delete speed
+          setText(text.slice(0, -3)); // Delete 3 chars at a time
+        }, 5); // Lightning fast delete
         return () => clearTimeout(timeout);
       } else {
         setPhase(2);
