@@ -64,13 +64,13 @@ export default function PresencePanel() {
           page: getCurrentPage(),
         }),
       });
-    } catch (_) {}
+    } catch (_e) { void _e; }
   };
 
   const removePresence = () => {
     try {
       navigator.sendBeacon(`${DB_URL}/visitors/${myId}.json`, '');
-    } catch (_) {}
+    } catch (_e) { void _e; }
     fetch(`${DB_URL}/visitors/${myId}.json`, { method: 'DELETE' }).catch(() => {});
   };
 
@@ -85,7 +85,7 @@ export default function PresencePanel() {
       
       // Since server filtered it, we just set the data directly
       setVisitors(data);
-    } catch (_) {}
+    } catch (_e) { void _e; }
   };
 
   const fetchReactions = async () => {
@@ -106,7 +106,7 @@ export default function PresencePanel() {
           setFloatingEmojis(prev => prev.filter(e => !fresh.find(f => f.id === e.id)));
         }, 3500);
       }
-    } catch (_) {}
+    } catch (_e) { void _e; }
   };
 
   const sendEmoji = async (emoji) => {
@@ -129,7 +129,7 @@ export default function PresencePanel() {
         body: JSON.stringify(reaction),
       });
       setTimeout(() => fetch(`${DB_URL}/reactions/${id}.json`, { method: 'DELETE' }).catch(() => {}), 4500);
-    } catch (_) {}
+    } catch (_e) { void _e; }
   };
 
   useEffect(() => {

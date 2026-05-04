@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Maximize, Info, Gamepad2 } from 'lucide-react';
 
 export default function Mario64() {

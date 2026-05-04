@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import { Download, MonitorPlay, XCircle } from 'lucide-react';
 
 const LaleSavascilari = ({ onGameOver }) => {

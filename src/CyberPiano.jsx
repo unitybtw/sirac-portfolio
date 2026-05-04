@@ -65,7 +65,7 @@ const playSound = (type) => {
                 osc.start(); osc.stop(audioCtx.currentTime + 0.05);
                 break;
         }
-    } catch(e) {}
+    } catch(e) { void e; }
 };
 
   useEffect(() => {
@@ -96,7 +96,7 @@ const playSound = (type) => {
             
             ripples.push({x: 100 + i*50 + 20, y: 200, r: 10});
             { setScore(s=>s+1); playSound('coin'); };
-        } catch(e) {}
+        } catch(e) { void e; }
     };
     
     const kd = (e) => {

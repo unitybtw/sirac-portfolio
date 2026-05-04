@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Maximize, RotateCcw, Info, MousePointer } from 'lucide-react';
 
 export default function Diablo() {

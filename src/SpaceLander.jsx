@@ -65,7 +65,7 @@ const playSound = (type) => {
                 osc.start(); osc.stop(audioCtx.currentTime + 0.05);
                 break;
         }
-    } catch(e) {}
+    } catch(e) { void e; }
 };
 
   useEffect(() => {
@@ -161,17 +161,17 @@ const playSound = (type) => {
                     if (Math.abs(p.vy) < 1.5 && Math.abs(p.angle) < 0.3) {
                         // Safe landing
                         setScore(currScore + 100);
-                        if (onGameOver) onGameOver(points); setIsPlaying(false);
+                        if (onGameOver) onGameOver(currScore + 100); setIsPlaying(false);
                         return;
                     } else {
                         // Crash
-                        if (onGameOver) onGameOver(points); setIsPlaying(false);
+                        if (onGameOver) onGameOver(currScore); setIsPlaying(false);
                         setScore(0);
                         return;
                     }
                 } else {
                     // Missed pad
-                    if (onGameOver) onGameOver(points); setIsPlaying(false);
+                    if (onGameOver) onGameOver(currScore); setIsPlaying(false);
                     setScore(0);
                     return;
                 }

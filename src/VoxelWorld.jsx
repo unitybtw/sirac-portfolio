@@ -1,24 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Maximize, ExternalLink, Info } from 'lucide-react';
 
-const VoxelWorld = ({ onGameOver }) => {
+const VoxelWorld = () => {
     const [started, setStarted] = useState(false);
     const iframeRef = useRef(null);
-
-    const toggleFullScreen = () => {
-        const elem = document.getElementById("minecraft-game-wrapper");
-        if (!elem) return;
-        if (!document.fullscreenElement) {
-            elem.requestFullscreen().catch(err => {
-                console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-            });
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        }
-    };
 
     useEffect(() => {
         if (started && iframeRef.current) {

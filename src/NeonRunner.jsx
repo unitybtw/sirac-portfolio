@@ -66,7 +66,7 @@ const playSound = (type) => {
                 osc.start(); osc.stop(audioCtx.currentTime + 0.05);
                 break;
         }
-    } catch(e) {}
+    } catch(e) { void e; }
 };
 
   useEffect(() => {
