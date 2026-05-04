@@ -160,11 +160,12 @@ var Module = {
     statusElement: document.getElementById('status'),
     activeAudioContext: null,
     // Try to prevent OOM
-    TOTAL_MEMORY: 536870912, // 512MB
+    TOTAL_MEMORY: 1073741824, // 1GB
     // Performance tuning for heavy games
     arguments: ["-f", "60"], // Force 60fps limit to prevent runaway CPU
 };
 
+const originalFetch = window.fetch;
 const loadingText = document.querySelector("#loading-text");
 let loadedBytes = 0;
 const DB_NAME = "gameFilesDB_VC";
@@ -246,15 +247,25 @@ async function fetchWithCache(name, url) {
     return fullBuffer.buffer;
 }
 
-// Merge multiple parts
-async function mergeFiles(fileParts, namePrefix) {
+// Merge multiple parts and save as a single entry in IndexedDB
+async function mergeAndCache(fileParts, finalName) {
+    let existing = await getFile(finalName);
+    if (existing) return;
+
     const buffers = [];
     for (let i = 0; i < fileParts.length; i++) {
-        const buffer = await fetchWithCache(\`\${namePrefix}.part\${i+1}\`, fileParts[i]);
+        const buffer = await fetchWithCache(`${finalName}.part${i+1}`, fileParts[i]);
         buffers.push(buffer);
     }
-    const mergedBlob = new Blob(buffers);
-    return URL.createObjectURL(mergedBlob);
+    let totalLength = buffers.reduce((acc, b) => acc + b.byteLength, 0);
+    let combined = new Uint8Array(totalLength);
+    let offset = 0;
+    for (let b of buffers) {
+        combined.set(new Uint8Array(b), offset);
+        offset += b.byteLength;
+    }
+    await saveFile(finalName, combined.buffer);
+    buffers.length = 0;
 }
 
 // Generate part URLs
@@ -269,53 +280,56 @@ function getParts(file, start, end) {
 // Start fetching and caching SEQUENTIALLY to save memory
 async function loadGameData() {
     try {
-        const indexdataurl = await mergeFiles(getParts("index.data", 1, 7), "index.data");
-        const EMOTIONadfurl = await mergeFiles(getParts("audio/emotion.adf", 1, 3), "emotion.adf");
-        const ESPANTadfurl = await mergeFiles(getParts("audio/espant.adf", 1, 3), "espant.adf");
-        const FEVERadfurl = await mergeFiles(getParts("audio/fever.adf", 1, 3), "fever.adf");
-        const FLASHadfurl = await mergeFiles(getParts("audio/flash.adf", 1, 3), "flash.adf");
-        const KCHATadfurl = await mergeFiles(getParts("audio/kchat.adf", 1, 3), "kchat.adf");
-        const VCPRadfurl = await mergeFiles(getParts("audio/vcpr.adf", 1, 2), "vcpr.adf");
-        const VROCKadfurl = await mergeFiles(getParts("audio/vrock.adf", 1, 4), "vrock.adf");
-        const WAVEadfurl = await mergeFiles(getParts("audio/wave.adf", 1, 4), "wave.adf");
-        const WILDadfurl = await mergeFiles(getParts("audio/wild.adf", 1, 4), "wild.adf");
+        await mergeAndCache(getParts("index.data", 1, 7), "index.data");
+        await mergeAndCache(getParts("audio/emotion.adf", 1, 3), "emotion.adf");
+        await mergeAndCache(getParts("audio/espant.adf", 1, 3), "espant.adf");
+        await mergeAndCache(getParts("audio/fever.adf", 1, 3), "fever.adf");
+        await mergeAndCache(getParts("audio/flash.adf", 1, 3), "flash.adf");
+        await mergeAndCache(getParts("audio/kchat.adf", 1, 3), "kchat.adf");
+        await mergeAndCache(getParts("audio/vcpr.adf", 1, 2), "vcpr.adf");
+        await mergeAndCache(getParts("audio/vrock.adf", 1, 4), "vrock.adf");
+        await mergeAndCache(getParts("audio/wave.adf", 1, 4), "wave.adf");
+        await mergeAndCache(getParts("audio/wild.adf", 1, 4), "wild.adf");
 
-        // Override fetch to use cached URLs
-        const originalFetch = window.fetch;
+        // Optimized fetch override to use Response from IndexedDB directly
         window.fetch = async function(input, init) {
             let urlString = input instanceof Request ? input.url : String(input);
-            let target = null;
-            if (urlString.toLowerCase().includes("index.data".toLowerCase())) target = indexdataurl;
-            else if (urlString.toLowerCase().includes("emotion.adf".toLowerCase())) target = EMOTIONadfurl;
-            else if (urlString.toLowerCase().includes("espant.adf".toLowerCase())) target = ESPANTadfurl;
-            else if (urlString.toLowerCase().includes("fever.adf".toLowerCase())) target = FEVERadfurl;
-            else if (urlString.toLowerCase().includes("flash.adf".toLowerCase())) target = FLASHadfurl;
-            else if (urlString.toLowerCase().includes("kchat.adf".toLowerCase())) target = KCHATadfurl;
-            else if (urlString.toLowerCase().includes("vcpr.adf".toLowerCase())) target = VCPRadfurl;
-            else if (urlString.toLowerCase().includes("vrock.adf".toLowerCase())) target = VROCKadfurl;
-            else if (urlString.toLowerCase().includes("wave.adf".toLowerCase())) target = WAVEadfurl;
-            else if (urlString.toLowerCase().includes("wild.adf".toLowerCase())) target = WILDadfurl;
+            const fileName = urlString.split('/').pop().split('?')[0];
             
-            if (target) return originalFetch(target, init);
+            // Check if we have this file in our virtual filesystem
+            const cached = await getFile(fileName);
+            if (cached) {
+                return new Response(cached);
+            }
             return originalFetch(input, init);
         };
 
-        // Similarly override XHR
+        // Similarly override XHR to use Blobs directly to save RAM
         const originalOpen = XMLHttpRequest.prototype.open;
+        const originalSend = XMLHttpRequest.prototype.send;
+        
         XMLHttpRequest.prototype.open = function(method, url, ...rest) {
-            let u = url.toLowerCase();
-            if (u.includes("https://cdn.dos.zone/vcsky/fetched/".toLowerCase())) url = url.replace("https://cdn.dos.zone/vcsky/fetched/", "")
-            if (u.includes("index.data".toLowerCase())) url = indexdataurl;
-            else if (u.includes("emotion.adf".toLowerCase())) url = EMOTIONadfurl;
-            else if (u.includes("espant.adf".toLowerCase())) url = ESPANTadfurl;
-            else if (u.includes("fever.adf".toLowerCase())) url = FEVERadfurl;
-            else if (u.includes("flash.adf".toLowerCase())) url = FLASHadfurl;
-            else if (u.includes("kchat.adf".toLowerCase())) url = KCHATadfurl;
-            else if (u.includes("vcpr.adf".toLowerCase())) url = VCPRadfurl;
-            else if (u.includes("vrock.adf".toLowerCase())) url = VROCKadfurl;
-            else if (u.includes("wave.adf".toLowerCase())) url = WAVEadfurl;
-            else if (u.includes("wild.adf".toLowerCase())) url = WILDadfurl;
+            this._url = url;
             return originalOpen.call(this, method, url, ...rest);
+        };
+        
+        XMLHttpRequest.prototype.send = async function(body) {
+            const fileName = this._url.split('/').pop().split('?')[0];
+            const cached = await getFile(fileName);
+            
+            if (cached) {
+                // We hijack the response by using a blob URL only for this specific request
+                const blob = new Blob([cached]);
+                const blobUrl = URL.createObjectURL(blob);
+                
+                // Revoke the blob URL after a short delay to free memory
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+                
+                // Re-open with the local URL
+                originalOpen.call(this, 'GET', blobUrl, true);
+                return originalSend.call(this);
+            }
+            return originalSend.call(this, body);
         };
 
         // Load game scripts
