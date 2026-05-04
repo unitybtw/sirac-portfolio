@@ -6,17 +6,6 @@ export default defineConfig({
   plugins: [react()],
   base: '/sirac-portfolio/',
   build: {
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('three')) return 'vendor-three';
-            if (id.includes('framer-motion')) return 'vendor-framer';
-            if (id.includes('react') || id.includes('react-dom')) return 'vendor-react';
-            return 'vendor';
-          }
-        }
-      }
-    }
+    chunkSizeWarningLimit: 2000,
   }
 })
