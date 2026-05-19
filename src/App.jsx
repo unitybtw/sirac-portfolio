@@ -8,7 +8,6 @@ import './index.css';
 import './light-mode.css';
 import './i18n';
 const GameLibrary = lazy(() => import("./GameLibrary"));
-import CompanionDrone from './CompanionDrone';
 import PresencePanel from './PresencePanel';
 import { playClick, playHover, playSuccess, playArcadeOpen, setMutedState, getMutedState } from './soundEffects';
 
@@ -1415,10 +1414,6 @@ function App() {
               &copy; {new Date().getFullYear()} {t('footer_copyright')}
             </div>
           </footer>
-          {/* Interactive Companion Drone */}
-          <div className="desktop-only">
-            <CompanionDrone activeGameId={activeArcadeGame} isArcadeOpen={isArcadeOpen} />
-          </div>
         </motion.div>
       </div>
     </AnimatePresence>
