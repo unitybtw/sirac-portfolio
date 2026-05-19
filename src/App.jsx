@@ -180,6 +180,9 @@ const MatrixBackground = ({ theme, isPaused }) => {
     const colorsDark = ['rgba(0, 240, 255, 0.15)', 'rgba(138, 43, 226, 0.15)'];
     const colorsLight = ['rgba(0, 150, 255, 0.1)', 'rgba(100, 43, 200, 0.1)'];
 
+    // Set font once initially
+    ctx.font = `${fontSize}px monospace`;
+
     let lastDrawTime = 0;
     const fps = 12;
     const interval = 1000 / fps;
@@ -190,12 +193,17 @@ const MatrixBackground = ({ theme, isPaused }) => {
         animationFrameId = requestAnimationFrame(draw);
         return;
       }
+      
+      // Pause drawing if tab is hidden to save CPU
+      if (document.hidden) {
+        animationFrameId = requestAnimationFrame(draw);
+        return;
+      }
+      
       lastDrawTime = timestamp;
 
       ctx.fillStyle = theme === 'dark' ? 'rgba(5, 5, 8, 0.1)' : 'rgba(255, 255, 255, 0.1)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.font = `${fontSize}px monospace`;
 
       const currentPalette = theme === 'dark' ? colorsDark : colorsLight;
 
@@ -219,6 +227,10 @@ const MatrixBackground = ({ theme, isPaused }) => {
     const handleResize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+      
+      // Re-apply font style since canvas resize resets the context state
+      ctx.font = `${fontSize}px monospace`;
+      
       const newColumns = Math.floor(canvas.width / fontSize);
       while (drops.length < newColumns) {
         drops.push(1);
@@ -259,12 +271,29 @@ const Model = ({ path }) => {
 const ThreeDViewer = ({ t }) => {
   const models = ["model.glb", "model2.glb", "model3.glb"];
   const [currentModelIndex, setCurrentModelIndex] = useState(0);
+  const containerRef = React.useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+    
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsVisible(entry.isIntersecting);
+    }, { threshold: 0.05 }); // Start loading when at least 5% is in view
+
+    observer.observe(containerRef.current);
+    
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
 
   const nextModel = () => setCurrentModelIndex((prev) => (prev + 1) % models.length);
   const prevModel = () => setCurrentModelIndex((prev) => (prev - 1 + models.length) % models.length);
 
   return (
     <motion.section
+      ref={containerRef}
       id="3d-viewer"
       className="viewer-section glass-panel"
       style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', borderRadius: '40px', padding: '3rem', border: '1px solid rgba(255,255,255,0.05)', position: 'relative', overflow: 'hidden' }}
@@ -291,24 +320,31 @@ const ThreeDViewer = ({ t }) => {
           <ChevronRight size={24} />
         </button>
 
-        <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'var(--accent-cyan)', fontFamily: 'monospace' }}>INITIALIZING 3D ENGINE...</div>}>
-          <Canvas dpr={[1, 1.5]} performance={{ min: 0.5 }} camera={{ position: [0, 0, 4], fov: 45 }}>
-            <color attach="background" args={['#050508']} />
-            <ambientLight intensity={0.5} />
-            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} castShadow />
-            <pointLight position={[-10, -10, -10]} />
-            
-            <PresentationControls speed={1.5} global zoom={0.7} polar={[-0.1, Math.PI / 4]}>
-              <Stage environment="city" intensity={0.6} contactShadow={false}>
-                <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
-                  <Model path={`${import.meta.env.BASE_URL}${models[currentModelIndex]}`} />
-                </Float>
-              </Stage>
-            </PresentationControls>
-            
-            <OrbitControls enableZoom={true} enablePan={false} makeDefault />
-          </Canvas>
-        </Suspense>
+        {isVisible ? (
+          <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'var(--accent-cyan)', fontFamily: 'monospace' }}>INITIALIZING 3D ENGINE...</div>}>
+            <Canvas dpr={[1, 1.5]} performance={{ min: 0.5 }} camera={{ position: [0, 0, 4], fov: 45 }}>
+              <color attach="background" args={['#050508']} />
+              <ambientLight intensity={0.5} />
+              <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} castShadow />
+              <pointLight position={[-10, -10, -10]} />
+              
+              <PresentationControls speed={1.5} global zoom={0.7} polar={[-0.1, Math.PI / 4]}>
+                <Stage environment="city" intensity={0.6} contactShadow={false}>
+                  <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
+                    <Model path={`${import.meta.env.BASE_URL}${models[currentModelIndex]}`} />
+                  </Float>
+                </Stage>
+              </PresentationControls>
+              
+              <OrbitControls enableZoom={true} enablePan={false} makeDefault />
+            </Canvas>
+          </Suspense>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'var(--text-muted)', fontFamily: 'monospace', fontSize: '0.85rem', gap: '8px' }}>
+            <Gamepad2 size={24} style={{ color: 'var(--text-muted)', opacity: 0.5 }} />
+            <span>3D ENGINE STANDBY</span>
+          </div>
+        )}
         
         <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.6)', padding: '8px 16px', borderRadius: '100px', fontSize: '0.75rem', color: 'var(--text-muted)', border: '1px solid rgba(255,255,255,0.1)', pointerEvents: 'none', letterSpacing: '1px', textTransform: 'uppercase' }}>
           {t('viewer_hint')}
