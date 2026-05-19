@@ -995,7 +995,7 @@ function App() {
             </div>
             <div className="nav-links" style={{ display: 'flex', alignItems: 'center' }}>
               <Magnetic><a href="#about">{t('nav_about') || 'About'}</a></Magnetic>
-              <Magnetic><a href="#timeline">{t('timeline_title') || 'Timeline'}</a></Magnetic>
+              <Magnetic><a href="#timeline">{t('nav_timeline') || 'Timeline'}</a></Magnetic>
               <Magnetic><a href="#projects">{t('nav_work')}</a></Magnetic>
               <Magnetic><a href="#skills">{t('nav_skills')}</a></Magnetic>
               <Magnetic><a href="#contact">{t('nav_contact')}</a></Magnetic>
@@ -1012,9 +1012,9 @@ function App() {
 
               <div style={{ marginLeft: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-glass)', padding: '0.4rem 0.8rem', borderRadius: '20px', border: '1px solid var(--border-glass)' }}>
                 <Globe size={16} style={{ color: 'var(--text-muted)' }} />
-                <motion.button whileHover={{ scale: 1.1, color: "var(--accent-cyan)" }} whileTap={{ scale: 0.9 }} onClick={() => changeLanguage('en')} style={{ background: 'transparent', border: 'none', color: i18n.language === 'en' ? 'var(--accent-cyan)' : 'var(--text-muted)', cursor: 'pointer', fontWeight: 600, padding: '0.2rem' }}>EN</motion.button>
+                <motion.button whileHover={{ scale: 1.1, color: "var(--accent-cyan)" }} whileTap={{ scale: 0.9 }} onClick={() => changeLanguage('en')} style={{ background: 'transparent', border: 'none', color: i18n.language?.startsWith('en') ? 'var(--accent-cyan)' : 'var(--text-muted)', cursor: 'pointer', fontWeight: 600, padding: '0.2rem' }}>EN</motion.button>
                 <span style={{ color: 'var(--border-glass)' }}>|</span>
-                <motion.button whileHover={{ scale: 1.1, color: "var(--accent-cyan)" }} whileTap={{ scale: 0.9 }} onClick={() => changeLanguage('tr')} style={{ background: 'transparent', border: 'none', color: i18n.language === 'tr' ? 'var(--accent-cyan)' : 'var(--text-muted)', cursor: 'pointer', fontWeight: 600, padding: '0.2rem' }}>TR</motion.button>
+                <motion.button whileHover={{ scale: 1.1, color: "var(--accent-cyan)" }} whileTap={{ scale: 0.9 }} onClick={() => changeLanguage('tr')} style={{ background: 'transparent', border: 'none', color: i18n.language?.startsWith('tr') ? 'var(--accent-cyan)' : 'var(--text-muted)', cursor: 'pointer', fontWeight: 600, padding: '0.2rem' }}>TR</motion.button>
               </div>
 
               <Magnetic>
@@ -1144,7 +1144,7 @@ function App() {
               </p>
             </div>
             
-            <div style={{ flex: '1 1 350px', display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', position: 'relative', zIndex: 1 }}>
+            <div style={{ flex: '1 1 350px', display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', position: 'relative', zIndex: 1 }}>
               {[1, 2, 3, 4].map((num) => (
                 <motion.div 
                   key={num} 
