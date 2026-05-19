@@ -319,20 +319,16 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                     placeholder="Search game..."
                                                     value={searchQuery}
                                                     onChange={(e) => setSearchQuery(e.target.value)}
+                                                    className="glass-input"
                                                     style={{
-                                                        background: 'rgba(255, 255, 255, 0.04)',
-                                                        border: '1px solid rgba(255, 255, 255, 0.08)',
                                                         padding: '0.4rem 1rem 0.4rem 2rem',
                                                         borderRadius: '20px',
-                                                        color: '#fff',
                                                         fontSize: '0.8rem',
-                                                        outline: 'none',
                                                         width: '160px',
-                                                        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                                                         fontFamily: 'monospace',
                                                     }}
-                                                    onFocus={(e) => { e.target.style.borderColor = 'var(--accent-cyan)'; e.target.style.width = '210px'; e.target.style.background = 'rgba(255,255,255,0.08)'; }}
-                                                    onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.08)'; e.target.style.width = '160px'; e.target.style.background = 'rgba(255,255,255,0.04)'; }}
+                                                    onFocus={(e) => { e.target.style.width = '210px'; }}
+                                                    onBlur={(e) => { e.target.style.width = '160px'; }}
                                                 />
                                                 <span style={{ position: 'absolute', left: '10px', color: 'rgba(255,255,255,0.3)', pointerEvents: 'none', display: 'flex', alignItems: 'center', fontSize: '0.75rem' }}>
                                                     🔍
@@ -372,14 +368,11 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                 placeholder="Enter username..."
                                                 value={tempName}
                                                 onChange={(e) => setTempName(e.target.value)}
+                                                className="glass-input"
                                                 style={{
-                                                    width: '100%', padding: '1.2rem', background: 'rgba(0,0,0,0.4)',
-                                                    border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px',
-                                                    color: '#fff', marginBottom: '1.5rem', textAlign: 'center', fontSize: '1.1rem',
-                                                    outline: 'none', transition: 'border-color 0.3s'
+                                                    width: '100%', padding: '1.2rem',
+                                                    marginBottom: '1.5rem', textAlign: 'center', fontSize: '1.1rem',
                                                 }}
-                                                onFocus={(e) => e.target.style.borderColor = 'var(--accent-cyan)'}
-                                                onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
                                                 maxLength={16}
                                                 autoFocus
                                             />
