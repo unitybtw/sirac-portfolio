@@ -752,6 +752,7 @@ function App() {
   const { t, i18n } = useTranslation();
   const [theme, setTheme] = useState('dark');
   const [showSecretGame, setShowSecretGame] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Mouse Tracking for Parallax
   const mouseX = useMotionValue(0);
@@ -988,23 +989,31 @@ function App() {
 
 
 
-          {/* Navigation */}
           <nav className="glass-panel">
             <div className="nav-logo">
               <h1 className="text-gradient">{t('nav_name') || 'SIRAÇ GÖKTUĞ ŞİMŞEK.'}</h1>
             </div>
-            <div className="nav-links" style={{ display: 'flex', alignItems: 'center' }}>
-              <Magnetic><a href="#about">{t('nav_about') || 'About'}</a></Magnetic>
-              <Magnetic><a href="#timeline">{t('nav_timeline') || 'Timeline'}</a></Magnetic>
-              <Magnetic><a href="#projects">{t('nav_work')}</a></Magnetic>
-              <Magnetic><a href="#skills">{t('nav_skills')}</a></Magnetic>
-              <Magnetic><a href="#contact">{t('nav_contact')}</a></Magnetic>
+            
+            <button className="nav-toggle-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Toggle Menu">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '2px', display: 'block', transition: 'all 0.3s', transform: isMobileMenuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none', transformOrigin: 'center' }}></span>
+                <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '2px', display: 'block', transition: 'all 0.3s', opacity: isMobileMenuOpen ? 0 : 1 }}></span>
+                <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '2px', display: 'block', transition: 'all 0.3s', transform: isMobileMenuOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none', transformOrigin: 'center' }}></span>
+              </div>
+            </button>
+
+            <div className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}>
+              <Magnetic><a href="#about" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_about') || 'About'}</a></Magnetic>
+              <Magnetic><a href="#timeline" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_timeline') || 'Timeline'}</a></Magnetic>
+              <Magnetic><a href="#projects" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_work')}</a></Magnetic>
+              <Magnetic><a href="#skills" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_skills')}</a></Magnetic>
+              <Magnetic><a href="#contact" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_contact')}</a></Magnetic>
               
               <Magnetic>
                 <button
-                  onClick={() => setIsArcadeOpen(true)}
-                  className="btn btn-outline glass-panel desktop-only"
-                  style={{ marginLeft: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-cyan)' }}
+                  onClick={() => { setIsArcadeOpen(true); setIsMobileMenuOpen(false); }}
+                  className="btn btn-outline glass-panel"
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-cyan)' }}
                 >
                   <Gamepad2 size={18} /> {t('arcade_button') || 'Arcade'}
                 </button>
@@ -1321,7 +1330,7 @@ function App() {
           </section>
 
           {/* Arcade Section */}
-          <section id="arcade" className="desktop-only" style={{ padding: '0 5% 5rem', textAlign: 'center' }}>
+          <section id="arcade" style={{ padding: '0 5% 5rem', textAlign: 'center' }}>
             <div className="section-header">
               <h2 className="section-title text-gradient"><ScrambleText text={t('arcade_section_title') || 'ARCADE UNIVERSE'} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('arcade_section_subtitle')}</p>

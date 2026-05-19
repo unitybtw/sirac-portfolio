@@ -346,22 +346,16 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        style={{
-                            position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
-                            background: 'rgba(5, 5, 8, 0.99)',
-                            zIndex: 100000, display: 'flex', flexDirection: 'column', overflow: 'hidden',
-                            willChange: 'opacity'
-                        }}
                     >
                         {/* Header */}
-                        <div style={{ padding: '2rem 3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', background: 'rgba(0,0,0,0.2)' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
+                        <div className="arcade-modal-header">
+                            <div className="arcade-modal-header-left">
                                 <div>
                                     <h2 className="text-gradient" style={{ fontSize: '1.8rem', margin: 0, letterSpacing: '-0.02em', fontWeight: 800 }}>{t('arcade_inside_title')}</h2>
                                     {nickname && <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0.2rem 0 0 0' }}>Connected as <span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold' }}>{nickname}</span></p>}
                                 </div>
                                 {nickname && !activeGameId && (
-                                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                                    <div className="arcade-header-controls" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                                         <button
                                             onClick={() => setShowScoreboard(!showScoreboard)}
                                             className={`btn ${showScoreboard ? 'btn-primary' : 'btn-outline'}`}
@@ -496,7 +490,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                 </div>
                                             </div>
 
-                                            <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '3.5rem' }}>
+                                            <div className="arcade-scoreboard-grid">
                                                 {/* Global Scores from Cloud */}
                                                 <div style={{ display: 'grid', gap: '0.8rem', alignContent: 'start' }}>
                                                     <h4 style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>Top 10 Records</h4>
@@ -631,7 +625,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                     transition: { staggerChildren: 0.02, delayChildren: 0.05 }
                                                 }
                                             }}
-                                            style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1.5rem', width: '100%', paddingBottom: '3rem' }}
+                                            className="arcade-games-grid"
                                         >
                                             {gamesList.filter(game => {
                                                 const matchesSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase());
