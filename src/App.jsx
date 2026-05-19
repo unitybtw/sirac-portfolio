@@ -1148,15 +1148,21 @@ function App() {
                 {t('hero_subtitle_1')}<br /> {t('hero_subtitle_2')}
               </p>
               <div className="hero-cta">
-                <a href="#projects" className="btn btn-primary glass-panel">
-                  {t('btn_explore')} <ArrowRight size={18} style={{ marginLeft: '8px' }} />
-                </a>
-                <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn btn-outline glass-panel">
-                  <Github size={18} style={{ marginRight: '8px' }} /> {t('btn_repos')}
-                </a>
-                <a href="https://unitybtw.itch.io/" target="_blank" rel="noopener noreferrer" className="btn btn-outline glass-panel" style={{ color: 'var(--accent-cyan)' }}>
-                  <Gamepad2 size={18} style={{ marginRight: '8px' }} /> Itch.io
-                </a>
+                <Magnetic>
+                  <a href="#projects" className="btn btn-primary glass-panel">
+                    {t('btn_explore')} <ArrowRight size={18} style={{ marginLeft: '8px' }} />
+                  </a>
+                </Magnetic>
+                <Magnetic>
+                  <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn btn-outline glass-panel">
+                    <Github size={18} style={{ marginRight: '8px' }} /> {t('btn_repos')}
+                  </a>
+                </Magnetic>
+                <Magnetic>
+                  <a href="https://unitybtw.itch.io/" target="_blank" rel="noopener noreferrer" className="btn btn-outline glass-panel" style={{ color: 'var(--accent-cyan)' }}>
+                    <Gamepad2 size={18} style={{ marginRight: '8px' }} /> Itch.io
+                  </a>
+                </Magnetic>
               </div>
             </motion.div>
             <motion.div
@@ -1241,7 +1247,7 @@ function App() {
                     initial={{ opacity: 0, x: num % 2 === 0 ? 50 : -50 }}
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true, margin: "-50px" }}
-                    transition={{ duration: 0.6, delay: num * 0.1 }}
+                    transition={{ type: "spring", stiffness: 80, damping: 15, mass: 1, delay: num * 0.1 }}
                     style={{ 
                       display: 'flex', 
                       justifyContent: num % 2 === 0 ? 'flex-start' : 'flex-end',
@@ -1470,15 +1476,21 @@ function App() {
 
               <div className="footer-contact">
                 <div className="contact-btn-wrapper">
-                  <a href="mailto:sgoktug34@gmail.com" className="btn btn-primary glass-panel" style={{ fontSize: '1.2rem', padding: '1.2rem 3rem' }}>
-                    <Mail size={20} style={{ marginRight: '10px' }} /> {t('btn_transmit')}
-                  </a>
+                  <Magnetic>
+                    <a href="mailto:sgoktug34@gmail.com" className="btn btn-primary glass-panel" style={{ fontSize: '1.2rem', padding: '1.2rem 3rem' }}>
+                      <Mail size={20} style={{ marginRight: '10px' }} /> {t('btn_transmit')}
+                    </a>
+                  </Magnetic>
                 </div>
               </div>
 
               <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginTop: '3rem' }}>
-                <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)' }}><Github size={24} /></a>
-                <a href="https://unitybtw.itch.io/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)' }}><Gamepad2 size={24} /></a>
+                <Magnetic>
+                  <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)' }}><Github size={24} /></a>
+                </Magnetic>
+                <Magnetic>
+                  <a href="https://unitybtw.itch.io/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)' }}><Gamepad2 size={24} /></a>
+                </Magnetic>
               </div>
             </motion.div>
             <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', borderTop: '1px solid var(--border-glass)', paddingTop: '2rem', marginTop: '2rem' }}>
