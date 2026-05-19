@@ -995,11 +995,11 @@ function App() {
             
             {/* Collapsible Nav Links */}
             <div className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}>
-              <Magnetic><a href="#about" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_about') || 'About'}</a></Magnetic>
-              <Magnetic><a href="#timeline" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_timeline') || 'Timeline'}</a></Magnetic>
-              <Magnetic><a href="#projects" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_work')}</a></Magnetic>
-              <Magnetic><a href="#skills" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_skills')}</a></Magnetic>
-              <Magnetic><a href="#contact" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_contact')}</a></Magnetic>
+              <Magnetic><a href="#about" data-index="[01]" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_about') || 'About'}</a></Magnetic>
+              <Magnetic><a href="#timeline" data-index="[02]" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_timeline') || 'Timeline'}</a></Magnetic>
+              <Magnetic><a href="#projects" data-index="[03]" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_work')}</a></Magnetic>
+              <Magnetic><a href="#skills" data-index="[04]" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_skills')}</a></Magnetic>
+              <Magnetic><a href="#contact" data-index="[05]" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_contact')}</a></Magnetic>
               
               <Magnetic>
                 <button

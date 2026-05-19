@@ -658,6 +658,17 @@ nav {
   }
 }
 
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Animations & Responsive */
 @media (max-width: 968px) {
   .desktop-only {
@@ -707,25 +718,59 @@ nav {
     flex-direction: column;
     width: 100%;
     align-items: stretch;
-    gap: 1rem;
-    padding: 1.5rem 0.5rem;
-    margin-top: 0.5rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
-    background: transparent;
+    gap: 0.5rem;
+    padding: 1.25rem 0.5rem 0.75rem 0.5rem;
+    margin-top: 0.75rem;
+    border-top: 1px solid rgba(0, 240, 255, 0.15);
+    background: rgba(10, 10, 15, 0.65);
+    backdrop-filter: blur(15px);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
   }
 
   .nav-links.active {
     display: flex;
+    animation: slideDown 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
   .nav-links a {
+    position: relative;
     text-align: center;
     width: 100%;
-    padding: 0.5rem 0;
+    padding: 0.75rem 0;
+    font-size: 0.95rem;
+    font-family: var(--font-code);
+    font-weight: 500;
+    color: var(--text-muted);
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid transparent;
+  }
+
+  .nav-links a::before {
+    content: attr(data-index) " ";
+    font-family: var(--font-code);
+    color: var(--accent-cyan);
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-right: 0.4rem;
+    letter-spacing: 1px;
+  }
+
+  .nav-links a:hover,
+  .nav-links a:active {
+    color: var(--accent-cyan);
+    background: rgba(0, 240, 255, 0.06);
+    border: 1px solid rgba(0, 240, 255, 0.15);
+    box-shadow: 0 0 15px rgba(0, 240, 255, 0.05);
   }
 
   .nav-links button {
     justify-content: center;
+    margin-top: 0.5rem;
+    width: 100%;
+    padding: 0.8rem !important;
+    border-radius: 12px !important;
   }
 
   .hero {
@@ -781,21 +826,42 @@ nav {
   .status-quest {
     font-size: 0.85rem;
     flex-direction: column;
-    text-align: center;
   }
-
-
 }
 
 @media (max-width: 480px) {
   nav {
-    padding: 0.8rem 0.5rem;
-    border-radius: 20px;
+    padding: 0.6rem 0.8rem;
+    border-radius: 16px;
     top: 0.5rem;
   }
 
   .nav-logo h1 {
-    font-size: 1rem;
+    font-size: 0.9rem;
+    letter-spacing: -0.5px;
+  }
+
+  .nav-utilities {
+    gap: 0.3rem !important;
+  }
+
+  .lang-selector-container {
+    padding: 0.25rem 0.5rem !important;
+    gap: 0.2rem !important;
+    border-radius: 12px !important;
+  }
+
+  .lang-selector-container span {
+    display: none !important;
+  }
+
+  .lang-selector-container svg {
+    display: none !important;
+  }
+
+  .nav-utilities button {
+    width: 32px !important;
+    height: 32px !important;
   }
 
   .hero-title {
