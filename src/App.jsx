@@ -1140,6 +1140,8 @@ function App() {
           <CyberCursor />
           <MatrixBackground theme={theme} isPaused={isArcadeOpen} matrixRainMode={matrixRainMode} />
           <div className="cyber-bg">
+            <div className="cyber-bg-blob-3"></div>
+            <div className="cyber-bg-blob-4"></div>
             {/* Parallax Floating Icons */}
               <motion.div style={{ position: 'absolute', top: '15%', left: '10%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax1, x: bgIconX, willChange: 'transform' }}>
                 <Code size={60} />
