@@ -1,6 +1,6 @@
 import React, { useEffect, useState, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Terminal, Github, Linkedin, Mail, ArrowRight, Code, Layers, Smartphone, Box, Gamepad2, Compass, Globe, Moon, Sun, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Terminal, Github, Linkedin, Mail, ArrowRight, Code, Layers, Smartphone, Box, Gamepad2, Compass, Globe, Moon, Sun, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Float, Stage, PresentationControls } from '@react-three/drei';
@@ -10,6 +10,7 @@ import './i18n';
 const GameLibrary = lazy(() => import("./GameLibrary"));
 import CompanionDrone from './CompanionDrone';
 import PresencePanel from './PresencePanel';
+import { playClick, playHover, playSuccess, playArcadeOpen, setMutedState, getMutedState } from './soundEffects';
 
 const PageProgress = () => {
   const { scrollYProgress } = useScroll();
@@ -644,6 +645,44 @@ function App() {
   }, []);
   const [isArcadeOpen, setIsArcadeOpen] = useState(false);
   const [activeArcadeGame, setActiveArcadeGame] = useState(null);
+  const [isMuted, setIsMuted] = useState(getMutedState());
+
+  const toggleMute = () => {
+    const nextMute = !isMuted;
+    setIsMuted(nextMute);
+    setMutedState(nextMute);
+    if (!nextMute) {
+      playClick();
+    }
+  };
+
+  // Global sound event delegation (hover & click)
+  useEffect(() => {
+    const handleGlobalClick = (e) => {
+      const target = e.target.closest('a, button, [role="button"], .project-card, .game-card');
+      if (target) {
+        if ((target.innerText && target.innerText.toLowerCase().includes('arcade')) || target.closest('#featured-modules')) {
+          playArcadeOpen();
+        } else {
+          playClick();
+        }
+      }
+    };
+
+    const handleGlobalHover = (e) => {
+      const target = e.target.closest('a, button, [role="button"], .project-card, .game-card');
+      if (target) {
+        playHover();
+      }
+    };
+
+    window.addEventListener('click', handleGlobalClick);
+    window.addEventListener('mouseover', handleGlobalHover);
+    return () => {
+      window.removeEventListener('click', handleGlobalClick);
+      window.removeEventListener('mouseover', handleGlobalHover);
+    };
+  }, []);
 
   // Konami Code Logic
   useEffect(() => {
@@ -655,6 +694,7 @@ function App() {
         konamiIndex++;
         if (konamiIndex === konamiCode.length) {
           setShowSecretGame(true);
+          playSuccess();
           konamiIndex = 0;
         }
       } else {
@@ -778,6 +818,17 @@ function App() {
                 <span style={{ color: 'var(--border-glass)' }}>|</span>
                 <motion.button whileHover={{ scale: 1.1, color: "var(--accent-cyan)" }} whileTap={{ scale: 0.9 }} onClick={() => changeLanguage('tr')} style={{ background: 'transparent', border: 'none', color: i18n.language === 'tr' ? 'var(--accent-cyan)' : 'var(--text-muted)', cursor: 'pointer', fontWeight: 600, padding: '0.2rem' }}>TR</motion.button>
               </div>
+
+              <Magnetic>
+                <motion.button
+                  onClick={toggleMute}
+                  style={{ marginLeft: '0.5rem', background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: isMuted ? 'var(--text-muted)' : 'var(--accent-cyan)' }}
+                  whileHover={{ scale: 1.1, boxShadow: isMuted ? 'none' : '0 0 10px var(--accent-cyan)' }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+                </motion.button>
+              </Magnetic>
 
               <Magnetic>
                 <motion.button

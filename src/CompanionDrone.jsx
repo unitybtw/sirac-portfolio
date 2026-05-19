@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { playDroneChat } from './soundEffects';
 
 // ==========================================
 // MASSIVE KNOWLEDGE BASE & NLP SIMULATION
@@ -175,6 +176,25 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
         const introTimer = setTimeout(() => setMessage(""), 5000);
         return () => clearTimeout(introTimer);
     }, [t]);
+
+    // Speech chirp sound effect for text bubbles
+    useEffect(() => {
+        if (message && message.length > 0 && !message.startsWith("USER$")) {
+            const charCount = Math.min(25, message.length);
+            const chirpCount = Math.ceil(charCount / 5);
+            
+            let count = 0;
+            const interval = setInterval(() => {
+                playDroneChat();
+                count++;
+                if (count >= chirpCount) {
+                    clearInterval(interval);
+                }
+            }, 120);
+
+            return () => clearInterval(interval);
+        }
+    }, [message]);
 
     // Global Events (Mouse & Scroll)
     useEffect(() => {
