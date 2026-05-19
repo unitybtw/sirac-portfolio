@@ -978,6 +978,20 @@ function App() {
     }
   }, []);
 
+  const [isArcadeOpen, setIsArcadeOpen] = useState(false);
+  const [activeArcadeGame, setActiveArcadeGame] = useState(null);
+  const [isMuted, setIsMuted] = useState(getMutedState());
+  const [matrixRainMode, setMatrixRainMode] = useState(false);
+
+  const toggleMute = () => {
+    const nextMute = !isMuted;
+    setIsMuted(nextMute);
+    setMutedState(nextMute);
+    if (!nextMute) {
+      playClick();
+    }
+  };
+
   // Konami Code Easter Egg: ↑ ↑ ↓ ↓ ← → ← → B A
   useEffect(() => {
     const konamiCode = [
@@ -1038,20 +1052,6 @@ function App() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isMuted]);
-
-  const [isArcadeOpen, setIsArcadeOpen] = useState(false);
-  const [activeArcadeGame, setActiveArcadeGame] = useState(null);
-  const [isMuted, setIsMuted] = useState(getMutedState());
-  const [matrixRainMode, setMatrixRainMode] = useState(false);
-
-  const toggleMute = () => {
-    const nextMute = !isMuted;
-    setIsMuted(nextMute);
-    setMutedState(nextMute);
-    if (!nextMute) {
-      playClick();
-    }
-  };
 
   // Global sound event delegation (hover & click)
   useEffect(() => {
