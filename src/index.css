@@ -370,7 +370,7 @@ nav {
   position: relative;
   border-radius: 20px;
   overflow: hidden;
-  padding: 1.5rem;
+  padding: 0;
   transition: box-shadow 0.4s ease, border-color 0.4s ease;
   cursor: pointer;
   display: flex;

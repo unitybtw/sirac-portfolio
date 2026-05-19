@@ -996,6 +996,20 @@ function App() {
                       textAlign: num % 2 === 0 ? 'left' : 'right',
                       border: '1px solid rgba(255,255,255,0.05)'
                     }}>
+                      <div style={{
+                        display: 'inline-block',
+                        padding: '0.2rem 0.6rem',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        color: num > 2 ? 'var(--accent-violet)' : 'var(--accent-cyan)',
+                        background: num > 2 ? 'rgba(140, 60, 230, 0.1)' : 'rgba(0, 212, 255, 0.1)',
+                        border: num > 2 ? '1px solid rgba(140, 60, 230, 0.2)' : '1px solid rgba(0, 212, 255, 0.2)',
+                        borderRadius: '8px',
+                        marginBottom: '0.5rem',
+                        letterSpacing: '1px'
+                      }}>
+                        {t(`timeline_event_${num}_year`)}
+                      </div>
                       <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 0.5rem 0', color: '#fff' }}>
                         {t(`timeline_event_${num}_title`)}
                       </h3>
@@ -1022,7 +1036,7 @@ function App() {
                 { name: 'Subway Surfers', desc: 'Infinite runner module with high-res assets.', icon: <Smartphone size={32} /> },
                 { name: 'Mario 64', desc: 'Native WebGL N64 simulation layer.', icon: <Box size={32} /> },
                 { name: 'Doom II', desc: 'Full retro FPS engine integration.', icon: <Terminal size={32} /> },
-                { name: 'SUBWAY RUN', desc: 'Arcade physics and high-score sync.', icon: <Gamepad2 size={32} /> }
+                { name: 'GTA Vice City', desc: 'Full 3D retro environment simulation.', icon: <Layers size={32} /> }
               ].map((game, i) => (
                 <motion.div
                   key={i}
@@ -1197,12 +1211,10 @@ function App() {
               &copy; {new Date().getFullYear()} {t('footer_copyright')}
             </div>
           </footer>
-          {/* Interactive Companion Drone Disabled */}
-          {/* 
+          {/* Interactive Companion Drone */}
           <div className="desktop-only">
             <CompanionDrone activeGameId={activeArcadeGame} isArcadeOpen={isArcadeOpen} />
           </div>
-          */}
         </motion.div>
       </div>
     </AnimatePresence>

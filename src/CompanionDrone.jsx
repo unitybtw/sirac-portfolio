@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useSpring } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 // ==========================================
@@ -121,8 +121,10 @@ const DroneTicTacToe = ({ onGameOver }) => {
 // CORE DRONE COMPONENT
 // ==========================================
 const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
-    const { t } = useTranslation();
-    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+    const pX = useMotionValue(0);
+    const pY = useMotionValue(0);
+    const pupilX = useSpring(pX, { stiffness: 150, damping: 15 });
+    const pupilY = useSpring(pY, { stiffness: 150, damping: 15 });
     const [message, setMessage] = useState("");
     const [clickCount, setClickCount] = useState(0);
     const [emotion, setEmotion] = useState('normal'); // normal, happy, angry, confused, dead
@@ -175,15 +177,26 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
 
     // Global Events (Mouse & Scroll)
     useEffect(() => {
-        let lastStateUpdate = 0;
         const handleMouseMove = (e) => {
             const now = Date.now();
             lastMouseMoveRef.current = now;
             
-            // Throttle state update to ~20FPS instead of every pixel (saves huge CPU)
-            if (now - lastStateUpdate > 50) {
-                setMousePos({ x: e.clientX, y: e.clientY });
-                lastStateUpdate = now;
+            if (eyeRef.current && !isShattered) {
+                const rect = eyeRef.current.getBoundingClientRect();
+                const eyeCX = rect.left + rect.width / 2;
+                const eyeCY = rect.top + rect.height / 2;
+                const angle = Math.atan2(e.clientY - eyeCY, e.clientX - eyeCX);
+                const distance = Math.min(6, Math.hypot(e.clientX - eyeCX, e.clientY - eyeCY) / 40);
+                
+                let targetX = Math.cos(angle) * distance;
+                let targetY = Math.sin(angle) * distance;
+
+                if (emotion === 'angry' || droneMode === 'combat') {
+                    targetX += (Math.random() - 0.5) * 3;
+                    targetY += (Math.random() - 0.5) * 3;
+                }
+                pX.set(targetX);
+                pY.set(targetY);
             }
 
             const target = e.target;
@@ -567,23 +580,7 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
         pupilColor = '#00ff00';
     }
 
-    let pupilX = 0;
-    let pupilY = 0;
 
-    if (eyeRef.current && !isShattered) {
-        const rect = eyeRef.current.getBoundingClientRect();
-        const eyeCX = rect.left + rect.width / 2;
-        const eyeCY = rect.top + rect.height / 2;
-        const angle = Math.atan2(mousePos.y - eyeCY, mousePos.x - eyeCX);
-        const distance = Math.min(6, Math.hypot(mousePos.x - eyeCX, mousePos.y - eyeCY) / 40);
-        pupilX = Math.cos(angle) * distance;
-        pupilY = Math.sin(angle) * distance;
-
-        if (emotion === 'angry' || droneMode === 'combat') {
-            pupilX += (Math.random() - 0.5) * 3;
-            pupilY += (Math.random() - 0.5) * 3;
-        }
-    }
 
     return (
         <motion.div
@@ -795,8 +792,9 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
 
                             {/* Pupil */}
                             <motion.div
-                                animate={{ x: pupilX, y: pupilY }} transition={{ type: "spring", stiffness: 150, damping: 15 }}
                                 style={{
+                                    x: pupilX,
+                                    y: pupilY,
                                     width: `${eyeSize}px`, height: `${eyeSize}px`, borderRadius: '50%',
                                     background: isScanning ? '#ff003c' : pupilColor,
                                     boxShadow: `0 0 12px ${isScanning ? '#ff003c' : pupilColor}, 0 0 24px ${isScanning ? '#ff003c' : pupilColor}88`,
