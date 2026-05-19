@@ -253,7 +253,6 @@ const ThreeDViewer = ({ t }) => {
       ref={containerRef}
       id="3d-viewer"
       className="viewer-section glass-panel"
-      style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', borderRadius: '40px', padding: '3rem', border: '1px solid rgba(255,255,255,0.05)', position: 'relative', overflow: 'hidden' }}
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
@@ -267,7 +266,7 @@ const ThreeDViewer = ({ t }) => {
         <p style={{ color: 'var(--text-muted)' }}>{t('viewer_subtitle')} ({currentModelIndex + 1}/{models.length})</p>
       </div>
 
-      <div style={{ height: '500px', width: '100%', position: 'relative', zIndex: 1, borderRadius: '24px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.05)' }}>
+      <div className="viewer-container">
         
         {/* Navigation Buttons */}
         <button onClick={prevModel} style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--text-main)', backdropFilter: 'blur(10px)' }}>
@@ -1133,7 +1132,6 @@ function App() {
           <motion.section
             id="about"
             className="about-section glass-panel"
-            style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', borderRadius: '40px', padding: '4rem 5%', display: 'flex', gap: '4rem', alignItems: 'center', flexWrap: 'wrap', border: '1px solid rgba(255,255,255,0.05)', boxShadow: '0 20px 60px -10px rgba(0,0,0,0.4)', position: 'relative', overflow: 'hidden' }}
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -1142,7 +1140,7 @@ function App() {
             {/* Background flourish inside About */}
             <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '300px', height: '300px', background: 'radial-gradient(circle at center, rgba(var(--accent-violet-rgb), 0.15) 0%, transparent 60%)', filter: 'blur(40px)', zIndex: 0 }} />
             
-            <div style={{ flex: '1 1 400px', position: 'relative', zIndex: 1 }}>
+            <div className="about-left">
               <div className="section-header" style={{ alignItems: 'flex-start', textAlign: 'left', marginBottom: '2rem' }}>
                 <h2 className="section-title text-gradient" style={{ letterSpacing: '-0.02em' }}><ScrambleText text={t('about_title')} /></h2>
                 <p style={{ color: 'var(--accent-cyan)', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', fontSize: '0.85rem' }}>{t('about_subtitle')}</p>
@@ -1158,7 +1156,7 @@ function App() {
               </p>
             </div>
             
-            <div style={{ flex: '1 1 350px', display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', position: 'relative', zIndex: 1 }}>
+            <div className="about-right">
               {[1, 2, 3, 4].map((num) => (
                 <motion.div 
                   key={num} 
@@ -1253,7 +1251,7 @@ function App() {
               <h2 className="section-title text-gradient"><ScrambleText text={t('featured_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('featured_subtitle')}</p>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginTop: '3rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2rem', marginTop: '3rem' }}>
               {[
                 { name: 'FNAF 1 (Fan Port)', desc: 'Full interactive 2D engine map for browser.', icon: <Gamepad2 size={32} /> },
                 { name: 'CS 1.6 Web', desc: 'Real-time tactical simulator in JS.', icon: <Terminal size={32} /> },
@@ -1366,7 +1364,7 @@ function App() {
               <h2 className="section-title text-gradient"><ScrambleText text={t('skills_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('skills_subtitle')}</p>
             </div>
-            <div className="skills-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginTop: '3rem' }}>
+            <div className="skills-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2rem', marginTop: '3rem' }}>
               <SkillCard icon={<UnityIcon />} label="Unity / C#" percent={95} delay={100} description={t('skill_unity_desc')} />
               <SkillCard icon={<SwiftIcon />} label="SwiftUI / macOS" percent={82} delay={300} description={t('skill_swift_desc')} />
               <SkillCard icon={<BlenderIcon />} label="Blender / 3D" percent={88} delay={500} description={t('skill_blender_desc')} />

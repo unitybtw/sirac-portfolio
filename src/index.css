@@ -1108,3 +1108,107 @@ nav {
     padding: 1rem !important;
   }
 }
+
+/* Responsive Navigation, About, 3D Viewer & Grids */
+@media (max-width: 968px) {
+  .nav-links > div {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .nav-links {
+    white-space: normal !important;
+  }
+  nav {
+    white-space: normal !important;
+  }
+  .hero-visual {
+    height: auto !important;
+    min-height: 380px;
+    margin-top: 2rem;
+  }
+}
+
+.about-section {
+  max-width: 1200px;
+  margin: 0 auto 5rem auto;
+  border-radius: 40px;
+  padding: 4rem 5%;
+  display: flex;
+  gap: 4rem;
+  align-items: center;
+  flex-wrap: wrap;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 20px 60px -10px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.about-left {
+  flex: 1 1 450px;
+  position: relative;
+  z-index: 1;
+}
+
+.about-right {
+  flex: 1 1 350px;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  position: relative;
+  z-index: 1;
+}
+
+.viewer-section {
+  max-width: 1200px;
+  margin: 0 auto 5rem auto;
+  border-radius: 40px;
+  padding: 3rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.viewer-container {
+  height: 500px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  border-radius: 24px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 968px) {
+  .about-section {
+    padding: 2.5rem 5% !important;
+    gap: 2rem !important;
+    border-radius: 24px !important;
+    margin-bottom: 3rem !important;
+  }
+  .about-left {
+    flex: 1 1 100% !important;
+  }
+  .about-right {
+    flex: 1 1 100% !important;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+  }
+  .viewer-section {
+    padding: 1.5rem !important;
+    border-radius: 24px !important;
+    margin-bottom: 3rem !important;
+  }
+  .viewer-container {
+    height: 350px !important;
+  }
+  .masonry-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+    gap: 1.5rem !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .masonry-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
