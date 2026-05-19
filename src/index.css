@@ -693,16 +693,6 @@ nav {
   .nav-logo h1 {
     font-size: 1.2rem;
   }
-  
-  @media (max-width: 480px) {
-    .nav-logo h1 {
-      font-size: 0.95rem;
-      max-width: 120px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-  }
 
   .nav-logo {
     order: 1;

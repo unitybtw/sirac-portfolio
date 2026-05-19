@@ -11,6 +11,11 @@ const GameLibrary = lazy(() => import("./GameLibrary"));
 import PresencePanel from './PresencePanel';
 import { playClick, playHover, playSuccess, playArcadeOpen, setMutedState, getMutedState } from './soundEffects';
 
+// Disable browser layout scroll restoration on reload
+if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
+  window.history.scrollRestoration = 'manual';
+}
+
 const PageProgress = () => {
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
@@ -775,10 +780,10 @@ function App() {
   // Force scroll to top on refresh
   useEffect(() => {
     window.scrollTo(0, 0);
-    // For some specialized browsers/mobile
-    if ('scrollRestoration' in window.history) {
-      window.history.scrollRestoration = 'manual';
-    }
+    const timer = setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
+    return () => clearTimeout(timer);
   }, []);
 
   const [isArcadeOpen, setIsArcadeOpen] = useState(false);
