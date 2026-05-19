@@ -121,6 +121,7 @@ const DroneTicTacToe = ({ onGameOver }) => {
 // CORE DRONE COMPONENT
 // ==========================================
 const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
+    const { t } = useTranslation();
     const pX = useMotionValue(0);
     const pY = useMotionValue(0);
     const pupilX = useSpring(pX, { stiffness: 150, damping: 15 });
