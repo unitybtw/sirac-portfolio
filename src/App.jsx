@@ -478,7 +478,7 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, 
         <div ref={terminalEndRef} />
       </div>
 
-      <div style={{ padding: '12px 20px', background: 'rgba(0,0,0,0.2)', borderTop: '1px solid rgba(255,255,255,0.03)', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-code)', fontSize: '0.85rem' }}>
+      <div style={{ padding: '12px 20px', background: 'rgba(0,0,0,0.2)', borderTop: '1px solid rgba(255,255,255,0.03)', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-code)', fontSize: '16px' }}>
         <span style={{ color: '#7ee787' }}>sirac@iku:~$</span>
         <input
           ref={inputRef}
@@ -493,7 +493,7 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, 
             color: 'var(--accent-cyan)',
             flex: 1,
             fontFamily: 'inherit',
-            fontSize: 'inherit',
+            fontSize: '16px',
             caretColor: 'var(--accent-cyan)',
             textShadow: '0 0 5px var(--accent-cyan)'
           }}
