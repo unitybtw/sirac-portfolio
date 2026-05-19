@@ -994,14 +994,72 @@ function App() {
               <h1 className="text-gradient">{t('nav_name') || 'SIRAÇ GÖKTUĞ ŞİMŞEK.'}</h1>
             </div>
             
-            <button className="nav-toggle-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Toggle Menu">
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '2px', display: 'block', transition: 'all 0.3s', transform: isMobileMenuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none', transformOrigin: 'center' }}></span>
-                <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '2px', display: 'block', transition: 'all 0.3s', opacity: isMobileMenuOpen ? 0 : 1 }}></span>
-                <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '2px', display: 'block', transition: 'all 0.3s', transform: isMobileMenuOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none', transformOrigin: 'center' }}></span>
+            {/* Nav Utilities - ALWAYS visible on right */}
+            <div className="nav-utilities" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <div className="lang-selector-container" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'var(--bg-glass)', padding: '0.4rem 0.8rem', borderRadius: '20px', border: '1px solid var(--border-glass)' }}>
+                <Globe size={16} style={{ color: 'var(--text-muted)' }} />
+                <motion.button whileHover={{ scale: 1.1, color: "var(--accent-cyan)" }} whileTap={{ scale: 0.9 }} onClick={() => changeLanguage('en')} style={{ background: 'transparent', border: 'none', color: i18n.language?.startsWith('en') ? 'var(--accent-cyan)' : 'var(--text-muted)', cursor: 'pointer', fontWeight: 600, padding: '0.1rem 0.2rem', fontSize: '0.8rem' }}>EN</motion.button>
+                <span style={{ color: 'var(--border-glass)', fontSize: '0.8rem' }}>|</span>
+                <motion.button whileHover={{ scale: 1.1, color: "var(--accent-cyan)" }} whileTap={{ scale: 0.9 }} onClick={() => changeLanguage('tr')} style={{ background: 'transparent', border: 'none', color: i18n.language?.startsWith('tr') ? 'var(--accent-cyan)' : 'var(--text-muted)', cursor: 'pointer', fontWeight: 600, padding: '0.1rem 0.2rem', fontSize: '0.8rem' }}>TR</motion.button>
               </div>
-            </button>
 
+              <Magnetic>
+                <motion.button
+                  onClick={toggleMute}
+                  style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '38px', height: '38px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: isMuted ? 'var(--text-muted)' : 'var(--accent-cyan)' }}
+                  whileHover={{ scale: 1.1, boxShadow: isMuted ? 'none' : '0 0 10px var(--accent-cyan)' }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                </motion.button>
+              </Magnetic>
+
+              <Magnetic>
+                <motion.button
+                  onClick={toggleTheme}
+                  style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '38px', height: '38px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--text-main)', position: 'relative', overflow: 'hidden' }}
+                  whileHover={{ scale: 1.1, boxShadow: '0 0 10px var(--accent-cyan)' }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    {theme === 'dark' ? (
+                      <motion.div
+                        key="moon"
+                        initial={{ y: -30, opacity: 0, rotate: -90 }}
+                        animate={{ y: 0, opacity: 1, rotate: 0 }}
+                        exit={{ y: 30, opacity: 0, rotate: 90 }}
+                        transition={{ duration: 0.3 }}
+                        style={{ position: 'absolute' }}
+                      >
+                        <Moon size={16} />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="sun"
+                        initial={{ y: -30, opacity: 0, rotate: -90 }}
+                        animate={{ y: 0, opacity: 1, rotate: 0 }}
+                        exit={{ y: 30, opacity: 0, rotate: 90 }}
+                        transition={{ duration: 0.3 }}
+                        style={{ position: 'absolute' }}
+                      >
+                        <Sun size={16} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
+              </Magnetic>
+
+              {/* Hamburger Toggle button */}
+              <button className="nav-toggle-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Toggle Menu">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                  <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '2px', display: 'block', transition: 'all 0.3s', transform: isMobileMenuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none', transformOrigin: 'center' }}></span>
+                  <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '2px', display: 'block', transition: 'all 0.3s', opacity: isMobileMenuOpen ? 0 : 1 }}></span>
+                  <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '2px', display: 'block', transition: 'all 0.3s', transform: isMobileMenuOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none', transformOrigin: 'center' }}></span>
+                </div>
+              </button>
+            </div>
+
+            {/* Collapsible Nav Links */}
             <div className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}>
               <Magnetic><a href="#about" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_about') || 'About'}</a></Magnetic>
               <Magnetic><a href="#timeline" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_timeline') || 'Timeline'}</a></Magnetic>
@@ -1017,59 +1075,6 @@ function App() {
                 >
                   <Gamepad2 size={18} /> {t('arcade_button') || 'Arcade'}
                 </button>
-              </Magnetic>
-
-              <div style={{ marginLeft: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--bg-glass)', padding: '0.4rem 0.8rem', borderRadius: '20px', border: '1px solid var(--border-glass)' }}>
-                <Globe size={16} style={{ color: 'var(--text-muted)' }} />
-                <motion.button whileHover={{ scale: 1.1, color: "var(--accent-cyan)" }} whileTap={{ scale: 0.9 }} onClick={() => changeLanguage('en')} style={{ background: 'transparent', border: 'none', color: i18n.language?.startsWith('en') ? 'var(--accent-cyan)' : 'var(--text-muted)', cursor: 'pointer', fontWeight: 600, padding: '0.2rem' }}>EN</motion.button>
-                <span style={{ color: 'var(--border-glass)' }}>|</span>
-                <motion.button whileHover={{ scale: 1.1, color: "var(--accent-cyan)" }} whileTap={{ scale: 0.9 }} onClick={() => changeLanguage('tr')} style={{ background: 'transparent', border: 'none', color: i18n.language?.startsWith('tr') ? 'var(--accent-cyan)' : 'var(--text-muted)', cursor: 'pointer', fontWeight: 600, padding: '0.2rem' }}>TR</motion.button>
-              </div>
-
-              <Magnetic>
-                <motion.button
-                  onClick={toggleMute}
-                  style={{ marginLeft: '0.5rem', background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: isMuted ? 'var(--text-muted)' : 'var(--accent-cyan)' }}
-                  whileHover={{ scale: 1.1, boxShadow: isMuted ? 'none' : '0 0 10px var(--accent-cyan)' }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-                </motion.button>
-              </Magnetic>
-
-              <Magnetic>
-                <motion.button
-                  onClick={toggleTheme}
-                  style={{ marginLeft: '0.5rem', background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--text-main)', position: 'relative', overflow: 'hidden' }}
-                  whileHover={{ scale: 1.1, boxShadow: '0 0 10px var(--accent-cyan)' }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <AnimatePresence mode="wait" initial={false}>
-                    {theme === 'dark' ? (
-                      <motion.div
-                        key="moon"
-                        initial={{ y: -30, opacity: 0, rotate: -90 }}
-                        animate={{ y: 0, opacity: 1, rotate: 0 }}
-                        exit={{ y: 30, opacity: 0, rotate: 90 }}
-                        transition={{ duration: 0.3 }}
-                        style={{ position: 'absolute' }}
-                      >
-                        <Moon size={20} />
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="sun"
-                        initial={{ y: -30, opacity: 0, rotate: -90 }}
-                        animate={{ y: 0, opacity: 1, rotate: 0 }}
-                        exit={{ y: 30, opacity: 0, rotate: 90 }}
-                        transition={{ duration: 0.3 }}
-                        style={{ position: 'absolute' }}
-                      >
-                        <Sun size={20} />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.button>
               </Magnetic>
             </div>
           </nav>
