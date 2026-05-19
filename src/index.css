@@ -819,3 +819,64 @@ nav {
     transform: none !important;
   }
 }
+
+/* Custom Cyber Cursor */
+@media (pointer: fine) {
+  body, a, button, [role="button"], input, textarea, select {
+    cursor: none !important;
+  }
+
+  .cyber-cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 30px;
+    height: 30px;
+    border: 2px solid rgba(0, 240, 255, 0.3);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 999999;
+    will-change: transform, border-color, box-shadow;
+    transition: border-color 0.25s, box-shadow 0.25s;
+    background: transparent;
+  }
+
+  .cyber-cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 999999;
+    background-color: var(--accent-cyan);
+    box-shadow: 0 0 10px var(--accent-cyan);
+    will-change: transform, background-color;
+    transition: background-color 0.25s;
+  }
+}
+
+/* Glowing Skill Bar Pulse Animation */
+@keyframes bar-pulse {
+  0% {
+    box-shadow: 0 0 5px var(--accent-cyan);
+    opacity: 0.8;
+  }
+  50% {
+    box-shadow: 0 0 15px var(--accent-cyan), 0 0 5px var(--accent-cyan);
+    opacity: 1;
+  }
+  100% {
+    box-shadow: 0 0 5px var(--accent-cyan);
+    opacity: 0.8;
+  }
+}
+
+.skill-progress-bar-fill {
+  position: relative;
+}
+
+.skill-card:hover .skill-progress-bar-fill {
+  animation: bar-pulse 1.5s infinite alternate;
+}

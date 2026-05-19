@@ -1,7 +1,7 @@
 import React, { useEffect, useState, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Terminal, Github, Linkedin, Mail, ArrowRight, Code, Layers, Smartphone, Box, Gamepad2, Compass, Globe, Moon, Sun, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring, useMotionTemplate, useInView } from 'framer-motion';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Float, Stage, PresentationControls } from '@react-three/drei';
 import './index.css';
@@ -91,6 +91,7 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
       <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.5', margin: '0.5rem 0' }}>{description}</p>
       <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden', position: 'relative' }}>
         <motion.div
+          className="skill-progress-bar-fill"
           style={{ height: '100%', background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))', borderRadius: '10px', position: 'relative' }}
           initial={{ width: 0 }}
           whileInView={{ width: `${percent}%` }}
@@ -262,7 +263,7 @@ const ThreeDViewer = ({ t }) => {
       </div>
 
       <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', marginBottom: '2rem' }}>
-        <h2 className="section-title text-gradient">{t('viewer_title')}</h2>
+        <h2 className="section-title text-gradient"><ScrambleText text={t('viewer_title')} /></h2>
         <p style={{ color: 'var(--text-muted)' }}>{t('viewer_subtitle')} ({currentModelIndex + 1}/{models.length})</p>
       </div>
 
@@ -310,7 +311,44 @@ const ThreeDViewer = ({ t }) => {
   );
 };
 
-const CursorGlow = () => {
+const ScrambleText = ({ text, delay = 0 }) => {
+  const ref = React.useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const [displayText, setDisplayText] = useState('');
+  const chars = 'XYZ01@#$%^&*()_+=-{}[]<>?/\\';
+
+  useEffect(() => {
+    if (!isInView) return;
+    let iteration = 0;
+    const originalText = text;
+    let interval = setInterval(() => {
+      setDisplayText(
+        originalText
+          .split('')
+          .map((char, index) => {
+            if (char === ' ') return ' ';
+            if (index < iteration) {
+              return originalText[index];
+            }
+            return chars[Math.floor(Math.random() * chars.length)];
+          })
+          .join('')
+      );
+      if (iteration >= originalText.length) {
+        clearInterval(interval);
+      }
+      iteration += 1 / 3;
+    }, 25);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isInView, text]);
+
+  return <span ref={ref}>{displayText || text}</span>;
+};
+
+const CyberCursor = () => {
   const mouseX = useMotionValue(-1000);
   const mouseY = useMotionValue(-1000);
   
@@ -318,28 +356,170 @@ const CursorGlow = () => {
   const smoothX = useSpring(mouseX, springConfig);
   const smoothY = useSpring(mouseY, springConfig);
 
+  const ringX = useSpring(mouseX, { damping: 30, stiffness: 220, mass: 0.7 });
+  const ringY = useSpring(mouseY, { damping: 30, stiffness: 220, mass: 0.7 });
+  
+  const dotX = useSpring(mouseX, { damping: 12, stiffness: 450, mass: 0.1 });
+  const dotY = useSpring(mouseY, { damping: 12, stiffness: 450, mass: 0.1 });
+
+  const [cursorType, setCursorType] = useState('default');
+  const [particles, setParticles] = useState([]);
+  const [isMobile, setIsMobile] = useState(true);
+
   useEffect(() => {
+    const media = window.matchMedia('(pointer: fine)');
+    setIsMobile(!media.matches);
+    const listener = (e) => setIsMobile(!e.matches);
+    media.addEventListener('change', listener);
+
     const handleMouseMove = (e) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
     };
 
+    const handleMouseDown = (e) => {
+      setCursorType('click');
+      const newParticles = [];
+      const count = 8;
+      for (let i = 0; i < count; i++) {
+        const angle = (i / count) * Math.PI * 2 + Math.random() * 0.5;
+        const velocity = 2 + Math.random() * 4;
+        newParticles.push({
+          id: Math.random(),
+          x: e.clientX,
+          y: e.clientY,
+          vx: Math.cos(angle) * velocity,
+          vy: Math.sin(angle) * velocity,
+          size: 3 + Math.random() * 4,
+          color: Math.random() > 0.5 ? 'var(--accent-cyan)' : 'var(--accent-violet)'
+        });
+      }
+      setParticles(prev => [...prev, ...newParticles].slice(-40));
+    };
+
+    const handleMouseUp = () => setCursorType('hover');
+
+    const handleMouseOver = (e) => {
+      const target = e.target;
+      if (!target) return;
+      const isInteractive = 
+        target.tagName === 'A' || 
+        target.tagName === 'BUTTON' || 
+        target.closest('.project-card') || 
+        target.closest('.game-card') || 
+        target.closest('.skill-card') ||
+        target.closest('.volume-toggle') ||
+        target.closest('a') ||
+        target.closest('button') ||
+        target.closest('.timeline-node');
+      
+      if (isInteractive) {
+        setCursorType('hover');
+      } else {
+        setCursorType('default');
+      }
+    };
+
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
-    return () => window.removeEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mousedown", handleMouseDown, { passive: true });
+    window.addEventListener("mouseup", handleMouseUp, { passive: true });
+    window.addEventListener("mouseover", handleMouseOver, { passive: true });
+
+    return () => {
+      media.removeEventListener('change', listener);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mousedown", handleMouseDown);
+      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("mouseover", handleMouseOver);
+    };
   }, [mouseX, mouseY]);
 
+  useEffect(() => {
+    if (particles.length > 0) {
+      const timer = setTimeout(() => {
+        setParticles([]);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [particles]);
+
+  if (isMobile) {
+    return (
+      <div className="cursor-glow-wrapper">
+        <motion.div
+          className="cursor-glow"
+          style={{ x: smoothX, y: smoothY }}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div className="cursor-glow-wrapper">
+    <>
+      <div className="cursor-glow-wrapper">
+        <motion.div
+          className="cursor-glow"
+          style={{ x: smoothX, y: smoothY }}
+        />
+      </div>
+
       <motion.div
-        className="cursor-glow"
+        className="cyber-cursor-ring"
         style={{
-          x: smoothX,
-          y: smoothY,
+          x: ringX,
+          y: ringY,
+          translateX: '-50%',
+          translateY: '-50%',
+          borderColor: cursorType === 'hover' ? 'var(--accent-cyan)' : (cursorType === 'click' ? 'var(--accent-violet)' : 'rgba(255, 255, 255, 0.2)'),
+          scale: cursorType === 'hover' ? 1.4 : (cursorType === 'click' ? 0.75 : 1),
+          boxShadow: cursorType === 'hover' ? '0 0 15px rgba(0, 240, 255, 0.4)' : 'none',
         }}
       />
-    </div>
+
+      <motion.div
+        className="cyber-cursor-dot"
+        style={{
+          x: dotX,
+          y: dotY,
+          translateX: '-50%',
+          translateY: '-50%',
+          backgroundColor: cursorType === 'click' ? 'var(--accent-violet)' : 'var(--accent-cyan)',
+          scale: cursorType === 'hover' ? 0.6 : 1,
+        }}
+      />
+
+      <AnimatePresence>
+        {particles.map(p => (
+          <motion.div
+            key={p.id}
+            initial={{ x: p.x, y: p.y, scale: 1, opacity: 1 }}
+            animate={{
+              x: p.x + p.vx * 12,
+              y: p.y + p.vy * 12,
+              scale: 0,
+              opacity: 0
+            }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            style={{
+              position: 'fixed',
+              left: 0,
+              top: 0,
+              width: p.size,
+              height: p.size,
+              borderRadius: '50%',
+              background: p.color,
+              boxShadow: `0 0 8px ${p.color}`,
+              pointerEvents: 'none',
+              zIndex: 9999999
+            }}
+          />
+        ))}
+      </AnimatePresence>
+    </>
   );
 };
+
 
 const TypewriterTitle = ({ title1, title2 }) => {
   const [text, setText] = useState('');
@@ -502,6 +682,10 @@ const TiltCard = ({ children, className }) => {
   const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
   const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
 
+  const flareX = useTransform(x, [-0.5, 0.5], ["0%", "100%"]);
+  const flareY = useTransform(y, [-0.5, 0.5], ["0%", "100%"]);
+  const background = useMotionTemplate`radial-gradient(circle at ${flareX} ${flareY}, rgba(0, 240, 255, 0.12) 0%, transparent 65%)`;
+
   const handleMouseMove = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const width = rect.width;
@@ -527,11 +711,25 @@ const TiltCard = ({ children, className }) => {
         rotateY,
         rotateX,
         transformStyle: "preserve-3d",
-        perspective: "1000px"
+        perspective: "1000px",
+        position: "relative"
       }}
       className={className}
     >
-      <div style={{ transform: "translateZ(30px)", transformStyle: "preserve-3d", height: '100%' }}>
+      <motion.div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background,
+          pointerEvents: "none",
+          borderRadius: "inherit",
+          zIndex: 5
+        }}
+      />
+      <div style={{ transform: "translateZ(30px)", transformStyle: "preserve-3d", height: '100%', position: "relative", zIndex: 2 }}>
         {children}
       </div>
     </motion.div>
@@ -728,7 +926,7 @@ function App() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1, ease: "easeOut" }}
         >
-          <CursorGlow />
+          <CyberCursor />
           <MatrixBackground theme={theme} isPaused={isArcadeOpen} />
           <div className="cyber-bg">
             {/* Parallax Floating Icons */}
@@ -926,7 +1124,7 @@ function App() {
             
             <div style={{ flex: '1 1 400px', position: 'relative', zIndex: 1 }}>
               <div className="section-header" style={{ alignItems: 'flex-start', textAlign: 'left', marginBottom: '2rem' }}>
-                <h2 className="section-title text-gradient" style={{ letterSpacing: '-0.02em' }}>{t('about_title')}</h2>
+                <h2 className="section-title text-gradient" style={{ letterSpacing: '-0.02em' }}><ScrambleText text={t('about_title')} /></h2>
                 <p style={{ color: 'var(--accent-cyan)', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', fontSize: '0.85rem' }}>{t('about_subtitle')}</p>
               </div>
               <p style={{ color: 'var(--text-main)', fontSize: '1.2rem', lineHeight: 1.8, marginBottom: '1.5rem', fontWeight: 500 }}>
@@ -958,7 +1156,7 @@ function App() {
           {/* Timeline Section */}
           <section id="timeline" style={{ padding: '0 5% 5rem', position: 'relative' }}>
             <div className="section-header">
-              <h2 className="section-title text-gradient">{t('timeline_title')}</h2>
+              <h2 className="section-title text-gradient"><ScrambleText text={t('timeline_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('timeline_subtitle')}</p>
             </div>
             
@@ -1032,7 +1230,7 @@ function App() {
           {/* Featured Modules Section - To prove content depth to admins */}
           <section id="featured-modules" style={{ padding: '5rem 5%', background: 'rgba(255,255,255,0.01)', borderTop: '1px solid rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
             <div className="section-header">
-              <h2 className="section-title text-gradient">{t('featured_title')}</h2>
+              <h2 className="section-title text-gradient"><ScrambleText text={t('featured_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('featured_subtitle')}</p>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginTop: '3rem' }}>
@@ -1062,7 +1260,7 @@ function App() {
           {/* Projects Timeline (Gallery) */}
           <section id="projects" className="gallery-section">
             <div className="section-header">
-              <h2 className="section-title text-gradient">{t('archives_title')}</h2>
+              <h2 className="section-title text-gradient"><ScrambleText text={t('archives_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('archives_subtitle')}</p>
             </div>
             <motion.div 
@@ -1119,7 +1317,7 @@ function App() {
           {/* Arcade Section */}
           <section id="arcade" className="desktop-only" style={{ padding: '0 5% 5rem', textAlign: 'center' }}>
             <div className="section-header">
-              <h2 className="section-title text-gradient">{t('arcade_section_title') || 'ARCADE UNIVERSE'}</h2>
+              <h2 className="section-title text-gradient"><ScrambleText text={t('arcade_section_title') || 'ARCADE UNIVERSE'} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('arcade_section_subtitle')}</p>
             </div>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -1145,7 +1343,7 @@ function App() {
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <div className="section-header">
-              <h2 className="section-title text-gradient">{t('skills_title')}</h2>
+              <h2 className="section-title text-gradient"><ScrambleText text={t('skills_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('skills_subtitle')}</p>
             </div>
             <div className="skills-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', marginTop: '3rem' }}>
