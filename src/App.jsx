@@ -993,6 +993,25 @@ function App() {
               <h1 className="text-gradient">{t('nav_name') || 'SIRAÇ GÖKTUĞ ŞİMŞEK.'}</h1>
             </div>
             
+            {/* Collapsible Nav Links */}
+            <div className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}>
+              <Magnetic><a href="#about" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_about') || 'About'}</a></Magnetic>
+              <Magnetic><a href="#timeline" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_timeline') || 'Timeline'}</a></Magnetic>
+              <Magnetic><a href="#projects" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_work')}</a></Magnetic>
+              <Magnetic><a href="#skills" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_skills')}</a></Magnetic>
+              <Magnetic><a href="#contact" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_contact')}</a></Magnetic>
+              
+              <Magnetic>
+                <button
+                  onClick={() => { setIsArcadeOpen(true); setIsMobileMenuOpen(false); }}
+                  className="btn btn-outline glass-panel"
+                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-cyan)' }}
+                >
+                  <Gamepad2 size={18} /> {t('arcade_button') || 'Arcade'}
+                </button>
+              </Magnetic>
+            </div>
+
             {/* Nav Utilities - ALWAYS visible on right */}
             <div className="nav-utilities" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <div className="lang-selector-container" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'var(--bg-glass)', padding: '0.4rem 0.8rem', borderRadius: '20px', border: '1px solid var(--border-glass)' }}>
@@ -1056,25 +1075,6 @@ function App() {
                   <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '2px', display: 'block', transition: 'all 0.3s', transform: isMobileMenuOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none', transformOrigin: 'center' }}></span>
                 </div>
               </button>
-            </div>
-
-            {/* Collapsible Nav Links */}
-            <div className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}>
-              <Magnetic><a href="#about" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_about') || 'About'}</a></Magnetic>
-              <Magnetic><a href="#timeline" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_timeline') || 'Timeline'}</a></Magnetic>
-              <Magnetic><a href="#projects" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_work')}</a></Magnetic>
-              <Magnetic><a href="#skills" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_skills')}</a></Magnetic>
-              <Magnetic><a href="#contact" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_contact')}</a></Magnetic>
-              
-              <Magnetic>
-                <button
-                  onClick={() => { setIsArcadeOpen(true); setIsMobileMenuOpen(false); }}
-                  className="btn btn-outline glass-panel"
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-cyan)' }}
-                >
-                  <Gamepad2 size={18} /> {t('arcade_button') || 'Arcade'}
-                </button>
-              </Magnetic>
             </div>
           </nav>
 

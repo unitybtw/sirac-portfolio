@@ -693,7 +693,16 @@ nav {
     }
   }
 
+  .nav-logo {
+    order: 1;
+  }
+
+  .nav-utilities {
+    order: 2;
+  }
+
   .nav-links {
+    order: 3;
     display: none;
     flex-direction: column;
     width: 100%;
