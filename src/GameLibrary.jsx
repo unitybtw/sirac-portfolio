@@ -142,6 +142,24 @@ const gamesList = [
 
 ];
 
+const categoryLabels = {
+    simulation: 'PORT',
+    arcade: 'ARCADE',
+    puzzle: 'PUZZLE'
+};
+
+const getGameCategory = (id) => {
+    const simList = ['fnaf1', 'cs16', 'lale_savascilari', 'gtavicecity', 'ultrakill', 'hollowknight', 'mario64', 'hl1', 'geodash', 'subway', 'slope', 'quake3', 'diablo', 'drift', 'doom', 'voxel'];
+    const puzzleList = ['color', 'mines', 'neon2048', 'cybergolf', 'neonsokoban', 'neonmemory', 'neontictactoe', 'neonbowling', 'cyberpiano', 'cyberinvaders', 'neonclimb', 'cybersort', 'neonbalance', 'cybermatch'];
+    
+    if (simList.includes(id)) return 'simulation';
+    if (puzzleList.includes(id)) return 'puzzle';
+    return 'arcade';
+};
+
+const RANDOM_PREFIXES = ['Pixel', 'Cyber', 'Neon', 'Voxel', 'Glitch', 'Retro', 'Alpha', 'Beta', 'Hyper', 'Matrix', 'Sonic', 'Aero', 'Nova', 'Quantum'];
+const RANDOM_SUFFIXES = ['Knight', 'Racer', 'Runner', 'Gamer', 'Hacker', 'Architect', 'Wizard', 'Driver', 'Slayer', 'Spectre', 'Ghost', 'Zero', 'Shadow', 'Striker'];
+
 const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
     const { t } = useTranslation();
     const [nickname, setNickname] = useState(localStorage.getItem('arcade_nickname') || '');
@@ -152,6 +170,15 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
         return saved ? JSON.parse(saved) : {};
     });
     const [searchQuery, setSearchQuery] = useState('');
+    const [activeTab, setActiveTab] = useState('all');
+    const [scoreboardGameFilter, setScoreboardGameFilter] = useState('all');
+
+    const generateRandomNickname = () => {
+        const p = RANDOM_PREFIXES[Math.floor(Math.random() * RANDOM_PREFIXES.length)];
+        const s = RANDOM_SUFFIXES[Math.floor(Math.random() * RANDOM_SUFFIXES.length)];
+        const num = Math.floor(100 + Math.random() * 899);
+        setTempName(`${p}${s}${num}`);
+    };
 
     const activeGame = gamesList.find(g => g.id === activeGameId);
 
@@ -245,7 +272,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
             <motion.div
                 onClick={() => setIsOpen(true)}
                 className="arcade-portal-card"
-                whileHover={{ scale: 1.02, y: -10, boxShadow: '0 30px 60px -15px rgba(0, 240, 255, 0.3)' }}
+                whileHover={{ scale: 1.02, y: -8, boxShadow: '0 0 40px rgba(0, 240, 255, 0.25), inset 0 0 20px rgba(255,255,255,0.05)' }}
                 whileTap={{ scale: 0.98 }}
                 style={{ 
                     cursor: 'pointer',
@@ -253,10 +280,10 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                     maxWidth: '900px', 
                     margin: '0 auto',
                     borderRadius: '32px',
-                    padding: '4rem 2rem',
-                    background: 'linear-gradient(135deg, rgba(20,20,30,0.8) 0%, rgba(10,10,15,0.9) 100%)',
-                    backdropFilter: 'blur(40px)',
-                    border: '1px solid rgba(255,255,255,0.08)',
+                    padding: '4.5rem 2rem',
+                    background: 'linear-gradient(135deg, rgba(15,15,25,0.7) 0%, rgba(5,5,10,0.9) 100%)',
+                    backdropFilter: 'blur(30px)',
+                    border: '1px solid rgba(0, 240, 255, 0.15)',
                     position: 'relative',
                     overflow: 'hidden',
                     display: 'flex',
@@ -266,18 +293,49 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                     transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
                 }}
             >
-                <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 40, ease: 'linear' }} style={{ position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%', background: 'radial-gradient(circle at center, rgba(0, 240, 255, 0.08) 0%, transparent 60%)', zIndex: 0, pointerEvents: 'none' }} />
+                {/* Scanner Beam / Scanline Effect */}
+                <div style={{
+                    position: 'absolute',
+                    top: 0, left: 0, width: '100%', height: '100%',
+                    background: 'linear-gradient(to bottom, rgba(0, 240, 255, 0) 0%, rgba(0, 240, 255, 0.03) 50%, rgba(0, 240, 255, 0) 100%)',
+                    pointerEvents: 'none',
+                    animation: 'bar-pulse 8s infinite linear',
+                    zIndex: 0
+                }} />
+
+                <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 30, ease: 'linear' }} style={{ position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%', background: 'radial-gradient(circle at center, rgba(0, 240, 255, 0.05) 0%, transparent 50%)', zIndex: 0, pointerEvents: 'none' }} />
                 
-                <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <div style={{ width: '80px', height: '80px', borderRadius: '24px', background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-violet))', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1rem', boxShadow: '0 10px 30px rgba(0, 240, 255, 0.3)' }}>
-                        <Gamepad2 size={40} color="#fff" />
-                    </div>
-                    <h3 style={{ fontSize: '2.5rem', fontWeight: 800, margin: 0, letterSpacing: '-0.03em', background: 'linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.7) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                    <motion.div 
+                        animate={{ 
+                            boxShadow: ['0 0 20px rgba(0,240,255,0.2)', '0 0 40px rgba(138,43,226,0.4)', '0 0 20px rgba(0,240,255,0.2)'],
+                            y: [0, -4, 0]
+                        }}
+                        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
+                        style={{ width: '90px', height: '90px', borderRadius: '28px', background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-violet))', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.1)' }}
+                    >
+                        <Gamepad2 size={46} color="#fff" style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))' }} />
+                    </motion.div>
+                    
+                    <h3 style={{ fontSize: '2.8rem', fontWeight: 800, margin: 0, letterSpacing: '-0.03em', background: 'linear-gradient(180deg, #ffffff 0%, rgba(255,255,255,0.7) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textShadow: '0 0 20px rgba(0,240,255,0.1)' }}>
                         {t('arcade_btn') || 'Launch Arcade'}
                     </h3>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', marginTop: '0.5rem', maxWidth: '400px' }}>
-                        Over 50 retro and modern simulations. Compete on global leaderboards.
+                    
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1.15rem', marginTop: '0.8rem', maxWidth: '500px', lineHeight: 1.6 }}>
+                        Explore 50+ fully playable web simulations, arcade games, and strategy challenges. Submit high scores to the global database.
                     </p>
+
+                    <div style={{ display: 'flex', gap: '2rem', marginTop: '2rem', background: 'rgba(0,0,0,0.4)', padding: '0.65rem 2.2rem', borderRadius: '50px', border: '1px solid rgba(0, 240, 255, 0.15)', backdropFilter: 'blur(10px)', boxShadow: '0 10px 30px rgba(0,0,0,0.2)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
+                            <span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold' }}>50+</span>
+                            <span style={{ color: 'var(--text-muted)' }}>Simulations</span>
+                        </div>
+                        <div style={{ width: '1px', background: 'rgba(255,255,255,0.1)' }} />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
+                            <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#00ff66', boxShadow: '0 0 8px #00ff66', animation: 'bar-pulse 2s infinite' }} />
+                            <span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold' }}>ONLINE</span>
+                        </div>
+                    </div>
                 </div>
             </motion.div>
 
@@ -357,25 +415,39 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                         initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -20 }}
                                         style={{ maxWidth: '450px', margin: '8vh auto', textAlign: 'center' }}
                                     >
-                                        <div className="glass-panel" style={{ padding: '3.5rem 2.5rem', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(20,20,25,0.6)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)' }}>
-                                            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-violet))', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem auto', boxShadow: '0 10px 20px rgba(0, 240, 255, 0.2)' }}>
+                                        <div className="glass-panel" style={{ padding: '3.5rem 2.5rem', borderRadius: '24px', border: '1px solid rgba(0, 240, 255, 0.15)', background: 'rgba(15,15,20,0.85)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.6)' }}>
+                                            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-violet))', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem auto', boxShadow: '0 10px 25px rgba(0, 240, 255, 0.3)' }}>
                                                 <User size={40} color="#fff" />
                                             </div>
                                             <h3 style={{ fontSize: '1.6rem', marginBottom: '0.5rem', letterSpacing: '-0.02em', fontWeight: 700 }}>{t('arcade_set_nickname')}</h3>
                                             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>Choose your identity to save your scores globally.</p>
-                                            <input
-                                                type="text"
-                                                placeholder="Enter username..."
-                                                value={tempName}
-                                                onChange={(e) => setTempName(e.target.value)}
-                                                className="glass-input"
-                                                style={{
-                                                    width: '100%', padding: '1.2rem',
-                                                    marginBottom: '1.5rem', textAlign: 'center', fontSize: '1.1rem',
-                                                }}
-                                                maxLength={16}
-                                                autoFocus
-                                            />
+                                            
+                                            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Enter username..."
+                                                    value={tempName}
+                                                    onChange={(e) => setTempName(e.target.value)}
+                                                    className="glass-input"
+                                                    style={{
+                                                        flex: 1, padding: '1.2rem',
+                                                        textAlign: 'center', fontSize: '1.1rem',
+                                                    }}
+                                                    maxLength={16}
+                                                    autoFocus
+                                                />
+                                                <motion.button
+                                                    onClick={generateRandomNickname}
+                                                    className="btn btn-outline"
+                                                    style={{ padding: '0.8rem 1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', borderColor: 'rgba(255,255,255,0.1)' }}
+                                                    title="Generate Random Tag"
+                                                    whileHover={{ scale: 1.05, borderColor: 'var(--accent-cyan)' }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                >
+                                                    🎲
+                                                </motion.button>
+                                            </div>
+
                                             <button
                                                 onClick={saveNickname}
                                                 className="btn btn-primary"
@@ -391,39 +463,96 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                     <motion.div
                                         key="scoreboard"
                                         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
-                                        style={{ maxWidth: '900px', margin: '0 auto' }}
+                                        style={{ maxWidth: '950px', margin: '0 auto' }}
                                     >
-                                        <div className="glass-panel" style={{ padding: '3rem', borderRadius: '24px', background: 'rgba(20,20,30,0.4)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                                            <h3 style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '2.5rem', fontSize: '1.8rem', letterSpacing: '-0.02em' }}>
-                                                <Trophy color="gold" size={28} /> Global Hall of Fame
-                                            </h3>
+                                        <div className="glass-panel" style={{ padding: '2.5rem 3rem', borderRadius: '24px', background: 'rgba(15,15,22,0.6)', border: '1px solid rgba(0, 240, 255, 0.15)' }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+                                                <h3 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.8rem', letterSpacing: '-0.02em', margin: 0 }}>
+                                                    <Trophy color="gold" size={28} /> Global Hall of Fame
+                                                </h3>
+                                                
+                                                <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
+                                                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Game Filter:</span>
+                                                    <select
+                                                        value={scoreboardGameFilter}
+                                                        onChange={(e) => setScoreboardGameFilter(e.target.value)}
+                                                        className="glass-input"
+                                                        style={{
+                                                            padding: '0.4rem 1.2rem',
+                                                            borderRadius: '20px',
+                                                            fontSize: '0.85rem',
+                                                            background: 'rgba(255,255,255,0.05)',
+                                                            border: '1px solid rgba(255,255,255,0.1)',
+                                                            color: '#fff',
+                                                            outline: 'none',
+                                                            cursor: 'pointer'
+                                                        }}
+                                                    >
+                                                        <option value="all" style={{ background: '#0a0a0f', color: '#fff' }}>All Simulations</option>
+                                                        {gamesList.map(g => (
+                                                            <option key={g.id} value={g.id} style={{ background: '#0a0a0f', color: '#fff' }}>{g.title}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </div>
 
-                                            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '4rem' }}>
+                                            <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: '3.5rem' }}>
                                                 {/* Global Scores from Cloud */}
                                                 <div style={{ display: 'grid', gap: '0.8rem', alignContent: 'start' }}>
-                                                    <h4 style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>Top 10 Global Records</h4>
-                                                    {globalScores.length === 0 ? (
-                                                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontStyle: 'italic' }}>Syncing with cloud database...</p>
-                                                    ) : (
-                                                        globalScores.slice(0, 10).map((s, idx) => (
-                                                            <div key={`global-${idx}`} style={{
-                                                                display: 'flex', justifyContent: 'space-between', padding: '0.8rem 1rem',
-                                                                background: s.name === nickname ? 'rgba(0, 240, 255, 0.08)' : 'transparent',
-                                                                borderBottom: '1px solid rgba(255,255,255,0.05)',
-                                                                animation: 'fadeIn 0.5s ease-out',
-                                                                alignItems: 'center'
-                                                            }}>
-                                                                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                                                                    <span style={{ color: 'var(--text-muted)', width: '20px', fontWeight: 600 }}>{idx + 1}.</span>
-                                                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                                        <span style={{ color: 'white', fontWeight: s.name === nickname ? 700 : 500 }}>{s.name}</span>
-                                                                        <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>{gamesList.find(g => g.id === s.gameId)?.title || s.gameId}</span>
+                                                    <h4 style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>Top 10 Records</h4>
+                                                    {(() => {
+                                                        const filtered = globalScores.filter(s => scoreboardGameFilter === 'all' || s.gameId === scoreboardGameFilter);
+                                                        if (globalScores.length === 0) {
+                                                            return <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontStyle: 'italic' }}>Syncing with cloud database...</p>;
+                                                        }
+                                                        if (filtered.length === 0) {
+                                                            return <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontStyle: 'italic' }}>No scores submitted yet for this game.</p>;
+                                                        }
+                                                        return filtered.slice(0, 10).map((s, idx) => {
+                                                            const isMe = s.name === nickname;
+                                                            let rowBg = 'transparent';
+                                                            let rowBorder = '1px solid rgba(255,255,255,0.03)';
+                                                            if (isMe) {
+                                                                rowBg = 'rgba(0, 240, 255, 0.06)';
+                                                                rowBorder = '1px solid rgba(0, 240, 255, 0.3)';
+                                                            } else if (idx === 0) {
+                                                                rowBg = 'rgba(255, 215, 0, 0.02)';
+                                                            }
+                                                            return (
+                                                                <div key={`global-${idx}`} style={{
+                                                                    display: 'flex', justifyContent: 'space-between', padding: '0.8rem 1.2rem',
+                                                                    background: rowBg,
+                                                                    border: rowBorder,
+                                                                    borderRadius: '12px',
+                                                                    alignItems: 'center',
+                                                                    boxShadow: isMe ? '0 0 15px rgba(0, 240, 255, 0.1)' : 'none',
+                                                                    transition: 'all 0.3s'
+                                                                }}>
+                                                                    <div style={{ display: 'flex', gap: '1.2rem', alignItems: 'center' }}>
+                                                                        <span style={{ 
+                                                                            color: idx === 0 ? '#ffd700' : idx === 1 ? '#c0c0c0' : idx === 2 ? '#cd7f32' : 'var(--text-muted)', 
+                                                                            width: '28px', 
+                                                                            fontWeight: 800, 
+                                                                            fontSize: idx < 3 ? '1.3rem' : '0.9rem',
+                                                                            display: 'inline-block',
+                                                                            textAlign: 'center'
+                                                                        }}>
+                                                                            {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`}
+                                                                        </span>
+                                                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                                                            <span style={{ color: 'white', fontWeight: isMe ? 700 : 500, fontSize: '0.95rem' }}>{s.name}</span>
+                                                                            <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '1px' }}>
+                                                                                {gamesList.find(g => g.id === s.gameId)?.title || s.gameId}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div style={{ color: isMe ? 'var(--accent-cyan)' : 'var(--text-main)', fontWeight: 700, fontSize: '1.15rem', fontFamily: 'monospace' }}>
+                                                                        {s.score.toLocaleString()}
                                                                     </div>
                                                                 </div>
-                                                                <div style={{ color: 'var(--text-main)', fontWeight: 600, fontSize: '1.1rem' }}>{s.score.toLocaleString()}</div>
-                                                            </div>
-                                                        ))
-                                                    )}
+                                                            );
+                                                        });
+                                                    })()}
                                                 </div>
 
                                                 {/* Local High Scores */}
@@ -434,14 +563,18 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                     ) : (
                                                         Object.entries(localScores)
                                                             .sort((a, b) => b[1] - a[1])
-                                                            .map(([gameId, score]) => (
-                                                                <div key={`local-${gameId}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.8rem 1rem', background: 'rgba(255,255,255,0.02)', borderRadius: '12px', alignItems: 'center' }}>
-                                                                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                                                                        <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{gamesList.find(g => g.id === gameId)?.title}</span>
+                                                            .map(([gameId, score]) => {
+                                                                const gameInfo = gamesList.find(g => g.id === gameId);
+                                                                return (
+                                                                    <div key={`local-${gameId}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.8rem 1.2rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: '12px', alignItems: 'center' }}>
+                                                                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                                                                            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: gameInfo?.color || 'var(--accent-cyan)' }} />
+                                                                            <span style={{ color: 'white', fontSize: '0.9rem', fontWeight: 500 }}>{gameInfo?.title || gameId}</span>
+                                                                        </div>
+                                                                        <div style={{ fontWeight: 700, color: gameInfo?.color || 'var(--accent-cyan)', fontFamily: 'monospace', fontSize: '1.05rem' }}>{score.toLocaleString()}</div>
                                                                     </div>
-                                                                    <div style={{ fontWeight: 600, color: 'var(--accent-cyan)' }}>{score.toLocaleString()}</div>
-                                                                </div>
-                                                            ))
+                                                                );
+                                                            })
                                                     )}
                                                 </div>
                                             </div>
@@ -449,95 +582,213 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                     </motion.div>
                                 ) : !activeGameId ? (
                                     /* Games Grid View */
-                                    <motion.div
-                                        key="grid"
-                                        initial="hidden"
-                                        animate="visible"
-                                        exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
-                                        variants={{
-                                            hidden: { opacity: 0 },
-                                            visible: {
-                                                opacity: 1,
-                                                transition: { staggerChildren: 0.02, delayChildren: 0.1 }
-                                            }
-                                        }}
-                                        style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '1.5rem', width: '100%', maxWidth: '1200px', margin: '0 auto', paddingBottom: '3rem' }}
-                                    >
-                                        {gamesList.filter(game => game.title.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
-                                            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
-                                                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>👾</div>
-                                                <p style={{ fontSize: '1.2rem', margin: 0 }}>No games match your query: "{searchQuery}"</p>
-                                                <button 
-                                                    className="btn btn-outline" 
-                                                    onClick={() => setSearchQuery('')}
-                                                    style={{ marginTop: '1.5rem', padding: '0.4rem 1.2rem', fontSize: '0.85rem' }}
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '1200px', margin: '0 auto' }}>
+                                        {/* Category Tabs */}
+                                        <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '2.5rem', width: '100%' }}>
+                                            {[
+                                                { id: 'all', label: 'All Simulations', count: gamesList.length, icon: <List size={16} /> },
+                                                { id: 'simulation', label: 'Retro & 3D Ports', count: gamesList.filter(g => getGameCategory(g.id) === 'simulation').length, icon: <Compass size={16} /> },
+                                                { id: 'arcade', label: 'Classic Arcade', count: gamesList.filter(g => getGameCategory(g.id) === 'arcade').length, icon: <Gamepad2 size={16} /> },
+                                                { id: 'puzzle', label: 'Puzzles & Strategy', count: gamesList.filter(g => getGameCategory(g.id) === 'puzzle').length, icon: <Zap size={16} /> }
+                                            ].map(cat => (
+                                                <motion.button
+                                                    key={cat.id}
+                                                    onClick={() => setActiveTab(cat.id)}
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '8px',
+                                                        padding: '0.6rem 1.2rem',
+                                                        borderRadius: '25px',
+                                                        border: activeTab === cat.id ? '1px solid var(--accent-cyan)' : '1px solid rgba(255, 255, 255, 0.05)',
+                                                        background: activeTab === cat.id ? 'rgba(0, 240, 255, 0.1)' : 'rgba(255, 255, 255, 0.02)',
+                                                        color: activeTab === cat.id ? 'var(--accent-cyan)' : 'var(--text-muted)',
+                                                        cursor: 'pointer',
+                                                        fontSize: '0.85rem',
+                                                        fontWeight: 600,
+                                                        boxShadow: activeTab === cat.id ? '0 0 15px rgba(0, 240, 255, 0.15)' : 'none',
+                                                        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+                                                    }}
+                                                    whileHover={{ scale: 1.05, background: 'rgba(255, 255, 255, 0.05)', borderColor: 'rgba(255,255,255,0.15)' }}
+                                                    whileTap={{ scale: 0.95 }}
                                                 >
-                                                    Clear Search Filter
-                                                </button>
-                                            </div>
-                                        )}
-                                        {gamesList
-                                            .filter(game => game.title.toLowerCase().includes(searchQuery.toLowerCase()))
-                                            .map((game) => (
-                                            <motion.div
-                                                key={game.id}
-                                                variants={{
-                                                    hidden: { opacity: 0, y: 15 },
-                                                    visible: { opacity: 1, y: 0, transition: { duration: 0.2, ease: "easeOut" } }
-                                                }}
-                                                whileHover={{ y: -4, scale: 1.02, boxShadow: `0 10px 25px -5px ${game.color}66`, borderColor: `rgba(255,255,255,0.2)` }}
-                                                onClick={() => setActiveGameId(game.id)}
-                                                style={{
-                                                    background: 'rgba(20, 20, 30, 0.85)', 
-                                                    border: '1px solid rgba(255,255,255,0.06)',
-                                                    borderRadius: '20px', padding: '1.5rem 1rem', cursor: 'pointer',
-                                                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem',
-                                                    justifyContent: 'space-between',
-                                                    position: 'relative', overflow: 'hidden',
-                                                    willChange: 'transform, opacity'
-                                                }}
-                                            >
-                                                {/* Ambient game color background glow */}
-                                                <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', height: '50px', background: `radial-gradient(ellipse at top, ${game.color}22 0%, transparent 70%)`, pointerEvents: 'none' }} />
-                                                
-                                                <div style={{ color: game.color, filter: `drop-shadow(0 0 16px ${game.color}88)`, background: 'rgba(0,0,0,0.2)', padding: '15px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.05)' }}>
-                                                    {game.icon}
+                                                    {cat.icon}
+                                                    <span>{cat.label}</span>
+                                                    <span style={{ fontSize: '0.75rem', opacity: 0.6, background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '10px' }}>{cat.count}</span>
+                                                </motion.button>
+                                            ))}
+                                        </div>
+
+                                        <motion.div
+                                            key="grid"
+                                            initial="hidden"
+                                            animate="visible"
+                                            exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
+                                            variants={{
+                                                hidden: { opacity: 0 },
+                                                visible: {
+                                                    opacity: 1,
+                                                    transition: { staggerChildren: 0.02, delayChildren: 0.05 }
+                                                }
+                                            }}
+                                            style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1.5rem', width: '100%', paddingBottom: '3rem' }}
+                                        >
+                                            {gamesList.filter(game => {
+                                                const matchesSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase());
+                                                const matchesTab = activeTab === 'all' || getGameCategory(game.id) === activeTab;
+                                                return matchesSearch && matchesTab;
+                                            }).length === 0 && (
+                                                <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+                                                    <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>👾</div>
+                                                    <p style={{ fontSize: '1.2rem', margin: 0 }}>No games match your filters</p>
+                                                    <button 
+                                                        className="btn btn-outline" 
+                                                        onClick={() => { setSearchQuery(''); setActiveTab('all'); }}
+                                                        style={{ marginTop: '1.5rem', padding: '0.4rem 1.2rem', fontSize: '0.85rem' }}
+                                                    >
+                                                        Reset Filters
+                                                    </button>
                                                 </div>
-                                                <div style={{ textAlign: 'center', width: '100%' }}>
-                                                    <h3 style={{ color: 'white', fontSize: '1rem', fontWeight: 600, margin: '0 0 0.5rem 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{game.title}</h3>
-                                                    {localScores[game.id] ? (
-                                                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '4px 8px', borderRadius: '6px', display: 'inline-block' }}>
-                                                            BEST <span style={{ color: game.color, fontWeight: 700 }}>{localScores[game.id]}</span>
-                                                        </div>
-                                                    ) : (
-                                                        <div style={{ fontSize: '0.75rem', color: 'transparent', padding: '4px 8px' }}>-</div>
-                                                    )}
-                                                </div>
-                                            </motion.div>
-                                        ))}
-                                    </motion.div>
+                                            )}
+
+                                            {gamesList
+                                                .filter(game => {
+                                                    const matchesSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase());
+                                                    const matchesTab = activeTab === 'all' || getGameCategory(game.id) === activeTab;
+                                                    return matchesSearch && matchesTab;
+                                                })
+                                                .map((game) => {
+                                                    const cat = getGameCategory(game.id);
+                                                    return (
+                                                        <motion.div
+                                                            key={game.id}
+                                                            variants={{
+                                                                hidden: { opacity: 0, y: 15 },
+                                                                visible: { opacity: 1, y: 0, transition: { duration: 0.2, ease: "easeOut" } },
+                                                                hover: { 
+                                                                    y: -5, 
+                                                                    scale: 1.03,
+                                                                    boxShadow: `0 15px 30px -5px ${game.color}44`,
+                                                                    borderColor: game.color,
+                                                                    transition: { type: 'spring', stiffness: 300, damping: 20 }
+                                                                }
+                                                            }}
+                                                            initial="hidden"
+                                                            animate="visible"
+                                                            whileHover="hover"
+                                                            onClick={() => setActiveGameId(game.id)}
+                                                            style={{
+                                                                background: 'rgba(20, 20, 30, 0.85)', 
+                                                                border: '1px solid rgba(255,255,255,0.06)',
+                                                                borderRadius: '20px', padding: '2rem 1rem 1.5rem 1rem', cursor: 'pointer',
+                                                                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.2rem',
+                                                                justifyContent: 'space-between',
+                                                                position: 'relative', overflow: 'hidden',
+                                                                boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                                                                willChange: 'transform, opacity'
+                                                            }}
+                                                        >
+                                                            {/* Category tag badge in top right */}
+                                                            <div style={{
+                                                                position: 'absolute',
+                                                                top: '8px',
+                                                                right: '8px',
+                                                                fontSize: '0.6rem',
+                                                                fontWeight: 700,
+                                                                letterSpacing: '1px',
+                                                                color: game.color,
+                                                                background: `${game.color}15`,
+                                                                border: `1px solid ${game.color}33`,
+                                                                padding: '2px 6px',
+                                                                borderRadius: '4px'
+                                                            }}>
+                                                                {categoryLabels[cat]}
+                                                            </div>
+
+                                                            {/* Ambient game color background glow */}
+                                                            <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', height: '60px', background: `radial-gradient(ellipse at top, ${game.color}33 0%, transparent 70%)`, pointerEvents: 'none' }} />
+                                                            
+                                                            <motion.div 
+                                                                variants={{
+                                                                    rest: { scale: 1, rotate: 0 },
+                                                                    hover: { scale: 1.1, rotate: 5, filter: `drop-shadow(0 0 16px ${game.color})` }
+                                                                }}
+                                                                style={{ color: game.color, filter: `drop-shadow(0 0 12px ${game.color}66)`, background: 'rgba(0,0,0,0.3)', padding: '16px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.08)' }}
+                                                            >
+                                                                {game.icon}
+                                                            </motion.div>
+                                                            
+                                                            <div style={{ textAlign: 'center', width: '100%', position: 'relative', height: '45px' }}>
+                                                                <h3 style={{ color: 'white', fontSize: '0.95rem', fontWeight: 600, margin: '0 0 0.5rem 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{game.title}</h3>
+                                                                
+                                                                <div style={{ position: 'relative', width: '100%', height: '20px', overflow: 'hidden' }}>
+                                                                    <motion.div 
+                                                                        variants={{
+                                                                            rest: { opacity: 1, y: 0 },
+                                                                            hover: { opacity: 0, y: -10 }
+                                                                        }} 
+                                                                        style={{ position: 'absolute', width: '100%', left: 0 }}
+                                                                    >
+                                                                        {localScores[game.id] ? (
+                                                                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.04)', padding: '3px 8px', borderRadius: '6px', display: 'inline-block', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                                                                BEST <span style={{ color: game.color, fontWeight: 700 }}>{localScores[game.id]}</span>
+                                                                            </div>
+                                                                        ) : (
+                                                                            <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.2)', padding: '3px 8px' }}>NOT PLAYED</div>
+                                                                        )}
+                                                                    </motion.div>
+
+                                                                    <motion.div 
+                                                                        variants={{
+                                                                            rest: { opacity: 0, y: 10 },
+                                                                            hover: { opacity: 1, y: 0 }
+                                                                        }}
+                                                                        style={{ position: 'absolute', width: '100%', left: 0, display: 'flex', justifyContent: 'center' }}
+                                                                    >
+                                                                        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#fff', background: `linear-gradient(90deg, ${game.color}, var(--accent-violet))`, padding: '4px 12px', borderRadius: '12px', display: 'inline-block', boxShadow: `0 0 10px ${game.color}88`, letterSpacing: '0.5px' }}>
+                                                                            LAUNCH ⚡
+                                                                        </div>
+                                                                    </motion.div>
+                                                                </div>
+                                                            </div>
+                                                        </motion.div>
+                                                    );
+                                                })}
+                                        </motion.div>
+                                    </div>
                                 ) : (
                                     /* Active Game View */
                                     <motion.div
                                         key="game"
-                                        initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
+                                        initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
                                         style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
                                     >
-                                        <div style={{ width: '100%', maxWidth: '800px', display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
-                                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '1rem' }}>
-                                                <h3 style={{ color: activeGame.color, textShadow: `0 0 10px ${activeGame.color}`, fontSize: '1.5rem', margin: 0 }}>{activeGame.title}</h3>
-                                                {localScores[activeGameId] && <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>BEST: {localScores[activeGameId]}</span>}
+                                        <div style={{ width: '100%', maxWidth: '850px', display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', alignItems: 'center' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                                                <h3 style={{ color: activeGame.color, textShadow: `0 0 12px ${activeGame.color}`, fontSize: '1.6rem', margin: 0, fontWeight: 800 }}>{activeGame.title}</h3>
+                                                {localScores[activeGameId] && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '6px' }}>PERSONAL BEST: {localScores[activeGameId]}</span>}
                                             </div>
                                             <button
                                                 onClick={() => setActiveGameId(null)}
                                                 className="btn btn-outline"
-                                                style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', borderColor: 'rgba(255,255,255,0.2)' }}
+                                                style={{ padding: '0.5rem 1.2rem', fontSize: '0.9rem', borderColor: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', gap: '8px' }}
                                             >
-                                                <X size={16} style={{ marginRight: '8px' }} /> {t('arcade_exit')}
+                                                <X size={16} /> {t('arcade_exit')}
                                             </button>
                                         </div>
 
-                                        <div style={{ flex: 1, width: '100%', maxWidth: '800px', minHeight: '600px', borderRadius: '16px', overflow: 'hidden', border: `2px solid ${activeGame.color}`, boxShadow: `0 0 30px ${activeGame.color}44`, background: '#000' }}>
+                                        <div style={{ 
+                                            flex: 1, 
+                                            width: '100%', 
+                                            maxWidth: '850px', 
+                                            height: 'clamp(400px, 70vh, 600px)', 
+                                            borderRadius: '24px', 
+                                            overflow: 'hidden', 
+                                            border: `2px solid ${activeGame.color}`, 
+                                            boxShadow: `0 0 35px ${activeGame.color}33`, 
+                                            background: '#000',
+                                            position: 'relative'
+                                        }}>
                                             <Suspense fallback={
                                                 <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: activeGame.color }}>
                                                     <motion.div
@@ -547,7 +798,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                     >
                                                         <Gamepad2 size={40} />
                                                     </motion.div>
-                                                    <p style={{ fontFamily: 'monospace', letterSpacing: '2px' }}>LOADING UNIVERSE...</p>
+                                                    <p style={{ fontFamily: 'monospace', letterSpacing: '2px' }}>INITIALIZING VIRTUAL CONTAINER...</p>
                                                 </div>
                                             }>
                                                 {activeGame.comp && <activeGame.comp onGameOver={(score) => handleGameOver(score, activeGame.id)} />}
