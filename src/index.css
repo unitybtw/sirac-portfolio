@@ -16,7 +16,7 @@
   --font-display: "Outfit", sans-serif;
   --font-code: "Fira Code", monospace;
 
-  --glass-blur: blur(40px);
+  --glass-blur: blur(20px);
 }
 
 * {
@@ -81,16 +81,13 @@ h1, h2, h3, h4, h5, h6 {
   content: "";
   position: absolute;
   border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.22;
-  mix-blend-mode: screen;
   will-change: transform;
 }
 
 .cyber-bg::before {
   width: 60vw;
   height: 60vw;
-  background: radial-gradient(circle, rgba(0, 212, 255, 0.45) 0%, rgba(0, 70, 255, 0.1) 70%, transparent 100%);
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.12) 0%, rgba(0, 70, 255, 0.03) 45%, transparent 70%);
   top: -10%;
   left: -10%;
   animation: float-blob-1 25s infinite alternate ease-in-out;
@@ -99,7 +96,7 @@ h1, h2, h3, h4, h5, h6 {
 .cyber-bg::after {
   width: 55vw;
   height: 55vw;
-  background: radial-gradient(circle, rgba(140, 60, 230, 0.45) 0%, rgba(200, 40, 150, 0.1) 70%, transparent 100%);
+  background: radial-gradient(circle, rgba(140, 60, 230, 0.12) 0%, rgba(200, 40, 150, 0.03) 45%, transparent 70%);
   bottom: -10%;
   right: -10%;
   animation: float-blob-2 20s infinite alternate ease-in-out;
@@ -108,7 +105,7 @@ h1, h2, h3, h4, h5, h6 {
 .cyber-bg-blob-3 {
   width: 48vw;
   height: 48vw;
-  background: radial-gradient(circle, rgba(0, 255, 180, 0.3) 0%, rgba(0, 100, 200, 0.1) 70%, transparent 100%);
+  background: radial-gradient(circle, rgba(0, 255, 180, 0.08) 0%, rgba(0, 100, 200, 0.02) 45%, transparent 70%);
   top: 35%;
   right: 15%;
   animation: float-blob-3 30s infinite alternate ease-in-out;
@@ -117,7 +114,7 @@ h1, h2, h3, h4, h5, h6 {
 .cyber-bg-blob-4 {
   width: 42vw;
   height: 42vw;
-  background: radial-gradient(circle, rgba(255, 0, 128, 0.3) 0%, rgba(255, 120, 0, 0.1) 70%, transparent 100%);
+  background: radial-gradient(circle, rgba(255, 0, 128, 0.08) 0%, rgba(255, 120, 0, 0.02) 45%, transparent 70%);
   bottom: 25%;
   left: 20%;
   animation: float-blob-4 22s infinite alternate ease-in-out;
@@ -140,8 +137,7 @@ h1, h2, h3, h4, h5, h6 {
   width: 600px;
   height: 600px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(var(--accent-cyan-rgb), 0.15) 0%, rgba(var(--accent-violet-rgb), 0.05) 50%, transparent 70%);
-  filter: blur(80px);
+  background: radial-gradient(circle, rgba(var(--accent-cyan-rgb), 0.10) 0%, rgba(var(--accent-violet-rgb), 0.03) 40%, transparent 70%);
   margin-top: -300px;
   margin-left: -300px;
   will-change: transform;
@@ -944,26 +940,26 @@ nav {
 
 /* Liquid background floating animations */
 @keyframes float-blob-1 {
-  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  50% { transform: translate(8%, 12%) scale(1.15) rotate(120deg); }
-  100% { transform: translate(-5%, -5%) scale(0.9) rotate(360deg); }
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(8%, 12%, 0) scale(1.15); }
+  100% { transform: translate3d(-5%, -5%, 0) scale(0.9); }
 }
 
 @keyframes float-blob-2 {
-  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  50% { transform: translate(-10%, -8%) scale(0.85) rotate(-180deg); }
-  100% { transform: translate(5%, 10%) scale(1.1) rotate(360deg); }
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-10%, -8%, 0) scale(0.85); }
+  100% { transform: translate3d(5%, 10%, 0) scale(1.1); }
 }
 
 @keyframes float-blob-3 {
-  0% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(-15%, 15%) scale(1.2); }
-  66% { transform: translate(10%, -10%) scale(0.9); }
-  100% { transform: translate(0, 0) scale(1); }
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(-12%, 12%, 0) scale(1.15); }
+  66% { transform: translate3d(8%, -8%, 0) scale(0.9); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
 }
 
 @keyframes float-blob-4 {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(12%, -15%) scale(1.1); }
-  100% { transform: translate(0, 0) scale(1); }
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(10%, -12%, 0) scale(1.1); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
 }
