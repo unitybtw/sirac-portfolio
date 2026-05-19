@@ -1150,7 +1150,7 @@ function App() {
             <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '300px', height: '300px', background: 'radial-gradient(circle at center, rgba(var(--accent-violet-rgb), 0.15) 0%, transparent 60%)', filter: 'blur(40px)', zIndex: 0 }} />
             
             <div className="about-left">
-              <div className="section-header" style={{ alignItems: 'flex-start', textAlign: 'left', marginBottom: '2rem' }}>
+              <div className="about-header">
                 <h2 className="section-title text-gradient" style={{ letterSpacing: '-0.02em' }}><ScrambleText text={t('about_title')} /></h2>
                 <p style={{ color: 'var(--accent-cyan)', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', fontSize: '0.85rem' }}>{t('about_subtitle')}</p>
               </div>
@@ -1255,7 +1255,7 @@ function App() {
           </section>
 
           {/* Featured Modules Section - To prove content depth to admins */}
-          <section id="featured-modules" className="desktop-only" style={{ padding: '5rem 5%', background: 'rgba(255,255,255,0.01)', borderTop: '1px solid rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+          <section id="featured-modules" className="desktop-only" style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', padding: '5rem 2rem', background: 'rgba(255,255,255,0.01)', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.03)' }}>
             <div className="section-header">
               <h2 className="section-title text-gradient"><ScrambleText text={t('featured_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('featured_subtitle')}</p>
@@ -1363,7 +1363,7 @@ function App() {
           <motion.section
             id="skills"
             className="skills-section glass-panel"
-            style={{ margin: '0 5%', borderRadius: '40px', willChange: 'transform, opacity' }}
+            style={{ borderRadius: '40px', willChange: 'transform, opacity' }}
             initial={{ opacity: 0, scale: 0.95, y: 50 }}
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}

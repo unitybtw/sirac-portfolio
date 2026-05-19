@@ -302,10 +302,12 @@ nav {
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
-  padding: 8rem 5% 0 5%;
+  padding: 8rem 2rem 0 2rem;
   /* Added top padding to prevent nav bar overlap */
   position: relative;
   overflow: hidden;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .hero-content {
@@ -436,14 +438,24 @@ nav {
 
 /* Gallery / Projects Section */
 .gallery-section {
-  padding: 4rem 5%;
+  padding: 4rem 2rem;
   /* Reduced from 8rem to tighten spacing on PC */
   position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .section-header {
   margin-bottom: 4rem;
   text-align: center;
+}
+
+.about-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  margin-bottom: 2rem;
 }
 
 .section-title {
@@ -803,6 +815,9 @@ nav {
     flex-direction: column;
     gap: 1rem;
     text-align: center;
+    margin: 0 auto 2rem auto;
+    display: flex;
+    max-width: max-content;
   }
 
   .status-level {
@@ -812,6 +827,12 @@ nav {
   .status-quest {
     font-size: 0.85rem;
     flex-direction: column;
+  }
+
+  .about-header {
+    align-items: center;
+    text-align: center;
+    width: 100%;
   }
 }
 
@@ -1256,6 +1277,11 @@ nav {
   }
   .viewer-section {
     padding: 1.5rem !important;
+    border-radius: 24px !important;
+    margin-bottom: 3rem !important;
+  }
+  .skills-section {
+    padding: 2.5rem 5% !important;
     border-radius: 24px !important;
     margin-bottom: 3rem !important;
   }
