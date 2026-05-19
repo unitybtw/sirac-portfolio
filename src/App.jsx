@@ -399,9 +399,13 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, 
         break;
 
       case 'arcade':
-        setIsArcadeOpen(!isArcadeOpen);
-        playArcadeOpen();
-        newHistory.push({ type: 'success', text: `Arcade module state toggled: ${!isArcadeOpen ? 'ACTIVE' : 'STANDBY'}` });
+        if (window.innerWidth < 968) {
+          newHistory.push({ type: 'error', text: 'ERROR: Arcade module requires physical keyboard/mouse inputs and is restricted on mobile devices.' });
+        } else {
+          setIsArcadeOpen(!isArcadeOpen);
+          playArcadeOpen();
+          newHistory.push({ type: 'success', text: `Arcade module state toggled: ${!isArcadeOpen ? 'ACTIVE' : 'STANDBY'}` });
+        }
         break;
 
       case 'sound':
@@ -1246,7 +1250,7 @@ function App() {
           </section>
 
           {/* Featured Modules Section - To prove content depth to admins */}
-          <section id="featured-modules" style={{ padding: '5rem 5%', background: 'rgba(255,255,255,0.01)', borderTop: '1px solid rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
+          <section id="featured-modules" className="desktop-only" style={{ padding: '5rem 5%', background: 'rgba(255,255,255,0.01)', borderTop: '1px solid rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
             <div className="section-header">
               <h2 className="section-title text-gradient"><ScrambleText text={t('featured_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('featured_subtitle')}</p>
