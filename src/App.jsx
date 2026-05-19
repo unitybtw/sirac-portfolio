@@ -112,7 +112,7 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
   );
 };
 
-const MatrixBackground = ({ theme, isPaused }) => {
+const MatrixBackground = ({ theme, isPaused, matrixRainMode }) => {
   useEffect(() => {
     if (isPaused) return;
     const canvas = document.getElementById('matrix-canvas');
@@ -135,12 +135,13 @@ const MatrixBackground = ({ theme, isPaused }) => {
 
     const colorsDark = ['rgba(0, 240, 255, 0.15)', 'rgba(138, 43, 226, 0.15)'];
     const colorsLight = ['rgba(0, 150, 255, 0.1)', 'rgba(100, 43, 200, 0.1)'];
+    const colorsMatrix = ['rgba(0, 255, 102, 0.4)', 'rgba(0, 255, 200, 0.2)'];
 
     // Set font once initially
     ctx.font = `${fontSize}px monospace`;
 
     let lastDrawTime = 0;
-    const fps = 12;
+    const fps = matrixRainMode ? 20 : 12;
     const interval = 1000 / fps;
     let animationFrameId;
 
@@ -161,12 +162,12 @@ const MatrixBackground = ({ theme, isPaused }) => {
       ctx.fillStyle = theme === 'dark' ? 'rgba(5, 5, 8, 0.1)' : 'rgba(255, 255, 255, 0.1)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      const currentPalette = theme === 'dark' ? colorsDark : colorsLight;
+      const currentPalette = matrixRainMode ? colorsMatrix : (theme === 'dark' ? colorsDark : colorsLight);
 
       for (let i = 0; i < drops.length; i++) {
         const text = characters[Math.floor(Math.random() * characters.length)];
 
-        // Dynamic colors: Random choice between cyan and violet tones
+        // Dynamic colors: Random choice between palette tones
         ctx.fillStyle = currentPalette[Math.random() > 0.5 ? 0 : 1];
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
@@ -519,6 +520,187 @@ const CyberCursor = () => {
   );
 };
 
+const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, setActiveArcadeGame, isMuted, toggleMute, matrixRainMode, setMatrixRainMode, t }) => {
+  const [history, setHistory] = useState([
+    { type: 'log', text: 'SYSTEM ONLINE // v2.5' },
+    { type: 'log', text: 'ESTABLISHING NEURAL GRID ENGINES... [OK]' },
+    { type: 'success', text: 'ACCESS GRANTED. Welcome to sirac@iku shell.' },
+    { type: 'log', text: 'Type "help" to list available system commands.' }
+  ]);
+  const [input, setInput] = useState('');
+  const terminalEndRef = React.useRef(null);
+  const inputRef = React.useRef(null);
+
+  useEffect(() => {
+    if (terminalEndRef.current) {
+      terminalEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [history]);
+
+  const handleFocus = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
+  const handleCommand = (e) => {
+    if (e.key !== 'Enter') return;
+    
+    const commandText = input.trim();
+    if (!commandText) return;
+
+    playClick();
+
+    const parts = commandText.split(' ');
+    const cmd = parts[0].toLowerCase();
+
+    const newHistory = [...history, { type: 'input', text: `sirac@iku:~$ ${commandText}` }];
+
+    switch (cmd) {
+      case 'help':
+        newHistory.push(
+          { type: 'log', text: 'Available commands:' },
+          { type: 'info', text: '  about      - Details about Siraç Göktuğ Şimşek' },
+          { type: 'info', text: '  skills     - Load system skill tree parameters' },
+          { type: 'info', text: '  projects   - Output compiled project archives' },
+          { type: 'info', text: '  arcade     - Toggle live arcade interface module' },
+          { type: 'info', text: '  sound      - Toggle synth volume state (mute/unmute)' },
+          { type: 'info', text: '  matrix     - Toggle green matrix digital code rain mode' },
+          { type: 'info', text: '  clear      - Purge screen buffer log' }
+        );
+        break;
+
+      case 'about':
+        newHistory.push(
+          { type: 'success', text: 'CLASSIFIED IDENTITY: Siraç Göktuğ Şimşek' },
+          { type: 'log', text: 'Role: Game Developer & UI Engineer' },
+          { type: 'log', text: 'Bio: Crafting low-level custom renderers, safe memory systems (Rust/C++), and console-grade web/mobile interfaces.' },
+          { type: 'log', text: 'Currently studying Digital Game Design at IKU.' }
+        );
+        break;
+
+      case 'skills':
+        newHistory.push(
+          { type: 'success', text: 'SYSTEM CAPABILITIES LOG:' },
+          { type: 'log', text: '  - Unity / C#          [|||||||||||||||||||] 95%' },
+          { type: 'log', text: '  - SwiftUI / macOS     [||||||||||||||||  ] 82%' },
+          { type: 'log', text: '  - Blender / 3D        [||||||||||||||||| ] 88%' },
+          { type: 'log', text: '  - C++ / Engine Dev    [||||||||||||||||  ] 80%' },
+          { type: 'log', text: '  - React / Web Apps    [|||||||||||||||   ] 75%' }
+        );
+        break;
+
+      case 'projects':
+        newHistory.push(
+          { type: 'success', text: 'ARCHIVED PROJECTS SUMMARY:' },
+          { type: 'info', text: '  1. FNAF 1 (Fan Port) - Interactive browser 2D engine' },
+          { type: 'info', text: '  2. CS 1.6 Web - Tactical shooter simulator' },
+          { type: 'info', text: '  3. Doom II - WebGL retro engine viewport integration' },
+          { type: 'log', text: 'Scroll down to the "Archives" grid to deploy any module!' }
+        );
+        break;
+
+      case 'arcade':
+        setIsArcadeOpen(!isArcadeOpen);
+        playArcadeOpen();
+        newHistory.push({ type: 'success', text: `Arcade module state toggled: ${!isArcadeOpen ? 'ACTIVE' : 'STANDBY'}` });
+        break;
+
+      case 'sound':
+        toggleMute();
+        newHistory.push({ type: 'success', text: `Audio mute state: ${!isMuted ? 'MUTED' : 'UNMUTED'}` });
+        break;
+
+      case 'matrix':
+        setMatrixRainMode(!matrixRainMode);
+        playSuccess();
+        newHistory.push({ type: 'success', text: `Matrix code rain theme: ${!matrixRainMode ? 'ACTIVE (NEON GREEN)' : 'STANDBY (CYAN VIOLET)'}` });
+        break;
+
+      case 'clear':
+        setHistory([]);
+        setInput('');
+        return;
+
+      default:
+        newHistory.push({ type: 'error', text: `Command not recognized: '${cmd}'. Type 'help' for options.` });
+        break;
+    }
+
+    setHistory(newHistory);
+    setInput('');
+  };
+
+  return (
+    <div 
+      className="glass-panel code-terminal" 
+      onClick={handleFocus}
+      style={{
+        width: '100%', maxWidth: '500px', borderRadius: '16px', overflow: 'hidden',
+        border: '1px solid rgba(0, 240, 255, 0.15)', 
+        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.8), 0 0 20px rgba(0, 240, 255, 0.1)',
+        textAlign: 'left', background: 'rgba(10, 10, 15, 0.85)', backdropFilter: 'blur(12px)',
+        cursor: 'text', height: '360px', display: 'flex', flexDirection: 'column'
+      }}
+    >
+      <div style={{ background: 'rgba(255,255,255,0.03)', padding: '12px 20px', display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', userSelect: 'none' }}>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56', boxShadow: '0 0 5px #ff5f56' }} />
+          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e', boxShadow: '0 0 5px #ffbd2e' }} />
+          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f', boxShadow: '0 0 5px #27c93f' }} />
+        </div>
+        <div style={{ flex: 1, textTransform: 'uppercase', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-sf)', letterSpacing: '1px' }}>
+          sirac@iku: ~/shell
+        </div>
+      </div>
+
+      <div style={{ padding: '20px', fontFamily: 'var(--font-code)', fontSize: '0.85rem', color: '#e5e5e5', lineHeight: '1.6', flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        {history.map((line, index) => {
+          let color = '#e5e5e5';
+          if (line.type === 'input') color = '#79c0ff';
+          else if (line.type === 'success') color = '#7ee787';
+          else if (line.type === 'error') color = '#ff7b72';
+          else if (line.type === 'info') color = 'var(--accent-cyan)';
+          
+          return (
+            <div key={index} style={{ color, whiteSpace: 'pre-wrap' }}>
+              {line.text}
+            </div>
+          );
+        })}
+        <div ref={terminalEndRef} />
+      </div>
+
+      <div style={{ padding: '12px 20px', background: 'rgba(0,0,0,0.2)', borderTop: '1px solid rgba(255,255,255,0.03)', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-code)', fontSize: '0.85rem' }}>
+        <span style={{ color: '#7ee787' }}>sirac@iku:~$</span>
+        <input
+          ref={inputRef}
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={handleCommand}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            outline: 'none',
+            color: 'var(--accent-cyan)',
+            flex: 1,
+            fontFamily: 'inherit',
+            fontSize: 'inherit',
+            caretColor: 'var(--accent-cyan)',
+            textShadow: '0 0 5px var(--accent-cyan)'
+          }}
+          placeholder="..."
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
+        />
+      </div>
+    </div>
+  );
+};
+
 
 const TypewriterTitle = ({ title1, title2 }) => {
   const [text, setText] = useState('');
@@ -795,9 +977,72 @@ function App() {
       window.history.scrollRestoration = 'manual';
     }
   }, []);
+
+  // Konami Code Easter Egg: ↑ ↑ ↓ ↓ ← → ← → B A
+  useEffect(() => {
+    const konamiCode = [
+      'ArrowUp', 'ArrowUp', 
+      'ArrowDown', 'ArrowDown', 
+      'ArrowLeft', 'ArrowRight', 
+      'ArrowLeft', 'ArrowRight', 
+      'b', 'a'
+    ];
+    let codeIndex = 0;
+
+    const handleKeyDown = (e) => {
+      if (e.key === konamiCode[codeIndex] || e.key === konamiCode[codeIndex].toLowerCase()) {
+        codeIndex++;
+        if (codeIndex === konamiCode.length) {
+          codeIndex = 0;
+          if (!isMuted) {
+            playArcadeOpen();
+            setTimeout(() => {
+              playSuccess();
+            }, 300);
+          }
+          console.log('%c👾 CHEAT CODE ACTIVATED 👾', 'color: #00f0ff; font-size: 20px; font-weight: bold; text-shadow: 0 0 10px #00f0ff');
+          setMatrixRainMode(prev => !prev);
+          
+          const banner = document.createElement('div');
+          banner.style.position = 'fixed';
+          banner.style.top = '15%';
+          banner.style.left = '50%';
+          banner.style.transform = 'translate(-50%, -50%)';
+          banner.style.background = 'rgba(8, 8, 18, 0.95)';
+          banner.style.border = '2px solid var(--accent-cyan)';
+          banner.style.boxShadow = '0 0 30px var(--accent-cyan)';
+          banner.style.padding = '20px 40px';
+          banner.style.borderRadius = '12px';
+          banner.style.zIndex = '999999';
+          banner.style.fontFamily = 'monospace';
+          banner.style.color = '#fff';
+          banner.style.textAlign = 'center';
+          banner.style.pointerEvents = 'none';
+          banner.innerHTML = `
+            <h1 style="color: var(--accent-cyan); margin: 0 0 10px 0; font-size: 24px; font-weight: bold; text-shadow: 0 0 10px var(--accent-cyan)">CHEAT CODE DETECTED</h1>
+            <p style="margin: 0; font-size: 14px; color: #7ee787">GRID SHADER OVERRIDE INITIATED</p>
+          `;
+          document.body.appendChild(banner);
+          
+          setTimeout(() => {
+            banner.style.transition = 'opacity 1s';
+            banner.style.opacity = '0';
+            setTimeout(() => banner.remove(), 1000);
+          }, 3000);
+        }
+      } else {
+        codeIndex = 0;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isMuted]);
+
   const [isArcadeOpen, setIsArcadeOpen] = useState(false);
   const [activeArcadeGame, setActiveArcadeGame] = useState(null);
   const [isMuted, setIsMuted] = useState(getMutedState());
+  const [matrixRainMode, setMatrixRainMode] = useState(false);
 
   const toggleMute = () => {
     const nextMute = !isMuted;
@@ -926,7 +1171,7 @@ function App() {
           transition={{ duration: 1, ease: "easeOut" }}
         >
           <CyberCursor />
-          <MatrixBackground theme={theme} isPaused={isArcadeOpen} />
+          <MatrixBackground theme={theme} isPaused={isArcadeOpen} matrixRainMode={matrixRainMode} />
           <div className="cyber-bg">
             {/* Parallax Floating Icons */}
               <motion.div style={{ position: 'absolute', top: '15%', left: '10%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax1, x: bgIconX, willChange: 'transform' }}>
@@ -1053,58 +1298,19 @@ function App() {
               initial={{ opacity: 0, scale: 0.9, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
+              style={{ x: terminalX, y: terminalY }}
             >
-              <motion.div 
-                className="glass-panel code-terminal" 
-                whileHover={{ y: -5, boxShadow: '0 35px 70px -15px rgba(0,240,255,0.15)' }}
-                style={{
-                  width: '100%', maxWidth: '500px', borderRadius: '16px', overflow: 'hidden',
-                  border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.8)',
-                  textAlign: 'left', background: 'rgba(10, 10, 15, 0.75)', backdropFilter: 'blur(10px)',
-                  willChange: 'transform, box-shadow',
-                  x: terminalX,
-                  y: terminalY
-                }}
-              >
-                <div style={{ background: 'rgba(255,255,255,0.02)', padding: '12px 20px', display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56', boxShadow: '0 0 5px #ff5f56' }} />
-                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e', boxShadow: '0 0 5px #ffbd2e' }} />
-                    <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f', boxShadow: '0 0 5px #27c93f' }} />
-                  </div>
-                  <div style={{ flex: 1, textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)', fontFamily: 'var(--font-sf)', letterSpacing: '1px' }}>
-                    sirac@iku: ~/portfolio
-                  </div>
-                </div>
-                <div style={{ padding: '24px', fontFamily: 'var(--font-code)', fontSize: '0.9rem', color: '#e5e5e5', lineHeight: '1.7' }}>
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
-                    <span style={{ color: '#ff7b72' }}>const</span> <span style={{ color: '#79c0ff' }}>developer</span> <span style={{ color: '#ff7b72' }}>=</span> {'{'}
-                  </motion.div>
-                  <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 1.5 }} style={{ paddingLeft: '24px' }}>
-                    <span style={{ color: '#d2a8ff' }}>name</span>: <span style={{ color: '#a5d6ff' }}>'Siraç Göktuğ Şimşek'</span>,
-                  </motion.div>
-                  <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 2.0 }} style={{ paddingLeft: '24px' }}>
-                    <span style={{ color: '#d2a8ff' }}>role</span>: <span style={{ color: '#a5d6ff' }}>'Game Developer & UI Engineer'</span>,
-                  </motion.div>
-                  <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 2.5 }} style={{ paddingLeft: '24px' }}>
-                    <span style={{ color: '#d2a8ff' }}>skills</span>: [<span style={{ color: '#a5d6ff' }}>'Unity'</span>, <span style={{ color: '#a5d6ff' }}>'C#'</span>, <span style={{ color: '#a5d6ff' }}>'SwiftUI'</span>, <span style={{ color: '#a5d6ff' }}>'React'</span>],
-                  </motion.div>
-                  <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 3.0 }} style={{ paddingLeft: '24px' }}>
-                    <span style={{ color: '#d2a8ff' }}>passion</span>: <span style={{ color: '#a5d6ff' }}>'Building Digital Realities'</span>,
-                  </motion.div>
-                  <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 3.5 }} style={{ paddingLeft: '24px' }}>
-                    <span style={{ color: '#d2a8ff' }}>status</span>: <span style={{ color: '#7ee787' }}>'Compiling the future...'</span>
-                  </motion.div>
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 4.0 }}>
-                    {'}'};
-                  </motion.div>
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 4.5 }} style={{ marginTop: '16px', display: 'flex', alignItems: 'center' }}>
-                    <span style={{ color: '#7ee787', marginRight: '8px' }}>➜</span>
-                    <span style={{ color: '#79c0ff', marginRight: '8px' }}>~</span>
-                    <motion.span animate={{ opacity: [1, 0] }} transition={{ repeat: Infinity, duration: 0.8 }} style={{ width: '10px', height: '18px', background: '#e5e5e5', display: 'inline-block' }} />
-                  </motion.div>
-                </div>
-              </motion.div>
+              <InteractiveTerminal 
+                isArcadeOpen={isArcadeOpen}
+                setIsArcadeOpen={setIsArcadeOpen}
+                activeArcadeGame={activeArcadeGame}
+                setActiveArcadeGame={setActiveArcadeGame}
+                isMuted={isMuted}
+                toggleMute={toggleMute}
+                matrixRainMode={matrixRainMode}
+                setMatrixRainMode={setMatrixRainMode}
+                t={t}
+              />
             </motion.div>
           </section>
 
