@@ -39,52 +39,7 @@ const PageProgress = () => {
   );
 };
 
-// --- Web Audio Synthesizer (Zero Dependencies) ---
-let audioCtx = null;
-const initAudio = () => {
-  if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  }
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
-  return audioCtx;
-};
 
-const playClickSound = () => {
-  try {
-    const ctx = initAudio();
-    const osc = ctx.createOscillator();
-    const gainNode = ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(800, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.1);
-    gainNode.gain.setValueAtTime(0.1, ctx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
-    osc.connect(gainNode);
-    gainNode.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.1);
-  } catch (e) { }
-};
-
-const playHoverSound = () => {
-  try {
-    const ctx = initAudio();
-    if (ctx.state !== 'running') return; // Needs interaction first
-    const osc = ctx.createOscillator();
-    const gainNode = ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(400, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.1);
-    gainNode.gain.setValueAtTime(0.02, ctx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
-    osc.connect(gainNode);
-    gainNode.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.1);
-  } catch (e) { }
-};
 
 // SVG Icons for Skills
 const UnityIcon = () => (
@@ -924,7 +879,7 @@ function App() {
                     sirac@iku: ~/portfolio
                   </div>
                 </div>
-                <div style={{ padding: '24px', fontFamily: '"Fira Code", monospace, SFMono-Regular', fontSize: '0.9rem', color: '#e5e5e5', lineHeight: '1.7' }}>
+                <div style={{ padding: '24px', fontFamily: 'var(--font-code)', fontSize: '0.9rem', color: '#e5e5e5', lineHeight: '1.7' }}>
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}>
                     <span style={{ color: '#ff7b72' }}>const</span> <span style={{ color: '#79c0ff' }}>developer</span> <span style={{ color: '#ff7b72' }}>=</span> {'{'}
                   </motion.div>

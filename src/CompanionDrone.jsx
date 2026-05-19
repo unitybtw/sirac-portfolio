@@ -755,6 +755,7 @@ const CompanionDrone = ({ activeGameId, isArcadeOpen }) => {
                     }}
                     style={{ width: '70px', height: '70px', position: 'relative', pointerEvents: 'auto', cursor: 'grab' }}
                     onClick={handleDroneClick}
+                    title={t('drone_tooltip')}
                 >
                     {/* Rotating Outer Ring */}
                     <motion.div

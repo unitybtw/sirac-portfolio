@@ -110,6 +110,7 @@ const resources = {
             "drone_click_3": "Searching for hidden administrator protocols...",
             "drone_click_4": "WARNING: AI CORE OVERHEATING.",
             "drone_click_5": "Security protocols engaged. Please stand down.",
+            "drone_tooltip": "Click to interact | Double-click to scan | Click 3x for root terminal",
             "drone_idle": [
                 "Need help debugging?",
                 "That game looks fun!",
@@ -282,6 +283,7 @@ const resources = {
             "drone_click_3": "Gizli yönetici protokolleri taranıyor...",
             "drone_click_4": "UYARI: YAPAY ZEKA ÇEKİRDEĞİ ISINIYOR.",
             "drone_click_5": "Güvenlik protokolleri devrede. Lütfen durun.",
+            "drone_tooltip": "Etkileşim için tıkla | Taramak için çift tıkla | Root terminali için 3x tıkla",
             "drone_idle": [
                 "Hata ayıklamaya yardım lazım mı?",
                 "Şu oyun çok eğlenceli duruyor!",
