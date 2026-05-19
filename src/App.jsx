@@ -311,41 +311,8 @@ const ThreeDViewer = ({ t }) => {
   );
 };
 
-const ScrambleText = ({ text, delay = 0 }) => {
-  const ref = React.useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
-  const [displayText, setDisplayText] = useState('');
-  const chars = 'XYZ01@#$%^&*()_+=-{}[]<>?/\\';
-
-  useEffect(() => {
-    if (!isInView) return;
-    let iteration = 0;
-    const originalText = text;
-    let interval = setInterval(() => {
-      setDisplayText(
-        originalText
-          .split('')
-          .map((char, index) => {
-            if (char === ' ') return ' ';
-            if (index < iteration) {
-              return originalText[index];
-            }
-            return chars[Math.floor(Math.random() * chars.length)];
-          })
-          .join('')
-      );
-      if (iteration >= originalText.length) {
-        clearInterval(interval);
-      }
-      iteration += 1 / 3;
-    }, 25);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [isInView, text]);
-
-  return <span ref={ref}>{displayText || text}</span>;
+const ScrambleText = ({ text }) => {
+  return <span>{text}</span>;
 };
 
 const CyberCursor = () => {
