@@ -151,6 +151,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
         const saved = localStorage.getItem('arcade_scores');
         return saved ? JSON.parse(saved) : {};
     });
+    const [searchQuery, setSearchQuery] = useState('');
 
     const activeGame = gamesList.find(g => g.id === activeGameId);
 
@@ -302,7 +303,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                     {nickname && <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0.2rem 0 0 0' }}>Connected as <span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold' }}>{nickname}</span></p>}
                                 </div>
                                 {nickname && !activeGameId && (
-                                    <div style={{ display: 'flex', gap: '1rem' }}>
+                                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                                         <button
                                             onClick={() => setShowScoreboard(!showScoreboard)}
                                             className={`btn ${showScoreboard ? 'btn-primary' : 'btn-outline'}`}
@@ -311,6 +312,33 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                             {showScoreboard ? <Gamepad2 size={16} /> : <Trophy size={16} />}
                                             {showScoreboard ? t('arcade_games') : t('arcade_scoreboard')}
                                         </button>
+                                        {!showScoreboard && (
+                                            <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search game..."
+                                                    value={searchQuery}
+                                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                                    style={{
+                                                        background: 'rgba(255, 255, 255, 0.04)',
+                                                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                                                        padding: '0.4rem 1rem 0.4rem 2rem',
+                                                        borderRadius: '20px',
+                                                        color: '#fff',
+                                                        fontSize: '0.8rem',
+                                                        outline: 'none',
+                                                        width: '160px',
+                                                        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+                                                        fontFamily: 'monospace',
+                                                    }}
+                                                    onFocus={(e) => { e.target.style.borderColor = 'var(--accent-cyan)'; e.target.style.width = '210px'; e.target.style.background = 'rgba(255,255,255,0.08)'; }}
+                                                    onBlur={(e) => { e.target.style.borderColor = 'rgba(255,255,255,0.08)'; e.target.style.width = '160px'; e.target.style.background = 'rgba(255,255,255,0.04)'; }}
+                                                />
+                                                <span style={{ position: 'absolute', left: '10px', color: 'rgba(255,255,255,0.3)', pointerEvents: 'none', display: 'flex', alignItems: 'center', fontSize: '0.75rem' }}>
+                                                    🔍
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -442,7 +470,22 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                         }}
                                         style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '1.5rem', width: '100%', maxWidth: '1200px', margin: '0 auto', paddingBottom: '3rem' }}
                                     >
-                                        {gamesList.map((game) => (
+                                        {gamesList.filter(game => game.title.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
+                                            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
+                                                <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>👾</div>
+                                                <p style={{ fontSize: '1.2rem', margin: 0 }}>No games match your query: "{searchQuery}"</p>
+                                                <button 
+                                                    className="btn btn-outline" 
+                                                    onClick={() => setSearchQuery('')}
+                                                    style={{ marginTop: '1.5rem', padding: '0.4rem 1.2rem', fontSize: '0.85rem' }}
+                                                >
+                                                    Clear Search Filter
+                                                </button>
+                                            </div>
+                                        )}
+                                        {gamesList
+                                            .filter(game => game.title.toLowerCase().includes(searchQuery.toLowerCase()))
+                                            .map((game) => (
                                             <motion.div
                                                 key={game.id}
                                                 variants={{
