@@ -6,6 +6,16 @@ export default defineConfig({
   plugins: [react()],
   base: '/',
   build: {
-    chunkSizeWarningLimit: 2000,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('three') || id.includes('@react-three') || id.includes('@react-spring') || id.includes('troika-three-text') || id.includes('three-stdlib')) {
+              return 'vendor-three';
+            }
+          }
+        }
+      }
+    }
   }
 })
