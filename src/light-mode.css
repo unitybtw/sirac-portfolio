@@ -121,3 +121,23 @@ body.light-mode .viewer-container {
     background: rgba(0, 0, 0, 0.02) !important;
     border-color: var(--border-glass) !important;
 }
+
+body.light-mode .arcade-portal-card {
+    background: var(--bg-glass) !important;
+    border-color: var(--border-glass) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-mode .arcade-portal-card:hover {
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.05), inset 0 0 20px rgba(255, 255, 255, 0.8) !important;
+}
+
+body.light-mode .arcade-portal-stats {
+    background: rgba(0, 0, 0, 0.03) !important;
+    border-color: var(--border-glass) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.02) !important;
+}
+
+body.light-mode .arcade-portal-divider {
+    background: rgba(0, 0, 0, 0.1) !important;
+}

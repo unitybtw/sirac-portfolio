@@ -307,26 +307,8 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.8 }}
-                whileHover={{ scale: 1.02, y: -8, boxShadow: '0 0 40px rgba(0, 240, 255, 0.25), inset 0 0 20px rgba(255,255,255,0.05)' }}
+                whileHover={{ scale: 1.02, y: -8 }}
                 whileTap={{ scale: 0.98 }}
-                style={{ 
-                    cursor: 'pointer',
-                    width: '100%', 
-                    maxWidth: '900px', 
-                    margin: '0 auto',
-                    borderRadius: '32px',
-                    padding: '4.5rem 2rem',
-                    background: 'linear-gradient(135deg, rgba(15,15,25,0.7) 0%, rgba(5,5,10,0.9) 100%)',
-                    backdropFilter: 'blur(30px)',
-                    border: '1px solid rgba(0, 240, 255, 0.15)',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '1.5rem',
-                    transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
-                }}
             >
                 {/* Scanner Beam / Scanline Effect */}
                 <div style={{
@@ -352,7 +334,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                         <Gamepad2 size={46} color="#fff" style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))' }} />
                     </motion.div>
                     
-                    <h3 style={{ fontSize: '2.8rem', fontWeight: 800, margin: 0, letterSpacing: '-0.03em', background: 'linear-gradient(180deg, #ffffff 0%, rgba(255,255,255,0.7) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textShadow: '0 0 20px rgba(0,240,255,0.1)' }}>
+                    <h3 className="text-gradient" style={{ fontSize: '2.8rem', fontWeight: 800, margin: 0, letterSpacing: '-0.03em', textShadow: '0 0 20px rgba(0,240,255,0.1)' }}>
                         {t('arcade_btn') || 'Launch Arcade'}
                     </h3>
                     
@@ -360,12 +342,12 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                         Explore 50+ fully playable web simulations, arcade games, and strategy challenges. Submit high scores to the global database.
                     </p>
 
-                    <div style={{ display: 'flex', gap: '2rem', marginTop: '2rem', background: 'rgba(0,0,0,0.4)', padding: '0.65rem 2.2rem', borderRadius: '50px', border: '1px solid rgba(0, 240, 255, 0.15)', backdropFilter: 'blur(10px)', boxShadow: '0 10px 30px rgba(0,0,0,0.2)' }}>
+                    <div className="arcade-portal-stats">
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
                             <span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold' }}>50+</span>
                             <span style={{ color: 'var(--text-muted)' }}>Simulations</span>
                         </div>
-                        <div style={{ width: '1px', background: 'rgba(255,255,255,0.1)' }} />
+                        <div className="arcade-portal-divider" />
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
                             <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#00ff66', boxShadow: '0 0 8px #00ff66', animation: 'bar-pulse 2s infinite' }} />
                             <span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold' }}>ONLINE</span>
