@@ -92,7 +92,11 @@ const playSound = (type) => {
         const newPiece = () => {
             let type = Math.floor(Math.random() * 7) + 1;
             piece = { shape: shapes[type], x: 3, y: 0, color: type };
-            if (collide(0, 0, piece.shape)) if (onGameOver) onGameOver(score); setIsPlaying(false);
+            if (collide(0, 0, piece.shape)) {
+                playSound('boom');
+                if (onGameOver) onGameOver(score);
+                setIsPlaying(false);
+            }
         };
 
         const collide = (dx, dy, shape) => {
@@ -129,6 +133,7 @@ const playSound = (type) => {
             if (lines > 0) {
                 currScore += lines * 100; setScore(currScore);
                 dropSpeed = Math.max(5, 30 - Math.floor(currScore / 500) * 2);
+                playSound('coin');
             }
             newPiece();
         };
@@ -136,10 +141,12 @@ const playSound = (type) => {
         const key = (e) => {
             if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "w", "a", "s", "d"].includes(e.key)) e.preventDefault();
             if (!piece) return;
-            if (e.key === 'ArrowLeft' && !collide(-1, 0, piece.shape)) piece.x--;
-            if (e.key === 'ArrowRight' && !collide(1, 0, piece.shape)) piece.x++;
-            if (e.key === 'ArrowUp') rotate();
-            if (e.key === 'ArrowDown' && !collide(0, 1, piece.shape)) piece.y++;
+            let moved = false;
+            if (e.key === 'ArrowLeft' && !collide(-1, 0, piece.shape)) { piece.x--; moved = true; }
+            if (e.key === 'ArrowRight' && !collide(1, 0, piece.shape)) { piece.x++; moved = true; }
+            if (e.key === 'ArrowUp') { rotate(); moved = true; }
+            if (e.key === 'ArrowDown' && !collide(0, 1, piece.shape)) { piece.y++; moved = true; }
+            if (moved) playSound('pew');
         };
         window.addEventListener('keydown', key, { passive: false });
 
@@ -223,7 +230,7 @@ const playSound = (type) => {
                 <h2 className="text-gradient" style={{ marginBottom: '1rem' }}>Neon Tetris</h2>
                 <p style={{ color: '#aaa', marginBottom: '1rem', fontFamily: 'monospace' }}>Classic Block Stacking.</p>
                 {score > 0 && <p style={{ color: '#8a2be2', marginBottom: '1rem' }}>Score: {score}</p>}
-                <button className="btn btn-primary" onClick={() => { setScore(0); setIsPlaying(true); }}><Play size={18} /> PLAY</button>
+                <button className="btn btn-primary" onClick={() => { playSound('click'); setScore(0); setIsPlaying(true); }}><Play size={18} /> PLAY</button>
             </div>}
     </div>;
 };

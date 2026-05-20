@@ -84,13 +84,21 @@ const playSound = (type) => {
 
             // Buy auto clicker
             if (cy > canvas.height - 60 && cx > canvas.width / 2 - 100 && cx < canvas.width / 2 + 100) {
-                if (curr >= cost) { curr -= cost; rate++; cost = Math.floor(cost * 1.5); setScore(Math.floor(curr)); }
+                if (curr >= cost) {
+                    curr -= cost;
+                    rate++;
+                    cost = Math.floor(cost * 1.5);
+                    setScore(Math.floor(curr));
+                    playSound('coin');
+                }
                 return;
             }
 
             let d = Math.hypot(canvas.width / 2 - cx, canvas.height / 2 - cy);
             if (d < coreR) {
-                curr += 1; setScore(Math.floor(curr));
+                curr += 1;
+                setScore(Math.floor(curr));
+                playSound('pew');
                 scale = 1.2;
                 for (let i = 0; i < 5; i++) parts.push({ x: canvas.width / 2, y: canvas.height / 2, vx: (Math.random() - 0.5) * 10, vy: (Math.random() - 0.5) * 10 });
             }
@@ -153,7 +161,7 @@ const playSound = (type) => {
             <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.8)' }}>
                 <h2 className="text-gradient" style={{ marginBottom: '1rem' }}>Neon Clicker</h2>
                 <p style={{ color: '#aaa', marginBottom: '1rem', fontFamily: 'monospace' }}>Click the core to generate energy.</p>
-                <button className="btn btn-primary" onClick={() => { setScore(0); setIsPlaying(true); }}><Play size={18} /> START</button>
+                <button className="btn btn-primary" onClick={() => { playSound('click'); setScore(0); setIsPlaying(true); }}><Play size={18} /> START</button>
             </div>}
     </div>;
 };

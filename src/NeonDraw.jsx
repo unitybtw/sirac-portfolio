@@ -80,6 +80,7 @@ const playSound = (type) => {
 
         const md = (e) => {
             drawing = true;
+            playSound('pew');
             let rect = canvas.getBoundingClientRect();
             currLine = [{ x: e.clientX - rect.left, y: e.clientY - rect.top }];
         };
@@ -127,20 +128,28 @@ const playSound = (type) => {
         return () => { cancelAnimationFrame(anim); canvas.removeEventListener('mousedown', md); canvas.removeEventListener('mousemove', mm); canvas.removeEventListener('mouseup', mu); };
     }, [isPlaying, colorIdx]);
 
+    // --- Score Persistence ---
+    const scoreRef = useRef(0);
+    useEffect(() => {
+        return () => {
+            if (onGameOver) onGameOver(scoreRef.current);
+        };
+    }, [onGameOver]);
+
     return <div style={{ position: 'relative', width: '100%', height: '100%', background: '#050508' }}>
         <canvas ref={canvasRef} width={600} height={400} style={{ width: '100%', height: '100%', objectFit: 'contain', cursor: isPlaying ? 'crosshair' : 'default' }} />
         {isPlaying ? (
             <div style={{ position: 'absolute', top: 10, left: 10, display: 'flex', gap: '10px' }}>
                 {colors.map((c, i) => (
-                    <button key={c} onClick={() => setColorIdx(i)} style={{ background: c, width: 30, height: 30, borderRadius: '50%', border: colorIdx === i ? '3px solid white' : 'none', cursor: 'pointer' }} />
+                    <button key={c} onClick={() => { playSound('click'); setColorIdx(i); }} style={{ background: c, width: 30, height: 30, borderRadius: '50%', border: colorIdx === i ? '3px solid white' : 'none', cursor: 'pointer' }} />
                 ))}
-                <button onClick={() => setIsPlaying(false)} className="btn btn-outline" style={{ padding: '5px', fontSize: '12px' }}>EXIT</button>
+                <button onClick={() => { playSound('click'); setIsPlaying(false); }} className="btn btn-outline" style={{ padding: '5px', fontSize: '12px' }}>EXIT</button>
             </div>
         ) :
             <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.8)' }}>
                 <h2 className="text-gradient" style={{ marginBottom: '1rem' }}>Neon Draw</h2>
                 <p style={{ color: '#aaa', marginBottom: '1rem', fontFamily: 'monospace' }}>Unleash your cyber creativity.</p>
-                <button className="btn btn-primary" onClick={() => { setIsPlaying(true); }}><Play size={18} /> START DRAWING</button>
+                <button className="btn btn-primary" onClick={() => { playSound('click'); setIsPlaying(true); }}><Play size={18} /> START DRAWING</button>
             </div>}
     </div>;
 };

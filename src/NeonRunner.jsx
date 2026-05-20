@@ -92,6 +92,7 @@ const playSound = (type) => {
                 if (player.grounded) {
                     player.velocityY = player.jumpPower;
                     player.grounded = false;
+                    playSound('jump');
                 }
             }
         };
@@ -218,6 +219,7 @@ const playSound = (type) => {
                     py + ph > obs.y
                 ) {
                     setGameOver(true);
+                    playSound('boom');
                     if (onGameOver) onGameOver(currentScore); setIsPlaying(false);
                     return;
                 }
@@ -262,7 +264,7 @@ const playSound = (type) => {
                 {(!isPlaying && !gameOver) && (
                     <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(10,10,12,0.7)', backdropFilter: 'blur(4px)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                         <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontFamily: 'monospace' }}>Press <b style={{ color: 'var(--accent-violet)' }}>SPACE</b> or <b style={{ color: 'var(--accent-violet)' }}>UP</b> to JUMP.</p>
-                        <button className="btn btn-primary" onClick={() => { setIsPlaying(true); setScore(0); setGameOver(false); }} style={{ padding: '0.8rem 2rem', borderRadius: '30px' }}>
+                        <button className="btn btn-primary" onClick={() => { playSound('click'); setIsPlaying(true); setScore(0); setGameOver(false); }} style={{ padding: '0.8rem 2rem', borderRadius: '30px' }}>
                             <Play size={18} style={{ marginRight: '8px' }} /> RUN
                         </button>
                     </div>
@@ -272,7 +274,7 @@ const playSound = (type) => {
                     <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(10,10,12,0.8)', backdropFilter: 'blur(6px)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
                         <h2 style={{ color: '#00f0ff', textShadow: '0 0 10px #00f0ff', marginBottom: '0.5rem', fontFamily: 'monospace', letterSpacing: '2px' }}>SYSTEM FAILURE</h2>
                         <p style={{ color: 'white', marginBottom: '1.5rem', fontSize: '1.2rem' }}>Distance: {score} M</p>
-                        <button className="btn btn-outline glow-violet" onClick={() => { setIsPlaying(true); setScore(0); setGameOver(false); }} style={{ padding: '0.8rem 2rem', borderRadius: '30px', borderColor: 'var(--accent-violet)', color: 'var(--accent-violet)' }}>
+                        <button className="btn btn-outline glow-violet" onClick={() => { playSound('click'); setIsPlaying(true); setScore(0); setGameOver(false); }} style={{ padding: '0.8rem 2rem', borderRadius: '30px', borderColor: 'var(--accent-violet)', color: 'var(--accent-violet)' }}>
                             <RotateCcw size={18} style={{ marginRight: '8px' }} /> REBOOT
                         </button>
                     </div>

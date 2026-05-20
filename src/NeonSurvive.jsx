@@ -159,13 +159,11 @@ const playSound = (type) => {
                 }
 
                 // Bullet hit
-                let dead = false;
                 for (let j = bullets.length - 1; j >= 0; j--) {
                     if (Math.hypot(e.x - bullets[j].x, e.y - bullets[j].y) < e.r + 4) {
                         bullets.splice(j, 1);
                         enemies.splice(i, 1);
                         curr += 10; setScore(curr); playSound('coin');
-                        dead = true;
                         break;
                     }
                 }
@@ -200,7 +198,7 @@ const playSound = (type) => {
                 <h2 className="text-gradient" style={{ marginBottom: '1rem' }}>Neon Survive 2.0</h2>
                 <p style={{ color: '#aaa', marginBottom: '1rem', fontFamily: 'monospace' }}>WASD to move. Auto-shooting enabled.</p>
                 {score > 0 && <p style={{ color: '#ff003c', marginBottom: '1rem' }}>Score: {score}</p>}
-                <button className="btn btn-primary" onClick={() => { setScore(0); setIsPlaying(true); }}><Play size={18} /> SURVIVE</button>
+                <button className="btn btn-primary" onClick={() => { playSound('click'); setScore(0); setIsPlaying(true); }}><Play size={18} /> SURVIVE</button>
             </div>}
     </div>;
 };

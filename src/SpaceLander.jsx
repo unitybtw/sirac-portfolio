@@ -78,15 +78,6 @@ const playSound = (type) => {
         let landingPad = { x: canvas.width / 2 - 40, y: canvas.height - 30, w: 80, h: 10 };
         let currScore = score; // persist score across landings
 
-        // terrain points
-        let terrain = [
-            { x: 0, y: canvas.height - 50 },
-            { x: landingPad.x, y: canvas.height - Math.random() * 100 - 50 },
-            { x: landingPad.x, y: landingPad.y },
-            { x: landingPad.x + landingPad.w, y: landingPad.y },
-            { x: canvas.width, y: canvas.height - Math.random() * 100 - 50 }
-        ];
-
         const handleKey = (e) => {
             if (["ArrowLeft", "ArrowRight", "ArrowUp"].includes(e.code)) e.preventDefault();
             keys[e.code] = e.type === 'keydown';
@@ -160,17 +151,20 @@ const playSound = (type) => {
                 if (p.x > landingPad.x && p.x < landingPad.x + landingPad.w) {
                     if (Math.abs(p.vy) < 1.5 && Math.abs(p.angle) < 0.3) {
                         // Safe landing
+                        playSound('coin');
                         setScore(currScore + 100);
                         if (onGameOver) onGameOver(currScore + 100); setIsPlaying(false);
                         return;
                     } else {
                         // Crash
+                        playSound('boom');
                         if (onGameOver) onGameOver(currScore); setIsPlaying(false);
                         setScore(0);
                         return;
                     }
                 } else {
                     // Missed pad
+                    playSound('boom');
                     if (onGameOver) onGameOver(currScore); setIsPlaying(false);
                     setScore(0);
                     return;
@@ -204,7 +198,7 @@ const playSound = (type) => {
                 <h2 className="text-gradient" style={{ marginBottom: '1rem' }}>Space Lander</h2>
                 <p style={{ color: '#aaa', marginBottom: '1rem', fontFamily: 'monospace' }}>Land softly on the green pad. Use Arrow Keys.</p>
                 {score > 0 && <p style={{ color: '#00ff00', marginBottom: '1rem' }}>Total Score: {score}</p>}
-                <button className="btn btn-primary" onClick={() => { setIsPlaying(true); }}><Play size={18} /> {score > 0 ? 'NEXT LEVEL' : 'PLAY'}</button>
+                <button className="btn btn-primary" onClick={() => { playSound('click'); setIsPlaying(true); }}><Play size={18} /> {score > 0 ? 'NEXT LEVEL' : 'PLAY'}</button>
             </div>}
     </div>;
 };

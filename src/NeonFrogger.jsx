@@ -90,7 +90,10 @@ const playSound = (type) => {
         initCars();
 
         const key = (e) => {
-            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "w", "a", "s", "d"].includes(e.key)) e.preventDefault();
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "w", "a", "s", "d"].includes(e.key)) {
+                e.preventDefault();
+                playSound('jump');
+            }
             const step = 30;
             if (e.key === 'ArrowUp' || e.key === 'w') p.y -= step;
             if (e.key === 'ArrowDown' || e.key === 's') p.y += step;
@@ -104,6 +107,7 @@ const playSound = (type) => {
             // Win condition
             if (p.y < 30) {
                 currLevel++;
+                playSound('coin');
                 setScore(curScore + currLevel * 10);
                 curScore += currLevel * 10;
                 p.y = canvas.height - 30;
@@ -141,6 +145,7 @@ const playSound = (type) => {
 
                 // Collision
                 if (p.x < c.x + c.w && p.x + p.size > c.x && p.y < c.y + c.h && p.y + p.size > c.y) {
+                    playSound('boom');
                     if (onGameOver) onGameOver(score); setIsPlaying(false);
                     setScore(0);
                     return;
@@ -176,7 +181,7 @@ const playSound = (type) => {
                 <h2 className="text-gradient" style={{ marginBottom: '1rem' }}>Neon Frogger</h2>
                 <p style={{ color: '#aaa', marginBottom: '1rem', fontFamily: 'monospace' }}>Cross the road to the top safe zone.</p>
                 {score > 0 && <p style={{ color: '#00f0ff', marginBottom: '1rem' }}>Last Score: {score}</p>}
-                <button className="btn btn-primary" onClick={() => { setScore(0); setIsPlaying(true); }}><Play size={18} /> PLAY</button>
+                <button className="btn btn-primary" onClick={() => { playSound('click'); setScore(0); setIsPlaying(true); }}><Play size={18} /> PLAY</button>
             </div>}
     </div>;
 };

@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+// eslint-disable-next-line no-unused-vars
+import { AnimatePresence, motion } from 'framer-motion';
 import { Users } from 'lucide-react';
 import { playClick, playHover } from './soundEffects';
 
@@ -49,11 +50,10 @@ export default function PresencePanel() {
   const [visitors, setVisitors] = useState({});
   const [isExpanded, setIsExpanded] = useState(false);
   const [floatingEmojis, setFloatingEmojis] = useState([]);
-  const [recentReactions, setRecentReactions] = useState([]);
   const timerRef = useRef(null);
   const seenReactions = useRef(new Set());
 
-  const registerPresence = async () => {
+  const registerPresence = useCallback(async () => {
     try {
       await fetch(`${DB_URL}/visitors/${myId}.json`, {
         method: 'PUT',
@@ -66,16 +66,16 @@ export default function PresencePanel() {
         }),
       });
     } catch (_e) { void _e; }
-  };
+  }, [myId, myName, myColor]);
 
-  const removePresence = () => {
+  const removePresence = useCallback(() => {
     try {
       navigator.sendBeacon(`${DB_URL}/visitors/${myId}.json`, '');
     } catch (_e) { void _e; }
     fetch(`${DB_URL}/visitors/${myId}.json`, { method: 'DELETE' }).catch(() => {});
-  };
+  }, [myId]);
 
-  const fetchVisitors = async () => {
+  const fetchVisitors = useCallback(async () => {
     try {
       const res = await fetch(`${DB_URL}/visitors.json`);
       const data = await res.json();
@@ -91,9 +91,9 @@ export default function PresencePanel() {
       });
       setVisitors(activeVisitors);
     } catch (_e) { void _e; }
-  };
+  }, []);
 
-  const fetchReactions = async () => {
+  const fetchReactions = useCallback(async () => {
     try {
       const res = await fetch(`${DB_URL}/reactions.json`);
       const data = await res.json();
@@ -112,9 +112,9 @@ export default function PresencePanel() {
         }, 3500);
       }
     } catch (_e) { void _e; }
-  };
+  }, []);
 
-  const sendEmoji = async (emoji) => {
+  const sendEmoji = useCallback(async (emoji) => {
     const id = `r_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`;
     const reaction = {
       emoji,
@@ -135,12 +135,16 @@ export default function PresencePanel() {
       });
       setTimeout(() => fetch(`${DB_URL}/reactions/${id}.json`, { method: 'DELETE' }).catch(() => {}), 4500);
     } catch (_e) { void _e; }
-  };
+  }, [myName, myColor]);
 
   useEffect(() => {
     registerPresence();
-    fetchVisitors();
-    fetchReactions();
+    
+    // Defer fetching to avoid synchronous setState inside mount effect
+    const deferTimer = setTimeout(() => {
+      fetchVisitors();
+      fetchReactions();
+    }, 100);
 
     timerRef.current = setInterval(() => {
       registerPresence();
@@ -150,11 +154,12 @@ export default function PresencePanel() {
 
     window.addEventListener('beforeunload', removePresence);
     return () => {
+      clearTimeout(deferTimer);
       clearInterval(timerRef.current);
       window.removeEventListener('beforeunload', removePresence);
       removePresence();
     };
-  }, []);
+  }, [registerPresence, fetchVisitors, fetchReactions, removePresence]);
 
   const onlineVisitors = Object.entries(visitors).filter(([id]) => id !== myId);
   const totalOnline = onlineVisitors.length + 1;

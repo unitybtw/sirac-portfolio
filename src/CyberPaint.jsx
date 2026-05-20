@@ -129,7 +129,7 @@ const playSound = (type) => {
   
     // --- Score Persistence ---
     const scoreRef = useRef(0);
-    useEffect(() => { scoreRef.current = scoreVal; }, [scoreVal]);
+    useEffect(() => { scoreRef.current = score; }, [score]);
     useEffect(() => {
         return () => {
             if (onGameOver) onGameOver(scoreRef.current);

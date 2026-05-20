@@ -122,18 +122,24 @@ const NeonMinesweeper = ({ onGameOver }) => {
             let c = Math.floor(bx / bw), r = Math.floor(by / bh);
             if (r >= 0 && r < h && c >= 0 && c < w) {
                 if (e.button === 2) {
-                    if (!grid[r][c].r) grid[r][c].f = !grid[r][c].f;
+                    if (!grid[r][c].r) {
+                        grid[r][c].f = !grid[r][c].f;
+                        playSound('click');
+                    }
                 } else if (e.button === 0) {
                     if (!grid[r][c].f) {
                         if (grid[r][c].m) {
                             // Game Over
+                            playSound('boom');
                             for (let i = 0; i < h; i++) for (let j = 0; j < w; j++) grid[i][j].r = true;
                             setStatus("KABOOM!");
                             setTimeout(() => setIsPlaying(false), 2000);
                         } else {
                             reveal(r, c);
+                            playSound('pew');
                             setScore(revealed * 10);
                             if (revealed === w * h - mines) {
+                                playSound('coin');
                                 setStatus("YOU WIN!");
                                 setTimeout(() => setIsPlaying(false), 2000);
                             }
@@ -202,6 +208,15 @@ const NeonMinesweeper = ({ onGameOver }) => {
         return () => { cancelAnimationFrame(anim); canvas.removeEventListener('mousedown', mdown); };
     }, [isPlaying]);
 
+    // --- Score Persistence ---
+    const scoreRef = useRef(0);
+    useEffect(() => { scoreRef.current = score; }, [score]);
+    useEffect(() => {
+        return () => {
+            if (onGameOver) onGameOver(scoreRef.current);
+        };
+    }, [onGameOver]);
+
     return <div style={{ position: 'relative', width: '100%', height: '100%', background: '#050508' }}>
         <canvas ref={canvasRef} width={600} height={400} style={{ width: '100%', height: '100%', objectFit: 'contain' }} onContextMenu={(e) => e.preventDefault()} />
         {!isPlaying && (
@@ -209,7 +224,7 @@ const NeonMinesweeper = ({ onGameOver }) => {
                 <h2 className="text-gradient" style={{ marginBottom: '1rem' }}>Cyber Sweeper</h2>
                 <p style={{ color: '#aaa', marginBottom: '1rem', fontFamily: 'monospace' }}>Left Click: Reveal. Right Click: Flag.</p>
                 {status && <p style={{ color: status === 'YOU WIN!' ? '#00ff00' : '#ff003c', marginBottom: '1rem' }}>{status}</p>}
-                <button className="btn btn-primary" onClick={() => { setStatus(''); setIsPlaying(true); }}><Play size={18} /> PLAY</button>
+                <button className="btn btn-primary" onClick={() => { playSound('click'); setStatus(''); setIsPlaying(true); }}><Play size={18} /> PLAY</button>
             </div>
         )}
     </div>;
