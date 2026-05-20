@@ -274,6 +274,73 @@ const ScrambleText = ({ text }) => {
   );
 };
 
+const Preloader = ({ progress }) => {
+  const messages = [
+    "INITIALIZING GRID MODULES...",
+    "ESTABLISHING SECURE PROTOCOLS...",
+    "UPGRADING NEURAL ENGINES...",
+    "LOAD COMPLETE."
+  ];
+  
+  const msgIndex = Math.min(Math.floor(progress / 26), 3);
+
+  return (
+    <motion.div
+      key="preloader"
+      initial={{ opacity: 1 }}
+      exit={{ 
+        opacity: 0, 
+        y: -100,
+        transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } 
+      }}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        backgroundColor: '#050508',
+        zIndex: 999999,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontFamily: 'monospace',
+      }}
+    >
+      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', overflow: 'hidden', opacity: 0.05, pointerEvents: 'none' }}>
+        <div style={{ width: '100%', height: '100%', background: 'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 255, 0, 0.06))', backgroundSize: '100% 4px, 6px 100%' }} />
+      </div>
+
+      <motion.div 
+        style={{ width: '300px', display: 'flex', flexDirection: 'column', gap: '1rem', position: 'relative' }}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div style={{ display: 'flex', width: '100%', color: 'var(--accent-cyan)' }}>
+          <span style={{ fontSize: '0.8rem', letterSpacing: '1px', textTransform: 'uppercase' }}>{messages[msgIndex]}</span>
+          <span style={{ fontSize: '1.2rem', fontWeight: 700, marginLeft: 'auto' }}>{progress}%</span>
+        </div>
+        
+        {/* Progress Bar Container */}
+        <div style={{ width: '100%', height: '4px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '10px', overflow: 'hidden', border: '1px solid rgba(0, 240, 255, 0.1)' }}>
+          <motion.div 
+            style={{ height: '100%', background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))', borderRadius: '10px', width: `${progress}%` }}
+            transition={{ ease: 'easeOut', duration: 0.1 }}
+          />
+        </div>
+
+        {/* Decorative corner brackets */}
+        <div style={{ position: 'absolute', top: '-15px', left: '-15px', width: '10px', height: '10px', borderTop: '2px solid var(--accent-cyan)', borderLeft: '2px solid var(--accent-cyan)' }} />
+        <div style={{ position: 'absolute', top: '-15px', right: '-15px', width: '10px', height: '10px', borderTop: '2px solid var(--accent-cyan)', borderRight: '2px solid var(--accent-cyan)' }} />
+        <div style={{ position: 'absolute', bottom: '-15px', left: '-15px', width: '10px', height: '10px', borderBottom: '2px solid var(--accent-cyan)', borderLeft: '2px solid var(--accent-cyan)' }} />
+        <div style={{ position: 'absolute', bottom: '-15px', right: '-15px', width: '10px', height: '10px', borderBottom: '2px solid var(--accent-cyan)', borderRight: '2px solid var(--accent-cyan)' }} />
+      </motion.div>
+    </motion.div>
+  );
+};
+
 const CyberCursor = () => null;
 
 const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMute, matrixRainMode, setMatrixRainMode, setShowSecretGame }) => {
@@ -884,6 +951,23 @@ function App() {
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [scrolled, setScrolled] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setLoadingProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(timer);
+          setTimeout(() => setIsLoading(false), 500);
+          return 100;
+        }
+        const increment = Math.floor(Math.random() * 12) + 5;
+        return Math.min(prev + increment, 100);
+      });
+    }, 80);
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const checkMobile = () => setIsMobileDevice(window.innerWidth <= 968);
@@ -1192,6 +1276,7 @@ function App() {
     <>
     <CyberCursor />
     <AnimatePresence>
+      {isLoading && <Preloader progress={loadingProgress} />}
       {showSecretGame && <KonamiGame key="konami" onClose={() => setShowSecretGame(false)} />}
     </AnimatePresence>
 
