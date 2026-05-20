@@ -344,6 +344,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                 {isOpen && (
                     <motion.div
                         className="arcade-modal-overlay"
+                        data-lenis-prevent
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -413,7 +414,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                             </button>
                         </div>
 
-                        <div style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
+                        <div data-lenis-prevent style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
                             <AnimatePresence mode="wait">
                                 {!nickname ? (
                                     /* Nickname Entry View */
