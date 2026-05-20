@@ -622,49 +622,20 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                 { id: 'arcade', label: 'Classic Arcade', count: gamesList.filter(g => getGameCategory(g.id) === 'arcade').length, icon: <Gamepad2 size={16} /> },
                                                 { id: 'puzzle', label: 'Puzzles & Strategy', count: gamesList.filter(g => getGameCategory(g.id) === 'puzzle').length, icon: <Zap size={16} /> }
                                             ].map(cat => (
-                                                <motion.button
+                                                <button
                                                     key={cat.id}
+                                                    className={`arcade-tab-btn ${activeTab === cat.id ? 'active' : ''}`}
                                                     onClick={() => { playClick(); setActiveTab(cat.id); }}
                                                     onMouseEnter={playHover}
-                                                    style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        gap: '8px',
-                                                        padding: '0.6rem 1.2rem',
-                                                        borderRadius: '25px',
-                                                        border: activeTab === cat.id ? '1px solid var(--accent-cyan)' : '1px solid rgba(255, 255, 255, 0.05)',
-                                                        background: activeTab === cat.id ? 'rgba(0, 240, 255, 0.1)' : 'rgba(255, 255, 255, 0.02)',
-                                                        color: activeTab === cat.id ? 'var(--accent-cyan)' : 'var(--text-muted)',
-                                                        cursor: 'pointer',
-                                                        fontSize: '0.85rem',
-                                                        fontWeight: 600,
-                                                        boxShadow: activeTab === cat.id ? '0 0 15px rgba(0, 240, 255, 0.15)' : 'none',
-                                                        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
-                                                    }}
-                                                    whileHover={{ scale: 1.05, background: 'rgba(255, 255, 255, 0.05)', borderColor: 'rgba(255,255,255,0.15)' }}
-                                                    whileTap={{ scale: 0.95 }}
                                                 >
                                                     {cat.icon}
                                                     <span>{cat.label}</span>
                                                     <span style={{ fontSize: '0.75rem', opacity: 0.6, background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '10px' }}>{cat.count}</span>
-                                                </motion.button>
+                                                </button>
                                             ))}
                                         </div>
 
-                                        <motion.div
-                                            key="grid"
-                                            initial="hidden"
-                                            animate="visible"
-                                            exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
-                                            variants={{
-                                                hidden: { opacity: 0 },
-                                                visible: {
-                                                    opacity: 1,
-                                                    transition: { staggerChildren: 0.02, delayChildren: 0.05 }
-                                                }
-                                            }}
-                                            className="arcade-games-grid"
-                                        >
+                                        <div className="arcade-games-grid">
                                             {gamesList.filter(game => {
                                                 const matchesSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase());
                                                 const matchesTab = activeTab === 'all' || getGameCategory(game.id) === activeTab;
@@ -692,102 +663,46 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                 .map((game) => {
                                                     const cat = getGameCategory(game.id);
                                                     return (
-                                                        <motion.div
+                                                        <div
                                                             key={game.id}
-                                                            variants={{
-                                                                hidden: { opacity: 0, y: 15 },
-                                                                visible: { opacity: 1, y: 0, transition: { duration: 0.2, ease: "easeOut" } },
-                                                                hover: { 
-                                                                    y: -5, 
-                                                                    scale: 1.03,
-                                                                    boxShadow: `0 15px 30px -5px ${game.color}44`,
-                                                                    borderColor: game.color,
-                                                                    transition: { type: 'spring', stiffness: 300, damping: 20 }
-                                                                }
-                                                            }}
-                                                            initial="hidden"
-                                                            animate="visible"
-                                                            whileHover="hover"
+                                                            className="arcade-game-card"
                                                             onMouseEnter={playHover}
                                                             onClick={() => { playClick(); setActiveGameId(game.id); }}
-                                                            style={{
-                                                                background: 'rgba(20, 20, 30, 0.85)', 
-                                                                border: '1px solid rgba(255,255,255,0.06)',
-                                                                borderRadius: '20px', padding: '2rem 1rem 1.5rem 1rem', cursor: 'pointer',
-                                                                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1.2rem',
-                                                                justifyContent: 'space-between',
-                                                                position: 'relative', overflow: 'hidden',
-                                                                boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
-                                                                willChange: 'transform, opacity'
-                                                            }}
+                                                            style={{ '--game-color': game.color }}
                                                         >
-                                                            {/* Category tag badge in top right */}
-                                                            <div style={{
-                                                                position: 'absolute',
-                                                                top: '8px',
-                                                                right: '8px',
-                                                                fontSize: '0.6rem',
-                                                                fontWeight: 700,
-                                                                letterSpacing: '1px',
-                                                                color: game.color,
-                                                                background: `${game.color}15`,
-                                                                border: `1px solid ${game.color}33`,
-                                                                padding: '2px 6px',
-                                                                borderRadius: '4px'
-                                                            }}>
+                                                            {/* Category tag badge */}
+                                                            <div className="arcade-card-badge" style={{ color: game.color, background: `${game.color}15`, borderColor: `${game.color}33` }}>
                                                                 {categoryLabels[cat]}
                                                             </div>
 
-                                                            {/* Ambient game color background glow */}
-                                                            <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', height: '60px', background: `radial-gradient(ellipse at top, ${game.color}33 0%, transparent 70%)`, pointerEvents: 'none' }} />
+                                                            {/* Ambient glow */}
+                                                            <div className="arcade-card-glow" style={{ background: `radial-gradient(ellipse at top, ${game.color}33 0%, transparent 70%)` }} />
                                                             
-                                                            <motion.div 
-                                                                variants={{
-                                                                    rest: { scale: 1, rotate: 0 },
-                                                                    hover: { scale: 1.1, rotate: 5, filter: `drop-shadow(0 0 16px ${game.color})` }
-                                                                }}
-                                                                style={{ color: game.color, filter: `drop-shadow(0 0 12px ${game.color}66)`, background: 'rgba(0,0,0,0.3)', padding: '16px', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.08)' }}
-                                                            >
+                                                            {/* Icon */}
+                                                            <div className="arcade-card-icon" style={{ color: game.color, filter: `drop-shadow(0 0 12px ${game.color}66)` }}>
                                                                 {game.icon}
-                                                            </motion.div>
+                                                            </div>
                                                             
-                                                            <div style={{ textAlign: 'center', width: '100%', position: 'relative', height: '45px' }}>
-                                                                <h3 style={{ color: 'white', fontSize: '0.95rem', fontWeight: 600, margin: '0 0 0.5rem 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{game.title}</h3>
-                                                                
-                                                                <div style={{ position: 'relative', width: '100%', height: '20px', overflow: 'hidden' }}>
-                                                                    <motion.div 
-                                                                        variants={{
-                                                                            rest: { opacity: 1, y: 0 },
-                                                                            hover: { opacity: 0, y: -10 }
-                                                                        }} 
-                                                                        style={{ position: 'absolute', width: '100%', left: 0 }}
-                                                                    >
+                                                            {/* Title & Score */}
+                                                            <div className="arcade-card-info">
+                                                                <h3>{game.title}</h3>
+                                                                <div className="arcade-card-status">
+                                                                    <div className="arcade-card-score">
                                                                         {localScores[game.id] ? (
-                                                                            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.04)', padding: '3px 8px', borderRadius: '6px', display: 'inline-block', border: '1px solid rgba(255,255,255,0.05)' }}>
-                                                                                BEST <span style={{ color: game.color, fontWeight: 700 }}>{localScores[game.id]}</span>
-                                                                            </div>
+                                                                            <span className="arcade-score-value">BEST <span style={{ color: game.color, fontWeight: 700 }}>{localScores[game.id]}</span></span>
                                                                         ) : (
-                                                                            <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.2)', padding: '3px 8px' }}>NOT PLAYED</div>
+                                                                            <span className="arcade-score-empty">NOT PLAYED</span>
                                                                         )}
-                                                                    </motion.div>
-
-                                                                    <motion.div 
-                                                                        variants={{
-                                                                            rest: { opacity: 0, y: 10 },
-                                                                            hover: { opacity: 1, y: 0 }
-                                                                        }}
-                                                                        style={{ position: 'absolute', width: '100%', left: 0, display: 'flex', justifyContent: 'center' }}
-                                                                    >
-                                                                        <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#fff', background: `linear-gradient(90deg, ${game.color}, var(--accent-violet))`, padding: '4px 12px', borderRadius: '12px', display: 'inline-block', boxShadow: `0 0 10px ${game.color}88`, letterSpacing: '0.5px' }}>
-                                                                            LAUNCH ⚡
-                                                                        </div>
-                                                                    </motion.div>
+                                                                    </div>
+                                                                    <div className="arcade-card-launch" style={{ background: `linear-gradient(90deg, ${game.color}, var(--accent-violet))`, boxShadow: `0 0 10px ${game.color}88` }}>
+                                                                        LAUNCH ⚡
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </motion.div>
+                                                        </div>
                                                     );
                                                 })}
-                                        </motion.div>
+                                        </div>
                                     </div>
                                 ) : (
                                     /* Active Game View */
