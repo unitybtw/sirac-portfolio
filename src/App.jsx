@@ -951,23 +951,6 @@ function App() {
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [scrolled, setScrolled] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadingProgress, setLoadingProgress] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setLoadingProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(timer);
-          setTimeout(() => setIsLoading(false), 500);
-          return 100;
-        }
-        const increment = Math.floor(Math.random() * 12) + 5;
-        return Math.min(prev + increment, 100);
-      });
-    }, 80);
-    return () => clearInterval(timer);
-  }, []);
 
   useEffect(() => {
     const checkMobile = () => setIsMobileDevice(window.innerWidth <= 968);
@@ -1276,7 +1259,6 @@ function App() {
     <>
     <CyberCursor />
     <AnimatePresence>
-      {isLoading && <Preloader progress={loadingProgress} />}
       {showSecretGame && <KonamiGame key="konami" onClose={() => setShowSecretGame(false)} />}
     </AnimatePresence>
 

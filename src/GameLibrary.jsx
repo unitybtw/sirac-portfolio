@@ -305,17 +305,11 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
 
     return (
         <>
-            <motion.div
-                onClick={() => { setIsOpen(true); playArcadeOpen(); }}
-                onMouseEnter={playHover}
-                className="arcade-portal-card"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.8 }}
-                whileHover={{ scale: 1.02, y: -8 }}
-                whileTap={{ scale: 0.98 }}
-            >
+            <div
+            onClick={() => { setIsOpen(true); playArcadeOpen(); }}
+            onMouseEnter={playHover}
+            className="arcade-portal-card"
+        >
                 {/* Scanner Beam / Scanline Effect */}
                 <div style={{
                     position: 'absolute',
@@ -326,19 +320,13 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                     zIndex: 0
                 }} />
 
-                <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 30, ease: 'linear' }} style={{ position: 'absolute', top: '-50%', left: '-50%', width: '200%', height: '200%', background: 'radial-gradient(circle at center, rgba(0, 240, 255, 0.05) 0%, transparent 50%)', zIndex: 0, pointerEvents: 'none' }} />
+                {/* Rotating bg glow — CSS instead of JS */}
+                <div className="arcade-portal-bg-rotate" />
                 
                 <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-                    <motion.div 
-                        animate={{ 
-                            boxShadow: ['0 0 20px rgba(0,240,255,0.2)', '0 0 40px rgba(138,43,226,0.4)', '0 0 20px rgba(0,240,255,0.2)'],
-                            y: [0, -4, 0]
-                        }}
-                        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                        style={{ width: '90px', height: '90px', borderRadius: '28px', background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-violet))', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.1)' }}
-                    >
+                    <div className="arcade-portal-icon">
                         <Gamepad2 size={46} color="#fff" style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))' }} />
-                    </motion.div>
+                    </div>
                     
                     <h3 className="text-gradient" style={{ fontSize: '2.8rem', fontWeight: 800, margin: 0, letterSpacing: '-0.03em', textShadow: '0 0 20px rgba(0,240,255,0.1)' }}>
                         {t('arcade_btn') || 'Launch Arcade'}
@@ -360,7 +348,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                         </div>
                     </div>
                 </div>
-            </motion.div>
+            </div>
 
             <AnimatePresence>
                 {isOpen && (
