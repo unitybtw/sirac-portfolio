@@ -807,10 +807,11 @@ nav.scrolled {
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: var(--text-main);
   cursor: pointer;
-  padding: 0.6rem;
   border-radius: 12px;
   z-index: 1001;
   transition: all 0.3s;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-toggle-btn:hover {
@@ -835,7 +836,15 @@ nav.scrolled {
   }
 
   .nav-toggle-btn {
-    display: block;
+    display: flex !important;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+  }
+
+  /* Completely hide Arcade Section on mobile */
+  #arcade {
+    display: none !important;
   }
 
   .nav-logo h1 {
@@ -998,9 +1007,15 @@ nav.scrolled {
     display: none !important;
   }
 
-  .nav-utilities button {
+  .nav-utilities button:not(.lang-selector-container button) {
     width: 32px !important;
     height: 32px !important;
+  }
+
+  .nav-toggle-btn {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 10px !important;
   }
 
   .hero-title {
@@ -1044,6 +1059,36 @@ nav.scrolled {
 
   .masonry-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 380px) {
+  .nav-logo h1 {
+    font-size: 0.8rem !important;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .nav-utilities {
+    gap: 0.2rem !important;
+  }
+  .lang-selector-container {
+    padding: 0.2rem 0.3rem !important;
+    border-radius: 10px !important;
+  }
+  .lang-selector-container button {
+    padding: 0.15rem 0.3rem !important;
+    font-size: 0.7rem !important;
+  }
+  .nav-utilities button:not(.lang-selector-container button) {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .nav-toggle-btn {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 8px !important;
   }
 }
 
