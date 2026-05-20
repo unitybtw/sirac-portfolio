@@ -332,12 +332,15 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, 
     { type: 'log', text: 'Type "help" to list available system commands.' }
   ]);
   const [input, setInput] = useState('');
-  const terminalEndRef = React.useRef(null);
+  const terminalBodyRef = React.useRef(null);
   const inputRef = React.useRef(null);
 
   useEffect(() => {
-    if (terminalEndRef.current) {
-      terminalEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (terminalBodyRef.current) {
+      terminalBodyRef.current.scrollTo({
+        top: terminalBodyRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
     }
   }, [history]);
 
@@ -462,7 +465,7 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, 
         </div>
       </div>
 
-      <div style={{ padding: '20px', fontFamily: 'var(--font-code)', fontSize: '0.85rem', color: '#e5e5e5', lineHeight: '1.6', flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div ref={terminalBodyRef} style={{ padding: '20px', fontFamily: 'var(--font-code)', fontSize: '0.85rem', color: '#e5e5e5', lineHeight: '1.6', flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {history.map((line, index) => {
           let color = '#e5e5e5';
           if (line.type === 'input') color = '#79c0ff';
@@ -476,7 +479,6 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, 
             </div>
           );
         })}
-        <div ref={terminalEndRef} />
       </div>
 
       <div style={{ padding: '12px 20px', background: 'rgba(0,0,0,0.2)', borderTop: '1px solid rgba(255,255,255,0.03)', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-code)', fontSize: '16px' }}>
