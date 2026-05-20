@@ -302,7 +302,7 @@ const ThreeDViewer = ({ t, theme }) => {
               <pointLight position={[-10, -10, -10]} />
               
               <PresentationControls speed={1.5} global zoom={0.7} polar={[-0.1, Math.PI / 4]}>
-                <Stage environment={theme === 'light' ? 'default' : 'city'} intensity={theme === 'light' ? 0.9 : 0.6} contactShadow={false}>
+                <Stage environment={theme === 'light' ? 'studio' : 'city'} intensity={theme === 'light' ? 0.9 : 0.6} contactShadow={false}>
                   <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
                     <Model path={`${import.meta.env.BASE_URL}${models[currentModelIndex]}`} />
                   </Float>
@@ -1969,7 +1969,7 @@ function App() {
               </motion.div>
             </motion.div>
             <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', borderTop: '1px solid var(--border-glass)', paddingTop: '2rem', marginTop: '2rem', letterSpacing: '1px' }}>
-              <span style={{ background: 'linear-gradient(90deg, var(--text-muted), rgba(255,255,255,0.6), var(--text-muted))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              <span>
                 &copy; {new Date().getFullYear()} {t('footer_copyright')}
               </span>
             </div>
