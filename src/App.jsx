@@ -1248,15 +1248,15 @@ function App() {
     <>
     <AnimatePresence>
       {showSecretGame && <KonamiGame key="konami" onClose={() => setShowSecretGame(false)} />}
+    </AnimatePresence>
 
-      <PageProgress key="progress" />
-      <div key="app-wrapper" className={`app-container ${theme}-mode`}>
-        <motion.div
-          key="main-app"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-        >
+    <PageProgress />
+    <div className={`app-container ${theme}-mode`}>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+      >
           <MatrixBackground theme={theme} isPaused={isArcadeOpen} matrixRainMode={matrixRainMode} />
           <div className="cyber-bg">
             <div className="cyber-bg-blob-3"></div>
@@ -1979,7 +1979,6 @@ function App() {
           </motion.footer>
         </motion.div>
       </div>
-    </AnimatePresence>
 
     {/* Back to Top Button */}
     <AnimatePresence>
