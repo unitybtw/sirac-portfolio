@@ -77,10 +77,10 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
   return (
     <motion.div
       className="skill-card glass-panel"
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
-      transition={{ duration: 0.5, delay: delay / 2000 }} // Scale down delay
+      transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: delay / 2000 }} // Scale down delay
       whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(0,240,255,0.1)' }}
       style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', willChange: 'transform, opacity' }}
     >
@@ -101,7 +101,7 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
           initial={{ width: 0 }}
           whileInView={{ width: `${percent}%` }}
           viewport={{ once: true }}
-          transition={{ duration: 1.5, delay: 0.2 + (delay / 3000), ease: "easeOut" }}
+          transition={{ type: "spring", stiffness: 50, damping: 12, delay: 0.2 + (delay / 3000) }}
         >
           <motion.div 
             style={{ 
@@ -1134,8 +1134,8 @@ function App() {
           <section className="hero">
             <motion.div
               className="hero-content"
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
               <div className="glass-panel" style={{ display: 'inline-block', padding: '0.5rem 1rem', marginBottom: '1.5rem', borderRadius: '30px' }}>
@@ -1244,8 +1244,8 @@ function App() {
                 {[1, 2, 3, 4].map((num) => (
                   <motion.div 
                     key={num}
-                    initial={{ opacity: 0, x: num % 2 === 0 ? 50 : -50 }}
-                    whileInView={{ opacity: 1, x: 0 }}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-50px" }}
                     transition={{ type: "spring", stiffness: 80, damping: 15, mass: 1, delay: num * 0.1 }}
                     style={{ 
@@ -1321,6 +1321,10 @@ function App() {
                 <motion.div
                   key={i}
                   className="glass-panel"
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: i * 0.1 }}
                   whileHover={{ scale: 1.05, y: -10, boxShadow: '0 20px 40px rgba(0,240,255,0.2)' }}
                   onClick={() => setIsArcadeOpen(true)}
                   style={{ padding: '2rem', borderRadius: '24px', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'center', background: 'rgba(0,0,0,0.3)' }}
@@ -1358,8 +1362,8 @@ function App() {
                     onClick={() => window.open(project.link, '_blank')}
                     style={{ padding: 0, willChange: 'transform, opacity' }}
                     variants={{
-                      hidden: { opacity: 0, y: 30 },
-                      visible: { opacity: 1, y: 0, transition: { type: 'tween', ease: "easeOut", duration: 0.4 } }
+                      hidden: { opacity: 0, y: 50 },
+                      visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 14, mass: 1 } }
                     }}
                   >
                     {project.image && (
