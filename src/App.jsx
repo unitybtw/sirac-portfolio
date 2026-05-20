@@ -1186,6 +1186,7 @@ function App() {
   const terminalY = useTransform(springY, [0, 1080], [-15, 15]);
   const bgIconX = useTransform(springX, [0, 1920], [20, -20]);
   const bgIconY = useTransform(springY, [0, 1080], [20, -20]);
+  const bgSpotlightTemplate = useMotionTemplate`radial-gradient(800px circle at ${springX}px ${springY}px, rgba(0, 240, 255, 0.04) 0%, rgba(138, 43, 226, 0.025) 50%, transparent 100%)`;
 
   return (
     <>
@@ -1203,6 +1204,20 @@ function App() {
       >
           <MatrixBackground theme={theme} isPaused={isArcadeOpen} matrixRainMode={matrixRainMode} />
           <div className="cyber-bg">
+            {!isMobileDevice && (
+              <motion.div
+                style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  width: '100vw',
+                  height: '100vh',
+                  pointerEvents: 'none',
+                  zIndex: 0,
+                  background: bgSpotlightTemplate,
+                }}
+              />
+            )}
             <div className="cyber-bg-blob-3"></div>
             <div className="cyber-bg-blob-4"></div>
             {/* Parallax Floating Icons */}
@@ -1227,11 +1242,66 @@ function App() {
             
             {/* Collapsible Nav Links */}
             <div className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}>
-              <Magnetic><a href="#about" className={activeSection === 'about' ? 'active' : ''} data-index="[01]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>{t('nav_about') || 'About'}</a></Magnetic>
-              <Magnetic><a href="#timeline" className={activeSection === 'timeline' ? 'active' : ''} data-index="[02]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>{t('nav_timeline') || 'Timeline'}</a></Magnetic>
-              <Magnetic><a href="#projects" className={activeSection === 'projects' ? 'active' : ''} data-index="[03]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>{t('nav_work')}</a></Magnetic>
-              <Magnetic><a href="#skills" className={activeSection === 'skills' ? 'active' : ''} data-index="[04]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>{t('nav_skills')}</a></Magnetic>
-              <Magnetic><a href="#contact" className={activeSection === 'contact' ? 'active' : ''} data-index="[05]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>{t('nav_contact')}</a></Magnetic>
+              <Magnetic>
+                <a href="#about" className={activeSection === 'about' ? 'active' : ''} data-index="[01]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
+                  {t('nav_about') || 'About'}
+                  {!isMobileDevice && activeSection === 'about' && (
+                    <motion.span 
+                      layoutId="activeNavIndicator" 
+                      className="active-nav-indicator" 
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </a>
+              </Magnetic>
+              <Magnetic>
+                <a href="#timeline" className={activeSection === 'timeline' ? 'active' : ''} data-index="[02]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
+                  {t('nav_timeline') || 'Timeline'}
+                  {!isMobileDevice && activeSection === 'timeline' && (
+                    <motion.span 
+                      layoutId="activeNavIndicator" 
+                      className="active-nav-indicator" 
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </a>
+              </Magnetic>
+              <Magnetic>
+                <a href="#projects" className={activeSection === 'projects' ? 'active' : ''} data-index="[03]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
+                  {t('nav_work')}
+                  {!isMobileDevice && activeSection === 'projects' && (
+                    <motion.span 
+                      layoutId="activeNavIndicator" 
+                      className="active-nav-indicator" 
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </a>
+              </Magnetic>
+              <Magnetic>
+                <a href="#skills" className={activeSection === 'skills' ? 'active' : ''} data-index="[04]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
+                  {t('nav_skills')}
+                  {!isMobileDevice && activeSection === 'skills' && (
+                    <motion.span 
+                      layoutId="activeNavIndicator" 
+                      className="active-nav-indicator" 
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </a>
+              </Magnetic>
+              <Magnetic>
+                <a href="#contact" className={activeSection === 'contact' ? 'active' : ''} data-index="[05]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
+                  {t('nav_contact')}
+                  {!isMobileDevice && activeSection === 'contact' && (
+                    <motion.span 
+                      layoutId="activeNavIndicator" 
+                      className="active-nav-indicator" 
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                </a>
+              </Magnetic>
               
               <Magnetic>
                 <button
@@ -1441,21 +1511,59 @@ function App() {
           <section className="hero">
             <motion.div
               className="hero-content"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.12,
+                    delayChildren: 0.05
+                  }
+                }
+              }}
+              initial="hidden"
+              animate="visible"
             >
-              <div className="glass-panel" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem', marginBottom: '1.5rem', borderRadius: '30px' }}>
+              <motion.div 
+                variants={{
+                  hidden: { opacity: 0, y: 15 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+                }}
+                className="glass-panel" 
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem', marginBottom: '1.5rem', borderRadius: '30px' }}
+              >
                 <span className="pulsing-dot dot-green" />
                 <span style={{ fontSize: '0.85rem', fontWeight: 600, letterSpacing: '2px', color: 'var(--accent-cyan)' }}>
                   {t('badge_hire')}
                 </span>
-              </div>
-              <TypewriterTitle title1={t('hero_title_1')} title2={t('hero_title_2')} />
-              <p className="hero-subtitle">
+              </motion.div>
+              
+              <motion.div
+                variants={{
+                  hidden: { opacity: 0, y: 15 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+                }}
+              >
+                <TypewriterTitle title1={t('hero_title_1')} title2={t('hero_title_2')} />
+              </motion.div>
+              
+              <motion.p 
+                variants={{
+                  hidden: { opacity: 0, y: 15 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+                }}
+                className="hero-subtitle"
+              >
                 {t('hero_subtitle_1')}<br /> {t('hero_subtitle_2')}
-              </p>
-              <div className="hero-cta">
+              </motion.p>
+              
+              <motion.div 
+                variants={{
+                  hidden: { opacity: 0, y: 15 },
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+                }}
+                className="hero-cta"
+              >
                 <Magnetic>
                   <a href="#projects" className="btn btn-primary glass-panel">
                     {t('btn_explore')} <ArrowRight size={18} style={{ marginLeft: '8px' }} />
@@ -1471,7 +1579,7 @@ function App() {
                     <Gamepad2 size={18} style={{ marginRight: '8px' }} /> Itch.io
                   </a>
                 </Magnetic>
-              </div>
+              </motion.div>
             </motion.div>
             <motion.div
               className="hero-visual"
@@ -1551,19 +1659,38 @@ function App() {
               </p>
             </div>
             
-            <div className="about-right">
+            <motion.div 
+              className="about-right"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.12
+                  }
+                }
+              }}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-100px" }}
+            >
               {[1, 2, 3, 4].map((num) => (
                 <motion.div 
                   key={num} 
                   className="glass-panel" 
-                  whileHover={{ y: -5, boxShadow: '0 10px 20px rgba(0,0,0,0.3)', borderColor: 'var(--border-glass)' }}
-                  style={{ padding: '1.5rem', borderRadius: '16px', transition: 'border-color 0.3s' }}
+                  variants={{
+                    hidden: { opacity: 0, y: 30 },
+                    visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 15 } }
+                  }}
+                  whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 20px rgba(0,240,255,0.1)', borderColor: 'var(--accent-cyan)' }}
+                  onMouseEnter={playHover}
+                  style={{ padding: '1.5rem', borderRadius: '16px', transition: 'border-color 0.3s, box-shadow 0.3s' }}
                 >
                   <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.8rem' }}>{t(`about_stat_${num}`)}</div>
                   <div style={{ color: 'var(--text-main)', fontSize: '1.1rem', fontWeight: 700 }}>{t(`about_stat_${num}_val`)}</div>
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
           </motion.section>
 
           {/* Timeline Section */}
