@@ -800,6 +800,8 @@ function App() {
       infinite: false,
     });
 
+    window.lenis = lenis;
+
     // Handle internal anchor links click with Lenis
     const handleAnchorClick = (e) => {
       const target = e.target.closest('a');
@@ -826,6 +828,7 @@ function App() {
     return () => {
       document.removeEventListener('click', handleAnchorClick);
       lenis.destroy();
+      window.lenis = null;
     };
   }, []);
 

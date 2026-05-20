@@ -220,11 +220,17 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
+            document.documentElement.style.overflow = 'hidden';
+            if (window.lenis) window.lenis.stop();
         } else {
             document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+            if (window.lenis) window.lenis.start();
         }
         return () => {
             document.body.style.overflow = '';
+            document.documentElement.style.overflow = '';
+            if (window.lenis) window.lenis.start();
         };
     }, [isOpen]);
 
