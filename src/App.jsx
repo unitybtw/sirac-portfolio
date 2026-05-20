@@ -1,7 +1,7 @@
 import React, { useEffect, useState, lazy, Suspense } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
-import { Terminal, Github, Linkedin, Mail, ArrowRight, Code, Layers, Smartphone, Box, Gamepad2, Compass, Globe, Moon, Sun, ChevronLeft, ChevronRight, ChevronUp, Volume2, VolumeX } from 'lucide-react';
+import { Terminal, Github, Linkedin, Mail, ArrowRight, Code, Layers, Smartphone, Box, Gamepad2, Compass, Globe, Moon, Sun, ChevronLeft, ChevronRight, ChevronUp, Volume2, VolumeX, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring, useMotionTemplate } from 'framer-motion';
 import './index.css';
 import './light-mode.css';
@@ -1451,18 +1451,7 @@ function App() {
 
             {/* Scroll Indicator */}
             <motion.div 
-              style={{ 
-                position: 'absolute', 
-                bottom: '40px', 
-                left: '50%', 
-                transform: 'translateX(-50%)', 
-                display: 'flex', 
-                flexDirection: 'column', 
-                alignItems: 'center', 
-                gap: '8px', 
-                cursor: 'pointer',
-                zIndex: 10
-              }}
+              className="scroll-indicator"
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.7 }}
               transition={{ delay: 1.5, duration: 0.8 }}
@@ -1474,21 +1463,20 @@ function App() {
                 if (el) window.lenis?.scrollTo(el, { offset: -80 });
               }}
             >
-              <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--text-muted)' }}>SCROLL</span>
-              <div style={{ 
-                width: '20px', 
-                height: '32px', 
-                borderRadius: '10px', 
-                border: '2px solid var(--text-muted)', 
-                display: 'flex', 
-                justifyContent: 'center', 
-                paddingTop: '6px' 
-              }}>
+              <span className="scroll-text">{t('scroll_down') || 'SCROLL'}</span>
+              
+              {/* Desktop: Mouse indicator */}
+              <div className="scroll-mouse-wheel">
                 <motion.div 
-                  style={{ width: '4px', height: '8px', borderRadius: '2px', backgroundColor: 'var(--accent-cyan)' }}
+                  className="scroll-mouse-dot"
                   animate={{ y: [0, 10, 0], opacity: [1, 0, 1] }}
                   transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
                 />
+              </div>
+
+              {/* Mobile: Bouncing Chevron */}
+              <div className="scroll-mobile-chevron">
+                <ChevronDown size={20} className="bounce-arrow" />
               </div>
             </motion.div>
           </section>

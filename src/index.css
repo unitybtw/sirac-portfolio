@@ -1745,3 +1745,83 @@ nav.scrolled {
     border-color: rgba(0, 240, 255, 0.2);
   }
 }
+
+/* Scroll Indicator */
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.scroll-text {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+}
+
+.scroll-mouse-wheel {
+  display: flex;
+  width: 20px;
+  height: 32px;
+  border-radius: 10px;
+  border: 2px solid var(--text-muted);
+  justify-content: center;
+  padding-top: 6px;
+}
+
+.scroll-mouse-dot {
+  width: 4px;
+  height: 8px;
+  border-radius: 2px;
+  background-color: var(--accent-cyan);
+}
+
+.scroll-mobile-chevron {
+  display: none;
+}
+
+@keyframes bounceArrow {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(5px);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 968px) {
+  .scroll-indicator {
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: none !important;
+    margin: 3.5rem auto 1.5rem auto;
+    gap: 4px;
+  }
+
+  .scroll-mouse-wheel {
+    display: none !important;
+  }
+
+  .scroll-mobile-chevron {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .bounce-arrow {
+    animation: bounceArrow 1.6s infinite ease-in-out;
+    color: var(--accent-cyan);
+    filter: drop-shadow(0 0 4px rgba(0, 240, 255, 0.4));
+  }
+}
