@@ -259,11 +259,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Navbar */
-nav {
+nav.glass-panel {
   position: fixed;
   top: 1.5rem;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate3d(-50%, 0, 0);
+  -webkit-transform: translate3d(-50%, 0, 0);
   width: 95%; /* Increased from 90% */
   max-width: 1300px; /* Increased from 1200px */
   padding: 0.65rem 1.25rem;
@@ -316,7 +317,7 @@ nav.scrolled {
   .nav-links a {
     font-size: 0.75rem;
   }
-  nav {
+  nav.glass-panel {
     width: 98%;
     padding: 0.5rem 0.8rem;
   }
@@ -805,7 +806,7 @@ nav.scrolled {
     display: none !important;
   }
 
-  nav {
+  nav.glass-panel {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -955,7 +956,7 @@ nav.scrolled {
 }
 
 @media (max-width: 480px) {
-  nav {
+  nav.glass-panel {
     padding: 0.6rem 0.8rem;
     border-radius: 16px;
     top: 0.5rem;
@@ -1333,7 +1334,7 @@ nav.scrolled {
   .nav-links {
     white-space: normal !important;
   }
-  nav {
+  nav.glass-panel {
     white-space: normal !important;
   }
   .hero-visual {
