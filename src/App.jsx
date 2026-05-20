@@ -1,9 +1,9 @@
 import React, { useEffect, useState, lazy, Suspense } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
-import { Terminal, Github, Linkedin, Mail, ArrowRight, Code, Layers, Smartphone, Box, Gamepad2, Compass, Globe, Moon, Sun, ChevronLeft, ChevronRight, Volume2, VolumeX } from 'lucide-react';
-import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring, useMotionTemplate, useInView } from 'framer-motion';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Terminal, Github, Linkedin, Mail, ArrowRight, Code, Layers, Smartphone, Box, Gamepad2, Compass, Globe, Moon, Sun, ChevronLeft, ChevronRight, ChevronUp, Volume2, VolumeX } from 'lucide-react';
+import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring, useMotionTemplate } from 'framer-motion';
+import { Canvas } from '@react-three/fiber';
 import { OrbitControls, useGLTF, Float, Stage, PresentationControls } from '@react-three/drei';
 import './index.css';
 import './light-mode.css';
@@ -82,6 +82,7 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
       viewport={{ once: true, margin: "-50px" }}
       transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: delay / 2000 }} // Scale down delay
       whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(0,240,255,0.1)' }}
+      onMouseEnter={playHover}
       style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', willChange: 'transform, opacity' }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -206,7 +207,7 @@ const MatrixBackground = ({ theme, isPaused, matrixRainMode }) => {
       cancelAnimationFrame(animationFrameId);
       window.removeEventListener('resize', handleResize);
     };
-  }, [theme, isPaused]);
+  }, [theme, isPaused, matrixRainMode]);
 
   // Styling matrix to sit completely behind everything with no pointer events
   return (
@@ -225,6 +226,8 @@ const MatrixBackground = ({ theme, isPaused, matrixRainMode }) => {
   );
 };
 
+
+
 // --- 3D Model Viewer Component ---
 const Model = ({ path }) => {
   const { scene } = useGLTF(path);
@@ -236,6 +239,14 @@ const ThreeDViewer = ({ t }) => {
   const [currentModelIndex, setCurrentModelIndex] = useState(0);
   const containerRef = React.useRef(null);
   const [isVisible, setIsVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 968);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -256,8 +267,8 @@ const ThreeDViewer = ({ t }) => {
 
   return (
     <motion.section
-      ref={containerRef}
       id="3d-viewer"
+      ref={containerRef}
       className="viewer-section glass-panel"
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
@@ -275,11 +286,11 @@ const ThreeDViewer = ({ t }) => {
       <div className="viewer-container">
         
         {/* Navigation Buttons */}
-        <button onClick={prevModel} style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--text-main)', backdropFilter: 'blur(10px)' }}>
-          <ChevronLeft size={24} />
+        <button onClick={prevModel} style={{ position: 'absolute', left: isMobile ? '8px' : '20px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: isMobile ? '36px' : '50px', height: isMobile ? '36px' : '50px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--text-main)', backdropFilter: 'blur(10px)' }}>
+          <ChevronLeft size={isMobile ? 18 : 24} />
         </button>
-        <button onClick={nextModel} style={{ position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '50px', height: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--text-main)', backdropFilter: 'blur(10px)' }}>
-          <ChevronRight size={24} />
+        <button onClick={nextModel} style={{ position: 'absolute', right: isMobile ? '8px' : '20px', top: '50%', transform: 'translateY(-50%)', zIndex: 10, background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: isMobile ? '36px' : '50px', height: isMobile ? '36px' : '50px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--text-main)', backdropFilter: 'blur(10px)' }}>
+          <ChevronRight size={isMobile ? 18 : 24} />
         </button>
 
         {isVisible ? (
@@ -320,11 +331,9 @@ const ScrambleText = ({ text }) => {
   return <span>{text}</span>;
 };
 
-const CyberCursor = () => {
-  return null;
-};
+const CyberCursor = () => null;
 
-const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, setActiveArcadeGame, isMuted, toggleMute, matrixRainMode, setMatrixRainMode, t }) => {
+const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMute, matrixRainMode, setMatrixRainMode, setShowSecretGame }) => {
   const [history, setHistory] = useState([
     { type: 'log', text: 'SYSTEM ONLINE // v2.5' },
     { type: 'log', text: 'ESTABLISHING NEURAL GRID ENGINES... [OK]' },
@@ -332,6 +341,7 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, 
     { type: 'log', text: 'Type "help" to list available system commands.' }
   ]);
   const [input, setInput] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
   const terminalBodyRef = React.useRef(null);
   const inputRef = React.useRef(null);
 
@@ -345,6 +355,7 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, 
   }, [history]);
 
   const handleFocus = () => {
+    setIsFocused(true);
     if (inputRef.current) {
       inputRef.current.focus();
     }
@@ -373,6 +384,7 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, 
           { type: 'info', text: '  arcade     - Toggle live arcade interface module' },
           { type: 'info', text: '  sound      - Toggle synth volume state (mute/unmute)' },
           { type: 'info', text: '  matrix     - Toggle green matrix digital code rain mode' },
+          { type: 'info', text: '  snake      - Launch secret retro snake easter egg game' },
           { type: 'info', text: '  clear      - Purge screen buffer log' }
         );
         break;
@@ -384,6 +396,10 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, 
           { type: 'log', text: 'Bio: Crafting low-level custom renderers, safe memory systems (Rust/C++), and console-grade web/mobile interfaces.' },
           { type: 'log', text: 'Currently studying Digital Game Design at IKU.' }
         );
+        setTimeout(() => {
+          const el = document.getElementById('about');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
         break;
 
       case 'skills':
@@ -395,6 +411,10 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, 
           { type: 'log', text: '  - C++ / Engine Dev    [||||||||||||||||  ] 80%' },
           { type: 'log', text: '  - React / Web Apps    [|||||||||||||||   ] 75%' }
         );
+        setTimeout(() => {
+          const el = document.getElementById('skills');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
         break;
 
       case 'projects':
@@ -405,6 +425,10 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, 
           { type: 'info', text: '  3. Doom II - WebGL retro engine viewport integration' },
           { type: 'log', text: 'Scroll down to the "Archives" grid to deploy any module!' }
         );
+        setTimeout(() => {
+          const el = document.getElementById('projects');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
         break;
 
       case 'arcade':
@@ -428,6 +452,17 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, 
         newHistory.push({ type: 'success', text: `Matrix code rain theme: ${!matrixRainMode ? 'ACTIVE (NEON GREEN)' : 'STANDBY (CYAN VIOLET)'}` });
         break;
 
+      case 'snake':
+      case 'secret':
+        if (setShowSecretGame) {
+          setShowSecretGame(true);
+          playSuccess();
+          newHistory.push({ type: 'success', text: 'INITIATING SECRET NEON SNAKE MINIGAME PROTOCOL...' });
+        } else {
+          newHistory.push({ type: 'error', text: 'ERROR: Secret engine is offline.' });
+        }
+        break;
+
       case 'clear':
         setHistory([]);
         setInput('');
@@ -448,10 +483,11 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, 
       onClick={handleFocus}
       style={{
         width: '100%', maxWidth: '500px', borderRadius: '16px', overflow: 'hidden',
-        border: '1px solid rgba(0, 240, 255, 0.15)', 
-        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.8), 0 0 20px rgba(0, 240, 255, 0.1)',
+        border: isFocused ? '1px solid var(--accent-cyan)' : '1px solid rgba(0, 240, 255, 0.15)', 
+        boxShadow: isFocused ? '0 25px 50px -12px rgba(0,0,0,0.8), 0 0 25px rgba(0, 240, 255, 0.25)' : '0 25px 50px -12px rgba(0,0,0,0.8), 0 0 20px rgba(0, 240, 255, 0.1)',
         textAlign: 'left', background: 'rgba(10, 10, 15, 0.85)', backdropFilter: 'blur(12px)',
-        cursor: 'text', height: '360px', display: 'flex', flexDirection: 'column'
+        cursor: 'text', height: '360px', display: 'flex', flexDirection: 'column',
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
       }}
     >
       <div style={{ background: 'rgba(255,255,255,0.03)', padding: '12px 20px', display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', userSelect: 'none' }}>
@@ -474,9 +510,15 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, 
           else if (line.type === 'info') color = 'var(--accent-cyan)';
           
           return (
-            <div key={index} style={{ color, whiteSpace: 'pre-wrap' }}>
+            <motion.div 
+              key={index} 
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              style={{ color, whiteSpace: 'pre-wrap' }}
+            >
               {line.text}
-            </div>
+            </motion.div>
           );
         })}
       </div>
@@ -489,6 +531,8 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, activeArcadeGame, 
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleCommand}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           style={{
             background: 'transparent',
             border: 'none',
@@ -535,7 +579,8 @@ const TypewriterTitle = ({ title1, title2 }) => {
         }, 5); // Lightning fast delete
         return () => clearTimeout(timeout);
       } else {
-        setPhase(2);
+        const timeout = setTimeout(() => setPhase(2), 0);
+        return () => clearTimeout(timeout);
       }
     }
   }, [text, phase]);
@@ -646,17 +691,108 @@ const KonamiGame = ({ onClose }) => {
   }, [dir, food, gameOver]);
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.95)', zIndex: 100000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-      <h1 style={{ color: '#0f0', fontFamily: 'monospace', textShadow: '0 0 10px #0f0' }}>NEON SNAKE</h1>
-      <p style={{ color: '#0f0', fontFamily: 'monospace' }}>SCORE: {score}</p>
-      <div style={{ width: '300px', height: '300px', border: '2px solid #0f0', position: 'relative', boxShadow: '0 0 20px #0f0' }}>
-        {snake.map((seg, i) => (
-          <div key={i} style={{ position: 'absolute', left: `${seg[0] * 10}px`, top: `${seg[1] * 10}px`, width: '10px', height: '10px', background: i === 0 ? '#fff' : '#0f0', boxShadow: '0 0 5px #0f0' }} />
-        ))}
-        <div style={{ position: 'absolute', left: `${food[0] * 10}px`, top: `${food[1] * 10}px`, width: '10px', height: '10px', background: '#f0f', boxShadow: '0 0 10px #f0f' }} />
+    <div style={{ 
+      position: 'fixed', 
+      top: 0, 
+      left: 0, 
+      width: '100vw', 
+      height: '100vh', 
+      background: 'rgba(5, 5, 8, 0.85)', 
+      backdropFilter: 'blur(20px)', 
+      zIndex: 100000, 
+      display: 'flex', 
+      flexDirection: 'column', 
+      alignItems: 'center', 
+      justifyContent: 'center',
+      gap: '1.5rem'
+    }}>
+      <div className="glass-panel" style={{ 
+        padding: '2.5rem', 
+        borderRadius: '32px', 
+        border: '1px solid rgba(0, 240, 255, 0.2)', 
+        boxShadow: '0 30px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 240, 255, 0.1)',
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        background: 'rgba(10, 10, 15, 0.9)'
+      }}>
+        <h2 className="text-gradient" style={{ margin: '0 0 0.5rem 0', fontSize: '2.2rem', fontWeight: 800, letterSpacing: '4px' }}>
+          NEON SNAKE
+        </h2>
+        <div style={{ color: 'var(--accent-cyan)', fontFamily: 'monospace', fontSize: '1.1rem', marginBottom: '1.5rem', fontWeight: 'bold' }}>
+          SCORE: <span style={{ color: '#fff' }}>{score}</span>
+        </div>
+        <div style={{ 
+          width: '300px', 
+          height: '300px', 
+          border: '2px solid rgba(255, 255, 255, 0.05)', 
+          background: 'rgba(0, 0, 0, 0.4)',
+          borderRadius: '16px',
+          position: 'relative', 
+          overflow: 'hidden',
+          boxShadow: 'inset 0 0 20px rgba(0,0,0,0.8)' 
+        }}>
+          {/* Grid lines background */}
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '10px 10px' }} />
+          
+          {snake.map((seg, i) => (
+            <motion.div 
+              key={i} 
+              layout
+              style={{ 
+                position: 'absolute', 
+                left: `${seg[0] * 10}px`, 
+                top: `${seg[1] * 10}px`, 
+                width: '10px', 
+                height: '10px', 
+                background: i === 0 ? '#fff' : 'var(--accent-cyan)', 
+                borderRadius: i === 0 ? '4px' : '2px',
+                boxShadow: i === 0 ? '0 0 8px #fff' : '0 0 6px var(--accent-cyan)' 
+              }} 
+            />
+          ))}
+          <motion.div 
+            animate={{ scale: [0.9, 1.2, 0.9] }}
+            transition={{ repeat: Infinity, duration: 1 }}
+            style={{ 
+              position: 'absolute', 
+              left: `${food[0] * 10}px`, 
+              top: `${food[1] * 10}px`, 
+              width: '10px', 
+              height: '10px', 
+              background: 'var(--accent-violet)', 
+              borderRadius: '50%',
+              boxShadow: '0 0 10px var(--accent-violet)' 
+            }} 
+          />
+        </div>
+        {gameOver && (
+          <motion.h3 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            style={{ color: '#ff7b72', fontFamily: 'monospace', marginTop: '1.5rem', marginBottom: 0, letterSpacing: '2px' }}
+          >
+            GAME OVER
+          </motion.h3>
+        )}
+        <motion.button 
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onMouseEnter={playHover}
+          onClick={() => { playClick(); onClose(); }} 
+          className="btn btn-outline glass-panel"
+          style={{ 
+            marginTop: '2rem', 
+            padding: '0.8rem 2rem', 
+            color: 'var(--accent-cyan)', 
+            cursor: 'pointer',
+            fontSize: '0.9rem',
+            letterSpacing: '1px'
+          }}
+        >
+          EXIT SIMULATION
+        </motion.button>
       </div>
-      {gameOver && <h2 style={{ color: 'red', fontFamily: 'monospace', marginTop: '1rem' }}>GAME OVER</h2>}
-      <button onClick={onClose} style={{ marginTop: '2rem', padding: '0.5rem 1rem', background: 'transparent', border: '1px solid #0f0', color: '#0f0', fontFamily: 'monospace', cursor: 'pointer' }}>EXIT SIMULATION</button>
     </div>
   );
 };
@@ -665,6 +801,21 @@ const KonamiGame = ({ onClose }) => {
 const TiltCard = ({ children, className }) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth <= 968;
+      setIsMobile(mobile);
+      if (mobile) {
+        x.set(0);
+        y.set(0);
+      }
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, [x, y]);
 
   const springConfig = { damping: 20, stiffness: 300, mass: 0.5 };
   const mouseXSpring = useSpring(x, springConfig);
@@ -678,6 +829,7 @@ const TiltCard = ({ children, className }) => {
   const background = useMotionTemplate`radial-gradient(circle at ${flareX} ${flareY}, rgba(0, 240, 255, 0.12) 0%, transparent 65%)`;
 
   const handleMouseMove = (e) => {
+    if (isMobile) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const width = rect.width;
     const height = rect.height;
@@ -690,6 +842,7 @@ const TiltCard = ({ children, className }) => {
   };
 
   const handleMouseLeave = () => {
+    if (isMobile) return;
     x.set(0);
     y.set(0);
   };
@@ -698,9 +851,10 @@ const TiltCard = ({ children, className }) => {
     <motion.div
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onMouseEnter={() => { if (!isMobile) playHover(); }}
       style={{
-        rotateY,
-        rotateX,
+        rotateY: isMobile ? 0 : rotateY,
+        rotateX: isMobile ? 0 : rotateX,
         transformStyle: "preserve-3d",
         perspective: "1000px",
         position: "relative"
@@ -714,13 +868,13 @@ const TiltCard = ({ children, className }) => {
           left: 0,
           right: 0,
           bottom: 0,
-          background,
+          background: isMobile ? "none" : background,
           pointerEvents: "none",
           borderRadius: "inherit",
           zIndex: 5
         }}
       />
-      <div style={{ transform: "translateZ(30px)", transformStyle: "preserve-3d", height: '100%', position: "relative", zIndex: 2 }}>
+      <div style={{ transform: isMobile ? "none" : "translateZ(30px)", transformStyle: "preserve-3d", height: '100%', position: "relative", zIndex: 2 }}>
         {children}
       </div>
     </motion.div>
@@ -731,8 +885,23 @@ const TiltCard = ({ children, className }) => {
 const Magnetic = ({ children }) => {
   const ref = React.useRef(null);
   const [position, setPosition] = React.useState({ x: 0, y: 0 });
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkMobile = () => {
+      const mobile = window.innerWidth <= 968;
+      setIsMobile(mobile);
+      if (mobile) {
+        setPosition({ x: 0, y: 0 });
+      }
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleMouse = (e) => {
+    if (isMobile) return;
     const { clientX, clientY } = e;
     const { height, width, left, top } = ref.current.getBoundingClientRect();
     const middleX = clientX - (left + width / 2);
@@ -741,21 +910,26 @@ const Magnetic = ({ children }) => {
   };
 
   const reset = () => {
+    if (isMobile) return;
     setPosition({ x: 0, y: 0 });
   };
 
   const { x, y } = position;
   return (
-    <motion.div
-      style={{ position: "relative" }}
+    <div
+      style={{ position: "relative", display: "inline-block" }}
       ref={ref}
       onMouseMove={handleMouse}
       onMouseLeave={reset}
-      animate={{ x, y }}
-      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
     >
-      {children}
-    </motion.div>
+      <motion.div
+        animate={{ x, y }}
+        transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+        style={{ display: "inline-block" }}
+      >
+        {children}
+      </motion.div>
+    </div>
   );
 };
 
@@ -764,6 +938,24 @@ function App() {
   const [theme, setTheme] = useState('dark');
   const [showSecretGame, setShowSecretGame] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileDevice, setIsMobileDevice] = useState(false);
+  const [activeSection, setActiveSection] = useState('hero');
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobileDevice(window.innerWidth <= 968);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Mouse Tracking for Parallax
   const mouseX = useMotionValue(0);
@@ -773,6 +965,7 @@ function App() {
 
   useEffect(() => {
     const handleMouseMove = (e) => {
+      if (window.innerWidth <= 968) return;
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
     };
@@ -789,16 +982,48 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Scroll spy active section tracker
+  useEffect(() => {
+    const sections = ['hero', 'about', 'timeline', 'projects', 'skills', 'contact'];
+    
+    const observerOptions = {
+      root: null,
+      rootMargin: '-30% 0px -40% 0px',
+      threshold: 0
+    };
+
+    const observerCallback = (entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.target.id) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    sections.forEach(id => {
+      const el = document.getElementById(id) || (id === 'hero' ? document.querySelector('.hero') : null);
+      if (el) {
+        if (id === 'hero' && !el.id) {
+          el.id = 'hero';
+        }
+        observer.observe(el);
+      }
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   // Initialize Lenis smooth scroll
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 1.5,
+      easing: (t) => 1 - Math.pow(1 - t, 5), // Quintic out - buttery smooth
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 1.5,
+      wheelMultiplier: 0.95,
+      touchMultiplier: 1.2,
       infinite: false,
     });
 
@@ -972,10 +1197,12 @@ function App() {
   }, [theme]);
 
   const toggleTheme = () => {
+    playClick();
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   const changeLanguage = (lng) => {
+    playClick();
     i18n.changeLanguage(lng);
   };
 
@@ -1015,52 +1242,53 @@ function App() {
 
   return (
     <>
-    <AnimatePresence mode="wait">
-      {showSecretGame && <KonamiGame onClose={() => setShowSecretGame(false)} />}
+    <AnimatePresence>
+      {showSecretGame && <KonamiGame key="konami" onClose={() => setShowSecretGame(false)} />}
 
-      <PageProgress />
-      <div className={`app-container ${theme}-mode`}>
+      <PageProgress key="progress" />
+      <div key="app-wrapper" className={`app-container ${theme}-mode`}>
         <motion.div
           key="main-app"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, ease: "easeOut" }}
         >
-          <CyberCursor />
           <MatrixBackground theme={theme} isPaused={isArcadeOpen} matrixRainMode={matrixRainMode} />
           <div className="cyber-bg">
             <div className="cyber-bg-blob-3"></div>
             <div className="cyber-bg-blob-4"></div>
             {/* Parallax Floating Icons */}
-              <motion.div style={{ position: 'absolute', top: '15%', left: '10%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax1, x: bgIconX, willChange: 'transform' }}>
+              <motion.div style={{ position: 'absolute', top: '15%', left: '10%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax1, x: isMobileDevice ? 0 : bgIconX, willChange: 'transform' }}>
                 <Code size={60} />
               </motion.div>
-              <motion.div style={{ position: 'absolute', top: '45%', right: '10%', opacity: 0.15, color: 'var(--accent-violet)', y: parallax2, x: bgIconY, willChange: 'transform' }}>
+              <motion.div style={{ position: 'absolute', top: '45%', right: '10%', opacity: 0.15, color: 'var(--accent-violet)', y: parallax2, x: isMobileDevice ? 0 : bgIconY, willChange: 'transform' }}>
                 <Layers size={80} />
               </motion.div>
-              <motion.div style={{ position: 'absolute', top: '75%', left: '15%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax3, x: bgIconX, willChange: 'transform' }}>
+              <motion.div style={{ position: 'absolute', top: '75%', left: '15%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax3, x: isMobileDevice ? 0 : bgIconX, willChange: 'transform' }}>
                 <Box size={70} />
               </motion.div>
           </div>
 
 
 
-          <nav className="glass-panel">
-            <div className="nav-logo">
+          <nav className={`glass-panel ${scrolled ? 'scrolled' : ''}`}>
+            <div className="nav-logo" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="Logo" style={{ width: '28px', height: '28px', filter: 'drop-shadow(0 0 8px #00f0ff)' }} />
               <h1 className="text-gradient">{t('nav_name') || 'SIRAÇ GÖKTUĞ ŞİMŞEK.'}</h1>
             </div>
             
             {/* Collapsible Nav Links */}
             <div className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}>
-              <Magnetic><a href="#about" data-index="[01]" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_about') || 'About'}</a></Magnetic>
-              <Magnetic><a href="#timeline" data-index="[02]" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_timeline') || 'Timeline'}</a></Magnetic>
-              <Magnetic><a href="#projects" data-index="[03]" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_work')}</a></Magnetic>
-              <Magnetic><a href="#skills" data-index="[04]" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_skills')}</a></Magnetic>
-              <Magnetic><a href="#contact" data-index="[05]" onClick={() => setIsMobileMenuOpen(false)}>{t('nav_contact')}</a></Magnetic>
+              <Magnetic><a href="#about" className={activeSection === 'about' ? 'active' : ''} data-index="[01]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>{t('nav_about') || 'About'}</a></Magnetic>
+              <Magnetic><a href="#timeline" className={activeSection === 'timeline' ? 'active' : ''} data-index="[02]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>{t('nav_timeline') || 'Timeline'}</a></Magnetic>
+              <Magnetic><a href="#projects" className={activeSection === 'projects' ? 'active' : ''} data-index="[03]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>{t('nav_work')}</a></Magnetic>
+              <Magnetic><a href="#skills" className={activeSection === 'skills' ? 'active' : ''} data-index="[04]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>{t('nav_skills')}</a></Magnetic>
+              <Magnetic><a href="#contact" className={activeSection === 'contact' ? 'active' : ''} data-index="[05]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>{t('nav_contact')}</a></Magnetic>
               
               <Magnetic>
                 <button
-                  onClick={() => { setIsArcadeOpen(true); setIsMobileMenuOpen(false); }}
+                  onClick={() => { playClick(); setIsArcadeOpen(true); setIsMobileMenuOpen(false); }}
+                  onMouseEnter={playHover}
                   className="btn btn-outline glass-panel"
                   style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-cyan)' }}
                 >
@@ -1071,16 +1299,98 @@ function App() {
 
             {/* Nav Utilities - ALWAYS visible on right */}
             <div className="nav-utilities" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <div className="lang-selector-container" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'var(--bg-glass)', padding: '0.4rem 0.8rem', borderRadius: '20px', border: '1px solid var(--border-glass)' }}>
-                <Globe size={16} style={{ color: 'var(--text-muted)' }} />
-                <motion.button whileHover={{ scale: 1.1, color: "var(--accent-cyan)" }} whileTap={{ scale: 0.9 }} onClick={() => changeLanguage('en')} style={{ background: 'transparent', border: 'none', color: i18n.language?.startsWith('en') ? 'var(--accent-cyan)' : 'var(--text-muted)', cursor: 'pointer', fontWeight: 600, padding: '0.1rem 0.2rem', fontSize: '0.8rem' }}>EN</motion.button>
-                <span style={{ color: 'var(--border-glass)', fontSize: '0.8rem' }}>|</span>
-                <motion.button whileHover={{ scale: 1.1, color: "var(--accent-cyan)" }} whileTap={{ scale: 0.9 }} onClick={() => changeLanguage('tr')} style={{ background: 'transparent', border: 'none', color: i18n.language?.startsWith('tr') ? 'var(--accent-cyan)' : 'var(--text-muted)', cursor: 'pointer', fontWeight: 600, padding: '0.1rem 0.2rem', fontSize: '0.8rem' }}>TR</motion.button>
+              <div className="lang-selector-container" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'var(--bg-glass)', padding: '0.3rem 0.6rem', borderRadius: '20px', border: '1px solid var(--border-glass)', position: 'relative' }}>
+                <Globe size={14} style={{ color: 'var(--text-muted)', marginRight: '2px', zIndex: 1 }} />
+                <motion.button 
+                  whileHover={{ scale: 1.05 }} 
+                  whileTap={{ scale: 0.95 }} 
+                  onMouseEnter={playHover}
+                  onClick={() => { playClick(); changeLanguage('en'); }} 
+                  style={{ 
+                    background: 'transparent', 
+                    border: 'none', 
+                    borderRadius: '12px', 
+                    color: i18n.language?.startsWith('en') ? 'var(--accent-cyan)' : 'var(--text-muted)', 
+                    cursor: 'pointer', 
+                    fontWeight: 700, 
+                    padding: '0.25rem 0.55rem', 
+                    fontSize: '0.75rem',
+                    position: 'relative',
+                    outline: 'none'
+                  }}
+                >
+                  {i18n.language?.startsWith('en') && (
+                    <motion.span
+                      layoutId="activeLangBg"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 240, 255, 0.05))',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(0, 240, 255, 0.4)',
+                        borderTop: '1px solid rgba(255, 255, 255, 0.4)',
+                        borderLeft: '1px solid rgba(255, 255, 255, 0.2)',
+                        boxShadow: '0 4px 12px rgba(0, 240, 255, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.1)',
+                        zIndex: 0
+                      }}
+                    />
+                  )}
+                  <span style={{ position: 'relative', zIndex: 1 }}>EN</span>
+                </motion.button>
+                <motion.button 
+                  whileHover={{ scale: 1.05 }} 
+                  whileTap={{ scale: 0.95 }} 
+                  onMouseEnter={playHover}
+                  onClick={() => { playClick(); changeLanguage('tr'); }} 
+                  style={{ 
+                    background: 'transparent', 
+                    border: 'none', 
+                    borderRadius: '12px', 
+                    color: i18n.language?.startsWith('tr') ? 'var(--accent-cyan)' : 'var(--text-muted)', 
+                    cursor: 'pointer', 
+                    fontWeight: 700, 
+                    padding: '0.25rem 0.55rem', 
+                    fontSize: '0.75rem',
+                    position: 'relative',
+                    outline: 'none'
+                  }}
+                >
+                  {i18n.language?.startsWith('tr') && (
+                    <motion.span
+                      layoutId="activeLangBg"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 240, 255, 0.05))',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        borderRadius: '8px',
+                        border: '1px solid rgba(0, 240, 255, 0.4)',
+                        borderTop: '1px solid rgba(255, 255, 255, 0.4)',
+                        borderLeft: '1px solid rgba(255, 255, 255, 0.2)',
+                        boxShadow: '0 4px 12px rgba(0, 240, 255, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.1)',
+                        zIndex: 0
+                      }}
+                    />
+                  )}
+                  <span style={{ position: 'relative', zIndex: 1 }}>TR</span>
+                </motion.button>
               </div>
 
               <Magnetic>
                 <motion.button
-                  onClick={toggleMute}
+                  onClick={() => { toggleMute(); playClick(); }}
+                  onMouseEnter={playHover}
                   style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '38px', height: '38px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: isMuted ? 'var(--text-muted)' : 'var(--accent-cyan)' }}
                   whileHover={{ scale: 1.1, boxShadow: isMuted ? 'none' : '0 0 10px var(--accent-cyan)' }}
                   whileTap={{ scale: 0.9 }}
@@ -1091,7 +1401,8 @@ function App() {
 
               <Magnetic>
                 <motion.button
-                  onClick={toggleTheme}
+                  onClick={() => { toggleTheme(); playClick(); }}
+                  onMouseEnter={playHover}
                   style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '38px', height: '38px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--text-main)', position: 'relative', overflow: 'hidden' }}
                   whileHover={{ scale: 1.1, boxShadow: '0 0 10px var(--accent-cyan)' }}
                   whileTap={{ scale: 0.9 }}
@@ -1125,7 +1436,12 @@ function App() {
               </Magnetic>
 
               {/* Hamburger Toggle button */}
-              <button className="nav-toggle-btn" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Toggle Menu">
+              <button 
+                className="nav-toggle-btn" 
+                onClick={() => { playClick(); setIsMobileMenuOpen(!isMobileMenuOpen); }} 
+                onMouseEnter={playHover}
+                aria-label="Toggle Menu"
+              >
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                   <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '2px', display: 'block', transition: 'all 0.3s', transform: isMobileMenuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none', transformOrigin: 'center' }}></span>
                   <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '2px', display: 'block', transition: 'all 0.3s', opacity: isMobileMenuOpen ? 0 : 1 }}></span>
@@ -1143,7 +1459,8 @@ function App() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             >
-              <div className="glass-panel" style={{ display: 'inline-block', padding: '0.5rem 1rem', marginBottom: '1.5rem', borderRadius: '30px' }}>
+              <div className="glass-panel" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem', marginBottom: '1.5rem', borderRadius: '30px' }}>
+                <span className="pulsing-dot dot-green" />
                 <span style={{ fontSize: '0.85rem', fontWeight: 600, letterSpacing: '2px', color: 'var(--accent-cyan)' }}>
                   {t('badge_hire')}
                 </span>
@@ -1175,19 +1492,60 @@ function App() {
               initial={{ opacity: 0, scale: 0.9, y: 50 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-              style={{ x: terminalX, y: terminalY }}
+              style={{ x: isMobileDevice ? 0 : terminalX, y: isMobileDevice ? 0 : terminalY }}
             >
               <InteractiveTerminal 
                 isArcadeOpen={isArcadeOpen}
                 setIsArcadeOpen={setIsArcadeOpen}
-                activeArcadeGame={activeArcadeGame}
-                setActiveArcadeGame={setActiveArcadeGame}
                 isMuted={isMuted}
                 toggleMute={toggleMute}
                 matrixRainMode={matrixRainMode}
                 setMatrixRainMode={setMatrixRainMode}
-                t={t}
+                setShowSecretGame={setShowSecretGame}
               />
+            </motion.div>
+
+            {/* Scroll Indicator */}
+            <motion.div 
+              style={{ 
+                position: 'absolute', 
+                bottom: '40px', 
+                left: '50%', 
+                transform: 'translateX(-50%)', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center', 
+                gap: '8px', 
+                cursor: 'pointer',
+                zIndex: 10
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.7 }}
+              transition={{ delay: 1.5, duration: 0.8 }}
+              whileHover={{ opacity: 1, scale: 1.05 }}
+              onMouseEnter={playHover}
+              onClick={() => {
+                playClick();
+                const el = document.getElementById('about');
+                if (el) window.lenis?.scrollTo(el, { offset: -80 });
+              }}
+            >
+              <span style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '2px', color: 'var(--text-muted)' }}>SCROLL</span>
+              <div style={{ 
+                width: '20px', 
+                height: '32px', 
+                borderRadius: '10px', 
+                border: '2px solid var(--text-muted)', 
+                display: 'flex', 
+                justifyContent: 'center', 
+                paddingTop: '6px' 
+              }}>
+                <motion.div 
+                  style={{ width: '4px', height: '8px', borderRadius: '2px', backgroundColor: 'var(--accent-cyan)' }}
+                  animate={{ y: [0, 10, 0], opacity: [1, 0, 1] }}
+                  transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
+                />
+              </div>
             </motion.div>
           </section>
 
@@ -1236,10 +1594,16 @@ function App() {
 
           {/* Timeline Section */}
           <section id="timeline" style={{ padding: '0 5% 5rem', position: 'relative' }}>
-            <div className="section-header">
+            <motion.div 
+              className="section-header"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+            >
               <h2 className="section-title text-gradient"><ScrambleText text={t('timeline_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('timeline_subtitle')}</p>
-            </div>
+            </motion.div>
             
             <div className="timeline-container" style={{ maxWidth: '900px', margin: '3rem auto 0', position: 'relative' }}>
               {/* Central Pipe */}
@@ -1273,14 +1637,26 @@ function App() {
                     }} />
 
                     {/* Content Card */}
-                    <div className="glass-panel" style={{ 
-                      width: '42%', 
-                      padding: '1.5rem', 
-                      borderRadius: '24px', 
-                      background: 'rgba(255,255,255,0.02)',
-                      textAlign: num % 2 === 0 ? 'left' : 'right',
-                      border: '1px solid rgba(255,255,255,0.05)'
-                    }}>
+                    <motion.div 
+                      className="glass-panel"
+                      whileHover={{ 
+                        y: -5, 
+                        scale: 1.02, 
+                        borderColor: num > 2 ? 'rgba(138, 43, 226, 0.4)' : 'rgba(0, 240, 255, 0.4)',
+                        boxShadow: num > 2 ? '0 10px 25px rgba(138, 43, 226, 0.15)' : '0 10px 25px rgba(0, 240, 255, 0.15)'
+                      }}
+                      onMouseEnter={playHover}
+                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                      style={{ 
+                        width: '42%', 
+                        padding: '1.5rem', 
+                        borderRadius: '24px', 
+                        background: 'rgba(255,255,255,0.02)',
+                        textAlign: num % 2 === 0 ? 'left' : 'right',
+                        border: '1px solid rgba(255,255,255,0.05)',
+                        cursor: 'pointer'
+                      }}
+                    >
                       <div style={{
                         display: 'inline-block',
                         padding: '0.2rem 0.6rem',
@@ -1301,7 +1677,7 @@ function App() {
                       <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.6', margin: 0 }}>
                         {t(`timeline_event_${num}_desc`)}
                       </p>
-                    </div>
+                    </motion.div>
                   </motion.div>
                 ))}
               </div>
@@ -1309,11 +1685,25 @@ function App() {
           </section>
 
           {/* Featured Modules Section - To prove content depth to admins */}
-          <section id="featured-modules" className="desktop-only" style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', padding: '5rem 2rem', background: 'rgba(255,255,255,0.01)', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.03)' }}>
-            <div className="section-header">
+          <motion.section 
+            id="featured-modules" 
+            className="desktop-only" 
+            style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', padding: '5rem 2rem', background: 'rgba(255,255,255,0.01)', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.03)', willChange: 'transform, opacity' }}
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+          >
+            <motion.div 
+              className="section-header"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
               <h2 className="section-title text-gradient"><ScrambleText text={t('featured_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('featured_subtitle')}</p>
-            </div>
+            </motion.div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2rem', marginTop: '3rem' }}>
               {[
                 { name: 'FNAF 1 (Fan Port)', desc: 'Full interactive 2D engine map for browser.', icon: <Gamepad2 size={32} /> },
@@ -1331,7 +1721,8 @@ function App() {
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: i * 0.1 }}
                   whileHover={{ scale: 1.05, y: -10, boxShadow: '0 20px 40px rgba(0,240,255,0.2)' }}
-                  onClick={() => setIsArcadeOpen(true)}
+                  onMouseEnter={playHover}
+                  onClick={() => { playClick(); setIsArcadeOpen(true); }}
                   style={{ padding: '2rem', borderRadius: '24px', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'center', background: 'rgba(0,0,0,0.3)' }}
                 >
                   <div style={{ color: 'var(--accent-cyan)', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>{game.icon}</div>
@@ -1340,14 +1731,20 @@ function App() {
                 </motion.div>
               ))}
             </div>
-          </section>
+          </motion.section>
 
           {/* Projects Timeline (Gallery) */}
           <section id="projects" className="gallery-section">
-            <div className="section-header">
+            <motion.div 
+              className="section-header"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.6 }}
+            >
               <h2 className="section-title text-gradient"><ScrambleText text={t('archives_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('archives_subtitle')}</p>
-            </div>
+            </motion.div>
             <motion.div 
               className="masonry-grid"
               initial="hidden"
@@ -1361,7 +1758,7 @@ function App() {
                 }
               }}
             >
-              {projects.map((project, idx) => (
+              {projects.map((project) => (
                 <TiltCard key={project.id} className={`project-card glass-panel ${project.glow}`}>
                   <motion.div
                     onClick={() => window.open(project.link, '_blank')}
@@ -1400,11 +1797,20 @@ function App() {
           </section>
 
           {/* Arcade Section */}
-          <section id="arcade" style={{ padding: '0 5% 5rem', textAlign: 'center' }}>
-            <div className="section-header">
+          <section 
+            id="arcade" 
+            style={{ padding: '0 5% 5rem', textAlign: 'center', position: 'relative' }}
+          >
+            <motion.div 
+              className="section-header"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
               <h2 className="section-title text-gradient"><ScrambleText text={t('arcade_section_title') || 'ARCADE UNIVERSE'} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('arcade_section_subtitle')}</p>
-            </div>
+            </motion.div>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
               <Suspense fallback={<div className="glass-panel" style={{ padding: '1rem 3rem', color: 'var(--accent-cyan)' }}>INITIALIZING ARCADE...</div>}>
                 <GameLibrary
@@ -1440,8 +1846,15 @@ function App() {
           </motion.section>
 
           {/* System Telemetry Section [NEW] - Professionalism Boost */}
-          <section id="telemetry" style={{ padding: '4rem 5%', display: 'flex', justifyContent: 'center' }}>
-            <div className="glass-panel" style={{ width: '100%', maxWidth: '1200px', padding: '2.5rem', borderRadius: '30px', display: 'flex', flexWrap: 'wrap', gap: '3rem', justifyContent: 'space-around', alignItems: 'center', border: '1px solid rgba(0,240,255,0.1)', background: 'rgba(0,0,0,0.4)', position: 'relative', overflow: 'hidden' }}>
+          <motion.section 
+            id="telemetry" 
+            style={{ padding: isMobileDevice ? '2rem 5%' : '4rem 5%', display: 'flex', justifyContent: 'center', willChange: 'transform, opacity' }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="glass-panel" style={{ width: '100%', maxWidth: '1200px', padding: isMobileDevice ? '1.5rem 1rem' : '2.5rem', borderRadius: isMobileDevice ? '20px' : '30px', display: 'flex', flexWrap: 'wrap', gap: isMobileDevice ? '1.5rem' : '3rem', justifyContent: 'space-around', alignItems: 'center', border: '1px solid rgba(0,240,255,0.1)', background: 'rgba(0,0,0,0.4)', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '2px', background: 'linear-gradient(90deg, transparent, var(--accent-cyan), transparent)' }} />
               {[
                 { label: t('stats_games'), val: "50+", icon: <Gamepad2 size={24} /> },
@@ -1449,19 +1862,31 @@ function App() {
                 { label: t('stats_users'), val: "SYNC.", icon: <Globe size={24} /> },
                 { label: t('stats_uptime'), val: "100%", icon: <Terminal size={24} /> }
               ].map((stat, i) => (
-                <div key={i} style={{ textAlign: 'center', minWidth: '150px' }}>
-                  <div style={{ color: 'var(--accent-cyan)', marginBottom: '0.5rem', display: 'flex', justifyContent: 'center' }}>{stat.icon}</div>
-                  <div style={{ fontSize: '1.8rem', fontWeight: 800, color: '#fff', marginBottom: '0.2rem' }}>{stat.val}</div>
+                <motion.div 
+                  key={i} 
+                  whileHover={{ scale: 1.15, transition: { type: 'spring', stiffness: 400, damping: 15 } }}
+                  onMouseEnter={playHover}
+                  style={{ textAlign: 'center', minWidth: '120px', cursor: 'default' }}
+                >
+                  <div className="stat-icon-wrapper" style={{ color: 'var(--accent-cyan)', marginBottom: '0.5rem', display: 'flex', justifyContent: 'center', transition: 'color 0.2s ease' }}>{stat.icon}</div>
+                  <div style={{ fontSize: isMobileDevice ? '1.4rem' : '1.8rem', fontWeight: 800, color: '#fff', marginBottom: '0.2rem' }}>{stat.val}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>{stat.label}</div>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </section>
+          </motion.section>
 
           <ThreeDViewer t={t} />
 
           {/* Interactive Footer */}
-          <footer id="contact" className="footer">
+          <motion.footer 
+            id="contact" 
+            className="footer"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1 }}
+          >
             <div className="glass-panel status-bar">
               <div className="status-level">
                 <div className="pulsing-dot"></div>
@@ -1486,29 +1911,113 @@ function App() {
               <div className="footer-contact">
                 <div className="contact-btn-wrapper">
                   <Magnetic>
-                    <a href="mailto:sgoktug34@gmail.com" className="btn btn-primary glass-panel" style={{ fontSize: '1.2rem', padding: '1.2rem 3rem' }}>
+                    <a 
+                      href="mailto:sgoktug34@gmail.com" 
+                      className="btn btn-primary glass-panel" 
+                      onMouseEnter={playHover}
+                      onClick={playClick}
+                      style={{ fontSize: '1.2rem', padding: '1.2rem 3rem' }}
+                    >
                       <Mail size={20} style={{ marginRight: '10px' }} /> {t('btn_transmit')}
                     </a>
                   </Magnetic>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginTop: '3rem' }}>
-                <Magnetic>
-                  <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)' }}><Github size={24} /></a>
-                </Magnetic>
-                <Magnetic>
-                  <a href="https://unitybtw.itch.io/" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-muted)' }}><Gamepad2 size={24} /></a>
-                </Magnetic>
-              </div>
+              <motion.div 
+                style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginTop: '3rem' }}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                variants={{
+                  hidden: {},
+                  visible: {
+                    transition: { staggerChildren: 0.15 }
+                  }
+                }}
+              >
+                {[
+                  { href: 'https://github.com/unitybtw', icon: <Github size={24} />, label: 'GitHub' },
+                  { href: 'https://unitybtw.itch.io/', icon: <Gamepad2 size={24} />, label: 'Itch.io' }
+                ].map((social, i) => (
+                  <motion.div
+                    key={i}
+                    variants={{
+                      hidden: { opacity: 0, y: 20, scale: 0.8 },
+                      visible: { opacity: 1, y: 0, scale: 1 }
+                    }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  >
+                    <Magnetic>
+                      <a 
+                        href={social.href} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        onMouseEnter={playHover}
+                        onClick={playClick}
+                        className="social-icon"
+                        style={{ color: 'var(--text-muted)', display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: '6px', textDecoration: 'none' }}
+                        title={social.label}
+                      >
+                        {social.icon}
+                        <span style={{ fontSize: '0.6rem', letterSpacing: '2px', textTransform: 'uppercase', opacity: 0.5 }}>{social.label}</span>
+                      </a>
+                    </Magnetic>
+                  </motion.div>
+                ))}
+              </motion.div>
             </motion.div>
-            <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', borderTop: '1px solid var(--border-glass)', paddingTop: '2rem', marginTop: '2rem' }}>
-              &copy; {new Date().getFullYear()} {t('footer_copyright')}
+            <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', borderTop: '1px solid var(--border-glass)', paddingTop: '2rem', marginTop: '2rem', letterSpacing: '1px' }}>
+              <span style={{ background: 'linear-gradient(90deg, var(--text-muted), rgba(255,255,255,0.6), var(--text-muted))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+                &copy; {new Date().getFullYear()} {t('footer_copyright')}
+              </span>
             </div>
-          </footer>
+          </motion.footer>
         </motion.div>
       </div>
     </AnimatePresence>
+
+    {/* Back to Top Button */}
+    <AnimatePresence>
+      {scrolled && (
+        <motion.button
+          key="backToTop"
+          initial={{ opacity: 0, scale: 0.5, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.5, y: 20 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+          onClick={() => { 
+            playClick(); 
+            window.lenis?.scrollTo(0, { duration: 1.5 }); 
+          }}
+          onMouseEnter={playHover}
+          whileHover={{ scale: 1.1, boxShadow: '0 0 20px var(--accent-cyan)' }}
+          whileTap={{ scale: 0.9 }}
+          style={{
+            position: 'fixed',
+            bottom: '2rem',
+            right: '2rem',
+            width: '44px',
+            height: '44px',
+            borderRadius: '50%',
+            background: 'rgba(10, 10, 15, 0.8)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(0, 240, 255, 0.3)',
+            color: 'var(--accent-cyan)',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 0 10px rgba(0, 240, 255, 0.1)'
+          }}
+          aria-label="Back to top"
+        >
+          <ChevronUp size={20} />
+        </motion.button>
+      )}
+    </AnimatePresence>
+
     <PresencePanel />
     </>
   );

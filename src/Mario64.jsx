@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Maximize, Info, Gamepad2 } from 'lucide-react';
 
 export default function Mario64() {
-    const [started, setStarted] = useState(false);
+    const [started, setStarted] = useState(true);
     const iframeRef = useRef(null);
 
     const toggleFullScreen = () => {

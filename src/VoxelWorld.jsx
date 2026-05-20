@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Maximize, ExternalLink, Info } from 'lucide-react';
 
 const VoxelWorld = () => {
-    const [started, setStarted] = useState(false);
+    const [started, setStarted] = useState(true);
     const iframeRef = useRef(null);
 
     useEffect(() => {

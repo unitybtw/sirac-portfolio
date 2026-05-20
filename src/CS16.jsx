@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Maximize, Target, Wifi } from 'lucide-react';
 
 export default function CS16() {
-    const [started, setStarted] = useState(false);
+    const [started, setStarted] = useState(true);
     const iframeRef = useRef(null);
 
     const toggleFullScreen = () => {

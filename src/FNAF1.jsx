@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Maximize, Eye, AlertTriangle } from 'lucide-react';
 
 export default function FNAF1() {
-    const [started, setStarted] = useState(false);
+    const [started, setStarted] = useState(true);
     const iframeRef = useRef(null);
 
     const toggleFullScreen = () => {

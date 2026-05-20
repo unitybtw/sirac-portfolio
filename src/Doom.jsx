@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function Doom() {
     const { t } = useTranslation();
-    const [started, setStarted] = useState(false);
+    const [started, setStarted] = useState(true);
     const iframeRef = useRef(null);
 
     const toggleFullScreen = () => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { X, Gamepad2, Rocket, Zap, Navigation, Shield, Ghost, Crosshair, Target, Activity, Box, Trophy, User, Save, List, Gem, Compass, Eye } from 'lucide-react';
@@ -70,10 +70,20 @@ const GTAViceCity = lazy(() => import('./GTAViceCity'));
 const LaleSavascilari = lazy(() => import('./LaleSavascilari'));
 const CS16 = lazy(() => import('./CS16'));
 const FNAF1 = lazy(() => import('./FNAF1'));
+const RetroBowl = lazy(() => import('./RetroBowl'));
+const MotoX3M = lazy(() => import('./MotoX3M'));
+const CookieClicker = lazy(() => import('./CookieClicker'));
+const WorldsHardestGame = lazy(() => import('./WorldsHardestGame'));
+const MinecraftClassic = lazy(() => import('./MinecraftClassic'));
 
 
 
 const gamesList = [
+    { id: 'retro_bowl', title: 'Retro Bowl', icon: <Gamepad2 size={24} />, color: '#ff4400', comp: RetroBowl },
+    { id: 'moto_x3m', title: 'Moto X3M', icon: <Navigation size={24} />, color: '#ffcc00', comp: MotoX3M },
+    { id: 'cookie_clicker', title: 'Cookie Clicker', icon: <Zap size={24} />, color: '#ff8800', comp: CookieClicker },
+    { id: 'worlds_hardest', title: "World's Hardest Game", icon: <Crosshair size={24} />, color: '#ff003c', comp: WorldsHardestGame },
+    { id: 'minecraft_classic', title: 'Minecraft Classic', icon: <Box size={24} />, color: '#55aa55', comp: MinecraftClassic },
     { id: 'fnaf1', title: "Five Nights at Freddy's", icon: <Eye size={24} />, color: '#ff2200', comp: FNAF1 },
     { id: 'cs16', title: 'Kirka.io (CSGO Web)', icon: <Target size={24} />, color: '#ffd700', comp: CS16 },
     { id: 'lale_savascilari', title: 'İst.Efsaneleri: Lale Savaşçıları', icon: <Compass size={24} />, color: '#00ff00', comp: LaleSavascilari },
@@ -150,7 +160,7 @@ const categoryLabels = {
 };
 
 const getGameCategory = (id) => {
-    const simList = ['fnaf1', 'cs16', 'lale_savascilari', 'gtavicecity', 'ultrakill', 'hollowknight', 'mario64', 'hl1', 'geodash', 'subway', 'slope', 'quake3', 'diablo', 'drift', 'doom', 'voxel'];
+    const simList = ['fnaf1', 'cs16', 'lale_savascilari', 'gtavicecity', 'ultrakill', 'hollowknight', 'mario64', 'hl1', 'geodash', 'subway', 'slope', 'quake3', 'diablo', 'drift', 'doom', 'voxel', 'retro_bowl', 'minecraft_classic', 'cookie_clicker'];
     const puzzleList = ['color', 'mines', 'neon2048', 'cybergolf', 'neonsokoban', 'neonmemory', 'neontictactoe', 'neonbowling', 'cyberpiano', 'cyberinvaders', 'neonclimb', 'cybersort', 'neonbalance', 'cybermatch'];
     
     if (simList.includes(id)) return 'simulation';
@@ -173,6 +183,14 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('all');
     const [scoreboardGameFilter, setScoreboardGameFilter] = useState('all');
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const generateRandomNickname = () => {
         const p = RANDOM_PREFIXES[Math.floor(Math.random() * RANDOM_PREFIXES.length)];
@@ -213,7 +231,12 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
     };
 
     useEffect(() => {
-        if (isOpen) fetchGlobalScores();
+        if (isOpen) {
+            const t = setTimeout(() => {
+                fetchGlobalScores();
+            }, 0);
+            return () => clearTimeout(t);
+        }
     }, [isOpen]);
 
     // Prevent background scroll when modal is open
@@ -278,7 +301,12 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
         <>
             <motion.div
                 onClick={() => { setIsOpen(true); playArcadeOpen(); }}
+                onMouseEnter={playHover}
                 className="arcade-portal-card"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.8 }}
                 whileHover={{ scale: 1.02, y: -8, boxShadow: '0 0 40px rgba(0, 240, 255, 0.25), inset 0 0 20px rgba(255,255,255,0.05)' }}
                 whileTap={{ scale: 0.98 }}
                 style={{ 
@@ -420,7 +448,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                             </button>
                         </div>
 
-                        <div data-lenis-prevent style={{ flex: 1, padding: '2rem', overflowY: 'auto' }}>
+                        <div data-lenis-prevent style={{ flex: 1, padding: isMobile ? '0.75rem' : '2rem', overflowY: 'auto' }}>
                             <AnimatePresence mode="wait">
                                 {!nickname ? (
                                     /* Nickname Entry View */
@@ -780,16 +808,16 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                         initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
                                         style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
                                     >
-                                        <div style={{ width: '100%', maxWidth: '850px', display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', alignItems: 'center' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                                                <h3 style={{ color: activeGame.color, textShadow: `0 0 12px ${activeGame.color}`, fontSize: '1.6rem', margin: 0, fontWeight: 800 }}>{activeGame.title}</h3>
-                                                {localScores[activeGameId] && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '6px' }}>PERSONAL BEST: {localScores[activeGameId]}</span>}
+                                        <div style={{ width: '100%', maxWidth: '850px', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', marginBottom: '1rem', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? '0.75rem' : '1rem' }}>
+                                            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', gap: '0.5rem' }}>
+                                                <h3 style={{ color: activeGame.color, textShadow: `0 0 12px ${activeGame.color}`, fontSize: isMobile ? '1.25rem' : '1.6rem', margin: 0, fontWeight: 800 }}>{activeGame.title}</h3>
+                                                {localScores[activeGameId] && <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '6px' }}>PERSONAL BEST: {localScores[activeGameId]}</span>}
                                             </div>
                                             <button
                                                 onClick={() => { playClick(); setActiveGameId(null); }}
                                                 onMouseEnter={playHover}
                                                 className="btn btn-outline"
-                                                style={{ padding: '0.5rem 1.2rem', fontSize: '0.9rem', borderColor: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', gap: '8px' }}
+                                                style={{ padding: isMobile ? '0.4rem 0.8rem' : '0.5rem 1.2rem', fontSize: isMobile ? '0.8rem' : '0.9rem', borderColor: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', gap: '8px', alignSelf: isMobile ? 'flex-end' : 'auto' }}
                                             >
                                                 <X size={16} /> {t('arcade_exit')}
                                             </button>
@@ -799,8 +827,8 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                             flex: 1, 
                                             width: '100%', 
                                             maxWidth: '850px', 
-                                            height: 'clamp(400px, 70vh, 600px)', 
-                                            borderRadius: '24px', 
+                                            height: isMobile ? 'max(220px, 56.25vw)' : 'clamp(400px, 70vh, 600px)', 
+                                            borderRadius: isMobile ? '16px' : '24px', 
                                             overflow: 'hidden', 
                                             border: `2px solid ${activeGame.color}`, 
                                             boxShadow: `0 0 35px ${activeGame.color}33`, 
@@ -814,9 +842,9 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                         transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
                                                         style={{ marginBottom: '1rem' }}
                                                     >
-                                                        <Gamepad2 size={40} />
+                                                        <Gamepad2 size={isMobile ? 30 : 40} />
                                                     </motion.div>
-                                                    <p style={{ fontFamily: 'monospace', letterSpacing: '2px' }}>INITIALIZING VIRTUAL CONTAINER...</p>
+                                                    <p style={{ fontFamily: 'monospace', letterSpacing: '2px', fontSize: isMobile ? '0.8rem' : '1rem' }}>INITIALIZING VIRTUAL CONTAINER...</p>
                                                 </div>
                                             }>
                                                 {activeGame.comp && <activeGame.comp onGameOver={(score) => handleGameOver(score, activeGame.id)} />}

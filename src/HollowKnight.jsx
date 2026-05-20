@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Maximize, Zap, PlayCircle } from 'lucide-react';
 
 export default function HollowKnight() {
-    const [started, setStarted] = useState(false);
+    const [started, setStarted] = useState(true);
     const iframeRef = useRef(null);
 
     const toggleFullScreen = () => {

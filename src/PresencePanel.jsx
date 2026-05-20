@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'framer-motion';
 import { Users } from 'lucide-react';
 import { playClick, playHover } from './soundEffects';
@@ -43,15 +42,74 @@ function getCurrentPage() {
 }
 
 export default function PresencePanel() {
-  const myId = getOrCreate('visitor_id', generateVisitorId);
-  const myName = getOrCreate('visitor_name', generateNeonName);
-  const myColor = getOrCreate('visitor_color', generateColor);
+  const [myId] = useState(() => getOrCreate('visitor_id', generateVisitorId));
+  const [myName] = useState(() => getOrCreate('visitor_name', generateNeonName));
+  const [myColor] = useState(() => getOrCreate('visitor_color', generateColor));
 
   const [visitors, setVisitors] = useState({});
   const [isExpanded, setIsExpanded] = useState(false);
   const [floatingEmojis, setFloatingEmojis] = useState([]);
   const timerRef = useRef(null);
   const seenReactions = useRef(new Set());
+
+  const [useMock, setUseMock] = useState(false);
+  const [mockVisitors, setMockVisitors] = useState({});
+
+  const updateMockVisitors = useCallback(() => {
+    setUseMock(true);
+    setMockVisitors(prev => {
+      const now = Date.now();
+      const pages = ['Hero', 'About', 'Timeline', 'Projects', 'Skills', 'Contact'];
+      
+      // If we don't have mock visitors yet, initialize 2-4 mock users
+      if (Object.keys(prev).length === 0) {
+        const count = Math.floor(Math.random() * 3) + 2; 
+        const list = {};
+        for (let i = 0; i < count; i++) {
+          const id = `mock_${Math.random().toString(36).substr(2, 9)}`;
+          list[id] = {
+            name: generateNeonName(),
+            color: generateColor(),
+            page: pages[Math.floor(Math.random() * pages.length)],
+            lastSeen: now
+          };
+        }
+        return list;
+      }
+
+      const updated = { ...prev };
+      Object.keys(updated).forEach(id => {
+        // 20% chance to change page
+        if (Math.random() < 0.2) {
+          updated[id] = {
+            ...updated[id],
+            page: pages[Math.floor(Math.random() * pages.length)],
+            lastSeen: now
+          };
+        }
+      });
+
+      // 5% chance to add a new visitor (max 5)
+      if (Math.random() < 0.05 && Object.keys(updated).length < 5) {
+        const newId = `mock_${Math.random().toString(36).substr(2, 9)}`;
+        updated[newId] = {
+          name: generateNeonName(),
+          color: generateColor(),
+          page: pages[Math.floor(Math.random() * pages.length)],
+          lastSeen: now
+        };
+      }
+
+      // 5% chance to remove a visitor (min 1)
+      if (Math.random() < 0.05 && Object.keys(updated).length > 1) {
+        const keys = Object.keys(updated);
+        const randKey = keys[Math.floor(Math.random() * keys.length)];
+        delete updated[randKey];
+      }
+
+      return updated;
+    });
+  }, []);
 
   const registerPresence = useCallback(async () => {
     try {
@@ -78,9 +136,13 @@ export default function PresencePanel() {
   const fetchVisitors = useCallback(async () => {
     try {
       const res = await fetch(`${DB_URL}/visitors.json`);
+      if (!res.ok) throw new Error('Network error');
       const data = await res.json();
       
-      if (!data || data.error) { setVisitors({}); return; }
+      if (!data || data.error) { 
+        updateMockVisitors();
+        return; 
+      }
       
       const cutoff = Date.now() - 75000;
       const activeVisitors = {};
@@ -90,8 +152,11 @@ export default function PresencePanel() {
         }
       });
       setVisitors(activeVisitors);
-    } catch (_e) { void _e; }
-  }, []);
+      setUseMock(false);
+    } catch { 
+      updateMockVisitors();
+    }
+  }, [updateMockVisitors]);
 
   const fetchReactions = useCallback(async () => {
     try {
@@ -150,6 +215,7 @@ export default function PresencePanel() {
       registerPresence();
       fetchVisitors();
       fetchReactions();
+      if (useMock) updateMockVisitors();
     }, 15000); // Reduced polling frequency to save battery and network
 
     window.addEventListener('beforeunload', removePresence);
@@ -159,9 +225,9 @@ export default function PresencePanel() {
       window.removeEventListener('beforeunload', removePresence);
       removePresence();
     };
-  }, [registerPresence, fetchVisitors, fetchReactions, removePresence]);
+  }, [registerPresence, fetchVisitors, fetchReactions, removePresence, useMock, updateMockVisitors]);
 
-  const onlineVisitors = Object.entries(visitors).filter(([id]) => id !== myId);
+  const onlineVisitors = Object.entries(useMock ? mockVisitors : visitors).filter(([id]) => id !== myId);
   const totalOnline = onlineVisitors.length + 1;
 
   return (
