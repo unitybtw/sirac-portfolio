@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users } from 'lucide-react';
+import { playClick, playHover } from './soundEffects';
 
 const DB_URL = 'https://sirac-portfolio-default-rtdb.europe-west1.firebasedatabase.app';
 
@@ -76,15 +77,19 @@ export default function PresencePanel() {
 
   const fetchVisitors = async () => {
     try {
-      const cutoff = Date.now() - 75000;
-      // Fetch only active visitors from the server directly to save bandwidth
-      const res = await fetch(`${DB_URL}/visitors.json?orderBy="lastSeen"&startAt=${cutoff}`);
+      const res = await fetch(`${DB_URL}/visitors.json`);
       const data = await res.json();
       
       if (!data || data.error) { setVisitors({}); return; }
       
-      // Since server filtered it, we just set the data directly
-      setVisitors(data);
+      const cutoff = Date.now() - 75000;
+      const activeVisitors = {};
+      Object.entries(data).forEach(([id, v]) => {
+        if (v && v.lastSeen && v.lastSeen >= cutoff) {
+          activeVisitors[id] = v;
+        }
+      });
+      setVisitors(activeVisitors);
     } catch (_e) { void _e; }
   };
 
@@ -247,7 +252,8 @@ export default function PresencePanel() {
                       key={emoji}
                       whileHover={{ scale: 1.35, y: -2 }}
                       whileTap={{ scale: 0.85 }}
-                      onClick={() => sendEmoji(emoji)}
+                      onMouseEnter={playHover}
+                      onClick={() => { playClick(); sendEmoji(emoji); }}
                       style={{
                         background: 'rgba(255,255,255,0.04)',
                         border: '1px solid rgba(255,255,255,0.08)',
@@ -270,7 +276,8 @@ export default function PresencePanel() {
 
         {/* Trigger Button */}
         <motion.button
-          onClick={() => setIsExpanded(p => !p)}
+          onClick={() => { playClick(); setIsExpanded(p => !p); }}
+          onMouseEnter={playHover}
           whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(0,240,255,0.2)' }}
           whileTap={{ scale: 0.95 }}
           style={{
