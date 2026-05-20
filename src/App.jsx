@@ -83,19 +83,19 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
       transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: delay / 2000 }} // Scale down delay
       whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(0,240,255,0.1)' }}
       onMouseEnter={playHover}
-      style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', willChange: 'transform, opacity' }}
+      style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '16px', border: '1px solid var(--border-glass)', willChange: 'transform, opacity' }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <div style={{ color: 'var(--text-main)', opacity: 0.8, background: 'rgba(255,255,255,0.05)', padding: '10px', borderRadius: '12px' }}>
+        <div style={{ color: 'var(--text-main)', opacity: 0.8, background: 'var(--bg-glass)', padding: '10px', borderRadius: '12px' }}>
           {icon}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-          <span style={{ fontWeight: '600', fontSize: '1.1rem', color: '#fff' }}>{label}</span>
+           <span style={{ fontWeight: '600', fontSize: '1.1rem', color: 'var(--text-main)' }}>{label}</span>
           <span style={{ fontSize: '0.85rem', color: 'var(--accent-cyan)', fontFamily: 'monospace' }}>{percent}% Proficiency</span>
         </div>
       </div>
       <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.5', margin: '0.5rem 0' }}>{description}</p>
-      <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.1)', borderRadius: '10px', overflow: 'hidden', position: 'relative' }}>
+      <div style={{ width: '100%', height: '6px', background: 'var(--border-glass)', borderRadius: '10px', overflow: 'hidden', position: 'relative' }}>
         <motion.div
           className="skill-progress-bar-fill"
           style={{ height: '100%', background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))', borderRadius: '10px', position: 'relative' }}
@@ -234,7 +234,7 @@ const Model = ({ path }) => {
   return <primitive object={scene} />;
 };
 
-const ThreeDViewer = ({ t }) => {
+const ThreeDViewer = ({ t, theme }) => {
   const models = ["model.glb", "model2.glb", "model3.glb"];
   const [currentModelIndex, setCurrentModelIndex] = useState(0);
   const containerRef = React.useRef(null);
@@ -296,13 +296,13 @@ const ThreeDViewer = ({ t }) => {
         {isVisible ? (
           <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'var(--accent-cyan)', fontFamily: 'monospace' }}>INITIALIZING 3D ENGINE...</div>}>
             <Canvas dpr={[1, 1.5]} performance={{ min: 0.5 }} camera={{ position: [0, 0, 4], fov: 45 }}>
-              <color attach="background" args={['#050508']} />
-              <ambientLight intensity={0.5} />
+              <color attach="background" args={[theme === 'light' ? '#f0f0f5' : '#050508']} />
+              <ambientLight intensity={theme === 'light' ? 0.8 : 0.5} />
               <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} castShadow />
               <pointLight position={[-10, -10, -10]} />
               
               <PresentationControls speed={1.5} global zoom={0.7} polar={[-0.1, Math.PI / 4]}>
-                <Stage environment="city" intensity={0.6} contactShadow={false}>
+                <Stage environment={theme === 'light' ? 'default' : 'city'} intensity={theme === 'light' ? 0.9 : 0.6} contactShadow={false}>
                   <Float speed={2} rotationIntensity={0.5} floatIntensity={0.5}>
                     <Model path={`${import.meta.env.BASE_URL}${models[currentModelIndex]}`} />
                   </Float>
@@ -319,7 +319,7 @@ const ThreeDViewer = ({ t }) => {
           </div>
         )}
         
-        <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.6)', padding: '8px 16px', borderRadius: '100px', fontSize: '0.75rem', color: 'var(--text-muted)', border: '1px solid rgba(255,255,255,0.1)', pointerEvents: 'none', letterSpacing: '1px', textTransform: 'uppercase' }}>
+        <div style={{ position: 'absolute', bottom: '20px', left: '50%', transform: 'translateX(-50%)', background: 'var(--bg-glass)', padding: '8px 16px', borderRadius: '100px', fontSize: '0.75rem', color: 'var(--text-muted)', border: '1px solid var(--border-glass)', pointerEvents: 'none', letterSpacing: '1px', textTransform: 'uppercase' }}>
           {t('viewer_hint')}
         </div>
       </div>
@@ -483,14 +483,14 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMut
       onClick={handleFocus}
       style={{
         width: '100%', maxWidth: '500px', borderRadius: '16px', overflow: 'hidden',
-        border: isFocused ? '1px solid var(--accent-cyan)' : '1px solid rgba(0, 240, 255, 0.15)', 
+        border: isFocused ? '1px solid var(--accent-cyan)' : '1px solid var(--border-glass)', 
         boxShadow: isFocused ? '0 25px 50px -12px rgba(0,0,0,0.8), 0 0 25px rgba(0, 240, 255, 0.25)' : '0 25px 50px -12px rgba(0,0,0,0.8), 0 0 20px rgba(0, 240, 255, 0.1)',
-        textAlign: 'left', background: 'rgba(10, 10, 15, 0.85)', backdropFilter: 'blur(12px)',
+        textAlign: 'left', background: 'var(--bg-glass)', backdropFilter: 'blur(12px)',
         cursor: 'text', height: '360px', display: 'flex', flexDirection: 'column',
         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
       }}
     >
-      <div style={{ background: 'rgba(255,255,255,0.03)', padding: '12px 20px', display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.05)', userSelect: 'none' }}>
+      <div style={{ background: 'var(--bg-glass)', padding: '12px 20px', display: 'flex', alignItems: 'center', borderBottom: '1px solid var(--border-glass)', userSelect: 'none' }}>
         <div style={{ display: 'flex', gap: '8px' }}>
           <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56', boxShadow: '0 0 5px #ff5f56' }} />
           <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e', boxShadow: '0 0 5px #ffbd2e' }} />
@@ -501,9 +501,9 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMut
         </div>
       </div>
 
-      <div ref={terminalBodyRef} style={{ padding: '20px', fontFamily: 'var(--font-code)', fontSize: '0.85rem', color: '#e5e5e5', lineHeight: '1.6', flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div ref={terminalBodyRef} style={{ padding: '20px', fontFamily: 'var(--font-code)', fontSize: '0.85rem', color: 'var(--text-main)', lineHeight: '1.6', flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {history.map((line, index) => {
-          let color = '#e5e5e5';
+          let color = 'var(--text-main)';
           if (line.type === 'input') color = '#79c0ff';
           else if (line.type === 'success') color = '#7ee787';
           else if (line.type === 'error') color = '#ff7b72';
@@ -523,7 +523,7 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMut
         })}
       </div>
 
-      <div style={{ padding: '12px 20px', background: 'rgba(0,0,0,0.2)', borderTop: '1px solid rgba(255,255,255,0.03)', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-code)', fontSize: '16px' }}>
+      <div style={{ padding: '12px 20px', background: 'rgba(0,0,0,0.2)', borderTop: '1px solid var(--border-glass)', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-code)', fontSize: '16px' }}>
         <span style={{ color: '#7ee787' }}>sirac@iku:~$</span>
         <input
           ref={inputRef}
@@ -709,31 +709,31 @@ const KonamiGame = ({ onClose }) => {
       <div className="glass-panel" style={{ 
         padding: '2.5rem', 
         borderRadius: '32px', 
-        border: '1px solid rgba(0, 240, 255, 0.2)', 
+        border: '1px solid var(--accent-cyan)', 
         boxShadow: '0 30px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 240, 255, 0.1)',
         display: 'flex', 
         flexDirection: 'column', 
         alignItems: 'center', 
-        background: 'rgba(10, 10, 15, 0.9)'
+        background: 'var(--bg-glass)'
       }}>
         <h2 className="text-gradient" style={{ margin: '0 0 0.5rem 0', fontSize: '2.2rem', fontWeight: 800, letterSpacing: '4px' }}>
           NEON SNAKE
         </h2>
         <div style={{ color: 'var(--accent-cyan)', fontFamily: 'monospace', fontSize: '1.1rem', marginBottom: '1.5rem', fontWeight: 'bold' }}>
-          SCORE: <span style={{ color: '#fff' }}>{score}</span>
+          SCORE: <span style={{ color: 'var(--text-main)' }}>{score}</span>
         </div>
         <div style={{ 
           width: '300px', 
           height: '300px', 
-          border: '2px solid rgba(255, 255, 255, 0.05)', 
-          background: 'rgba(0, 0, 0, 0.4)',
+          border: '2px solid var(--border-glass)', 
+          background: 'var(--bg-dark)',
           borderRadius: '16px',
           position: 'relative', 
           overflow: 'hidden',
           boxShadow: 'inset 0 0 20px rgba(0,0,0,0.8)' 
         }}>
           {/* Grid lines background */}
-          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '10px 10px' }} />
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(var(--border-glass) 1px, transparent 1px), linear-gradient(90deg, var(--border-glass) 1px, transparent 1px)', backgroundSize: '10px 10px' }} />
           
           {snake.map((seg, i) => (
             <motion.div 
@@ -745,9 +745,9 @@ const KonamiGame = ({ onClose }) => {
                 top: `${seg[1] * 10}px`, 
                 width: '10px', 
                 height: '10px', 
-                background: i === 0 ? '#fff' : 'var(--accent-cyan)', 
+                background: i === 0 ? 'var(--text-main)' : 'var(--accent-cyan)', 
                 borderRadius: i === 0 ? '4px' : '2px',
-                boxShadow: i === 0 ? '0 0 8px #fff' : '0 0 6px var(--accent-cyan)' 
+                boxShadow: i === 0 ? '0 0 8px var(--text-main)' : '0 0 6px var(--accent-cyan)' 
               }} 
             />
           ))}
@@ -1114,7 +1114,7 @@ function App() {
           banner.style.borderRadius = '12px';
           banner.style.zIndex = '999999';
           banner.style.fontFamily = 'monospace';
-          banner.style.color = '#fff';
+          banner.style.color = 'var(--text-main)';
           banner.style.textAlign = 'center';
           banner.style.pointerEvents = 'none';
           banner.innerHTML = `
@@ -1586,8 +1586,8 @@ function App() {
                 <motion.div 
                   key={num} 
                   className="glass-panel" 
-                  whileHover={{ y: -5, boxShadow: '0 10px 20px rgba(0,0,0,0.3)', borderColor: 'rgba(255,255,255,0.1)' }}
-                  style={{ padding: '1.5rem', borderRadius: '16px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.03)', transition: 'border-color 0.3s' }}
+                  whileHover={{ y: -5, boxShadow: '0 10px 20px rgba(0,0,0,0.3)', borderColor: 'var(--border-glass)' }}
+                  style={{ padding: '1.5rem', borderRadius: '16px', transition: 'border-color 0.3s' }}
                 >
                   <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.8rem' }}>{t(`about_stat_${num}`)}</div>
                   <div style={{ color: 'var(--text-main)', fontSize: '1.1rem', fontWeight: 700 }}>{t(`about_stat_${num}_val`)}</div>
@@ -1636,7 +1636,7 @@ function App() {
                       background: num > 2 ? 'var(--accent-violet)' : 'var(--accent-cyan)',
                       boxShadow: `0 0 15px ${num > 2 ? 'var(--accent-violet)' : 'var(--accent-cyan)'}`,
                       zIndex: 2,
-                      border: '4px solid #050508'
+                      border: '4px solid var(--bg-dark)'
                     }} />
 
                     {/* Content Card */}
@@ -1654,9 +1654,7 @@ function App() {
                         width: '42%', 
                         padding: '1.5rem', 
                         borderRadius: '24px', 
-                        background: 'rgba(255,255,255,0.02)',
                         textAlign: num % 2 === 0 ? 'left' : 'right',
-                        border: '1px solid rgba(255,255,255,0.05)',
                         cursor: 'pointer'
                       }}
                     >
@@ -1674,7 +1672,7 @@ function App() {
                       }}>
                         {t(`timeline_event_${num}_year`)}
                       </div>
-                      <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 0.5rem 0', color: '#fff' }}>
+                      <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 0.5rem 0', color: 'var(--text-main)' }}>
                         {t(`timeline_event_${num}_title`)}
                       </h3>
                       <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.6', margin: 0 }}>
@@ -1687,11 +1685,11 @@ function App() {
             </div>
           </section>
 
-          {/* Featured Modules Section - To prove content depth to admins */}
+          {/* Featured Modules Section */}
           <motion.section 
-            id="featured-modules" 
-            className="desktop-only" 
-            style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', padding: '5rem 2rem', background: 'rgba(255,255,255,0.01)', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.03)', willChange: 'transform, opacity' }}
+             id="featured-modules" 
+             className="desktop-only glass-panel" 
+             style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', padding: '5rem 2rem', borderRadius: '40px', willChange: 'transform, opacity' }}
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -1726,10 +1724,10 @@ function App() {
                   whileHover={{ scale: 1.05, y: -10, boxShadow: '0 20px 40px rgba(0,240,255,0.2)' }}
                   onMouseEnter={playHover}
                   onClick={() => { playClick(); setIsArcadeOpen(true); }}
-                  style={{ padding: '2rem', borderRadius: '24px', cursor: 'pointer', border: '1px solid rgba(255,255,255,0.05)', textAlign: 'center', background: 'rgba(0,0,0,0.3)' }}
+                  style={{ padding: '2rem', borderRadius: '24px', cursor: 'pointer', border: '1px solid var(--border-glass)', textAlign: 'center', background: 'var(--bg-glass)' }}
                 >
                   <div style={{ color: 'var(--accent-cyan)', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>{game.icon}</div>
-                  <h3 style={{ color: '#fff', fontSize: '1.2rem', marginBottom: '0.5rem' }}>{game.name}</h3>
+                  <h3 style={{ color: 'var(--text-main)', fontSize: '1.2rem', marginBottom: '0.5rem' }}>{game.name}</h3>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{game.desc}</p>
                 </motion.div>
               ))}
@@ -1857,7 +1855,7 @@ function App() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8 }}
           >
-            <div className="glass-panel" style={{ width: '100%', maxWidth: '1200px', padding: isMobileDevice ? '1.5rem 1rem' : '2.5rem', borderRadius: isMobileDevice ? '20px' : '30px', display: 'flex', flexWrap: 'wrap', gap: isMobileDevice ? '1.5rem' : '3rem', justifyContent: 'space-around', alignItems: 'center', border: '1px solid rgba(0,240,255,0.1)', background: 'rgba(0,0,0,0.4)', position: 'relative', overflow: 'hidden' }}>
+            <div className="glass-panel" style={{ width: '100%', maxWidth: '1200px', padding: isMobileDevice ? '1.5rem 1rem' : '2.5rem', borderRadius: isMobileDevice ? '20px' : '30px', display: 'flex', flexWrap: 'wrap', gap: isMobileDevice ? '1.5rem' : '3rem', justifyContent: 'space-around', alignItems: 'center', border: '1px solid var(--border-glass)', background: 'var(--bg-glass)', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '2px', background: 'linear-gradient(90deg, transparent, var(--accent-cyan), transparent)' }} />
               {[
                 { label: t('stats_games'), val: "50+", icon: <Gamepad2 size={24} /> },
@@ -1872,14 +1870,14 @@ function App() {
                   style={{ textAlign: 'center', minWidth: '120px', cursor: 'default' }}
                 >
                   <div className="stat-icon-wrapper" style={{ color: 'var(--accent-cyan)', marginBottom: '0.5rem', display: 'flex', justifyContent: 'center', transition: 'color 0.2s ease' }}>{stat.icon}</div>
-                  <div style={{ fontSize: isMobileDevice ? '1.4rem' : '1.8rem', fontWeight: 800, color: '#fff', marginBottom: '0.2rem' }}>{stat.val}</div>
+                  <div style={{ fontSize: isMobileDevice ? '1.4rem' : '1.8rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.2rem' }}>{stat.val}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>{stat.label}</div>
                 </motion.div>
               ))}
             </div>
           </motion.section>
 
-          <ThreeDViewer t={t} />
+          <ThreeDViewer t={t} theme={theme} />
 
           {/* Interactive Footer */}
           <motion.footer 
@@ -2002,9 +2000,9 @@ function App() {
             width: '44px',
             height: '44px',
             borderRadius: '50%',
-            background: 'rgba(10, 10, 15, 0.8)',
+            background: 'var(--bg-glass)',
             backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(0, 240, 255, 0.3)',
+            border: '1px solid var(--border-glass)',
             color: 'var(--accent-cyan)',
             cursor: 'pointer',
             display: 'flex',
