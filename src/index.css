@@ -1069,6 +1069,16 @@ nav {
 
 
 
+/* Holographic Scanline Animation */
+@keyframes scanline-anim {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
 /* Glowing Skill Bar Pulse Animation */
 @keyframes bar-pulse {
   0% {

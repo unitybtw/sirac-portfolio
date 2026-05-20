@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, lazy, Suspense } from 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { X, Gamepad2, Rocket, Zap, Navigation, Shield, Ghost, Crosshair, Target, Activity, Box, Trophy, User, Save, List, Gem, Compass, Eye } from 'lucide-react';
+import { playClick, playHover, playSuccess, playArcadeOpen } from './soundEffects';
 
 const AsteroidBlaster = lazy(() => import('./AsteroidBlaster'));
 const NeonRunner = lazy(() => import('./NeonRunner'));
@@ -88,8 +89,8 @@ const gamesList = [
     { id: 'diablo', title: 'Diablo I', icon: <Ghost size={24} />, color: '#8b0000', comp: Diablo },
     { id: 'drift', title: 'Drift Hunters', icon: <Navigation size={24} />, color: '#ff4400', comp: DriftHunters },
     { id: 'doom', title: 'DOOM (Classic)', icon: <Activity size={24} />, color: '#ff0000', comp: Doom },
-    { id: 'asteroid', title: 'Asteroid Blaster', icon: <Rocket size={24} />, color: 'var(--accent-cyan)', comp: AsteroidBlaster },
-    { id: 'runner', title: 'Cyber Jumper', icon: <Zap size={24} />, color: 'var(--accent-violet)', comp: NeonRunner },
+    { id: 'asteroid', title: 'Asteroid Blaster', icon: <Rocket size={24} />, color: '#00f0ff', comp: AsteroidBlaster },
+    { id: 'runner', title: 'Cyber Jumper', icon: <Zap size={24} />, color: '#bd00ff', comp: NeonRunner },
     { id: 'pong', title: 'Cyber Pong', icon: <Activity size={24} />, color: '#00f0ff', comp: CyberPong },
     { id: 'breaker', title: 'Neon Breakout', icon: <Box size={24} />, color: '#ff003c', comp: BrickBreaker },
     { id: 'flappy', title: 'Flappy Neon', icon: <Navigation size={24} />, color: '#8a2be2', comp: FlappyNeon },
@@ -270,7 +271,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
     return (
         <>
             <motion.div
-                onClick={() => setIsOpen(true)}
+                onClick={() => { setIsOpen(true); playArcadeOpen(); }}
                 className="arcade-portal-card"
                 whileHover={{ scale: 1.02, y: -8, boxShadow: '0 0 40px rgba(0, 240, 255, 0.25), inset 0 0 20px rgba(255,255,255,0.05)' }}
                 whileTap={{ scale: 0.98 }}
@@ -297,9 +298,9 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                 <div style={{
                     position: 'absolute',
                     top: 0, left: 0, width: '100%', height: '100%',
-                    background: 'linear-gradient(to bottom, rgba(0, 240, 255, 0) 0%, rgba(0, 240, 255, 0.03) 50%, rgba(0, 240, 255, 0) 100%)',
+                    background: 'linear-gradient(to bottom, transparent, rgba(0, 240, 255, 0.08) 50%, transparent)',
                     pointerEvents: 'none',
-                    animation: 'bar-pulse 8s infinite linear',
+                    animation: 'scanline-anim 6s infinite linear',
                     zIndex: 0
                 }} />
 
@@ -352,12 +353,23 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                             <div className="arcade-modal-header-left">
                                 <div>
                                     <h2 className="text-gradient" style={{ fontSize: '1.8rem', margin: 0, letterSpacing: '-0.02em', fontWeight: 800 }}>{t('arcade_inside_title')}</h2>
-                                    {nickname && <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0.2rem 0 0 0' }}>Connected as <span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold' }}>{nickname}</span></p>}
+                                    {nickname && (
+                                        <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0.2rem 0 0 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            Connected as <span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold' }}>{nickname}</span>
+                                            <button 
+                                                onClick={() => { playClick(); setTempName(nickname); setNickname(''); }}
+                                                style={{ background: 'none', border: 'none', color: 'var(--accent-violet)', fontSize: '0.75rem', cursor: 'pointer', padding: 0, textDecoration: 'underline', fontWeight: 600 }}
+                                            >
+                                                [Edit]
+                                            </button>
+                                        </p>
+                                    )}
                                 </div>
                                 {nickname && !activeGameId && (
                                     <div className="arcade-header-controls" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                                         <button
-                                            onClick={() => setShowScoreboard(!showScoreboard)}
+                                            onClick={() => { playClick(); setShowScoreboard(!showScoreboard); }}
+                                            onMouseEnter={playHover}
                                             className={`btn ${showScoreboard ? 'btn-primary' : 'btn-outline'}`}
                                             style={{ padding: '0.4rem 1rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '8px' }}
                                         >
@@ -391,7 +403,8 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                 )}
                             </div>
                             <button
-                                onClick={() => { setIsOpen(false); setActiveGameId(null); setShowScoreboard(false); }}
+                                onClick={() => { playClick(); setIsOpen(false); setActiveGameId(null); setShowScoreboard(false); }}
+                                onMouseEnter={playHover}
                                 style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '0.6rem', borderRadius: '50%', color: 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.3s' }}
                                 onMouseOver={(e) => { e.currentTarget.style.color = 'white'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
                                 onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
@@ -431,7 +444,8 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                     autoFocus
                                                 />
                                                 <motion.button
-                                                    onClick={generateRandomNickname}
+                                                    onClick={() => { playClick(); generateRandomNickname(); }}
+                                                    onMouseEnter={playHover}
                                                     className="btn btn-outline"
                                                     style={{ padding: '0.8rem 1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', borderColor: 'rgba(255,255,255,0.1)' }}
                                                     title="Generate Random Tag"
@@ -443,7 +457,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                             </div>
 
                                             <button
-                                                onClick={saveNickname}
+                                                onClick={() => { playSuccess(); saveNickname(); }}
                                                 className="btn btn-primary"
                                                 style={{ width: '100%', padding: '1.2rem', fontSize: '1.05rem' }}
                                                 disabled={tempName.trim().length < 3}
@@ -587,7 +601,8 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                             ].map(cat => (
                                                 <motion.button
                                                     key={cat.id}
-                                                    onClick={() => setActiveTab(cat.id)}
+                                                    onClick={() => { playClick(); setActiveTab(cat.id); }}
+                                                    onMouseEnter={playHover}
                                                     style={{
                                                         display: 'flex',
                                                         alignItems: 'center',
@@ -670,7 +685,8 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                             initial="hidden"
                                                             animate="visible"
                                                             whileHover="hover"
-                                                            onClick={() => setActiveGameId(game.id)}
+                                                            onMouseEnter={playHover}
+                                                            onClick={() => { playClick(); setActiveGameId(game.id); }}
                                                             style={{
                                                                 background: 'rgba(20, 20, 30, 0.85)', 
                                                                 border: '1px solid rgba(255,255,255,0.06)',
@@ -763,7 +779,8 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                 {localScores[activeGameId] && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '6px' }}>PERSONAL BEST: {localScores[activeGameId]}</span>}
                                             </div>
                                             <button
-                                                onClick={() => setActiveGameId(null)}
+                                                onClick={() => { playClick(); setActiveGameId(null); }}
+                                                onMouseEnter={playHover}
                                                 className="btn btn-outline"
                                                 style={{ padding: '0.5rem 1.2rem', fontSize: '0.9rem', borderColor: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', gap: '8px' }}
                                             >
