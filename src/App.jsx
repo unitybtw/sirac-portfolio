@@ -1624,7 +1624,6 @@ function App() {
                     style={{ 
                       display: 'flex', 
                       justifyContent: num % 2 === 0 ? 'flex-start' : 'flex-end',
-                      flexDirection: num % 2 === 0 ? 'row-reverse' : 'row',
                       alignItems: 'center',
                       width: '100%',
                       position: 'relative'
