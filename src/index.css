@@ -800,6 +800,23 @@ nav.scrolled {
   }
 }
 
+/* Mobile Menu Toggle Styles */
+.nav-toggle-btn {
+  display: none;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-main);
+  cursor: pointer;
+  padding: 0.6rem;
+  border-radius: 12px;
+  z-index: 1001;
+  transition: all 0.3s;
+}
+
+.nav-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
 /* Animations & Responsive */
 @media (max-width: 968px) {
   .desktop-only {
@@ -975,10 +992,6 @@ nav.scrolled {
     padding: 0.25rem 0.5rem !important;
     gap: 0.2rem !important;
     border-radius: 12px !important;
-  }
-
-  .lang-selector-container span {
-    display: none !important;
   }
 
   .lang-selector-container svg {
@@ -1215,22 +1228,7 @@ nav.scrolled {
   100% { transform: translate3d(0, 0, 0) scale(1); }
 }
 
-/* Mobile Menu Toggle Styles */
-.nav-toggle-btn {
-  display: none;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--text-main);
-  cursor: pointer;
-  padding: 0.6rem;
-  border-radius: 12px;
-  z-index: 1001;
-  transition: all 0.3s;
-}
 
-.nav-toggle-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
 
 /* Responsive Arcade Modal Styles */
 .arcade-modal-overlay {
@@ -1546,4 +1544,87 @@ nav.scrolled {
 .arcade-portal-divider {
   width: 1px;
   background: rgba(255, 255, 255, 0.1);
+}
+
+/* Presence Panel Premium Styles */
+.presence-panel-container {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+  z-index: 99999;
+  font-family: monospace;
+  transition: all 0.3s ease;
+}
+
+.presence-panel-card {
+  background: rgba(8, 8, 18, 0.97);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(0, 240, 255, 0.18);
+  border-radius: 18px;
+  padding: 1rem;
+  margin-bottom: 10px;
+  width: 230px;
+  box-shadow: 0 0 40px rgba(0, 240, 255, 0.08), 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.presence-panel-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(8, 8, 18, 0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  border-radius: 12px;
+  padding: 8px 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  color: white;
+  width: 100%;
+  justify-content: center;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.presence-panel-trigger.expanded {
+  border-color: rgba(0, 240, 255, 0.4);
+}
+
+/* Light Mode Overrides */
+.light-mode .presence-panel-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 150, 255, 0.18);
+  box-shadow: 0 0 30px rgba(0, 150, 255, 0.05), 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .presence-panel-card p {
+  color: #666;
+}
+
+.light-mode .presence-panel-card span {
+  color: #333;
+}
+
+.light-mode .presence-panel-trigger {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 150, 255, 0.15);
+  color: #333;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.light-mode .presence-panel-trigger.expanded {
+  border-color: rgba(0, 150, 255, 0.4);
+}
+
+/* Mobile Overrides */
+@media (max-width: 768px) {
+  .presence-panel-container {
+    bottom: 80px;
+    right: 16px;
+  }
+  
+  .presence-panel-trigger {
+    padding: 6px 10px;
+    font-size: 0.72rem;
+  }
 }

@@ -257,7 +257,7 @@ export default function PresencePanel() {
       </AnimatePresence>
 
       {/* Panel */}
-      <div style={{ position: 'fixed', bottom: '100px', right: '24px', zIndex: 99999, fontFamily: 'monospace' }}>
+      <div className="presence-panel-container">
         <AnimatePresence>
           {isExpanded && (
             <motion.div
@@ -265,16 +265,7 @@ export default function PresencePanel() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 16, scale: 0.92 }}
               transition={{ duration: 0.2 }}
-              style={{
-                background: 'rgba(8, 8, 18, 0.97)',
-                backdropFilter: 'blur(24px)',
-                border: '1px solid rgba(0, 240, 255, 0.18)',
-                borderRadius: '18px',
-                padding: '1rem',
-                marginBottom: '10px',
-                width: '230px',
-                boxShadow: '0 0 40px rgba(0, 240, 255, 0.08), 0 8px 32px rgba(0,0,0,0.5)',
-              }}
+              className="presence-panel-card"
             >
               {/* My identity */}
               <div style={{
@@ -351,19 +342,7 @@ export default function PresencePanel() {
           onMouseEnter={playHover}
           whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(0,240,255,0.2)' }}
           whileTap={{ scale: 0.95 }}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '8px',
-            background: 'rgba(8, 8, 18, 0.97)',
-            backdropFilter: 'blur(20px)',
-            border: `1px solid ${isExpanded ? 'rgba(0,240,255,0.4)' : 'rgba(0,240,255,0.15)'}`,
-            borderRadius: '12px',
-            padding: '8px 14px',
-            cursor: 'pointer',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
-            color: 'white',
-            width: '100%',
-            justifyContent: 'center',
-          }}
+          className={`presence-panel-trigger ${isExpanded ? 'expanded' : ''}`}
         >
           <motion.div
             animate={{ opacity: [1, 0.3, 1] }}
