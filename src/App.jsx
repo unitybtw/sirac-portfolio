@@ -1029,6 +1029,10 @@ function App() {
 
     window.lenis = lenis;
 
+    lenis.on('scroll', (e) => {
+      scrollY.set(e.scroll);
+    });
+
     // Handle internal anchor links click with Lenis
     const handleAnchorClick = (e) => {
       const target = e.target.closest('a');
@@ -1229,7 +1233,7 @@ function App() {
 
 
 
-  const { scrollY } = useScroll();
+  const scrollY = useMotionValue(0);
   const parallax1 = useTransform(scrollY, [0, 1000], [0, -150]);
   const parallax2 = useTransform(scrollY, [0, 1000], [0, 200]);
   const parallax3 = useTransform(scrollY, [0, 1000], [0, -100]);
