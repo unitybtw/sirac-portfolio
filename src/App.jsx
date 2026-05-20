@@ -1201,6 +1201,44 @@ function App() {
                   <Gamepad2 size={18} /> {t('arcade_button') || 'Arcade'}
                 </button>
               </Magnetic>
+
+              {/* Mobile-only utilities drawer */}
+              <div className="mobile-menu-utilities">
+                {/* Language Switcher */}
+                <div className="mobile-lang-switcher">
+                  <button 
+                    onClick={() => { playClick(); changeLanguage('en'); }}
+                    className={i18n.language?.startsWith('en') ? 'active' : ''}
+                  >
+                    EN
+                  </button>
+                  <button 
+                    onClick={() => { playClick(); changeLanguage('tr'); }}
+                    className={i18n.language?.startsWith('tr') ? 'active' : ''}
+                  >
+                    TR
+                  </button>
+                </div>
+
+                {/* Sound & Theme Controls */}
+                <div className="mobile-controls">
+                  <button 
+                    onClick={() => { toggleMute(); playClick(); }} 
+                    className="mobile-control-btn"
+                    aria-label="Toggle Sound"
+                    style={{ color: isMuted ? 'var(--text-muted)' : 'var(--accent-cyan)' }}
+                  >
+                    {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                  </button>
+                  <button 
+                    onClick={() => { toggleTheme(); playClick(); }} 
+                    className="mobile-control-btn"
+                    aria-label="Toggle Theme"
+                  >
+                    {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Nav Utilities - ALWAYS visible on right */}
