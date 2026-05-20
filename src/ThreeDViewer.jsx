@@ -10,7 +10,48 @@ const Model = ({ path }) => {
 };
 
 const ScrambleText = ({ text }) => {
-  return <span>{text}</span>;
+  const [displayText, setDisplayText] = useState(text);
+  const intervalRef = React.useRef(null);
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#%&*";
+
+  const triggerScramble = () => {
+    let iteration = 0;
+    clearInterval(intervalRef.current);
+
+    intervalRef.current = setInterval(() => {
+      setDisplayText((prev) =>
+        text
+          .split("")
+          .map((letter, index) => {
+            if (letter === " ") return " ";
+            if (index < iteration) {
+              return text[index];
+            }
+            return letters[Math.floor(Math.random() * letters.length)];
+          })
+          .join("")
+      );
+
+      if (iteration >= text.length) {
+        clearInterval(intervalRef.current);
+      }
+      iteration += 1 / 3;
+    }, 30);
+  };
+
+  useEffect(() => {
+    triggerScramble();
+    return () => clearInterval(intervalRef.current);
+  }, [text]);
+
+  return (
+    <motion.span 
+      onMouseEnter={triggerScramble} 
+      style={{ display: 'inline-block', cursor: 'default' }}
+    >
+      {displayText}
+    </motion.span>
+  );
 };
 
 export default function ThreeDViewer({ t, theme }) {

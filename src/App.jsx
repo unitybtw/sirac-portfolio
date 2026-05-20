@@ -1,4 +1,4 @@
-import React, { useEffect, useState, lazy, Suspense } from 'react';
+import React, { useEffect, useState, useRef, lazy, Suspense } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
 import { Terminal, Github, Linkedin, Mail, ArrowRight, Code, Layers, Smartphone, Box, Gamepad2, Compass, Globe, Moon, Sun, ChevronLeft, ChevronRight, ChevronUp, Volume2, VolumeX, ChevronDown } from 'lucide-react';
@@ -230,10 +230,175 @@ const MatrixBackground = ({ theme, isPaused, matrixRainMode }) => {
 // ThreeDViewer is now imported lazily from ThreeDViewer.jsx
 
 const ScrambleText = ({ text }) => {
-  return <span>{text}</span>;
+  const [displayText, setDisplayText] = useState(text);
+  const intervalRef = useRef(null);
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*";
+
+  const triggerScramble = () => {
+    let iteration = 0;
+    clearInterval(intervalRef.current);
+
+    intervalRef.current = setInterval(() => {
+      setDisplayText((prev) =>
+        text
+          .split("")
+          .map((letter, index) => {
+            if (letter === " ") return " ";
+            if (index < iteration) {
+              return text[index];
+            }
+            return letters[Math.floor(Math.random() * letters.length)];
+          })
+          .join("")
+      );
+
+      if (iteration >= text.length) {
+        clearInterval(intervalRef.current);
+      }
+      iteration += 1 / 3;
+    }, 30);
+  };
+
+  useEffect(() => {
+    triggerScramble();
+    return () => clearInterval(intervalRef.current);
+  }, [text]);
+
+  return (
+    <motion.span 
+      onMouseEnter={triggerScramble} 
+      style={{ display: 'inline-block', cursor: 'default' }}
+    >
+      {displayText}
+    </motion.span>
+  );
 };
 
-const CyberCursor = () => null;
+const CyberCursor = () => {
+  const mouseX = useMotionValue(-100);
+  const mouseY = useMotionValue(-100);
+  const ringX = useSpring(mouseX, { stiffness: 80, damping: 15 });
+  const ringY = useSpring(mouseY, { stiffness: 80, damping: 15 });
+  const [hovered, setHovered] = useState(false);
+  const [clicked, setClicked] = useState(false);
+  const [hidden, setHidden] = useState(true);
+
+  useEffect(() => {
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    if (isTouch || window.innerWidth <= 968) {
+      setHidden(true);
+      return;
+    }
+
+    const handleMouseMove = (e) => {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
+      if (hidden) setHidden(false);
+    };
+
+    const handleMouseLeave = () => setHidden(true);
+    const handleMouseEnter = () => setHidden(false);
+    const handleMouseDown = () => setClicked(true);
+    const handleMouseUp = () => setClicked(false);
+
+    const addHoverListeners = () => {
+      const interactives = document.querySelectorAll('a, button, [role="button"], .clickable, input, textarea, select');
+      interactives.forEach((el) => {
+        el.addEventListener('mouseenter', () => setHovered(true));
+        el.addEventListener('mouseleave', () => setHovered(false));
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseleave', handleMouseLeave);
+    document.addEventListener('mouseenter', handleMouseEnter);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
+
+    addHoverListeners();
+    const observer = new MutationObserver(addHoverListeners);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener('mouseenter', handleMouseEnter);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
+      observer.disconnect();
+    };
+  }, [mouseX, mouseY, hidden]);
+
+  if (hidden) return null;
+
+  return (
+    <>
+      <motion.div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '8px',
+          height: '8px',
+          backgroundColor: hovered ? 'var(--accent-cyan)' : '#ffffff',
+          borderRadius: '50%',
+          pointerEvents: 'none',
+          zIndex: 9999,
+          x: mouseX,
+          y: mouseY,
+          translateX: '-50%',
+          translateY: '-50%',
+          mixBlendMode: 'difference',
+        }}
+      />
+      <motion.div
+        animate={{
+          scale: clicked ? 0.8 : hovered ? 1.6 : 1,
+          borderColor: hovered ? 'var(--accent-cyan)' : 'rgba(255, 255, 255, 0.4)',
+          backgroundColor: hovered ? 'rgba(0, 240, 255, 0.05)' : 'rgba(255, 255, 255, 0)',
+        }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '36px',
+          height: '36px',
+          border: '1.5px solid',
+          borderRadius: '50%',
+          pointerEvents: 'none',
+          zIndex: 9998,
+          x: ringX,
+          y: ringY,
+          translateX: '-50%',
+          translateY: '-50%',
+          boxShadow: hovered ? '0 0 15px rgba(0, 240, 255, 0.3)' : 'none',
+        }}
+      >
+        {hovered && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.6 }}
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              width: '100%',
+              height: '100%',
+              translateX: '-50%',
+              translateY: '-50%',
+            }}
+          >
+            <span style={{ position: 'absolute', top: '-4px', left: '50%', transform: 'translateX(-50%)', width: '1px', height: '4px', backgroundColor: 'var(--accent-cyan)' }} />
+            <span style={{ position: 'absolute', bottom: '-4px', left: '50%', transform: 'translateX(-50%)', width: '1px', height: '4px', backgroundColor: 'var(--accent-cyan)' }} />
+            <span style={{ position: 'absolute', left: '-4px', top: '50%', transform: 'translateY(-50%)', width: '4px', height: '1px', backgroundColor: 'var(--accent-cyan)' }} />
+            <span style={{ position: 'absolute', right: '-4px', top: '50%', transform: 'translateY(-50%)', width: '4px', height: '1px', backgroundColor: 'var(--accent-cyan)' }} />
+          </motion.div>
+        )}
+      </motion.div>
+    </>
+  );
+};
 
 const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMute, matrixRainMode, setMatrixRainMode, setShowSecretGame }) => {
   const [history, setHistory] = useState([
@@ -1148,6 +1313,7 @@ function App() {
 
   return (
     <>
+    <CyberCursor />
     <AnimatePresence>
       {showSecretGame && <KonamiGame key="konami" onClose={() => setShowSecretGame(false)} />}
     </AnimatePresence>
