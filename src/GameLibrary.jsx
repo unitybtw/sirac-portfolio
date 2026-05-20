@@ -75,10 +75,16 @@ const MotoX3M = lazy(() => import('./MotoX3M'));
 const CookieClicker = lazy(() => import('./CookieClicker'));
 const WorldsHardestGame = lazy(() => import('./WorldsHardestGame'));
 const MinecraftClassic = lazy(() => import('./MinecraftClassic'));
+const Pacman = lazy(() => import('./Pacman'));
+const FlappyBirdPort = lazy(() => import('./FlappyBirdPort'));
+const Original2048 = lazy(() => import('./Original2048'));
 
 
 
 const gamesList = [
+    { id: 'pacman', title: 'Pac-Man (Classic)', icon: <Ghost size={24} />, color: '#ffd700', comp: Pacman },
+    { id: 'flappy_bird', title: 'Flappy Bird', icon: <Navigation size={24} />, color: '#ffcc00', comp: FlappyBirdPort },
+    { id: 'original_2048', title: '2048 (Original)', icon: <Box size={24} />, color: '#bd00ff', comp: Original2048 },
     { id: 'retro_bowl', title: 'Retro Bowl', icon: <Gamepad2 size={24} />, color: '#ff4400', comp: RetroBowl },
     { id: 'moto_x3m', title: 'Moto X3M', icon: <Navigation size={24} />, color: '#ffcc00', comp: MotoX3M },
     { id: 'cookie_clicker', title: 'Cookie Clicker', icon: <Zap size={24} />, color: '#ff8800', comp: CookieClicker },
@@ -160,7 +166,7 @@ const categoryLabels = {
 };
 
 const getGameCategory = (id) => {
-    const simList = ['fnaf1', 'cs16', 'lale_savascilari', 'gtavicecity', 'ultrakill', 'hollowknight', 'mario64', 'hl1', 'geodash', 'subway', 'slope', 'quake3', 'diablo', 'drift', 'doom', 'voxel', 'retro_bowl', 'minecraft_classic', 'cookie_clicker'];
+    const simList = ['fnaf1', 'cs16', 'lale_savascilari', 'gtavicecity', 'ultrakill', 'hollowknight', 'mario64', 'hl1', 'geodash', 'subway', 'slope', 'quake3', 'diablo', 'drift', 'doom', 'voxel', 'retro_bowl', 'minecraft_classic', 'cookie_clicker', 'pacman', 'flappy_bird', 'original_2048'];
     const puzzleList = ['color', 'mines', 'neon2048', 'cybergolf', 'neonsokoban', 'neonmemory', 'neontictactoe', 'neonbowling', 'cyberpiano', 'cyberinvaders', 'neonclimb', 'cybersort', 'neonbalance', 'cybermatch'];
     
     if (simList.includes(id)) return 'simulation';
