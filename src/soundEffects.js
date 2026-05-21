@@ -55,8 +55,12 @@ export const playClick = () => {
   playTone([800, 1200], [0.04, 0.04], 'triangle', 0.15);
 };
 
-// 2. UI Hover: Short sine wave frequency slide
+// 2. UI Hover: Short sine wave frequency slide — throttled to prevent scroll audio storms
+let lastHoverTime = 0;
 export const playHover = () => {
+  const now = Date.now();
+  if (now - lastHoverTime < 120) return;
+  lastHoverTime = now;
   playTone([180, 240], [0.02, 0.02], 'sine', 0.05);
 };
 

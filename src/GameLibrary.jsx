@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { X, Gamepad2, Rocket, Zap, Navigation, Shield, Ghost, Crosshair, Target, Activity, Box, Trophy, User, Save, List, Gem, Compass, Eye } from 'lucide-react';
@@ -200,30 +200,44 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
 
     const scrollRef = useRef(null);
     const gridRef = useRef(null);
+    const isScrollingRef = useRef(false);
+    const scrollTimerRef = useRef(null);
 
-    // Suppress pointer events during scrolling to save layout re-render & sound node synthesis cost
+    // Attach scroll listener once — never re-attaches on state changes
+    // Uses direct DOM classList manipulation (zero React overhead)
     useEffect(() => {
-        const scrollContainer = scrollRef.current;
-        const grid = gridRef.current;
-        if (!scrollContainer || !grid) return;
+        const getScrollContainer = () => scrollRef.current;
+        const getGrid = () => gridRef.current;
 
-        let scrollTimeout;
-        const handleScroll = () => {
-            if (!grid.classList.contains('is-scrolling')) {
+        const onScroll = () => {
+            const grid = getGrid();
+            if (!grid) return;
+
+            if (!isScrollingRef.current) {
+                isScrollingRef.current = true;
                 grid.classList.add('is-scrolling');
             }
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                grid.classList.remove('is-scrolling');
-            }, 150);
+            clearTimeout(scrollTimerRef.current);
+            scrollTimerRef.current = setTimeout(() => {
+                isScrollingRef.current = false;
+                if (grid) grid.classList.remove('is-scrolling');
+            }, 200);
         };
 
-        scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
-        return () => {
-            scrollContainer.removeEventListener('scroll', handleScroll);
-            clearTimeout(scrollTimeout);
+        // Re-attach whenever the modal opens (scrollRef re-mounts)
+        const attach = () => {
+            const el = getScrollContainer();
+            if (el) el.addEventListener('scroll', onScroll, { passive: true });
         };
-    }, [isOpen, nickname, showScoreboard, activeGameId]);
+
+        attach();
+        return () => {
+            const el = getScrollContainer();
+            if (el) el.removeEventListener('scroll', onScroll);
+            clearTimeout(scrollTimerRef.current);
+        };
+    // Only re-run when view that contains the grid changes
+    }, [isOpen, activeGameId, showScoreboard, nickname]);
 
     const generateRandomNickname = () => {
         const p = RANDOM_PREFIXES[Math.floor(Math.random() * RANDOM_PREFIXES.length)];
@@ -241,6 +255,16 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
             localStorage.setItem('arcade_nickname', trimmed);
         }
     };
+
+    // Memoize filtered games list — avoids re-filtering 75+ items on every render
+    const filteredGames = useMemo(() => {
+        const q = searchQuery.toLowerCase();
+        return gamesList.filter(game => {
+            const matchesSearch = !q || game.title.toLowerCase().includes(q);
+            const matchesTab = activeTab === 'all' || getGameCategory(game.id) === activeTab;
+            return matchesSearch && matchesTab;
+        });
+    }, [searchQuery, activeTab]);
 
     const [globalScores, setGlobalScores] = useState([]);
     const FIREBASE_DB = 'https://sirac-portfolio-default-rtdb.europe-west1.firebasedatabase.app';
@@ -643,11 +667,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                         </div>
 
                                         <div ref={gridRef} className="arcade-games-grid">
-                                            {gamesList.filter(game => {
-                                                const matchesSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase());
-                                                const matchesTab = activeTab === 'all' || getGameCategory(game.id) === activeTab;
-                                                return matchesSearch && matchesTab;
-                                            }).length === 0 && (
+                                            {filteredGames.length === 0 && (
                                                 <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
                                                     <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>👾</div>
                                                     <p style={{ fontSize: '1.2rem', margin: 0 }}>No games match your filters</p>
@@ -661,13 +681,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                 </div>
                                             )}
 
-                                            {gamesList
-                                                .filter(game => {
-                                                    const matchesSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase());
-                                                    const matchesTab = activeTab === 'all' || getGameCategory(game.id) === activeTab;
-                                                    return matchesSearch && matchesTab;
-                                                })
-                                                .map((game) => {
+                                            {filteredGames.map((game) => {
                                                     const cat = getGameCategory(game.id);
                                                     return (
                                                         <div

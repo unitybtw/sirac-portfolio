@@ -1307,7 +1307,6 @@ nav.scrolled {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  will-change: opacity;
 }
 
 .arcade-modal-header {
@@ -1317,14 +1316,16 @@ nav.scrolled {
   align-items: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   background: rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
 }
 
 .arcade-modal-body {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
-  will-change: scroll-position;
-  contain: layout style;
+  overscroll-behavior: contain;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .arcade-modal-header-left {
@@ -1345,10 +1346,13 @@ nav.scrolled {
   gap: 1.5rem;
   width: 100%;
   padding-bottom: 3rem;
-  contain: layout style;
 }
 
 .arcade-games-grid.is-scrolling {
+  pointer-events: none;
+}
+
+.arcade-games-grid.is-scrolling * {
   pointer-events: none;
 }
 
@@ -1369,12 +1373,13 @@ nav.scrolled {
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.25s ease,
               border-color 0.25s ease;
-  contain: layout style paint;
+  will-change: transform;
+  isolation: isolate;
 }
 
 .arcade-game-card:hover {
   transform: translateY(-5px) scale(1.03);
-  box-shadow: 0 15px 30px -5px color-mix(in srgb, var(--game-color, #0ff) 27%, transparent);
+  box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.5);
   border-color: var(--game-color, #0ff);
 }
 
