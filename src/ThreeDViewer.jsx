@@ -17,7 +17,7 @@ const ScrambleText = ({ text }) => {
   );
 };
 
-export default function ThreeDViewer({ t, theme }) {
+export default function ThreeDViewer({ t, theme, isArcadeOpen }) {
   const models = ["model.glb", "model2.glb", "model3.glb"];
   const [currentModelIndex, setCurrentModelIndex] = useState(0);
   const containerRef = React.useRef(null);
@@ -32,6 +32,10 @@ export default function ThreeDViewer({ t, theme }) {
   }, []);
 
   useEffect(() => {
+    if (isArcadeOpen) {
+      setIsVisible(false);
+      return;
+    }
     if (!containerRef.current) return;
     
     const observer = new IntersectionObserver(([entry]) => {
@@ -43,7 +47,7 @@ export default function ThreeDViewer({ t, theme }) {
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [isArcadeOpen]);
 
   const nextModel = () => setCurrentModelIndex((prev) => (prev + 1) % models.length);
   const prevModel = () => setCurrentModelIndex((prev) => (prev - 1 + models.length) % models.length);

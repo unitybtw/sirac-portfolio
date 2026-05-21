@@ -1137,7 +1137,7 @@ function App() {
     </AnimatePresence>
 
     <PageProgress />
-    <div className={`app-container ${theme}-mode`}>
+    <div className={`app-container ${theme}-mode ${isArcadeOpen ? 'arcade-open-active' : ''}`}>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -1923,7 +1923,7 @@ function App() {
           </motion.section>
 
           <Suspense fallback={<div className="viewer-section glass-panel" style={{ height: '500px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'var(--accent-cyan)' }}>LOADING 3D ENGINE...</div>}>
-            <ThreeDViewer t={t} theme={theme} />
+            <ThreeDViewer t={t} theme={theme} isArcadeOpen={isArcadeOpen} />
           </Suspense>
 
           {/* Interactive Footer */}
@@ -2026,7 +2026,7 @@ function App() {
 
     {/* Back to Top Button */}
     <AnimatePresence>
-      {scrolled && (
+      {scrolled && !isArcadeOpen && (
         <motion.button
           key="backToTop"
           initial={{ opacity: 0, scale: 0.5, y: 20 }}
@@ -2065,7 +2065,7 @@ function App() {
       )}
     </AnimatePresence>
 
-    <PresencePanel />
+    {!isArcadeOpen && <PresencePanel />}
     </>
   );
 }

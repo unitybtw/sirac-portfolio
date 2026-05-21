@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { X, Gamepad2, Rocket, Zap, Navigation, Shield, Ghost, Crosshair, Target, Activity, Box, Trophy, User, Save, List, Gem, Compass, Eye } from 'lucide-react';
 import { playClick, playHover, playSuccess, playArcadeOpen } from './soundEffects';
@@ -405,11 +406,12 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                 </div>
             </div>
 
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div
-                        className="arcade-modal-overlay"
-                        data-lenis-prevent
+            {createPortal(
+                <AnimatePresence>
+                    {isOpen && (
+                        <motion.div
+                            className="arcade-modal-overlay"
+                            data-lenis-prevent
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -792,9 +794,11 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                         </div>
                     </motion.div>
                 )}
-            </AnimatePresence>
-        </>
-    );
+            </AnimatePresence>,
+            document.body
+        )}
+    </>
+);
 };
 
 export default GameLibrary;
