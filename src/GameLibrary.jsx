@@ -303,22 +303,19 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
             // Fully pause Lenis RAF processing (not just stop scrolling)
             if (window.lenisRafPause) window.lenisRafPause();
             else if (window.lenis) window.lenis.stop();
-            // Pause portal card CSS animations so they don't compete for GPU
+            // Hide portal card completely — removes it from GPU render tree
+            // This eliminates its backdrop-filter, animations, and compositing cost
             const portalCard = document.querySelector('.arcade-portal-card');
-            if (portalCard) portalCard.style.animationPlayState = 'paused';
-            const portalAnims = document.querySelectorAll('.arcade-portal-scanline, .arcade-portal-bg-rotate, .arcade-portal-icon');
-            portalAnims.forEach(el => { el.style.animationPlayState = 'paused'; });
+            if (portalCard) portalCard.style.display = 'none';
         } else {
             document.body.style.overflow = '';
             document.documentElement.style.overflow = '';
             // Resume Lenis RAF
             if (window.lenisRafResume) window.lenisRafResume();
             else if (window.lenis) window.lenis.start();
-            // Resume portal card animations
+            // Show portal card again
             const portalCard = document.querySelector('.arcade-portal-card');
-            if (portalCard) portalCard.style.animationPlayState = '';
-            const portalAnims = document.querySelectorAll('.arcade-portal-scanline, .arcade-portal-bg-rotate, .arcade-portal-icon');
-            portalAnims.forEach(el => { el.style.animationPlayState = ''; });
+            if (portalCard) portalCard.style.display = '';
         }
         return () => {
             document.body.style.overflow = '';

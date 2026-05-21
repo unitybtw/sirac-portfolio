@@ -1302,7 +1302,8 @@ nav.scrolled {
   width: 100vw;
   height: 100vh;
   height: 100dvh;
-  background: rgba(5, 5, 8, 0.99);
+  /* Fully opaque — lets browser skip compositing everything behind the modal */
+  background: rgb(5, 5, 8);
   z-index: 100000;
   display: flex;
   flex-direction: column;
@@ -1324,8 +1325,6 @@ nav.scrolled {
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  transform: translateZ(0);
-  will-change: transform;
 }
 
 .arcade-modal-header-left {
@@ -1778,8 +1777,7 @@ nav.scrolled {
   margin: 0 auto;
   border-radius: 32px;
   padding: 4.5rem 2rem;
-  background: linear-gradient(135deg, rgba(var(--accent-cyan-rgb), 0.03) 0%, rgba(5,5,10,0.9) 100%);
-  backdrop-filter: blur(8px);
+  background: linear-gradient(135deg, rgba(var(--accent-cyan-rgb), 0.03) 0%, rgba(5,5,10,0.95) 100%);
   border: 1px solid var(--border-glass);
   position: relative;
   overflow: hidden;
