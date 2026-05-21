@@ -36,8 +36,7 @@ const PageProgress = () => {
         height: '4px',
         background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))',
         transformOrigin: '0%',
-        zIndex: 10001,
-        boxShadow: '0 0 10px var(--accent-cyan)'
+        zIndex: 10001
       }}
     />
   );
@@ -80,7 +79,7 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: delay / 2000 }} // Scale down delay
-      whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 30px rgba(0,240,255,0.1)' }}
+      whileHover={{ y: -5, scale: 1.02, boxShadow: '0 12px 30px rgba(0, 0, 0, 0.25)' }}
       onMouseEnter={playHover}
       style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '16px', border: '1px solid var(--border-glass)', willChange: 'transform, opacity' }}
     >
@@ -139,8 +138,8 @@ const MatrixBackground = ({ theme, isPaused, matrixRainMode }) => {
       drops[x] = 1;
     }
 
-    const colorsDark = ['rgba(0, 240, 255, 0.15)', 'rgba(138, 43, 226, 0.15)'];
-    const colorsLight = ['rgba(0, 150, 255, 0.1)', 'rgba(100, 43, 200, 0.1)'];
+    const colorsDark = ['rgba(96, 165, 250, 0.04)', 'rgba(192, 132, 252, 0.02)'];
+    const colorsLight = ['rgba(37, 99, 235, 0.03)', 'rgba(124, 58, 237, 0.015)'];
     const colorsMatrix = ['rgba(0, 255, 102, 0.4)', 'rgba(0, 255, 200, 0.2)'];
 
     // Set font once initially
@@ -165,7 +164,7 @@ const MatrixBackground = ({ theme, isPaused, matrixRainMode }) => {
       
       lastDrawTime = timestamp;
 
-      ctx.fillStyle = theme === 'dark' ? 'rgba(5, 5, 8, 0.1)' : 'rgba(255, 255, 255, 0.1)';
+      ctx.fillStyle = theme === 'dark' ? 'rgba(10, 12, 16, 0.1)' : 'rgba(248, 250, 252, 0.1)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const currentPalette = matrixRainMode ? colorsMatrix : (theme === 'dark' ? colorsDark : colorsLight);
@@ -391,7 +390,7 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMut
       style={{
         width: '100%', maxWidth: '500px', borderRadius: '16px', overflow: 'hidden',
         border: isFocused ? '1px solid var(--accent-cyan)' : '1px solid var(--border-glass)', 
-        boxShadow: isFocused ? '0 25px 50px -12px rgba(0,0,0,0.8), 0 0 25px rgba(0, 240, 255, 0.25)' : '0 25px 50px -12px rgba(0,0,0,0.8), 0 0 20px rgba(0, 240, 255, 0.1)',
+        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.6)',
         textAlign: 'left', background: 'var(--bg-glass)', backdropFilter: 'blur(12px)',
         cursor: 'text', height: '360px', display: 'flex', flexDirection: 'column',
         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
@@ -399,9 +398,9 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMut
     >
       <div style={{ background: 'var(--bg-glass)', padding: '12px 20px', display: 'flex', alignItems: 'center', borderBottom: '1px solid var(--border-glass)', userSelect: 'none' }}>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56', boxShadow: '0 0 5px #ff5f56' }} />
-          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e', boxShadow: '0 0 5px #ffbd2e' }} />
-          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f', boxShadow: '0 0 5px #27c93f' }} />
+          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56' }} />
+          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e' }} />
+          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f' }} />
         </div>
         <div style={{ flex: 1, textTransform: 'uppercase', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-sf)', letterSpacing: '1px' }}>
           sirac@iku: ~/shell
@@ -448,8 +447,7 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMut
             flex: 1,
             fontFamily: 'inherit',
             fontSize: '16px',
-            caretColor: 'var(--accent-cyan)',
-            textShadow: '0 0 5px var(--accent-cyan)'
+            caretColor: 'var(--accent-cyan)'
           }}
           placeholder="..."
           autoComplete="off"
@@ -616,8 +614,8 @@ const KonamiGame = ({ onClose }) => {
       <div className="glass-panel" style={{ 
         padding: '2.5rem', 
         borderRadius: '32px', 
-        border: '1px solid var(--accent-cyan)', 
-        boxShadow: '0 30px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 240, 255, 0.1)',
+        border: '1px solid var(--border-glass)', 
+        boxShadow: '0 30px 60px rgba(0, 0, 0, 0.6)',
         display: 'flex', 
         flexDirection: 'column', 
         alignItems: 'center', 
@@ -653,8 +651,7 @@ const KonamiGame = ({ onClose }) => {
                 width: '10px', 
                 height: '10px', 
                 background: i === 0 ? 'var(--text-main)' : 'var(--accent-cyan)', 
-                borderRadius: i === 0 ? '4px' : '2px',
-                boxShadow: i === 0 ? '0 0 8px var(--text-main)' : '0 0 6px var(--accent-cyan)' 
+                borderRadius: i === 0 ? '4px' : '2px'
               }} 
             />
           ))}
@@ -668,8 +665,7 @@ const KonamiGame = ({ onClose }) => {
               width: '10px', 
               height: '10px', 
               background: 'var(--accent-violet)', 
-              borderRadius: '50%',
-              boxShadow: '0 0 10px var(--accent-violet)' 
+              borderRadius: '50%'
             }} 
           />
         </div>
@@ -758,7 +754,7 @@ const TiltCard = ({ children, className }) => {
 
   const flareX = useTransform(x, [-0.5, 0.5], ["0%", "100%"]);
   const flareY = useTransform(y, [-0.5, 0.5], ["0%", "100%"]);
-  const background = useMotionTemplate`radial-gradient(circle at ${flareX} ${flareY}, rgba(0, 240, 255, 0.12) 0%, transparent 65%)`;
+  const background = useMotionTemplate`radial-gradient(circle at ${flareX} ${flareY}, rgba(var(--accent-cyan-rgb), 0.12) 0%, transparent 65%)`;
 
   const handleMouseMove = (e) => {
     if (isMobile) return;
@@ -1037,14 +1033,14 @@ function App() {
             playArcadeOpen();
             setTimeout(() => playSuccess(), 300);
           }
-          console.log('%c👾 KONAMI CODE ACTIVATED 👾', 'color: #00f0ff; font-size: 18px; font-weight: bold;');
+          console.log('%c👾 KONAMI CODE ACTIVATED 👾', 'color: var(--accent-cyan); font-size: 18px; font-weight: bold;');
           const banner = document.createElement('div');
           Object.assign(banner.style, {
             position: 'fixed', top: '15%', left: '50%',
             transform: 'translate(-50%, -50%)',
-            background: 'rgba(8,8,18,0.95)',
-            border: '2px solid var(--accent-cyan)',
-            boxShadow: '0 0 30px var(--accent-cyan)',
+            background: 'rgba(10, 12, 16, 0.95)',
+            border: '1px solid var(--accent-cyan)',
+            boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
             padding: '20px 40px', borderRadius: '12px',
             zIndex: '999999', fontFamily: 'monospace',
             color: 'var(--text-main)', textAlign: 'center',
@@ -1123,7 +1119,7 @@ function App() {
   const terminalY = useTransform(springY, [0, 1080], [-15, 15]);
   const bgIconX = useTransform(springX, [0, 1920], [20, -20]);
   const bgIconY = useTransform(springY, [0, 1080], [20, -20]);
-  const bgSpotlightTemplate = useMotionTemplate`radial-gradient(800px circle at ${springX}px ${springY}px, rgba(0, 240, 255, 0.04) 0%, rgba(138, 43, 226, 0.025) 50%, transparent 100%)`;
+  const bgSpotlightTemplate = useMotionTemplate`radial-gradient(800px circle at ${springX}px ${springY}px, rgba(var(--accent-cyan-rgb), 0.04) 0%, rgba(var(--accent-violet-rgb), 0.025) 50%, transparent 100%)`;
 
   return (
     <>
@@ -1321,14 +1317,14 @@ function App() {
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 240, 255, 0.05))',
+                        background: 'linear-gradient(135deg, rgba(var(--accent-cyan-rgb), 0.15), rgba(var(--accent-cyan-rgb), 0.05))',
                         backdropFilter: 'blur(8px)',
                         WebkitBackdropFilter: 'blur(8px)',
                         borderRadius: '8px',
-                        border: '1px solid rgba(0, 240, 255, 0.4)',
-                        borderTop: '1px solid rgba(255, 255, 255, 0.4)',
-                        borderLeft: '1px solid rgba(255, 255, 255, 0.2)',
-                        boxShadow: '0 4px 12px rgba(0, 240, 255, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(var(--accent-cyan-rgb), 0.3)',
+                        borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
+                        boxShadow: '0 4px 12px rgba(var(--accent-cyan-rgb), 0.15), inset 0 2px 4px rgba(255, 255, 255, 0.05)',
                         zIndex: 0
                       }}
                     />
@@ -1363,14 +1359,14 @@ function App() {
                         left: 0,
                         right: 0,
                         bottom: 0,
-                        background: 'linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(0, 240, 255, 0.05))',
+                        background: 'linear-gradient(135deg, rgba(var(--accent-cyan-rgb), 0.15), rgba(var(--accent-cyan-rgb), 0.05))',
                         backdropFilter: 'blur(8px)',
                         WebkitBackdropFilter: 'blur(8px)',
                         borderRadius: '8px',
-                        border: '1px solid rgba(0, 240, 255, 0.4)',
-                        borderTop: '1px solid rgba(255, 255, 255, 0.4)',
-                        borderLeft: '1px solid rgba(255, 255, 255, 0.2)',
-                        boxShadow: '0 4px 12px rgba(0, 240, 255, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.1)',
+                        border: '1px solid rgba(var(--accent-cyan-rgb), 0.3)',
+                        borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+                        borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
+                        boxShadow: '0 4px 12px rgba(var(--accent-cyan-rgb), 0.15), inset 0 2px 4px rgba(255, 255, 255, 0.05)',
                         zIndex: 0
                       }}
                     />
@@ -1384,7 +1380,7 @@ function App() {
                   onClick={() => { toggleMute(); playClick(); }}
                   onMouseEnter={playHover}
                   style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '38px', height: '38px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: isMuted ? 'var(--text-muted)' : 'var(--accent-cyan)' }}
-                  whileHover={{ scale: 1.1, boxShadow: isMuted ? 'none' : '0 0 10px var(--accent-cyan)' }}
+                  whileHover={{ scale: 1.1, borderColor: isMuted ? 'var(--border-glass)' : 'var(--accent-cyan)' }}
                   whileTap={{ scale: 0.9 }}
                 >
                   {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
@@ -1396,7 +1392,7 @@ function App() {
                   onClick={() => { toggleTheme(); playClick(); }}
                   onMouseEnter={playHover}
                   style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '38px', height: '38px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--text-main)', position: 'relative', overflow: 'hidden' }}
-                  whileHover={{ scale: 1.1, boxShadow: '0 0 10px var(--accent-cyan)' }}
+                  whileHover={{ scale: 1.1, borderColor: 'var(--accent-cyan)' }}
                   whileTap={{ scale: 0.9 }}
                 >
                   <AnimatePresence mode="wait" initial={false}>
@@ -1446,6 +1442,7 @@ function App() {
           {/* Hero Section */}
           <section className="hero">
             <motion.div
+              layout
               className="hero-content"
               variants={{
                 hidden: { opacity: 0 },
@@ -1461,6 +1458,7 @@ function App() {
               animate="visible"
             >
               <motion.div 
+                layout
                 variants={{
                   hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
@@ -1475,6 +1473,7 @@ function App() {
               </motion.div>
               
               <motion.div
+                layout
                 variants={{
                   hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
@@ -1484,6 +1483,7 @@ function App() {
               </motion.div>
               
               <motion.p 
+                layout
                 variants={{
                   hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
@@ -1494,6 +1494,7 @@ function App() {
               </motion.p>
               
               <motion.div 
+                layout
                 variants={{
                   hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
@@ -1537,11 +1538,12 @@ function App() {
 
             {/* Scroll Indicator */}
             <motion.div 
+              layout
               className="scroll-indicator"
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.7 }}
               transition={{ delay: 1.5, duration: 0.8 }}
-              whileHover={{ opacity: 1, scale: 1.05 }}
+              whileHover={{ opacity: 1 }}
               onMouseEnter={playHover}
               onClick={() => {
                 playClick();
@@ -1618,7 +1620,7 @@ function App() {
                     hidden: { opacity: 0, y: 30 },
                     visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 15 } }
                   }}
-                  whileHover={{ y: -5, scale: 1.02, boxShadow: '0 10px 20px rgba(0,240,255,0.1)', borderColor: 'var(--accent-cyan)' }}
+                  whileHover={{ y: -5, scale: 1.02, boxShadow: '0 12px 30px rgba(0, 0, 0, 0.25)', borderColor: 'var(--accent-cyan)' }}
                   onMouseEnter={playHover}
                   style={{ padding: '1.5rem', borderRadius: '16px', transition: 'border-color 0.3s, box-shadow 0.3s' }}
                 >
@@ -1677,8 +1679,8 @@ function App() {
                       whileHover={{ 
                         y: -5, 
                         scale: 1.02, 
-                        borderColor: num > 2 ? 'rgba(138, 43, 226, 0.4)' : 'rgba(0, 240, 255, 0.4)',
-                        boxShadow: num > 2 ? '0 10px 25px rgba(138, 43, 226, 0.15)' : '0 10px 25px rgba(0, 240, 255, 0.15)'
+                        borderColor: num > 2 ? 'rgba(var(--accent-violet-rgb), 0.4)' : 'rgba(var(--accent-cyan-rgb), 0.4)',
+                        boxShadow: '0 12px 30px rgba(0, 0, 0, 0.25)'
                       }}
                       onMouseEnter={playHover}
                       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
@@ -1696,8 +1698,8 @@ function App() {
                         fontSize: '0.75rem',
                         fontWeight: 700,
                         color: num > 2 ? 'var(--accent-violet)' : 'var(--accent-cyan)',
-                        background: num > 2 ? 'rgba(140, 60, 230, 0.1)' : 'rgba(0, 212, 255, 0.1)',
-                        border: num > 2 ? '1px solid rgba(140, 60, 230, 0.2)' : '1px solid rgba(0, 212, 255, 0.2)',
+                        background: num > 2 ? 'rgba(var(--accent-violet-rgb), 0.1)' : 'rgba(var(--accent-cyan-rgb), 0.1)',
+                        border: num > 2 ? '1px solid rgba(var(--accent-violet-rgb), 0.2)' : '1px solid rgba(var(--accent-cyan-rgb), 0.2)',
                         borderRadius: '8px',
                         marginBottom: '0.5rem',
                         letterSpacing: '1px'
@@ -1753,7 +1755,7 @@ function App() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: i * 0.1 }}
-                  whileHover={{ scale: 1.05, y: -10, boxShadow: '0 20px 40px rgba(0,240,255,0.2)' }}
+                  whileHover={{ scale: 1.05, y: -10, boxShadow: '0 20px 40px rgba(0, 0, 0, 0.35)' }}
                   onMouseEnter={playHover}
                   onClick={() => { playClick(); setIsArcadeOpen(true); }}
                   style={{ padding: '2rem', borderRadius: '24px', cursor: 'pointer', border: '1px solid var(--border-glass)', textAlign: 'center', background: 'var(--bg-glass)' }}
@@ -2027,7 +2029,7 @@ function App() {
             window.lenis?.scrollTo(0, { duration: 1.5 }); 
           }}
           onMouseEnter={playHover}
-          whileHover={{ scale: 1.1, boxShadow: '0 0 20px var(--accent-cyan)' }}
+          whileHover={{ scale: 1.1, borderColor: 'var(--accent-cyan)' }}
           whileTap={{ scale: 0.9 }}
           style={{
             position: 'fixed',
@@ -2045,7 +2047,7 @@ function App() {
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 9999,
-            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4), 0 0 10px rgba(0, 240, 255, 0.1)'
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.3)'
           }}
           aria-label="Back to top"
         >
