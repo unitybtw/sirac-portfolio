@@ -1294,11 +1294,6 @@ nav.scrolled {
 
 
 
-#arcade {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 650px;
-}
-
 /* Responsive Arcade Modal Styles */
 .arcade-modal-overlay {
   position: fixed;
@@ -1375,8 +1370,6 @@ nav.scrolled {
               box-shadow 0.25s ease,
               border-color 0.25s ease;
   contain: layout style paint;
-  content-visibility: auto;
-  contain-intrinsic-size: auto 220px;
 }
 
 .arcade-game-card:hover {
