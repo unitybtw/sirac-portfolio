@@ -970,26 +970,35 @@ function App() {
         e.preventDefault();
         const element = document.querySelector(href);
         if (element) {
-          lenis.scrollTo(element, { offset: -80 }); // offset to account for sticky nav
+          lenis.scrollTo(element, { offset: -80 });
         }
       }
     };
 
     document.addEventListener('click', handleAnchorClick);
 
-    // Store RAF id so we can cancel it on cleanup (memory leak fix)
+    // Pausable RAF loop — can be fully suspended when arcade modal is open
     let rafId;
+    let rafPaused = false;
     function raf(time) {
-      lenis.raf(time);
+      if (!rafPaused) {
+        lenis.raf(time);
+      }
       rafId = requestAnimationFrame(raf);
     }
     rafId = requestAnimationFrame(raf);
+
+    // Expose pause/resume so arcade modal can fully stop Lenis processing
+    window.lenisRafPause = () => { rafPaused = true; };
+    window.lenisRafResume = () => { rafPaused = false; };
 
     return () => {
       cancelAnimationFrame(rafId);
       document.removeEventListener('click', handleAnchorClick);
       lenis.destroy();
       window.lenis = null;
+      window.lenisRafPause = null;
+      window.lenisRafResume = null;
     };
   }, []);
 

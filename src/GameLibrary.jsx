@@ -295,21 +295,36 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
         }
     }, [isOpen, fetchGlobalScores]);
 
-    // Prevent background scroll when modal is open
+    // Freeze everything behind the modal when open
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
             document.documentElement.style.overflow = 'hidden';
-            if (window.lenis) window.lenis.stop();
+            // Fully pause Lenis RAF processing (not just stop scrolling)
+            if (window.lenisRafPause) window.lenisRafPause();
+            else if (window.lenis) window.lenis.stop();
+            // Pause portal card CSS animations so they don't compete for GPU
+            const portalCard = document.querySelector('.arcade-portal-card');
+            if (portalCard) portalCard.style.animationPlayState = 'paused';
+            const portalAnims = document.querySelectorAll('.arcade-portal-scanline, .arcade-portal-bg-rotate, .arcade-portal-icon');
+            portalAnims.forEach(el => { el.style.animationPlayState = 'paused'; });
         } else {
             document.body.style.overflow = '';
             document.documentElement.style.overflow = '';
-            if (window.lenis) window.lenis.start();
+            // Resume Lenis RAF
+            if (window.lenisRafResume) window.lenisRafResume();
+            else if (window.lenis) window.lenis.start();
+            // Resume portal card animations
+            const portalCard = document.querySelector('.arcade-portal-card');
+            if (portalCard) portalCard.style.animationPlayState = '';
+            const portalAnims = document.querySelectorAll('.arcade-portal-scanline, .arcade-portal-bg-rotate, .arcade-portal-icon');
+            portalAnims.forEach(el => { el.style.animationPlayState = ''; });
         }
         return () => {
             document.body.style.overflow = '';
             document.documentElement.style.overflow = '';
-            if (window.lenis) window.lenis.start();
+            if (window.lenisRafResume) window.lenisRafResume();
+            else if (window.lenis) window.lenis.start();
         };
     }, [isOpen]);
 
