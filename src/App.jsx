@@ -233,40 +233,35 @@ const ScrambleText = ({ text }) => {
   const [displayText, setDisplayText] = useState(text);
   const intervalRef = useRef(null);
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*";
+  // Keep a ref to text so triggerScramble never captures a stale closure
+  const textRef = useRef(text);
+  useEffect(() => { textRef.current = text; }, [text]);
 
-  const triggerScramble = () => {
+  const triggerScramble = useRef(() => {
     let iteration = 0;
     clearInterval(intervalRef.current);
-
     intervalRef.current = setInterval(() => {
-      setDisplayText((prev) =>
-        text
-          .split("")
-          .map((letter, index) => {
-            if (letter === " ") return " ";
-            if (index < iteration) {
-              return text[index];
-            }
-            return letters[Math.floor(Math.random() * letters.length)];
-          })
-          .join("")
+      const t = textRef.current;
+      setDisplayText(
+        t.split("").map((letter, index) => {
+          if (letter === " ") return " ";
+          if (index < iteration) return t[index];
+          return letters[Math.floor(Math.random() * letters.length)];
+        }).join("")
       );
-
-      if (iteration >= text.length) {
-        clearInterval(intervalRef.current);
-      }
+      if (iteration >= t.length) clearInterval(intervalRef.current);
       iteration += 1 / 3;
     }, 30);
-  };
+  }).current;
 
   useEffect(() => {
     triggerScramble();
     return () => clearInterval(intervalRef.current);
-  }, [text]);
+  }, [text, triggerScramble]);
 
   return (
-    <motion.span 
-      onMouseEnter={triggerScramble} 
+    <motion.span
+      onMouseEnter={triggerScramble}
       style={{ display: 'inline-block', cursor: 'default' }}
     >
       {displayText}
@@ -274,74 +269,8 @@ const ScrambleText = ({ text }) => {
   );
 };
 
-const Preloader = ({ progress }) => {
-  const messages = [
-    "INITIALIZING GRID MODULES...",
-    "ESTABLISHING SECURE PROTOCOLS...",
-    "UPGRADING NEURAL ENGINES...",
-    "LOAD COMPLETE."
-  ];
-  
-  const msgIndex = Math.min(Math.floor(progress / 26), 3);
-
-  return (
-    <motion.div
-      key="preloader"
-      initial={{ opacity: 1 }}
-      exit={{ 
-        opacity: 0, 
-        y: -100,
-        transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } 
-      }}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100vw',
-        height: '100vh',
-        backgroundColor: '#050508',
-        zIndex: 999999,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontFamily: 'monospace',
-      }}
-    >
-      <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', overflow: 'hidden', opacity: 0.05, pointerEvents: 'none' }}>
-        <div style={{ width: '100%', height: '100%', background: 'linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 255, 0, 0.06))', backgroundSize: '100% 4px, 6px 100%' }} />
-      </div>
-
-      <motion.div 
-        style={{ width: '300px', display: 'flex', flexDirection: 'column', gap: '1rem', position: 'relative' }}
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div style={{ display: 'flex', width: '100%', color: 'var(--accent-cyan)' }}>
-          <span style={{ fontSize: '0.8rem', letterSpacing: '1px', textTransform: 'uppercase' }}>{messages[msgIndex]}</span>
-          <span style={{ fontSize: '1.2rem', fontWeight: 700, marginLeft: 'auto' }}>{progress}%</span>
-        </div>
-        
-        {/* Progress Bar Container */}
-        <div style={{ width: '100%', height: '4px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '10px', overflow: 'hidden', border: '1px solid rgba(0, 240, 255, 0.1)' }}>
-          <motion.div 
-            style={{ height: '100%', background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))', borderRadius: '10px', width: `${progress}%` }}
-            transition={{ ease: 'easeOut', duration: 0.1 }}
-          />
-        </div>
-
-        {/* Decorative corner brackets */}
-        <div style={{ position: 'absolute', top: '-15px', left: '-15px', width: '10px', height: '10px', borderTop: '2px solid var(--accent-cyan)', borderLeft: '2px solid var(--accent-cyan)' }} />
-        <div style={{ position: 'absolute', top: '-15px', right: '-15px', width: '10px', height: '10px', borderTop: '2px solid var(--accent-cyan)', borderRight: '2px solid var(--accent-cyan)' }} />
-        <div style={{ position: 'absolute', bottom: '-15px', left: '-15px', width: '10px', height: '10px', borderBottom: '2px solid var(--accent-cyan)', borderLeft: '2px solid var(--accent-cyan)' }} />
-        <div style={{ position: 'absolute', bottom: '-15px', right: '-15px', width: '10px', height: '10px', borderBottom: '2px solid var(--accent-cyan)', borderRight: '2px solid var(--accent-cyan)' }} />
-      </motion.div>
-    </motion.div>
-  );
-};
-
-const CyberCursor = () => null;
+// Preloader removed — site loads instantly
+// CyberCursor removed — using native cursor
 
 const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMute, matrixRainMode, setMatrixRainMode, setShowSecretGame }) => {
   const [history, setHistory] = useState([
@@ -1059,14 +988,16 @@ function App() {
 
     document.addEventListener('click', handleAnchorClick);
 
+    // Store RAF id so we can cancel it on cleanup (memory leak fix)
+    let rafId;
     function raf(time) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
-
-    requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     return () => {
+      cancelAnimationFrame(rafId);
       document.removeEventListener('click', handleAnchorClick);
       lenis.destroy();
       window.lenis = null;
@@ -1087,52 +1018,47 @@ function App() {
     }
   };
 
-  // Konami Code Easter Egg: ↑ ↑ ↓ ↓ ← → ← → B A
+  // Unified Konami Code Easter Egg: ↑ ↑ ↓ ↓ ← → ← → B A
+  // Merged two duplicate listeners into one to prevent double-firing
   useEffect(() => {
     const konamiCode = [
-      'ArrowUp', 'ArrowUp', 
-      'ArrowDown', 'ArrowDown', 
-      'ArrowLeft', 'ArrowRight', 
-      'ArrowLeft', 'ArrowRight', 
+      'ArrowUp', 'ArrowUp',
+      'ArrowDown', 'ArrowDown',
+      'ArrowLeft', 'ArrowRight',
+      'ArrowLeft', 'ArrowRight',
       'b', 'a'
     ];
     let codeIndex = 0;
 
     const handleKeyDown = (e) => {
-      if (e.key === konamiCode[codeIndex] || e.key === konamiCode[codeIndex].toLowerCase()) {
+      const expected = konamiCode[codeIndex];
+      if (e.key === expected || e.key === expected.toLowerCase()) {
         codeIndex++;
         if (codeIndex === konamiCode.length) {
           codeIndex = 0;
+          // Action 1: Toggle matrix rain
+          setMatrixRainMode(prev => !prev);
+          // Action 2: Show secret snake game
+          setShowSecretGame(true);
           if (!isMuted) {
             playArcadeOpen();
-            setTimeout(() => {
-              playSuccess();
-            }, 300);
+            setTimeout(() => playSuccess(), 300);
           }
-          console.log('%c👾 CHEAT CODE ACTIVATED 👾', 'color: #00f0ff; font-size: 20px; font-weight: bold; text-shadow: 0 0 10px #00f0ff');
-          setMatrixRainMode(prev => !prev);
-          
+          console.log('%c👾 KONAMI CODE ACTIVATED 👾', 'color: #00f0ff; font-size: 18px; font-weight: bold;');
           const banner = document.createElement('div');
-          banner.style.position = 'fixed';
-          banner.style.top = '15%';
-          banner.style.left = '50%';
-          banner.style.transform = 'translate(-50%, -50%)';
-          banner.style.background = 'rgba(8, 8, 18, 0.95)';
-          banner.style.border = '2px solid var(--accent-cyan)';
-          banner.style.boxShadow = '0 0 30px var(--accent-cyan)';
-          banner.style.padding = '20px 40px';
-          banner.style.borderRadius = '12px';
-          banner.style.zIndex = '999999';
-          banner.style.fontFamily = 'monospace';
-          banner.style.color = 'var(--text-main)';
-          banner.style.textAlign = 'center';
-          banner.style.pointerEvents = 'none';
-          banner.innerHTML = `
-            <h1 style="color: var(--accent-cyan); margin: 0 0 10px 0; font-size: 24px; font-weight: bold; text-shadow: 0 0 10px var(--accent-cyan)">CHEAT CODE DETECTED</h1>
-            <p style="margin: 0; font-size: 14px; color: #7ee787">GRID SHADER OVERRIDE INITIATED</p>
-          `;
+          Object.assign(banner.style, {
+            position: 'fixed', top: '15%', left: '50%',
+            transform: 'translate(-50%, -50%)',
+            background: 'rgba(8,8,18,0.95)',
+            border: '2px solid var(--accent-cyan)',
+            boxShadow: '0 0 30px var(--accent-cyan)',
+            padding: '20px 40px', borderRadius: '12px',
+            zIndex: '999999', fontFamily: 'monospace',
+            color: 'var(--text-main)', textAlign: 'center',
+            pointerEvents: 'none'
+          });
+          banner.innerHTML = `<h1 style="color:var(--accent-cyan);margin:0 0 10px;font-size:22px">CHEAT CODE DETECTED</h1><p style="margin:0;font-size:13px;color:#7ee787">GRID SHADER OVERRIDE INITIATED</p>`;
           document.body.appendChild(banner);
-          
           setTimeout(() => {
             banner.style.transition = 'opacity 1s';
             banner.style.opacity = '0';
@@ -1147,56 +1073,6 @@ function App() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isMuted]);
-
-  // Global sound event delegation (hover & click)
-  useEffect(() => {
-    const handleGlobalClick = (e) => {
-      const target = e.target.closest('a, button, [role="button"], .project-card, .game-card');
-      if (target) {
-        if ((target.innerText && target.innerText.toLowerCase().includes('arcade')) || target.closest('#featured-modules')) {
-          playArcadeOpen();
-        } else {
-          playClick();
-        }
-      }
-    };
-
-    const handleGlobalHover = (e) => {
-      const target = e.target.closest('a, button, [role="button"], .project-card, .game-card');
-      if (target) {
-        playHover();
-      }
-    };
-
-    window.addEventListener('click', handleGlobalClick);
-    window.addEventListener('mouseover', handleGlobalHover);
-    return () => {
-      window.removeEventListener('click', handleGlobalClick);
-      window.removeEventListener('mouseover', handleGlobalHover);
-    };
-  }, []);
-
-  // Konami Code Logic
-  useEffect(() => {
-    const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
-    let konamiIndex = 0;
-
-    const handleKeyDown = (e) => {
-      if (e.key === konamiCode[konamiIndex]) {
-        konamiIndex++;
-        if (konamiIndex === konamiCode.length) {
-          setShowSecretGame(true);
-          playSuccess();
-          konamiIndex = 0;
-        }
-      } else {
-        konamiIndex = 0;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
 
 
 
@@ -1244,9 +1120,7 @@ function App() {
 
 
   const scrollY = useMotionValue(0);
-  const parallax1 = useTransform(scrollY, [0, 1000], [0, -150]);
-  const parallax2 = useTransform(scrollY, [0, 1000], [0, 200]);
-  const parallax3 = useTransform(scrollY, [0, 1000], [0, -100]);
+  // parallax1/2/3 removed — were declared but never used in JSX
 
   // Mouse-driven transforms
   const terminalX = useTransform(springX, [0, 1920], [-15, 15]);
@@ -1257,7 +1131,6 @@ function App() {
 
   return (
     <>
-    <CyberCursor />
     <AnimatePresence>
       {showSecretGame && <KonamiGame key="konami" onClose={() => setShowSecretGame(false)} />}
     </AnimatePresence>

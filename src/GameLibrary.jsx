@@ -218,23 +218,22 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
     const [globalScores, setGlobalScores] = useState([]);
     const FIREBASE_DB = 'https://sirac-portfolio-default-rtdb.europe-west1.firebasedatabase.app';
 
-    // Fetch Global Scores from Firebase
-    const fetchGlobalScores = async () => {
+    // Wrap in useCallback so it can be safely added to useEffect deps
+    const fetchGlobalScores = useCallback(async () => {
         try {
             const res = await fetch(`${FIREBASE_DB}/scores.json`);
             const data = await res.json();
             if (data) {
-                // Firebase stores objects, convert to sorted array
                 const scoresArray = Object.values(data);
                 scoresArray.sort((a, b) => b.score - a.score);
-                setGlobalScores(scoresArray.slice(0, 100)); // Keep top 100
+                setGlobalScores(scoresArray.slice(0, 100));
             } else {
                 setGlobalScores([]);
             }
         } catch (e) {
             console.error("Score fetch failed", e);
         }
-    };
+    }, [FIREBASE_DB]);
 
     useEffect(() => {
         if (isOpen) {
@@ -243,7 +242,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
             }, 0);
             return () => clearTimeout(t);
         }
-    }, [isOpen]);
+    }, [isOpen, fetchGlobalScores]);
 
     // Prevent background scroll when modal is open
     useEffect(() => {
