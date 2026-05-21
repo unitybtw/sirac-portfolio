@@ -1412,7 +1412,7 @@ function App() {
                         animate={{ y: 0, opacity: 1, rotate: 0 }}
                         exit={{ y: 30, opacity: 0, rotate: 90 }}
                         transition={{ duration: 0.3 }}
-                        style={{ position: 'absolute' }}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
                         <Moon size={16} />
                       </motion.div>
@@ -1423,7 +1423,7 @@ function App() {
                         animate={{ y: 0, opacity: 1, rotate: 0 }}
                         exit={{ y: 30, opacity: 0, rotate: 90 }}
                         transition={{ duration: 0.3 }}
-                        style={{ position: 'absolute' }}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                       >
                         <Sun size={16} />
                       </motion.div>
