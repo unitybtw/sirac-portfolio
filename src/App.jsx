@@ -232,12 +232,12 @@ const MatrixBackground = ({ theme, isPaused, matrixRainMode }) => {
 const ScrambleText = ({ text }) => {
   const [displayText, setDisplayText] = useState(text);
   const intervalRef = useRef(null);
-  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*";
-  // Keep a ref to text so triggerScramble never captures a stale closure
   const textRef = useRef(text);
+  const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*";
+
   useEffect(() => { textRef.current = text; }, [text]);
 
-  const triggerScramble = useRef(() => {
+  const triggerScramble = () => {
     let iteration = 0;
     clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
@@ -246,18 +246,19 @@ const ScrambleText = ({ text }) => {
         t.split("").map((letter, index) => {
           if (letter === " ") return " ";
           if (index < iteration) return t[index];
-          return letters[Math.floor(Math.random() * letters.length)];
+          return LETTERS[Math.floor(Math.random() * LETTERS.length)];
         }).join("")
       );
       if (iteration >= t.length) clearInterval(intervalRef.current);
       iteration += 1 / 3;
     }, 30);
-  }).current;
+  };
 
   useEffect(() => {
     triggerScramble();
     return () => clearInterval(intervalRef.current);
-  }, [text, triggerScramble]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [text]);
 
   return (
     <motion.span
@@ -1120,7 +1121,10 @@ function App() {
 
 
   const scrollY = useMotionValue(0);
-  // parallax1/2/3 removed — were declared but never used in JSX
+  // Background icon parallax — used in JSX floating icons
+  const parallax1 = useTransform(scrollY, [0, 1000], [0, -150]);
+  const parallax2 = useTransform(scrollY, [0, 1000], [0, 200]);
+  const parallax3 = useTransform(scrollY, [0, 1000], [0, -100]);
 
   // Mouse-driven transforms
   const terminalX = useTransform(springX, [0, 1920], [-15, 15]);
