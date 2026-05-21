@@ -230,43 +230,10 @@ const MatrixBackground = ({ theme, isPaused, matrixRainMode }) => {
 // ThreeDViewer is now imported lazily from ThreeDViewer.jsx
 
 const ScrambleText = ({ text }) => {
-  const [displayText, setDisplayText] = useState(text);
-  const intervalRef = useRef(null);
-  const textRef = useRef(text);
-  const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%&*";
-
-  useEffect(() => { textRef.current = text; }, [text]);
-
-  const triggerScramble = () => {
-    let iteration = 0;
-    clearInterval(intervalRef.current);
-    intervalRef.current = setInterval(() => {
-      const t = textRef.current;
-      setDisplayText(
-        t.split("").map((letter, index) => {
-          if (letter === " ") return " ";
-          if (index < iteration) return t[index];
-          return LETTERS[Math.floor(Math.random() * LETTERS.length)];
-        }).join("")
-      );
-      if (iteration >= t.length) clearInterval(intervalRef.current);
-      iteration += 1 / 3;
-    }, 30);
-  };
-
-  useEffect(() => {
-    triggerScramble();
-    return () => clearInterval(intervalRef.current);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [text]);
-
   return (
-    <motion.span
-      onMouseEnter={triggerScramble}
-      style={{ display: 'inline-block', cursor: 'default' }}
-    >
-      {displayText}
-    </motion.span>
+    <span style={{ display: 'inline-block', cursor: 'default' }}>
+      {text}
+    </span>
   );
 };
 
