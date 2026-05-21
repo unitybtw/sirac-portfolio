@@ -544,6 +544,7 @@ const TypewriterTitle = ({ title1, title2 }) => {
 
     return (
       <motion.h1
+        layout
         className="hero-title"
         variants={container}
         initial="hidden"
@@ -568,11 +569,17 @@ const TypewriterTitle = ({ title1, title2 }) => {
   }
 
   return (
-    <div style={{ minHeight: '160px', display: 'flex', alignItems: 'center' }}>
-      <h1 style={{ fontFamily: 'monospace', fontSize: 'clamp(1rem, 2.5vw, 1.8rem)', textAlign: 'left', color: 'var(--accent-cyan)', whiteSpace: 'pre-wrap', lineHeight: '1.4', margin: 0 }}>
+    <motion.div 
+      layout
+      style={{ minHeight: '160px', display: 'flex', alignItems: 'center' }}
+    >
+      <motion.h1 
+        layout
+        style={{ fontFamily: 'monospace', fontSize: 'clamp(1rem, 2.5vw, 1.8rem)', textAlign: 'left', color: 'var(--accent-cyan)', whiteSpace: 'pre-wrap', lineHeight: '1.4', margin: 0 }}
+      >
         {text}<span className="cursor-blink">|</span>
-      </h1>
-    </div>
+      </motion.h1>
+    </motion.div>
   );
 };
 
@@ -1454,6 +1461,7 @@ function App() {
           {/* Hero Section */}
           <section className="hero">
             <motion.div
+              layout
               className="hero-content"
               variants={{
                 hidden: { opacity: 0 },
@@ -1469,6 +1477,7 @@ function App() {
               animate="visible"
             >
               <motion.div 
+                layout
                 variants={{
                   hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
@@ -1483,6 +1492,7 @@ function App() {
               </motion.div>
               
               <motion.div
+                layout
                 variants={{
                   hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
@@ -1492,6 +1502,7 @@ function App() {
               </motion.div>
               
               <motion.p 
+                layout
                 variants={{
                   hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
@@ -1502,6 +1513,7 @@ function App() {
               </motion.p>
               
               <motion.div 
+                layout
                 variants={{
                   hidden: { opacity: 0, y: 15 },
                   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }

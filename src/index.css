@@ -515,18 +515,21 @@ nav.scrolled {
   filter: drop-shadow(0 0 30px rgba(var(--accent-cyan-rgb), 0.3));
 }
 
-@keyframes float {
+@keyframes float-terminal {
   0% {
-    transform: translateY(0px) rotateX(2deg) rotateY(-2deg);
+    transform: translateY(0px) rotateX(1deg) rotateY(-1deg);
   }
-
   50% {
-    transform: translateY(-20px) rotateX(-2deg) rotateY(2deg);
+    transform: translateY(-10px) rotateX(-1deg) rotateY(1deg);
   }
-
   100% {
-    transform: translateY(0px) rotateX(2deg) rotateY(-2deg);
+    transform: translateY(0px) rotateX(1deg) rotateY(-1deg);
   }
+}
+
+.code-terminal {
+  animation: float-terminal 8s ease-in-out infinite;
+  transform-style: preserve-3d;
 }
 
 /* Gallery / Projects Section */
