@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, useRef, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { X, Gamepad2, Rocket, Zap, Navigation, Shield, Ghost, Crosshair, Target, Activity, Box, Trophy, User, Save, List, Gem, Compass, Eye } from 'lucide-react';
@@ -197,6 +197,33 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
+
+    const scrollRef = useRef(null);
+    const gridRef = useRef(null);
+
+    // Suppress pointer events during scrolling to save layout re-render & sound node synthesis cost
+    useEffect(() => {
+        const scrollContainer = scrollRef.current;
+        const grid = gridRef.current;
+        if (!scrollContainer || !grid) return;
+
+        let scrollTimeout;
+        const handleScroll = () => {
+            if (!grid.classList.contains('is-scrolling')) {
+                grid.classList.add('is-scrolling');
+            }
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                grid.classList.remove('is-scrolling');
+            }, 150);
+        };
+
+        scrollContainer.addEventListener('scroll', handleScroll, { passive: true });
+        return () => {
+            scrollContainer.removeEventListener('scroll', handleScroll);
+            clearTimeout(scrollTimeout);
+        };
+    }, [isOpen, nickname, showScoreboard, activeGameId]);
 
     const generateRandomNickname = () => {
         const p = RANDOM_PREFIXES[Math.floor(Math.random() * RANDOM_PREFIXES.length)];
@@ -416,7 +443,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                             </button>
                         </div>
 
-                        <div className="arcade-modal-body" data-lenis-prevent style={{ padding: isMobile ? '0.75rem' : '2rem' }}>
+                        <div ref={scrollRef} className="arcade-modal-body" data-lenis-prevent style={{ padding: isMobile ? '0.75rem' : '2rem' }}>
                             <AnimatePresence mode="wait">
                                 {!nickname ? (
                                     /* Nickname Entry View */
@@ -615,7 +642,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                             ))}
                                         </div>
 
-                                        <div className="arcade-games-grid">
+                                        <div ref={gridRef} className="arcade-games-grid">
                                             {gamesList.filter(game => {
                                                 const matchesSearch = game.title.toLowerCase().includes(searchQuery.toLowerCase());
                                                 const matchesTab = activeTab === 'all' || getGameCategory(game.id) === activeTab;
@@ -651,15 +678,15 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                             style={{ '--game-color': game.color }}
                                                         >
                                                             {/* Category tag badge */}
-                                                            <div className="arcade-card-badge" style={{ color: game.color, background: `${game.color}15`, borderColor: `${game.color}33` }}>
+                                                            <div className="arcade-card-badge">
                                                                 {categoryLabels[cat]}
                                                             </div>
 
                                                             {/* Ambient glow */}
-                                                            <div className="arcade-card-glow" style={{ background: `radial-gradient(ellipse at top, ${game.color}33 0%, transparent 70%)` }} />
+                                                            <div className="arcade-card-glow" />
                                                             
                                                             {/* Icon */}
-                                                            <div className="arcade-card-icon" style={{ color: game.color }}>
+                                                            <div className="arcade-card-icon">
                                                                 {game.icon}
                                                             </div>
                                                             
@@ -669,12 +696,12 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                                 <div className="arcade-card-status">
                                                                     <div className="arcade-card-score">
                                                                         {localScores[game.id] ? (
-                                                                            <span className="arcade-score-value">BEST <span style={{ color: game.color, fontWeight: 700 }}>{localScores[game.id]}</span></span>
+                                                                            <span className="arcade-score-value">BEST <span className="arcade-score-number">{localScores[game.id]}</span></span>
                                                                         ) : (
                                                                             <span className="arcade-score-empty">NOT PLAYED</span>
                                                                         )}
                                                                     </div>
-                                                                    <div className="arcade-card-launch" style={{ background: `linear-gradient(90deg, ${game.color}, var(--accent-violet))`, boxShadow: `0 0 10px ${game.color}88` }}>
+                                                                    <div className="arcade-card-launch">
                                                                         LAUNCH ⚡
                                                                     </div>
                                                                 </div>
