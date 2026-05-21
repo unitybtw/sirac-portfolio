@@ -310,14 +310,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
             className="arcade-portal-card"
         >
                 {/* Scanner Beam / Scanline Effect */}
-                <div style={{
-                    position: 'absolute',
-                    top: 0, left: 0, width: '100%', height: '100%',
-                    background: 'linear-gradient(to bottom, transparent, rgba(0, 240, 255, 0.08) 50%, transparent)',
-                    pointerEvents: 'none',
-                    animation: 'scanline-anim 6s infinite linear',
-                    zIndex: 0
-                }} />
+                <div className="arcade-portal-scanline" />
 
                 {/* Rotating bg glow — CSS instead of JS */}
                 <div className="arcade-portal-bg-rotate" />
@@ -423,7 +416,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                             </button>
                         </div>
 
-                        <div data-lenis-prevent style={{ flex: 1, padding: isMobile ? '0.75rem' : '2rem', overflowY: 'auto' }}>
+                        <div className="arcade-modal-body" data-lenis-prevent style={{ padding: isMobile ? '0.75rem' : '2rem' }}>
                             <AnimatePresence mode="wait">
                                 {!nickname ? (
                                     /* Nickname Entry View */
@@ -666,7 +659,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                             <div className="arcade-card-glow" style={{ background: `radial-gradient(ellipse at top, ${game.color}33 0%, transparent 70%)` }} />
                                                             
                                                             {/* Icon */}
-                                                            <div className="arcade-card-icon" style={{ color: game.color, filter: `drop-shadow(0 0 12px ${game.color}66)` }}>
+                                                            <div className="arcade-card-icon" style={{ color: game.color }}>
                                                                 {game.icon}
                                                             </div>
                                                             

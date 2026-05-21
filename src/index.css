@@ -1319,6 +1319,14 @@ nav.scrolled {
   background: rgba(0, 0, 0, 0.2);
 }
 
+.arcade-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
+  contain: layout style;
+}
+
 .arcade-modal-header-left {
   display: flex;
   align-items: center;
@@ -1358,6 +1366,8 @@ nav.scrolled {
               box-shadow 0.25s ease,
               border-color 0.25s ease;
   contain: layout style paint;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 220px;
 }
 
 .arcade-game-card:hover {
@@ -1393,12 +1403,16 @@ nav.scrolled {
   padding: 16px;
   border-radius: 50%;
   border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--game-color, #0ff) 15%, transparent);
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-              filter 0.25s ease;
+              box-shadow 0.25s ease,
+              border-color 0.25s ease;
 }
 
 .arcade-game-card:hover .arcade-card-icon {
   transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--game-color, #0ff) 60%, transparent);
+  border-color: color-mix(in srgb, var(--game-color, #0ff) 40%, transparent);
 }
 
 .arcade-card-info {
@@ -1741,7 +1755,7 @@ nav.scrolled {
   border-radius: 32px;
   padding: 4.5rem 2rem;
   background: linear-gradient(135deg, rgba(var(--accent-cyan-rgb), 0.03) 0%, rgba(5,5,10,0.9) 100%);
-  backdrop-filter: blur(30px);
+  backdrop-filter: blur(8px);
   border: 1px solid var(--border-glass);
   position: relative;
   overflow: hidden;
@@ -1776,6 +1790,23 @@ nav.scrolled {
   animation: portal-slow-rotate 30s linear infinite;
   pointer-events: none;
   z-index: 0;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* Hardware-accelerated Scanline element class */
+.arcade-portal-scanline {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, rgba(0, 240, 255, 0.08) 50%, transparent);
+  pointer-events: none;
+  animation: scanline-anim 6s infinite linear;
+  z-index: 0;
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 @keyframes portal-slow-rotate {
@@ -1808,11 +1839,10 @@ nav.scrolled {
   display: flex;
   gap: 2rem;
   margin-top: 2rem;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(10, 10, 15, 0.85);
   padding: 0.65rem 2.2rem;
   border-radius: 50px;
   border: 1px solid var(--border-glass);
-  backdrop-filter: blur(10px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
