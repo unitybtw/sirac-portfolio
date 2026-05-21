@@ -85,7 +85,7 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
       style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '16px', border: '1px solid var(--border-glass)', willChange: 'transform, opacity' }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <div style={{ color: 'var(--text-main)', opacity: 0.8, background: 'var(--bg-glass)', padding: '10px', borderRadius: '12px' }}>
+        <div className="skill-icon-container" style={{ color: 'var(--text-main)', opacity: 0.8, background: 'var(--bg-glass)', padding: '10px', borderRadius: '12px', transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}>
           {icon}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
@@ -441,7 +441,7 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMut
         </div>
       </div>
 
-      <div ref={terminalBodyRef} style={{ padding: '20px', fontFamily: 'var(--font-code)', fontSize: '0.85rem', color: 'var(--text-main)', lineHeight: '1.6', flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div ref={terminalBodyRef} className="code-terminal-body" style={{ padding: '20px', fontFamily: 'var(--font-code)', fontSize: '0.85rem', color: 'var(--text-main)', lineHeight: '1.6', flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', position: 'relative' }}>
         {history.map((line, index) => {
           let color = 'var(--text-main)';
           if (line.type === 'input') color = '#79c0ff';
@@ -662,7 +662,7 @@ const KonamiGame = ({ onClose }) => {
         <div style={{ color: 'var(--accent-cyan)', fontFamily: 'monospace', fontSize: '1.1rem', marginBottom: '1.5rem', fontWeight: 'bold' }}>
           SCORE: <span style={{ color: 'var(--text-main)' }}>{score}</span>
         </div>
-        <div style={{ 
+        <div className="neon-game-board" style={{ 
           width: '300px', 
           height: '300px', 
           border: '2px solid var(--border-glass)', 
@@ -715,23 +715,48 @@ const KonamiGame = ({ onClose }) => {
             GAME OVER
           </motion.h3>
         )}
-        <motion.button 
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onMouseEnter={playHover}
-          onClick={() => { playClick(); onClose(); }} 
-          className="btn btn-outline glass-panel"
-          style={{ 
-            marginTop: '2rem', 
-            padding: '0.8rem 2rem', 
-            color: 'var(--accent-cyan)', 
-            cursor: 'pointer',
-            fontSize: '0.9rem',
-            letterSpacing: '1px'
-          }}
-        >
-          EXIT SIMULATION
-        </motion.button>
+        <div style={{ display: 'flex', gap: '1rem', marginTop: '2rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+          {gameOver && (
+            <motion.button 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onMouseEnter={playHover}
+              onClick={() => {
+                playSuccess();
+                setSnake([[10, 10]]);
+                setFood([15, 15]);
+                setDir([0, -1]);
+                setGameOver(false);
+                setScore(0);
+              }} 
+              className="btn btn-primary glass-panel"
+              style={{ 
+                padding: '0.8rem 2rem', 
+                fontSize: '0.9rem',
+                letterSpacing: '1px',
+                cursor: 'pointer'
+              }}
+            >
+              RESTART
+            </motion.button>
+          )}
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onMouseEnter={playHover}
+            onClick={() => { playClick(); onClose(); }} 
+            className="btn btn-outline glass-panel"
+            style={{ 
+              padding: '0.8rem 2rem', 
+              color: 'var(--accent-cyan)', 
+              cursor: 'pointer',
+              fontSize: '0.9rem',
+              letterSpacing: '1px'
+            }}
+          >
+            EXIT SIMULATION
+          </motion.button>
+        </div>
       </div>
     </div>
   );
@@ -1671,14 +1696,13 @@ function App() {
                     }}
                   >
                     {/* Node Dot */}
-                    <div style={{ 
-                      position: 'absolute', left: '50%', transform: 'translateX(-50%)', 
-                      width: '16px', height: '16px', borderRadius: '50%', 
-                      background: num > 2 ? 'var(--accent-violet)' : 'var(--accent-cyan)',
-                      boxShadow: `0 0 15px ${num > 2 ? 'var(--accent-violet)' : 'var(--accent-cyan)'}`,
-                      zIndex: 2,
-                      border: '4px solid var(--bg-dark)'
-                    }} />
+                    <div 
+                      className={`timeline-dot ${num > 2 ? 'violet' : 'cyan'}`}
+                      style={{ 
+                        position: 'absolute', left: '50%', transform: 'translateX(-50%)', 
+                        zIndex: 2
+                      }} 
+                    />
 
                     {/* Content Card */}
                     <motion.div 
@@ -1811,7 +1835,7 @@ function App() {
                     }}
                   >
                     {project.image && (
-                      <div style={{ height: '180px', overflow: 'hidden', borderBottom: '1px solid var(--border-glass)', borderRadius: '20px 20px 0 0' }}>
+                      <div style={{ height: '180px', overflow: 'hidden', borderBottom: '1px solid var(--border-glass)', borderRadius: '20px 20px 0 0', position: 'relative' }}>
                         <motion.img
                           src={project.image}
                           alt={project.title}
@@ -1819,6 +1843,7 @@ function App() {
                           whileHover={{ scale: 1.08 }}
                           transition={{ duration: 0.6, ease: "easeOut" }}
                         />
+                        <div className="hologram-overlay" />
                       </div>
                     )}
                     <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
@@ -1906,11 +1931,12 @@ function App() {
               ].map((stat, i) => (
                 <motion.div 
                   key={i} 
+                  className="telemetry-item"
                   whileHover={{ scale: 1.15, transition: { type: 'spring', stiffness: 400, damping: 15 } }}
                   onMouseEnter={playHover}
                   style={{ textAlign: 'center', minWidth: '120px', cursor: 'default' }}
                 >
-                  <div className="stat-icon-wrapper" style={{ color: 'var(--accent-cyan)', marginBottom: '0.5rem', display: 'flex', justifyContent: 'center', transition: 'color 0.2s ease' }}>{stat.icon}</div>
+                  <div className="stat-icon-wrapper" style={{ color: 'var(--accent-cyan)', marginBottom: '0.5rem', display: 'flex', justifyContent: 'center', transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}>{stat.icon}</div>
                   <div style={{ fontSize: isMobileDevice ? '1.4rem' : '1.8rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.2rem' }}>{stat.val}</div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>{stat.label}</div>
                 </motion.div>
