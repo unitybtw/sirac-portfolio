@@ -956,7 +956,7 @@ const TiltCard = ({ children, className }) => {
 };
 
 // --- Magnetic Effect for Interactive Elements ---
-const Magnetic = ({ children }) => {
+const Magnetic = ({ children, className }) => {
   const ref = React.useRef(null);
   const [position, setPosition] = React.useState({ x: 0, y: 0 });
   const [isMobile, setIsMobile] = React.useState(false);
@@ -991,6 +991,7 @@ const Magnetic = ({ children }) => {
   const { x, y } = position;
   return (
     <div
+      className={className}
       style={{ position: "relative", display: "inline-block" }}
       ref={ref}
       onMouseMove={handleMouse}
@@ -1547,35 +1548,11 @@ function App() {
                   onClick={() => { toggleTheme(); playClick(); }}
                   onMouseEnter={playHover}
                   className="theme-toggle-btn-desktop"
-                  style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '38px', height: '38px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: theme === 'dark' ? 'var(--accent-cyan)' : 'var(--accent-cyan)', position: 'relative', overflow: 'hidden' }}
+                  style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '38px', height: '38px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--accent-cyan)', position: 'relative' }}
                   whileHover={{ scale: 1.1, borderColor: 'var(--accent-cyan)' }}
                   whileTap={{ scale: 0.9 }}
                 >
-                  <AnimatePresence mode="wait" initial={false}>
-                    {theme === 'dark' ? (
-                      <motion.div
-                        key="moon"
-                        initial={{ y: -30, opacity: 0, rotate: -90 }}
-                        animate={{ y: 0, opacity: 1, rotate: 0 }}
-                        exit={{ y: 30, opacity: 0, rotate: 90 }}
-                        transition={{ duration: 0.3 }}
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                      >
-                        <Moon size={16} />
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="sun"
-                        initial={{ y: -30, opacity: 0, rotate: -90 }}
-                        animate={{ y: 0, opacity: 1, rotate: 0 }}
-                        exit={{ y: 30, opacity: 0, rotate: 90 }}
-                        transition={{ duration: 0.3 }}
-                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                      >
-                        <Sun size={16} />
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
                 </motion.button>
               </Magnetic>
 
