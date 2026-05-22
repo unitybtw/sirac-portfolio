@@ -1395,9 +1395,9 @@ function App() {
                   onClick={() => { playClick(); setIsArcadeOpen(true); setIsMobileMenuOpen(false); }}
                   onMouseEnter={playHover}
                   className="btn btn-outline glass-panel"
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-cyan)' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-cyan)' }}
                 >
-                  <Gamepad2 size={18} /> {t('arcade_button') || 'Arcade'}
+                  <Gamepad2 size={14} /> {t('arcade_button') || 'Arcade'}
                 </button>
               </Magnetic>
 
