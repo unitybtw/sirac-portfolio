@@ -308,6 +308,7 @@ nav.scrolled {
 .social-icon {
   color: var(--text-muted);
   transition: color 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
 }
 
 .social-icon:hover {
@@ -693,6 +694,7 @@ body.light-mode .nav-links button.btn:hover {
   min-height: 280px;
   background: var(--bg-glass);
   border: 1px solid var(--border-glass);
+  will-change: transform, box-shadow;
 }
 
 .project-card:hover {
@@ -1503,6 +1505,7 @@ body.light-mode .nav-links button.btn:hover {
               box-shadow 0.25s ease,
               background 0.25s ease,
               border-color 0.25s ease;
+  will-change: transform, box-shadow;
 }
 
 .arcade-game-card:hover {

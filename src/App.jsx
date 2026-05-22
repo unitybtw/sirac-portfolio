@@ -36,7 +36,8 @@ const PageProgress = () => {
         height: '4px',
         background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))',
         transformOrigin: '0%',
-        zIndex: 10001
+        zIndex: 10001,
+        willChange: 'transform'
       }}
     />
   );
@@ -931,7 +932,8 @@ const TiltCard = ({ children, className }) => {
         rotateX: isMobile ? 0 : rotateX,
         transformStyle: "preserve-3d",
         perspective: "1000px",
-        position: "relative"
+        position: "relative",
+        willChange: "transform"
       }}
       className={className}
     >
@@ -1092,13 +1094,13 @@ function App() {
   // Initialize Lenis smooth scroll
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.5,
-      easing: (t) => 1 - Math.pow(1 - t, 5), // Quintic out - buttery smooth
+      duration: 1.2,
+      easing: (t) => 1 - Math.pow(1 - t, 4), // Quartic out - punchier and responsive
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 0.95,
-      touchMultiplier: 1.2,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 1.5,
       infinite: false,
     });
 
@@ -1911,7 +1913,8 @@ function App() {
                         padding: '1.5rem', 
                         borderRadius: '24px', 
                         textAlign: num % 2 === 0 ? 'left' : 'right',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
+                        willChange: "transform"
                       }}
                     >
                       <div style={{
