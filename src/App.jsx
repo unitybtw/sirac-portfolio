@@ -1542,11 +1542,12 @@ function App() {
                 </motion.button>
               </Magnetic>
 
-              <Magnetic>
+              <Magnetic className="theme-toggle-container">
                 <motion.button
                   onClick={() => { toggleTheme(); playClick(); }}
                   onMouseEnter={playHover}
-                  style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '38px', height: '38px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--text-main)', position: 'relative', overflow: 'hidden' }}
+                  className="theme-toggle-btn-desktop"
+                  style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '38px', height: '38px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: theme === 'dark' ? 'var(--accent-cyan)' : 'var(--accent-cyan)', position: 'relative', overflow: 'hidden' }}
                   whileHover={{ scale: 1.1, borderColor: 'var(--accent-cyan)' }}
                   whileTap={{ scale: 0.9 }}
                 >

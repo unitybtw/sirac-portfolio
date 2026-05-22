@@ -934,6 +934,20 @@ body.light-mode .nav-links button.btn:hover {
   background: rgba(255, 255, 255, 0.08);
 }
 
+/* Theme toggle desktop button - always visible */
+.theme-toggle-btn-desktop {
+  color: var(--accent-cyan) !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.theme-toggle-container {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Animations & Responsive */
 @media (max-width: 968px) {
   .desktop-only {
@@ -2078,8 +2092,14 @@ body.light-mode .nav-links button.btn:hover {
 
 @media (max-width: 968px) {
   /* Hide desktop utility buttons on mobile so header doesn't wrap/skew */
-  .nav-utilities > :not(.nav-toggle-btn) {
+  /* Keep theme-toggle-container and lang-selector-container visible */
+  .nav-utilities > :not(.nav-toggle-btn):not(.theme-toggle-container):not(.lang-selector-container) {
     display: none !important;
+  }
+
+  /* Keep the theme toggle always visible in the navbar header */
+  .nav-utilities .theme-toggle-container {
+    display: flex !important;
   }
 
   .mobile-menu-utilities {
