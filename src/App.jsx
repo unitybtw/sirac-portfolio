@@ -1019,6 +1019,8 @@ function App() {
   const [activeSection, setActiveSection] = useState('hero');
   const [scrolled, setScrolled] = useState(false);
 
+
+
   useEffect(() => {
     const checkMobile = () => setIsMobileDevice(window.innerWidth <= 968);
     checkMobile();
@@ -1432,6 +1434,7 @@ function App() {
                   {t('nav_about') || 'About'}
                   {!isMobileDevice && activeSection === 'about' && (
                     <motion.span 
+                      key={i18n.language}
                       layoutId="activeNavIndicator" 
                       className="active-nav-indicator" 
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
@@ -1444,6 +1447,7 @@ function App() {
                   {t('nav_timeline') || 'Timeline'}
                   {!isMobileDevice && activeSection === 'timeline' && (
                     <motion.span 
+                      key={i18n.language}
                       layoutId="activeNavIndicator" 
                       className="active-nav-indicator" 
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
@@ -1456,6 +1460,7 @@ function App() {
                   {t('nav_work')}
                   {!isMobileDevice && activeSection === 'projects' && (
                     <motion.span 
+                      key={i18n.language}
                       layoutId="activeNavIndicator" 
                       className="active-nav-indicator" 
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
@@ -1468,6 +1473,7 @@ function App() {
                   {t('nav_skills')}
                   {!isMobileDevice && activeSection === 'skills' && (
                     <motion.span 
+                      key={i18n.language}
                       layoutId="activeNavIndicator" 
                       className="active-nav-indicator" 
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
@@ -1480,6 +1486,7 @@ function App() {
                   {t('nav_contact')}
                   {!isMobileDevice && activeSection === 'contact' && (
                     <motion.span 
+                      key={i18n.language}
                       layoutId="activeNavIndicator" 
                       className="active-nav-indicator" 
                       transition={{ type: 'spring', stiffness: 380, damping: 30 }}
@@ -1544,11 +1551,7 @@ function App() {
                 <Globe size={14} style={{ color: 'var(--text-muted)', marginRight: '2px', zIndex: 1 }} />
                 <div style={{ position: 'relative', display: 'flex', gap: '5px', alignItems: 'center' }}>
                   {/* Sliding Background */}
-                  <motion.div
-                    animate={{
-                      x: i18n.language?.startsWith('tr') ? 37 : 0
-                    }}
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                  <div
                     style={{
                       position: 'absolute',
                       left: 0,
@@ -1563,7 +1566,9 @@ function App() {
                       borderTop: '1px solid rgba(255, 255, 255, 0.2)',
                       borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
                       boxShadow: '0 4px 12px rgba(var(--accent-cyan-rgb), 0.15), inset 0 2px 4px rgba(255, 255, 255, 0.05)',
-                      zIndex: 0
+                      zIndex: 0,
+                      transform: `translateX(${i18n.language?.startsWith('tr') ? 37 : 0}px)`,
+                      transition: 'transform 0.25s cubic-bezier(0.16, 1, 0.3, 1)'
                     }}
                   />
                   
