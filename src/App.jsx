@@ -1303,7 +1303,7 @@ function App() {
 
           <nav className={`glass-panel ${scrolled ? 'scrolled' : ''}`}>
             <div className="nav-logo" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="Logo" style={{ width: '28px', height: '28px', filter: 'drop-shadow(0 0 8px #00f0ff)' }} />
+              <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="Logo" style={{ width: '28px', height: '28px', filter: 'drop-shadow(0 0 8px var(--accent-cyan))' }} />
               <h1 className="text-gradient">{t('nav_name') || 'SIRAÇ GÖKTUĞ ŞİMŞEK.'}</h1>
             </div>
             
