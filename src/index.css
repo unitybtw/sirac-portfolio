@@ -57,6 +57,11 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
+/* Ensure iframes inside the active game container/arcade modal can ALWAYS be clicked/focused */
+.arcade-modal-overlay iframe {
+  pointer-events: auto !important;
+}
+
 * {
   margin: 0;
   padding: 0;
