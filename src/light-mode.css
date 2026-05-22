@@ -7,8 +7,20 @@ body.light-mode {
     --border-glass-glow: rgba(37, 99, 235, 0.15);
     --accent-cyan: #2563eb;
     --accent-violet: #7c3aed;
+    --accent-pink: #db2777;
     --accent-cyan-rgb: 37, 99, 235;
     --accent-violet-rgb: 124, 58, 237;
+    --accent-pink-rgb: 219, 39, 119;
+
+    /* Terminal Colors (Light Mode) */
+    --terminal-prompt: rgba(15, 23, 42, 0.4);
+    --terminal-input: #1e40af;
+    --terminal-success: #166534;
+    --terminal-error: #991b1b;
+    --terminal-info: var(--accent-cyan);
+    --terminal-orange: #c2410c;
+    --terminal-progress-bg: rgba(0, 0, 0, 0.1);
+
     --text-main: #0f172a;
     --text-muted: #475569;
 }
@@ -144,4 +156,24 @@ body.light-mode .arcade-portal-stats {
 
 body.light-mode .arcade-portal-divider {
     background: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Light Mode Selection & Scrollbar Overrides */
+body.light-mode ::selection {
+    background: rgba(37, 99, 235, 0.15) !important;
+    color: var(--text-main) !important;
+}
+
+body.light-mode ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.03) !important;
+}
+
+body.light-mode ::-webkit-scrollbar-thumb {
+    background: linear-gradient(var(--bg-dark), var(--bg-dark)) padding-box,
+                linear-gradient(to bottom, var(--accent-cyan), var(--accent-violet), var(--accent-pink)) border-box !important;
+}
+
+body.light-mode ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(var(--bg-dark), var(--bg-dark)) padding-box,
+                linear-gradient(to bottom, var(--accent-pink), var(--accent-cyan), var(--accent-violet)) border-box !important;
 }

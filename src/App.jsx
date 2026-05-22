@@ -239,6 +239,130 @@ const ScrambleText = ({ text }) => {
 // Preloader removed — site loads instantly
 // CyberCursor removed — using native cursor
 
+const formatTerminalText = (text, type) => {
+  if (type === 'input') {
+    const parts = text.split('sirac@iku:~$ ');
+    if (parts.length > 1) {
+      return (
+        <>
+          <span style={{ color: 'var(--terminal-prompt)' }}>sirac@iku:~$ </span>
+          <span style={{ color: 'var(--accent-cyan)', fontWeight: 600 }}>{parts[1]}</span>
+        </>
+      );
+    }
+  }
+  
+  if (text.includes('[OK]')) {
+    const parts = text.split('[OK]');
+    return (
+      <>
+        {parts[0]}
+        <span style={{ color: 'var(--terminal-success)', fontWeight: 'bold' }}>[OK]</span>
+        {parts.slice(1).join('[OK]')}
+      </>
+    );
+  }
+  
+  if (text.includes('ACCESS GRANTED')) {
+    return (
+      <>
+        <span style={{ color: 'var(--terminal-success)', fontWeight: 'bold', textShadow: '0 0 10px var(--border-glass-glow)' }}>ACCESS GRANTED.</span>
+        {text.replace('ACCESS GRANTED.', '')}
+      </>
+    );
+  }
+
+  if (text.includes('CLASSIFIED IDENTITY:')) {
+    return (
+      <>
+        <span style={{ color: 'var(--accent-pink)', fontWeight: 'bold' }}>CLASSIFIED IDENTITY: </span>
+        <span style={{ color: 'var(--accent-cyan)' }}>{text.replace('CLASSIFIED IDENTITY: ', '')}</span>
+      </>
+    );
+  }
+
+  if (text.includes('Role:')) {
+    return (
+      <>
+        <span style={{ color: 'var(--terminal-orange)' }}>Role:</span>
+        {text.replace('Role:', '')}
+      </>
+    );
+  }
+
+  if (text.includes('SYSTEM CAPABILITIES LOG:')) {
+    return <span style={{ color: 'var(--accent-pink)', fontWeight: 'bold' }}>{text}</span>;
+  }
+
+  if (text.includes('[|||||||||||||||||||]')) {
+    const parts = text.split(' [');
+    const progressParts = parts[1].split('] ');
+    return (
+      <>
+        <span style={{ color: 'var(--text-main)' }}>{parts[0]}</span>
+        <span style={{ color: 'var(--terminal-progress-bg)' }}> [</span>
+        <span style={{ color: 'var(--accent-cyan)' }}>{progressParts[0]}</span>
+        <span style={{ color: 'var(--terminal-progress-bg)' }}>] </span>
+        <span style={{ color: 'var(--terminal-success)', fontWeight: 'bold' }}>{progressParts[1]}</span>
+      </>
+    );
+  }
+
+  if (text.includes('[||||||||||||||||  ]')) {
+    const parts = text.split(' [');
+    const progressParts = parts[1].split('] ');
+    return (
+      <>
+        <span style={{ color: 'var(--text-main)' }}>{parts[0]}</span>
+        <span style={{ color: 'var(--terminal-progress-bg)' }}> [</span>
+        <span style={{ color: 'var(--accent-violet)' }}>{progressParts[0]}</span>
+        <span style={{ color: 'var(--terminal-progress-bg)' }}>] </span>
+        <span style={{ color: 'var(--terminal-success)', fontWeight: 'bold' }}>{progressParts[1]}</span>
+      </>
+    );
+  }
+
+  if (text.includes('[||||||||||||||||| ]')) {
+    const parts = text.split(' [');
+    const progressParts = parts[1].split('] ');
+    return (
+      <>
+        <span style={{ color: 'var(--text-main)' }}>{parts[0]}</span>
+        <span style={{ color: 'var(--terminal-progress-bg)' }}> [</span>
+        <span style={{ color: 'var(--accent-pink)' }}>{progressParts[0]}</span>
+        <span style={{ color: 'var(--terminal-progress-bg)' }}>] </span>
+        <span style={{ color: 'var(--terminal-success)', fontWeight: 'bold' }}>{progressParts[1]}</span>
+      </>
+    );
+  }
+
+  if (text.includes('[|||||||||||||||   ]')) {
+    const parts = text.split(' [');
+    const progressParts = parts[1].split('] ');
+    return (
+      <>
+        <span style={{ color: 'var(--text-main)' }}>{parts[0]}</span>
+        <span style={{ color: 'var(--terminal-progress-bg)' }}> [</span>
+        <span style={{ color: 'var(--accent-cyan)' }}>{progressParts[0]}</span>
+        <span style={{ color: 'var(--terminal-progress-bg)' }}>] </span>
+        <span style={{ color: 'var(--terminal-success)', fontWeight: 'bold' }}>{progressParts[1]}</span>
+      </>
+    );
+  }
+
+  if (text.startsWith('  ') && text.includes(' - ')) {
+    const parts = text.split(' - ');
+    return (
+      <>
+        <span style={{ color: 'var(--accent-cyan)', fontWeight: 600 }}>{parts[0]}</span>
+        <span style={{ color: 'var(--text-muted)' }}> - {parts[1]}</span>
+      </>
+    );
+  }
+
+  return text;
+};
+
 const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMute, matrixRainMode, setMatrixRainMode, setShowSecretGame }) => {
   const [history, setHistory] = useState([
     { type: 'log', text: 'SYSTEM ONLINE // v2.5' },
@@ -390,8 +514,10 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMut
       style={{
         width: '100%', maxWidth: '500px', borderRadius: '16px', overflow: 'hidden',
         border: isFocused ? '1px solid var(--accent-cyan)' : '1px solid var(--border-glass)', 
-        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.6)',
-        textAlign: 'left', background: 'var(--bg-glass)', backdropFilter: 'blur(12px)',
+        boxShadow: isFocused 
+          ? '0 20px 40px -10px rgba(var(--accent-cyan-rgb), 0.25), 0 0 15px rgba(var(--accent-cyan-rgb), 0.1)' 
+          : '0 25px 50px -12px rgba(0,0,0,0.6)',
+        textAlign: 'left', background: 'var(--bg-glass)', backdropFilter: 'var(--glass-blur)',
         cursor: 'text', height: '360px', display: 'flex', flexDirection: 'column',
         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
       }}
@@ -410,10 +536,10 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMut
       <div ref={terminalBodyRef} className="code-terminal-body" style={{ padding: '20px', fontFamily: 'var(--font-code)', fontSize: '0.85rem', color: 'var(--text-main)', lineHeight: '1.6', flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '8px', position: 'relative' }}>
         {history.map((line, index) => {
           let color = 'var(--text-main)';
-          if (line.type === 'input') color = '#79c0ff';
-          else if (line.type === 'success') color = '#7ee787';
-          else if (line.type === 'error') color = '#ff7b72';
-          else if (line.type === 'info') color = 'var(--accent-cyan)';
+          if (line.type === 'input') color = 'var(--terminal-input)';
+          else if (line.type === 'success') color = 'var(--terminal-success)';
+          else if (line.type === 'error') color = 'var(--terminal-error)';
+          else if (line.type === 'info') color = 'var(--terminal-info)';
           
           return (
             <motion.div 
@@ -423,13 +549,13 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMut
               transition={{ duration: 0.2, ease: "easeOut" }}
               style={{ color, whiteSpace: 'pre-wrap' }}
             >
-              {line.text}
+              {formatTerminalText(line.text, line.type)}
             </motion.div>
           );
         })}
       </div>
 
-      <div style={{ padding: '12px 20px', background: 'rgba(0,0,0,0.2)', borderTop: '1px solid var(--border-glass)', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-code)', fontSize: '16px' }}>
+      <div style={{ padding: '12px 20px', background: 'rgba(0,0,0,0.15)', borderTop: '1px solid var(--border-glass)', display: 'flex', alignItems: 'center', gap: '8px', fontFamily: 'var(--font-code)', fontSize: '16px' }}>
         <span style={{ color: '#7ee787' }}>sirac@iku:~$</span>
         <input
           ref={inputRef}
