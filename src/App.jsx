@@ -1441,7 +1441,7 @@ function App() {
             </div>
 
             {/* Nav Utilities - ALWAYS visible on right */}
-            <div className="nav-utilities" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div className="nav-utilities">
               <div className="lang-selector-container" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'var(--bg-glass)', padding: '0.3rem 0.6rem', borderRadius: '20px', border: '1px solid var(--border-glass)', position: 'relative' }}>
                 <Globe size={14} style={{ color: 'var(--text-muted)', marginRight: '2px', zIndex: 1 }} />
                 <motion.button 

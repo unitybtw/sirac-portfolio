@@ -287,6 +287,7 @@ nav.glass-panel {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 2rem;
   border-radius: 100px;
   background: rgba(10, 10, 15, 0.6);
   backdrop-filter: blur(32px) saturate(200%);
@@ -334,6 +335,7 @@ nav.scrolled {
   nav.glass-panel {
     width: 98%;
     padding: 0.5rem 0.8rem;
+    gap: 1.2rem;
   }
   .nav-links button.btn {
     padding: 0.35rem 0.7rem !important;
@@ -342,14 +344,26 @@ nav.scrolled {
 }
 
 .nav-logo {
-  flex: initial;
-  margin-right: 1rem;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  margin-right: 0;
 }
 
 .nav-links {
   display: flex;
   gap: 0.8rem;
   align-items: center;
+  flex: initial;
+  justify-content: center;
+}
+
+.nav-utilities {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.8rem;
 }
 
 .nav-links a {
@@ -955,10 +969,13 @@ body.light-mode .nav-links button.btn:hover {
 
   .nav-logo {
     order: 1;
+    flex: initial;
   }
 
   .nav-utilities {
     order: 2;
+    flex: initial;
+    gap: 0.5rem;
   }
 
   .nav-links {
