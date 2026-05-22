@@ -1,28 +1,29 @@
 body.light-mode {
-    --bg-dark: #f8fafc;
-    --bg-darker: #f1f5f9;
-    --bg-glass: rgba(255, 255, 255, 0.75);
+    --bg-dark: #f6f8fa;        /* GitHub Light Bg */
+    --bg-darker: #ffffff;      /* GitHub Light Darker */
+    --bg-glass: rgba(246, 248, 250, 0.75);
     --bg-glass-hover: rgba(255, 255, 255, 0.9);
-    --border-glass: rgba(15, 23, 42, 0.06);
-    --border-glass-glow: rgba(5, 150, 105, 0.1);
-    --accent-cyan: #059669;
-    --accent-violet: #0d9488;
-    --accent-pink: #d97706;
-    --accent-cyan-rgb: 5, 150, 105;
-    --accent-violet-rgb: 13, 148, 136;
-    --accent-pink-rgb: 217, 119, 6;
+    --border-glass: rgba(208, 215, 222, 0.5);
+    --border-glass-glow: rgba(9, 105, 218, 0.15);
+    --accent-cyan: #0969da;    /* GitHub Blue */
+    --accent-violet: #1a7f37;  /* GitHub Green */
+    --accent-pink: #bc4c00;    /* GitHub Pumpkin Orange */
+    --accent-cyan-rgb: 9, 105, 218;
+    --accent-violet-rgb: 26, 127, 55;
+    --accent-pink-rgb: 188, 76, 0;
 
-    /* Terminal Colors (Light Mode) */
-    --terminal-prompt: rgba(15, 23, 42, 0.4);
-    --terminal-input: #0d9488;
-    --terminal-success: #059669;
-    --terminal-error: #b91c1c;
-    --terminal-info: var(--accent-cyan);
-    --terminal-orange: #d97706;
+    /* Terminal Colors (GitHub Light Style) */
+    --terminal-prompt: rgba(36, 41, 47, 0.4);
+    --terminal-input: #0969da;
+    --terminal-success: #1a7f37;
+    --terminal-error: #cf222e;
+    --terminal-info: #0969da;
+    --terminal-orange: #bc4c00;
     --terminal-progress-bg: rgba(0, 0, 0, 0.08);
 
-    --text-main: #0f172a;
-    --text-muted: #475569;
+    --text-main: #24292f;      /* GitHub Dark Gray Text */
+    --text-headers: #24292f;
+    --text-muted: #57606a;     /* GitHub Light Muted Text */
 }
 
 body.light-mode .text-gradient {

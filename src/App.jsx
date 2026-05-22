@@ -236,6 +236,26 @@ const ScrambleText = ({ text }) => {
   );
 };
 
+const SyntaxHighlightedTitle = ({ text }) => {
+  if (!text) return null;
+  if (text.startsWith('//') && text.includes('<') && text.includes('/>')) {
+    const commentIndex = text.indexOf('//');
+    const tagStartIndex = text.indexOf('<');
+    const tagEndIndex = text.indexOf('/>');
+    const commentPart = text.substring(commentIndex, tagStartIndex);
+    const tagContent = text.substring(tagStartIndex + 1, tagEndIndex).trim();
+    return (
+      <span className="developer-title">
+        <span className="code-comment">{commentPart}</span>
+        <span className="code-bracket">&lt;</span>
+        <span className="code-tag">{tagContent}</span>
+        <span className="code-bracket">/&gt;</span>
+      </span>
+    );
+  }
+  return <span>{text}</span>;
+};
+
 // Preloader removed — site loads instantly
 // CyberCursor removed — using native cursor
 
@@ -1718,7 +1738,7 @@ function App() {
             
             <div className="about-left">
               <div className="about-header">
-                <h2 className="section-title text-gradient" style={{ letterSpacing: '-0.02em' }}><ScrambleText text={t('about_title')} /></h2>
+                <h2 className="section-title text-gradient" style={{ letterSpacing: '-0.02em' }}><SyntaxHighlightedTitle text={t('about_title')} /></h2>
                 <p style={{ color: 'var(--accent-cyan)', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', fontSize: '0.85rem' }}>{t('about_subtitle')}</p>
               </div>
               <p style={{ color: 'var(--text-main)', fontSize: '1.2rem', lineHeight: 1.8, marginBottom: '1.5rem', fontWeight: 500 }}>
@@ -1775,7 +1795,7 @@ function App() {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="section-title text-gradient"><ScrambleText text={t('timeline_title')} /></h2>
+              <h2 className="section-title text-gradient"><SyntaxHighlightedTitle text={t('timeline_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('timeline_subtitle')}</p>
             </motion.div>
             
@@ -1871,7 +1891,7 @@ function App() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="section-title text-gradient"><ScrambleText text={t('featured_title')} /></h2>
+              <h2 className="section-title text-gradient"><SyntaxHighlightedTitle text={t('featured_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('featured_subtitle')}</p>
             </motion.div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2rem', marginTop: '3rem' }}>
@@ -1912,7 +1932,7 @@ function App() {
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="section-title text-gradient"><ScrambleText text={t('archives_title')} /></h2>
+              <h2 className="section-title text-gradient"><SyntaxHighlightedTitle text={t('archives_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('archives_subtitle')}</p>
             </motion.div>
             <motion.div 
@@ -1979,7 +1999,7 @@ function App() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="section-title text-gradient"><ScrambleText text={t('arcade_section_title') || 'ARCADE UNIVERSE'} /></h2>
+              <h2 className="section-title text-gradient"><SyntaxHighlightedTitle text={t('arcade_section_title') || 'ARCADE UNIVERSE'} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('arcade_section_subtitle')}</p>
             </motion.div>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -2005,7 +2025,7 @@ function App() {
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
             <div className="section-header">
-              <h2 className="section-title text-gradient"><ScrambleText text={t('skills_title')} /></h2>
+              <h2 className="section-title text-gradient"><SyntaxHighlightedTitle text={t('skills_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('skills_subtitle')}</p>
             </div>
             <div className="skills-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2rem', marginTop: '3rem' }}>
@@ -2079,7 +2099,7 @@ function App() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.6 }}
             >
-              <h3 className="text-gradient" style={{ fontSize: '2rem', marginBottom: '1rem' }}>{t('footer_title')}</h3>
+              <h3 className="section-title text-gradient" style={{ fontSize: '2.5rem', marginBottom: '1rem', width: '100%', display: 'flex', justifyContent: 'center' }}><SyntaxHighlightedTitle text={t('footer_title')} /></h3>
               <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>{t('footer_subtitle')}</p>
 
               <div className="footer-contact">
