@@ -1,25 +1,25 @@
 :root {
-  --bg-dark: #07090e;
-  --bg-darker: #030407;
-  --bg-glass: rgba(10, 12, 18, 0.55);
-  --bg-glass-hover: rgba(20, 24, 36, 0.7);
-  --border-glass: rgba(255, 255, 255, 0.08);
-  --border-glass-glow: rgba(0, 243, 255, 0.2);
-  --accent-cyan: #00f3ff;
-  --accent-violet: #d633ff;
-  --accent-pink: #ff2a85;
-  --accent-cyan-rgb: 0, 243, 255;
-  --accent-violet-rgb: 214, 51, 255;
-  --accent-pink-rgb: 255, 42, 133;
+  --bg-dark: #0b1120;
+  --bg-darker: #070a13;
+  --bg-glass: rgba(15, 23, 42, 0.65);
+  --bg-glass-hover: rgba(30, 41, 59, 0.8);
+  --border-glass: rgba(255, 255, 255, 0.06);
+  --border-glass-glow: rgba(52, 211, 153, 0.15);
+  --accent-cyan: #34d399;
+  --accent-violet: #2dd4bf;
+  --accent-pink: #f59e0b;
+  --accent-cyan-rgb: 52, 211, 153;
+  --accent-violet-rgb: 45, 212, 191;
+  --accent-pink-rgb: 245, 158, 11;
 
   /* Terminal Colors */
   --terminal-prompt: rgba(255, 255, 255, 0.4);
-  --terminal-input: #79c0ff;
-  --terminal-success: #50fa7b;
-  --terminal-error: #ff7b72;
-  --terminal-info: var(--accent-cyan);
-  --terminal-orange: #ffb86c;
-  --terminal-progress-bg: rgba(255, 255, 255, 0.2);
+  --terminal-input: #2dd4bf;
+  --terminal-success: #34d399;
+  --terminal-error: #f87171;
+  --terminal-info: var(--accent-pink);
+  --terminal-orange: #f59e0b;
+  --terminal-progress-bg: rgba(255, 255, 255, 0.15);
 
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
@@ -142,7 +142,7 @@ h1, h2, h3, h4, h5, h6 {
 .cyber-bg::before {
   width: 60vw;
   height: 60vw;
-  background: radial-gradient(circle, rgba(0, 212, 255, 0.12) 0%, rgba(0, 70, 255, 0.03) 45%, transparent 70%);
+  background: radial-gradient(circle, rgba(var(--accent-cyan-rgb), 0.12) 0%, rgba(var(--accent-cyan-rgb), 0.03) 45%, transparent 70%);
   top: -10%;
   left: -10%;
   animation: float-blob-1 25s infinite alternate ease-in-out;
@@ -151,7 +151,7 @@ h1, h2, h3, h4, h5, h6 {
 .cyber-bg::after {
   width: 55vw;
   height: 55vw;
-  background: radial-gradient(circle, rgba(140, 60, 230, 0.12) 0%, rgba(200, 40, 150, 0.03) 45%, transparent 70%);
+  background: radial-gradient(circle, rgba(var(--accent-violet-rgb), 0.12) 0%, rgba(var(--accent-violet-rgb), 0.03) 45%, transparent 70%);
   bottom: -10%;
   right: -10%;
   animation: float-blob-2 20s infinite alternate ease-in-out;
@@ -160,7 +160,7 @@ h1, h2, h3, h4, h5, h6 {
 .cyber-bg-blob-3 {
   width: 48vw;
   height: 48vw;
-  background: radial-gradient(circle, rgba(192, 132, 252, 0.04) 0%, rgba(100, 43, 200, 0.01) 45%, transparent 70%);
+  background: radial-gradient(circle, rgba(var(--accent-pink-rgb), 0.08) 0%, rgba(var(--accent-pink-rgb), 0.02) 45%, transparent 70%);
   top: 35%;
   right: 15%;
   animation: float-blob-3 30s infinite alternate ease-in-out;
@@ -169,7 +169,7 @@ h1, h2, h3, h4, h5, h6 {
 .cyber-bg-blob-4 {
   width: 42vw;
   height: 42vw;
-  background: radial-gradient(circle, rgba(96, 165, 250, 0.03) 0%, rgba(37, 99, 235, 0.01) 45%, transparent 70%);
+  background: radial-gradient(circle, rgba(var(--accent-cyan-rgb), 0.08) 0%, rgba(var(--accent-cyan-rgb), 0.02) 45%, transparent 70%);
   bottom: 25%;
   left: 20%;
   animation: float-blob-4 22s infinite alternate ease-in-out;

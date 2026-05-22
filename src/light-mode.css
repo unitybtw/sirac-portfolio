@@ -1,25 +1,25 @@
 body.light-mode {
     --bg-dark: #f8fafc;
     --bg-darker: #f1f5f9;
-    --bg-glass: rgba(255, 255, 255, 0.7);
-    --bg-glass-hover: rgba(255, 255, 255, 0.85);
-    --border-glass: rgba(15, 23, 42, 0.08);
-    --border-glass-glow: rgba(37, 99, 235, 0.15);
-    --accent-cyan: #2563eb;
-    --accent-violet: #7c3aed;
-    --accent-pink: #db2777;
-    --accent-cyan-rgb: 37, 99, 235;
-    --accent-violet-rgb: 124, 58, 237;
-    --accent-pink-rgb: 219, 39, 119;
+    --bg-glass: rgba(255, 255, 255, 0.75);
+    --bg-glass-hover: rgba(255, 255, 255, 0.9);
+    --border-glass: rgba(15, 23, 42, 0.06);
+    --border-glass-glow: rgba(5, 150, 105, 0.1);
+    --accent-cyan: #059669;
+    --accent-violet: #0d9488;
+    --accent-pink: #d97706;
+    --accent-cyan-rgb: 5, 150, 105;
+    --accent-violet-rgb: 13, 148, 136;
+    --accent-pink-rgb: 217, 119, 6;
 
     /* Terminal Colors (Light Mode) */
     --terminal-prompt: rgba(15, 23, 42, 0.4);
-    --terminal-input: #1e40af;
-    --terminal-success: #166534;
-    --terminal-error: #991b1b;
+    --terminal-input: #0d9488;
+    --terminal-success: #059669;
+    --terminal-error: #b91c1c;
     --terminal-info: var(--accent-cyan);
-    --terminal-orange: #c2410c;
-    --terminal-progress-bg: rgba(0, 0, 0, 0.1);
+    --terminal-orange: #d97706;
+    --terminal-progress-bg: rgba(0, 0, 0, 0.08);
 
     --text-main: #0f172a;
     --text-muted: #475569;
