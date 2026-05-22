@@ -11,7 +11,7 @@ export const getMutedState = () => isMuted;
 
 const getAudioContext = () => {
   if (!audioCtx) {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    audioCtx = window.sharedAudioCtx || (window.sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)());
   }
   if (audioCtx.state === 'suspended') {
     audioCtx.resume();

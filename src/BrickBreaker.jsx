@@ -10,7 +10,10 @@ const BrickBreaker = ({ onGameOver }) => {
 // --- Audio Helper ---
 const playSound = (type) => {
     try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const audioCtx = window.sharedAudioCtx || (window.sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)());
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume().catch(() => {});
+        }
         const osc = audioCtx.createOscillator();
         const gainNode = audioCtx.createGain();
         osc.connect(gainNode);
@@ -116,8 +119,8 @@ const playSound = (type) => {
             if (paddle.x + paddle.w > canvas.width) paddle.x = canvas.width - paddle.w;
 
             ball.x += ball.dx; ball.y += ball.dy;
-            if (ball.x - ball.r < 0 || ball.x + ball.r > canvas.width) ball.dx *= -1; playSound('bump');
-            if (ball.y - ball.r < 0) ball.dy *= -1; playSound('bump');
+            if (ball.x - ball.r < 0 || ball.x + ball.r > canvas.width) { ball.dx *= -1; playSound('bump'); }
+            if (ball.y - ball.r < 0) { ball.dy *= -1; playSound('bump'); }
 
             if (ball.y + ball.r > canvas.height) {
                 { playSound('boom'); if (onGameOver) onGameOver(currentScore); setIsPlaying(false); return; } // Game Over

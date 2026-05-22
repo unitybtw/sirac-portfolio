@@ -10,7 +10,10 @@ const CyberGolf = ({ onGameOver }) => {
     // --- Audio Helper ---
     const playSound = (type) => {
         try {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const audioCtx = window.sharedAudioCtx || (window.sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)());
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume().catch(() => {});
+        }
             const osc = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
             osc.connect(gainNode);
@@ -118,8 +121,8 @@ const CyberGolf = ({ onGameOver }) => {
             ball.vx *= 0.98; ball.vy *= 0.98;
 
             // Bounds
-            if (ball.x < ball.r || ball.x > canvas.width - ball.r) ball.vx *= -1; playSound('bump');
-            if (ball.y < ball.r || ball.y > canvas.height - ball.r) ball.vy *= -1; playSound('bump');
+            if (ball.x < ball.r || ball.x > canvas.width - ball.r) { ball.vx *= -1; playSound('bump'); }
+            if (ball.y < ball.r || ball.y > canvas.height - ball.r) { ball.vy *= -1; playSound('bump'); }
 
             // Walls collision
             walls.forEach(w => {

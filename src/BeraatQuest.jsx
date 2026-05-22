@@ -3,7 +3,10 @@ import { Play } from 'lucide-react';
 
 const playScareSound = () => {
     try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const audioCtx = window.sharedAudioCtx || (window.sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)());
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume().catch(() => {});
+        }
 
         // Create multiple oscillators for a dissonant, screeching chord
         const playOsc = (type, freq, detune) => {

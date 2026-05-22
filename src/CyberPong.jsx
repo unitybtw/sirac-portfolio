@@ -10,7 +10,10 @@ const CyberPong = ({ onGameOver }) => {
     // --- Audio Helper ---
     const playSound = (type) => {
         try {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const audioCtx = window.sharedAudioCtx || (window.sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)());
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume().catch(() => {});
+        }
             const osc = audioCtx.createOscillator();
             const gainNode = audioCtx.createGain();
             osc.connect(gainNode);
@@ -133,7 +136,7 @@ const CyberPong = ({ onGameOver }) => {
             ball.x += ball.dx; ball.y += ball.dy;
 
             // Wall collision
-            if (ball.y - ball.r < 0 || ball.y + ball.r > canvas.height) ball.dy *= -1; playSound('bump');
+            if (ball.y - ball.r < 0 || ball.y + ball.r > canvas.height) { ball.dy *= -1; playSound('bump'); }
 
             // Paddle collision
             if (ball.dx < 0 && ball.x - ball.r < p.x + p.w && ball.y > p.y && ball.y < p.y + p.h) {
