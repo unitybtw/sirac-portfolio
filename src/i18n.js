@@ -5,6 +5,7 @@ const resources = {
     en: {
         translation: {
             "nav_name": "SIRAÇ GÖKTUĞ ŞİMŞEK.",
+            "nav_name_mobile": "SIRAÇ.",
             "nav_work": "projects.git",
             "nav_skills": "skills.css",
             "nav_about": "about.jsx",
@@ -180,6 +181,7 @@ const resources = {
     tr: {
         translation: {
             "nav_name": "SİRAÇ GÖKTUĞ ŞİMŞEK.",
+            "nav_name_mobile": "SİRAÇ.",
             "nav_work": "projects.git",
             "nav_skills": "skills.css",
             "nav_about": "about.jsx",

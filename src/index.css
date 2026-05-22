@@ -281,13 +281,13 @@ nav.glass-panel {
   transform: translate3d(-50%, 0, 0);
   -webkit-transform: translate3d(-50%, 0, 0);
   width: 95%; /* Increased from 90% */
-  max-width: 1300px; /* Increased from 1200px */
+  max-width: 1350px; /* Increased from 1300px to allow slightly more width */
   padding: 0.65rem 1.25rem;
   z-index: 1000;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 2rem;
+  gap: 1.25rem; /* Decreased gap to fit on standard desktop resolutions */
   border-radius: 100px;
   background: rgba(10, 10, 15, 0.6);
   backdrop-filter: blur(32px) saturate(200%);
@@ -322,7 +322,7 @@ nav.scrolled {
   white-space: nowrap;
 }
 
-@media (max-width: 1250px) {
+@media (max-width: 1366px) { /* Increased breakpoint from 1250px to fit elements perfectly on 1280px-1366px screens */
   .nav-logo h1 {
     font-size: 0.95rem;
   }
@@ -352,7 +352,7 @@ nav.scrolled {
 
 .nav-links {
   display: flex;
-  gap: 0.8rem;
+  gap: 0.55rem; /* Reduced gap on desktop */
   align-items: center;
   flex: initial;
   justify-content: center;
@@ -363,7 +363,7 @@ nav.scrolled {
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.6rem; /* Reduced gap on desktop */
 }
 
 .nav-links a {
@@ -372,13 +372,13 @@ nav.scrolled {
   font-weight: 500;
   font-size: 0.82rem;
   font-family: var(--font-code);
-  padding: 0.45rem 0.9rem;
+  padding: 0.4rem 0.75rem; /* Reduced padding on desktop */
   border-radius: 20px;
   transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px; /* Reduced gap between text and active dot */
 }
 
 .nav-links a:hover {
@@ -948,10 +948,23 @@ body.light-mode .nav-links button.btn:hover {
   justify-content: center;
 }
 
+/* Responsive visibility inline utilities */
+.mobile-only-inline {
+  display: none !important;
+}
+
 /* Animations & Responsive */
 @media (max-width: 968px) {
   .desktop-only {
     display: none !important;
+  }
+
+  .desktop-only-inline {
+    display: none !important;
+  }
+
+  .mobile-only-inline {
+    display: inline !important;
   }
 
   nav.glass-panel {
@@ -979,16 +992,21 @@ body.light-mode .nav-links button.btn:hover {
 
   .nav-logo h1 {
     font-size: 1.2rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .nav-logo {
     order: 1;
-    flex: initial;
+    flex: 1;
+    min-width: 0;
   }
 
   .nav-utilities {
     order: 2;
     flex: initial;
+    flex-shrink: 0;
     gap: 0.5rem;
   }
 
@@ -1418,7 +1436,7 @@ body.light-mode .nav-links button.btn:hover {
   height: 100vh;
   height: 100dvh;
   /* Fully opaque — lets browser skip compositing everything behind the modal */
-  background: rgb(5, 5, 8);
+  background: var(--bg-dark);
   z-index: 100000;
   display: flex;
   flex-direction: column;
@@ -1467,8 +1485,8 @@ body.light-mode .nav-links button.btn:hover {
 }
 
 .arcade-game-card {
-  background: rgba(20, 20, 30, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
   border-radius: 20px;
   padding: 2rem 1rem 1.5rem 1rem;
   cursor: pointer;
@@ -1483,6 +1501,7 @@ body.light-mode .nav-links button.btn:hover {
   contain-intrinsic-size: auto 170px;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.25s ease,
+              background 0.25s ease,
               border-color 0.25s ease;
 }
 
@@ -1490,6 +1509,7 @@ body.light-mode .nav-links button.btn:hover {
   transform: translateY(-5px) scale(1.03);
   box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.5);
   border-color: var(--game-color, #0ff);
+  background: var(--bg-glass-hover);
 }
 
 /* Badge: use opacity instead of color-mix for background — zero repaint cost */
@@ -1552,7 +1572,7 @@ body.light-mode .nav-links button.btn:hover {
 }
 
 .arcade-card-info h3 {
-  color: white;
+  color: var(--text-headers);
   font-size: 0.95rem;
   font-weight: 600;
   margin: 0 0 0.5rem 0;
@@ -1575,11 +1595,11 @@ body.light-mode .nav-links button.btn:hover {
 .arcade-score-value {
   font-size: 0.7rem;
   color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(var(--accent-cyan-rgb), 0.05);
   padding: 3px 8px;
   border-radius: 6px;
   display: inline-block;
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(var(--accent-cyan-rgb), 0.15);
 }
 
 .arcade-score-number {
@@ -1653,6 +1673,47 @@ body.light-mode .nav-links button.btn:hover {
   background: rgba(var(--accent-cyan-rgb), 0.1);
   color: var(--accent-cyan);
   box-shadow: none;
+}
+
+.glass-select {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  color: var(--text-headers);
+  outline: none;
+  cursor: pointer;
+  padding: 0.4rem 1.2rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.glass-select:focus {
+  border-color: var(--accent-cyan);
+}
+
+.glass-select option {
+  background: var(--bg-darker);
+  color: var(--text-headers);
+}
+
+.arcade-close-btn {
+  background: var(--bg-glass);
+  border: 1px solid var(--border-glass);
+  padding: 0.6rem;
+  border-radius: 50%;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.arcade-close-btn:hover {
+  color: var(--text-headers);
+  background: var(--bg-glass-hover);
+  border-color: var(--accent-cyan);
 }
 
 @media (max-width: 768px) {
@@ -2431,3 +2492,19 @@ body.light-mode .nav-links button.btn:hover {
 .project-card:hover .project-title {
   text-shadow: none;
 }
+
+/* View Transition API Ripple Customization */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none !important;
+  mix-blend-mode: normal !important;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 999999;
+}
+

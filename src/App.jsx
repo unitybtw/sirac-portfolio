@@ -1231,9 +1231,101 @@ function App() {
     }
   }, [theme]);
 
-  const toggleTheme = () => {
+  const toggleTheme = (e) => {
     playClick();
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+
+    // Get click position, or default to center of the viewport
+    const x = e && typeof e.clientX === 'number' ? e.clientX : window.innerWidth / 2;
+    const y = e && typeof e.clientY === 'number' ? e.clientY : window.innerHeight / 2;
+
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    // Check if browser supports View Transition API
+    if (document.startViewTransition) {
+      const transition = document.startViewTransition(() => {
+        setTheme(nextTheme);
+      });
+
+      transition.ready.then(() => {
+        try {
+          const clipPath = [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`
+          ];
+          document.documentElement.animate(
+            {
+              clipPath: clipPath
+            },
+            {
+              duration: 650,
+              easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+              pseudoElement: '::view-transition-new(root)'
+            }
+          );
+        } catch (err) {
+          console.warn("View transition animation failed:", err);
+        }
+      }).catch((err) => {
+        console.warn("View transition promise rejected:", err);
+      });
+    } else {
+      // Create a temporary ripple overlay element
+      const ripple = document.createElement('div');
+      ripple.className = 'theme-transition-ripple';
+      
+      // Set styles for the ripple circle
+      ripple.style.position = 'fixed';
+      ripple.style.left = `${x}px`;
+      ripple.style.top = `${y}px`;
+      ripple.style.width = `${endRadius * 2}px`;
+      ripple.style.height = `${endRadius * 2}px`;
+      ripple.style.marginLeft = `${-endRadius}px`;
+      ripple.style.marginTop = `${-endRadius}px`;
+      ripple.style.borderRadius = '50%';
+      ripple.style.pointerEvents = 'none';
+      ripple.style.zIndex = '999999';
+      ripple.style.backgroundColor = nextTheme === 'light' ? '#f6f8fa' : '#1a1b26';
+
+      document.body.appendChild(ripple);
+
+      // Animate the ripple scale from 0 to 1
+      const animation = ripple.animate(
+        [
+          { transform: 'scale(0)' },
+          { transform: 'scale(1)' }
+        ],
+        {
+          duration: 650,
+          easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+        }
+      );
+
+      // Once the ripple has fully expanded and covers the screen, toggle the theme
+      animation.onfinish = () => {
+        setTheme(nextTheme);
+
+        // Now fade out the ripple smoothly to reveal the new theme
+        const fadeAnimation = ripple.animate(
+          [
+            { opacity: 1 },
+            { opacity: 0 }
+          ],
+          {
+            duration: 300,
+            easing: 'ease-out'
+          }
+        );
+
+        fadeAnimation.onfinish = () => {
+          ripple.remove();
+        };
+      };
+    }
   };
 
   const changeLanguage = (lng) => {
@@ -1325,7 +1417,10 @@ function App() {
           <nav className={`glass-panel ${scrolled ? 'scrolled' : ''}`}>
             <div className="nav-logo" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="Logo" style={{ width: '28px', height: '28px', filter: 'drop-shadow(0 0 8px var(--accent-cyan))' }} />
-              <h1 className="text-gradient">{t('nav_name') || 'SIRAÇ GÖKTUĞ ŞİMŞEK.'}</h1>
+              <h1 className="text-gradient">
+                <span className="desktop-only-inline">{t('nav_name') || 'SIRAÇ GÖKTUĞ ŞİMŞEK.'}</span>
+                <span className="mobile-only-inline">{t('nav_name_mobile') || 'SIRAÇ.'}</span>
+              </h1>
             </div>
             
             {/* Collapsible Nav Links */}
@@ -1431,7 +1526,7 @@ function App() {
                     {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
                   </button>
                   <button 
-                    onClick={() => { toggleTheme(); playClick(); }} 
+                    onClick={(e) => { toggleTheme(e); }} 
                     className="mobile-control-btn"
                     aria-label="Toggle Theme"
                   >
@@ -1445,90 +1540,82 @@ function App() {
             <div className="nav-utilities">
               <div className="lang-selector-container" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'var(--bg-glass)', padding: '0.3rem 0.6rem', borderRadius: '20px', border: '1px solid var(--border-glass)', position: 'relative' }}>
                 <Globe size={14} style={{ color: 'var(--text-muted)', marginRight: '2px', zIndex: 1 }} />
-                <motion.button 
-                  whileHover={{ scale: 1.05 }} 
-                  whileTap={{ scale: 0.95 }} 
-                  onMouseEnter={playHover}
-                  onClick={() => { playClick(); changeLanguage('en'); }} 
-                  style={{ 
-                    background: 'transparent', 
-                    border: 'none', 
-                    borderRadius: '12px', 
-                    color: i18n.language?.startsWith('en') ? 'var(--accent-cyan)' : 'var(--text-muted)', 
-                    cursor: 'pointer', 
-                    fontWeight: 700, 
-                    padding: '0.25rem 0.55rem', 
-                    fontSize: '0.75rem',
-                    position: 'relative',
-                    outline: 'none'
-                  }}
-                >
-                  {i18n.language?.startsWith('en') && (
-                    <motion.span
-                      layoutId="activeLangBg"
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        background: 'linear-gradient(135deg, rgba(var(--accent-cyan-rgb), 0.15), rgba(var(--accent-cyan-rgb), 0.05))',
-                        backdropFilter: 'blur(8px)',
-                        WebkitBackdropFilter: 'blur(8px)',
-                        borderRadius: '8px',
-                        border: '1px solid rgba(var(--accent-cyan-rgb), 0.3)',
-                        borderTop: '1px solid rgba(255, 255, 255, 0.2)',
-                        borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
-                        boxShadow: '0 4px 12px rgba(var(--accent-cyan-rgb), 0.15), inset 0 2px 4px rgba(255, 255, 255, 0.05)',
-                        zIndex: 0
-                      }}
-                    />
-                  )}
-                  <span style={{ position: 'relative', zIndex: 1 }}>EN</span>
-                </motion.button>
-                <motion.button 
-                  whileHover={{ scale: 1.05 }} 
-                  whileTap={{ scale: 0.95 }} 
-                  onMouseEnter={playHover}
-                  onClick={() => { playClick(); changeLanguage('tr'); }} 
-                  style={{ 
-                    background: 'transparent', 
-                    border: 'none', 
-                    borderRadius: '12px', 
-                    color: i18n.language?.startsWith('tr') ? 'var(--accent-cyan)' : 'var(--text-muted)', 
-                    cursor: 'pointer', 
-                    fontWeight: 700, 
-                    padding: '0.25rem 0.55rem', 
-                    fontSize: '0.75rem',
-                    position: 'relative',
-                    outline: 'none'
-                  }}
-                >
-                  {i18n.language?.startsWith('tr') && (
-                    <motion.span
-                      layoutId="activeLangBg"
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                      style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        background: 'linear-gradient(135deg, rgba(var(--accent-cyan-rgb), 0.15), rgba(var(--accent-cyan-rgb), 0.05))',
-                        backdropFilter: 'blur(8px)',
-                        WebkitBackdropFilter: 'blur(8px)',
-                        borderRadius: '8px',
-                        border: '1px solid rgba(var(--accent-cyan-rgb), 0.3)',
-                        borderTop: '1px solid rgba(255, 255, 255, 0.2)',
-                        borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
-                        boxShadow: '0 4px 12px rgba(var(--accent-cyan-rgb), 0.15), inset 0 2px 4px rgba(255, 255, 255, 0.05)',
-                        zIndex: 0
-                      }}
-                    />
-                  )}
-                  <span style={{ position: 'relative', zIndex: 1 }}>TR</span>
-                </motion.button>
+                <div style={{ position: 'relative', display: 'flex', gap: '5px', alignItems: 'center' }}>
+                  {/* Sliding Background */}
+                  <motion.div
+                    animate={{
+                      x: i18n.language?.startsWith('tr') ? 37 : 0
+                    }}
+                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    style={{
+                      position: 'absolute',
+                      left: 0,
+                      top: 0,
+                      width: '32px',
+                      height: '24px',
+                      background: 'linear-gradient(135deg, rgba(var(--accent-cyan-rgb), 0.15), rgba(var(--accent-cyan-rgb), 0.05))',
+                      backdropFilter: 'blur(8px)',
+                      WebkitBackdropFilter: 'blur(8px)',
+                      borderRadius: '8px',
+                      border: '1px solid rgba(var(--accent-cyan-rgb), 0.3)',
+                      borderTop: '1px solid rgba(255, 255, 255, 0.2)',
+                      borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
+                      boxShadow: '0 4px 12px rgba(var(--accent-cyan-rgb), 0.15), inset 0 2px 4px rgba(255, 255, 255, 0.05)',
+                      zIndex: 0
+                    }}
+                  />
+                  
+                  <motion.button 
+                    whileHover={{ scale: 1.05 }} 
+                    whileTap={{ scale: 0.95 }} 
+                    onMouseEnter={playHover}
+                    onClick={() => { playClick(); changeLanguage('en'); }} 
+                    style={{ 
+                      background: 'transparent', 
+                      border: 'none', 
+                      borderRadius: '8px', 
+                      color: i18n.language?.startsWith('en') ? 'var(--accent-cyan)' : 'var(--text-muted)', 
+                      cursor: 'pointer', 
+                      fontWeight: 700, 
+                      width: '32px',
+                      height: '24px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.75rem',
+                      position: 'relative',
+                      zIndex: 1,
+                      outline: 'none'
+                    }}
+                  >
+                    EN
+                  </motion.button>
+                  <motion.button 
+                    whileHover={{ scale: 1.05 }} 
+                    whileTap={{ scale: 0.95 }} 
+                    onMouseEnter={playHover}
+                    onClick={() => { playClick(); changeLanguage('tr'); }} 
+                    style={{ 
+                      background: 'transparent', 
+                      border: 'none', 
+                      borderRadius: '8px', 
+                      color: i18n.language?.startsWith('tr') ? 'var(--accent-cyan)' : 'var(--text-muted)', 
+                      cursor: 'pointer', 
+                      fontWeight: 700, 
+                      width: '32px',
+                      height: '24px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.75rem',
+                      position: 'relative',
+                      zIndex: 1,
+                      outline: 'none'
+                    }}
+                  >
+                    TR
+                  </motion.button>
+                </div>
               </div>
 
               <Magnetic>
@@ -1543,18 +1630,20 @@ function App() {
                 </motion.button>
               </Magnetic>
 
-              <Magnetic className="theme-toggle-container">
-                <motion.button
-                  onClick={() => { toggleTheme(); playClick(); }}
-                  onMouseEnter={playHover}
-                  className="theme-toggle-btn-desktop"
-                  style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '38px', height: '38px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--accent-cyan)', position: 'relative' }}
-                  whileHover={{ scale: 1.1, borderColor: 'var(--accent-cyan)' }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
-                </motion.button>
-              </Magnetic>
+              <div className="theme-toggle-container">
+                <Magnetic>
+                  <motion.button
+                    onClick={(e) => { toggleTheme(e); }}
+                    onMouseEnter={playHover}
+                    className="theme-toggle-btn-desktop"
+                    style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '38px', height: '38px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--accent-cyan)', position: 'relative' }}
+                    whileHover={{ scale: 1.1, borderColor: 'var(--accent-cyan)' }}
+                    whileTap={{ scale: 0.9 }}
+                  >
+                    {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
+                  </motion.button>
+                </Magnetic>
+              </div>
 
               {/* Hamburger Toggle button */}
               <button 

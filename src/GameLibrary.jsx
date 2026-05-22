@@ -473,9 +473,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                             <button
                                 onClick={() => { playClick(); setIsOpen(false); setActiveGameId(null); setShowScoreboard(false); }}
                                 onMouseEnter={playHover}
-                                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', padding: '0.6rem', borderRadius: '50%', color: 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.3s' }}
-                                onMouseOver={(e) => { e.currentTarget.style.color = 'white'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; }}
-                                onMouseOut={(e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
+                                className="arcade-close-btn"
                             >
                                 <X size={24} />
                             </button>
@@ -490,11 +488,11 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                         initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -20 }}
                                         style={{ maxWidth: '450px', margin: '8vh auto', textAlign: 'center' }}
                                     >
-                                        <div className="glass-panel" style={{ padding: '3.5rem 2.5rem', borderRadius: '24px', border: '1px solid rgba(0, 240, 255, 0.15)', background: 'rgba(15,15,20,0.85)', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.6)' }}>
-                                            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-violet))', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem auto', boxShadow: '0 10px 25px rgba(0, 240, 255, 0.3)' }}>
+                                        <div className="glass-panel" style={{ padding: '3.5rem 2.5rem' }}>
+                                            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-violet))', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem auto', boxShadow: '0 10px 25px rgba(var(--accent-cyan-rgb), 0.3)' }}>
                                                 <User size={40} color="#fff" />
                                             </div>
-                                            <h3 style={{ fontSize: '1.6rem', marginBottom: '0.5rem', letterSpacing: '-0.02em', fontWeight: 700 }}>{t('arcade_set_nickname')}</h3>
+                                            <h3 style={{ fontSize: '1.6rem', marginBottom: '0.5rem', letterSpacing: '-0.02em', fontWeight: 700, color: 'var(--text-headers)' }}>{t('arcade_set_nickname')}</h3>
                                             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>Choose your identity to save your scores globally.</p>
                                             
                                             <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
@@ -515,7 +513,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                     onClick={() => { playClick(); generateRandomNickname(); }}
                                                     onMouseEnter={playHover}
                                                     className="btn btn-outline"
-                                                    style={{ padding: '0.8rem 1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', borderColor: 'rgba(255,255,255,0.1)' }}
+                                                    style={{ padding: '0.8rem 1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                                     title="Generate Random Tag"
                                                     whileHover={{ scale: 1.05, borderColor: 'var(--accent-cyan)' }}
                                                     whileTap={{ scale: 0.95 }}
@@ -541,9 +539,9 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
                                         style={{ maxWidth: '950px', margin: '0 auto' }}
                                     >
-                                        <div className="glass-panel" style={{ padding: '2.5rem 3rem', borderRadius: '24px', background: 'rgba(15,15,22,0.6)', border: '1px solid rgba(0, 240, 255, 0.15)' }}>
+                                        <div className="glass-panel" style={{ padding: '2.5rem 3rem' }}>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-                                                <h3 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.8rem', letterSpacing: '-0.02em', margin: 0 }}>
+                                                <h3 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.8rem', letterSpacing: '-0.02em', margin: 0, color: 'var(--text-headers)' }}>
                                                     <Trophy color="gold" size={28} /> Global Hall of Fame
                                                 </h3>
                                                 
@@ -552,21 +550,11 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                     <select
                                                         value={scoreboardGameFilter}
                                                         onChange={(e) => setScoreboardGameFilter(e.target.value)}
-                                                        className="glass-input"
-                                                        style={{
-                                                            padding: '0.4rem 1.2rem',
-                                                            borderRadius: '20px',
-                                                            fontSize: '0.85rem',
-                                                            background: 'rgba(255,255,255,0.05)',
-                                                            border: '1px solid rgba(255,255,255,0.1)',
-                                                            color: '#fff',
-                                                            outline: 'none',
-                                                            cursor: 'pointer'
-                                                        }}
+                                                        className="glass-select"
                                                     >
-                                                        <option value="all" style={{ background: '#0a0a0f', color: '#fff' }}>All Simulations</option>
+                                                        <option value="all">All Simulations</option>
                                                         {gamesList.map(g => (
-                                                            <option key={g.id} value={g.id} style={{ background: '#0a0a0f', color: '#fff' }}>{g.title}</option>
+                                                            <option key={g.id} value={g.id}>{g.title}</option>
                                                         ))}
                                                     </select>
                                                 </div>
@@ -575,7 +563,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                             <div className="arcade-scoreboard-grid">
                                                 {/* Global Scores from Cloud */}
                                                 <div style={{ display: 'grid', gap: '0.8rem', alignContent: 'start' }}>
-                                                    <h4 style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>Top 10 Records</h4>
+                                                    <h4 style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', borderBottom: '1px solid var(--border-glass)', paddingBottom: '0.5rem' }}>Top 10 Records</h4>
                                                     {(() => {
                                                         const filtered = globalScores.filter(s => scoreboardGameFilter === 'all' || s.gameId === scoreboardGameFilter);
                                                         if (globalScores.length === 0) {
@@ -587,12 +575,12 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                         return filtered.slice(0, 10).map((s, idx) => {
                                                             const isMe = s.name === nickname;
                                                             let rowBg = 'transparent';
-                                                            let rowBorder = '1px solid rgba(255,255,255,0.03)';
+                                                            let rowBorder = '1px solid var(--border-glass)';
                                                             if (isMe) {
-                                                                rowBg = 'rgba(0, 240, 255, 0.06)';
-                                                                rowBorder = '1px solid rgba(0, 240, 255, 0.3)';
+                                                                rowBg = 'rgba(var(--accent-cyan-rgb), 0.08)';
+                                                                rowBorder = '1px solid rgba(var(--accent-cyan-rgb), 0.3)';
                                                             } else if (idx === 0) {
-                                                                rowBg = 'rgba(255, 215, 0, 0.02)';
+                                                                rowBg = 'rgba(255, 215, 0, 0.04)';
                                                             }
                                                             return (
                                                                 <div key={`global-${idx}`} style={{
@@ -601,7 +589,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                                     border: rowBorder,
                                                                     borderRadius: '12px',
                                                                     alignItems: 'center',
-                                                                    boxShadow: isMe ? '0 0 15px rgba(0, 240, 255, 0.1)' : 'none',
+                                                                    boxShadow: isMe ? '0 0 15px rgba(var(--accent-cyan-rgb), 0.15)' : 'none',
                                                                     transition: 'all 0.3s'
                                                                 }}>
                                                                     <div style={{ display: 'flex', gap: '1.2rem', alignItems: 'center' }}>
@@ -616,7 +604,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                                             {idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`}
                                                                         </span>
                                                                         <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                                            <span style={{ color: 'white', fontWeight: isMe ? 700 : 500, fontSize: '0.95rem' }}>{s.name}</span>
+                                                                            <span style={{ color: 'var(--text-headers)', fontWeight: isMe ? 700 : 500, fontSize: '0.95rem' }}>{s.name}</span>
                                                                             <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '1px' }}>
                                                                                 {gamesList.find(g => g.id === s.gameId)?.title || s.gameId}
                                                                             </span>
@@ -633,7 +621,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
 
                                                 {/* Local High Scores */}
                                                 <div style={{ display: 'grid', gap: '0.8rem', alignContent: 'start' }}>
-                                                    <h4 style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '0.5rem' }}>Your Best Performances</h4>
+                                                    <h4 style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', borderBottom: '1px solid var(--border-glass)', paddingBottom: '0.5rem' }}>Your Best Performances</h4>
                                                     {Object.entries(localScores).length === 0 ? (
                                                         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No local records yet.</p>
                                                     ) : (
@@ -642,10 +630,10 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                             .map(([gameId, score]) => {
                                                                 const gameInfo = gamesList.find(g => g.id === gameId);
                                                                 return (
-                                                                    <div key={`local-${gameId}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.8rem 1.2rem', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', borderRadius: '12px', alignItems: 'center' }}>
+                                                                    <div key={`local-${gameId}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.8rem 1.2rem', background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '12px', alignItems: 'center' }}>
                                                                         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
                                                                             <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: gameInfo?.color || 'var(--accent-cyan)' }} />
-                                                                            <span style={{ color: 'white', fontSize: '0.9rem', fontWeight: 500 }}>{gameInfo?.title || gameId}</span>
+                                                                            <span style={{ color: 'var(--text-headers)', fontSize: '0.9rem', fontWeight: 500 }}>{gameInfo?.title || gameId}</span>
                                                                         </div>
                                                                         <div style={{ fontWeight: 700, color: gameInfo?.color || 'var(--accent-cyan)', fontFamily: 'monospace', fontSize: '1.05rem' }}>{score.toLocaleString()}</div>
                                                                     </div>
@@ -675,7 +663,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                 >
                                                     {cat.icon}
                                                     <span>{cat.label}</span>
-                                                    <span style={{ fontSize: '0.75rem', opacity: 0.6, background: 'rgba(0,0,0,0.3)', padding: '2px 6px', borderRadius: '10px' }}>{cat.count}</span>
+                                                    <span style={{ fontSize: '0.75rem', opacity: 0.8, background: 'rgba(var(--accent-cyan-rgb), 0.15)', color: 'var(--text-headers)', padding: '2px 6px', borderRadius: '10px' }}>{cat.count}</span>
                                                 </button>
                                             ))}
                                         </div>
@@ -749,13 +737,13 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                         <div style={{ width: '100%', maxWidth: '850px', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', marginBottom: '1rem', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? '0.75rem' : '1rem' }}>
                                             <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', gap: '0.5rem' }}>
                                                 <h3 style={{ color: activeGame.color, textShadow: `0 0 12px ${activeGame.color}`, fontSize: isMobile ? '1.25rem' : '1.6rem', margin: 0, fontWeight: 800 }}>{activeGame.title}</h3>
-                                                {localScores[activeGameId] && <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem', background: 'rgba(255,255,255,0.05)', padding: '2px 8px', borderRadius: '6px' }}>PERSONAL BEST: {localScores[activeGameId]}</span>}
+                                                {localScores[activeGameId] && <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem', background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', padding: '2px 8px', borderRadius: '6px' }}>PERSONAL BEST: {localScores[activeGameId]}</span>}
                                             </div>
                                             <button
                                                 onClick={() => { playClick(); setActiveGameId(null); }}
                                                 onMouseEnter={playHover}
                                                 className="btn btn-outline"
-                                                style={{ padding: isMobile ? '0.4rem 0.8rem' : '0.5rem 1.2rem', fontSize: isMobile ? '0.8rem' : '0.9rem', borderColor: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', gap: '8px', alignSelf: isMobile ? 'flex-end' : 'auto' }}
+                                                style={{ padding: isMobile ? '0.4rem 0.8rem' : '0.5rem 1.2rem', fontSize: isMobile ? '0.8rem' : '0.9rem', display: 'flex', alignItems: 'center', gap: '8px', alignSelf: isMobile ? 'flex-end' : 'auto' }}
                                             >
                                                 <X size={16} /> {t('arcade_exit')}
                                             </button>
