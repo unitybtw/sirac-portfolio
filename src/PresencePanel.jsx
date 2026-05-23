@@ -135,18 +135,27 @@ export default function PresencePanel() {
 
   const fetchVisitors = useCallback(async () => {
     try {
-      const res = await fetch(`${DB_URL}/visitors.json`);
+      const now = Date.now();
+      const cutoff = now - 75000;
+      const cleanCutoff = now - 120000; // 2 minutes
+      
+      // Try optimized query first (requires ".indexOn": "lastSeen" in Firebase rules)
+      let res = await fetch(`${DB_URL}/visitors.json?orderBy="lastSeen"&startAt=${cutoff}`);
       if (!res.ok) throw new Error('Network error');
-      const data = await res.json();
+      let data = await res.json();
+      
+      // Fall back if index not defined
+      if (data && data.error && data.error.includes("Index not defined")) {
+        res = await fetch(`${DB_URL}/visitors.json`);
+        if (!res.ok) throw new Error('Network error');
+        data = await res.json();
+      }
       
       if (!data || data.error) { 
         updateMockVisitors();
         return; 
       }
       
-      const now = Date.now();
-      const cutoff = now - 75000;
-      const cleanCutoff = now - 120000; // 2 minutes
       const activeVisitors = {};
       
       Object.entries(data).forEach(([id, v]) => {

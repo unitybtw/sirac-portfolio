@@ -273,8 +273,16 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
     // Wrap in useCallback so it can be safely added to useEffect deps
     const fetchGlobalScores = useCallback(async () => {
         try {
-            const res = await fetch(`${FIREBASE_DB}/scores.json`);
-            const data = await res.json();
+            // Try optimized query first (requires ".indexOn": "score" in Firebase rules)
+            let res = await fetch(`${FIREBASE_DB}/scores.json?orderBy="score"&limitToLast=100`);
+            let data = await res.json();
+            
+            // Fall back to unoptimized query if index is not defined yet on remote database
+            if (data && data.error && data.error.includes("Index not defined")) {
+                res = await fetch(`${FIREBASE_DB}/scores.json`);
+                data = await res.json();
+            }
+
             if (data) {
                 const scoresArray = Object.values(data);
                 scoresArray.sort((a, b) => b.score - a.score);
