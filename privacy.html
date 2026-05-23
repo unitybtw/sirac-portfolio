@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gizlilik Politikası | Siraç Göktuğ Şimşek</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-color: #080808;
+      --card-bg: rgba(20, 20, 20, 0.6);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 2.5rem;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    header {
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #fff;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    h2::before {
+      content: '';
+      display: inline-block;
+      width: 4px;
+      height: 1.25rem;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+
+    p {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    ul {
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-muted);
+    }
+
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: var(--accent-hover);
+      text-decoration: underline;
+    }
+
+    .date {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--card-border);
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 1.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      border: 1px solid var(--card-border);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .back-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.2);
+      text-decoration: none;
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        padding: 1.5rem;
+      }
+      h1 {
+        font-size: 1.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-btn">← Siteden Çık</a>
+    <header>
+      <h1>Gizlilik Politikası</h1>
+      <div class="date">Son Güncelleme: 23 Mayıs 2026</div>
+    </header>
+
+    <main>
+      <p>Bu gizlilik politikası, <strong>sirac.dev</strong> web sitesi üzerinden sunulan hizmetlerin kullanımı sırasında elde edilen kişisel verilerin nasıl işlendiğini, saklandığını ve korunduğunu açıklamaktadır.</p>
+
+      <h2>1. Toplanan Veriler ve Çerezler (Cookies)</h2>
+      <p>Sitemizi ziyaret ettiğinizde, deneyiminizi iyileştirmek, trafik analizi yapmak ve reklam sunmak amacıyla çerezler ve benzeri takip teknolojileri kullanılmaktadır. Çerezler, tarayıcınız aracılığıyla cihazınıza kaydedilen küçük metin dosyalarıdır.</p>
+
+      <h2>2. Google AdSense ve Üçüncü Taraf Reklam Çerezleri</h2>
+      <p>Web sitemizde reklamları sunmak için Google AdSense programını kullanmaktayız. Google, sitemizde reklam sunmak için çerezlerden yararlanır. Bu bağlamda:</p>
+      <ul>
+        <li>Google dahil olmak üzere üçüncü taraf satıcılar, kullanıcıların web sitemize veya diğer web sitelerine yaptığı önceki ziyaretlere dayalı olarak reklam sunmak için çerezleri (DoubleClick çerezi gibi) kullanır.</li>
+        <li>Google'ın reklam çerezlerini kullanması, kendisinin ve ortaklarının kullanıcılarımıza, sitemize ve/veya internetteki diğer sitelere yaptıkları ziyaretlere dayalı olarak reklam sunmasına olanak tanır.</li>
+        <li>Ziyaretçiler, <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google Reklam Ayarları</a> sayfasını ziyaret ederek kişiselleştirilmiş reklamcılığı devre dışı bırakabilirler.</li>
+      </ul>
+
+      <h2>3. Kullanıcı Rızası (GDPR / AEA Uyumluluğu)</h2>
+      <p>Avrupa Ekonomik Alanı (AEA), Birleşik Krallık ve İsviçre'deki ziyaretçilerimiz için Google sertifikalı bir <strong>Kullanıcı Rızası Yönetim Platformu (CMP)</strong> kullanılmaktadır. Sitemizi ilk ziyaret ettiğinizde karşınıza çıkan rıza mesajı aracılığıyla:</p>
+      <ul>
+        <li>Kişiselleştirilmiş reklam gösterimine <strong>İzin verebilir</strong>,</li>
+        <li>Kişiselleştirilmiş reklam gösterimine <strong>İzin vermeyebilir</strong>, veya</li>
+        <li><strong>Seçenekleri Yönet</strong> bağlantısını kullanarak hangi üçüncü taraf iş ortaklarının hangi amaçlarla çerez kullanabileceğini detaylı olarak ayarlayabilirsiniz.</li>
+      </ul>
+      <p>Seçtiğiniz rıza tercihlerinizi dilediğiniz zaman tarayıcı çerezlerinizi temizleyerek ya da web sitesinde yer alan gizlilik ayarlarını sıfırlayarak değiştirebilirsiniz.</p>
+
+      <h2>4. Veri Güvenliği</h2>
+      <p>Kullanıcılarımızın sitemizde yaptığı skor kaydetme veya ziyaretçi etkileşimi gibi işlemler tamamen şifreli (HTTPS) protokolü üzerinden gerçekleşmektedir. Verileriniz, izinsiz erişim veya kayıplara karşı koruma altındadır.</p>
+
+      <h2>5. İletişim</h2>
+      <p>Bu gizlilik politikası hakkında sorularınız veya talepleriniz olması durumunda bizimle iletişime geçebilirsiniz.</p>
+    </main>
+
+    <footer>
+      &copy; 2026 sirac.dev. Tüm Hakları Saklıdır.
+    </footer>
+  </div>
+</body>
+</html>
