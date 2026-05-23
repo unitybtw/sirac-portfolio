@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { X, Gamepad2, Rocket, Zap, Navigation, Shield, Ghost, Crosshair, Target, Activity, Box, Trophy, User, Save, List, Gem, Compass, Eye } from 'lucide-react';
 import { playClick, playHover, playSuccess, playArcadeOpen } from './soundEffects';
+import AdSense from './AdSense';
 
 const AsteroidBlaster = lazy(() => import('./AsteroidBlaster'));
 const NeonRunner = lazy(() => import('./NeonRunner'));
@@ -650,6 +651,8 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                     )}
                                                 </div>
                                             </div>
+                                            {/* AdSense Unit in Scoreboard (Placeholder Slot ID) */}
+                                            <AdSense slot="0000000000" style={{ marginTop: '2rem', maxWidth: '728px', width: '100%' }} />
                                         </div>
                                     </motion.div>
                                 ) : !activeGameId ? (
@@ -675,6 +678,9 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                 </button>
                                             ))}
                                         </div>
+
+                                        {/* AdSense Unit in Games Grid (Placeholder Slot ID) */}
+                                        <AdSense slot="0000000000" style={{ marginBottom: '2.5rem', maxWidth: '728px', width: '100%' }} />
 
                                         <div ref={gridRef} className="arcade-games-grid">
                                             {filteredGames.length === 0 && (
