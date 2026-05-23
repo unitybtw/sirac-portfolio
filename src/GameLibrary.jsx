@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo, lazy, Suspens
 import { motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { X, Gamepad2, Rocket, Zap, Navigation, Shield, Ghost, Crosshair, Target, Activity, Box, Trophy, User, Save, List, Gem, Compass, Eye } from 'lucide-react';
+import { X, Gamepad2, Rocket, Zap, Navigation, Shield, Ghost, Crosshair, Target, Activity, Box, Trophy, User, Save, List, Gem, Compass, Eye, Play } from 'lucide-react';
 import { playClick, playHover, playSuccess, playArcadeOpen } from './soundEffects';
 import AdSense from './AdSense';
 
@@ -192,6 +192,29 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
     const [activeTab, setActiveTab] = useState('all');
     const [scoreboardGameFilter, setScoreboardGameFilter] = useState('all');
     const [isMobile, setIsMobile] = useState(false);
+    const [showPreroll, setShowPreroll] = useState(false);
+    const [prerollTimer, setPrerollTimer] = useState(5);
+
+    useEffect(() => {
+        if (activeGameId) {
+            setShowPreroll(true);
+            setPrerollTimer(5);
+        } else {
+            setShowPreroll(false);
+        }
+    }, [activeGameId]);
+
+    useEffect(() => {
+        let interval = null;
+        if (showPreroll && prerollTimer > 0) {
+            interval = setInterval(() => {
+                setPrerollTimer(prev => prev - 1);
+            }, 1000);
+        }
+        return () => {
+            if (interval) clearInterval(interval);
+        };
+    }, [showPreroll, prerollTimer]);
 
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth <= 768);
@@ -756,7 +779,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                             <button
                                                 onClick={() => { playClick(); setActiveGameId(null); }}
                                                 onMouseEnter={playHover}
-                                                className="btn btn-outline"
+                                                        className="btn btn-outline"
                                                 style={{ padding: isMobile ? '0.4rem 0.8rem' : '0.5rem 1.2rem', fontSize: isMobile ? '0.8rem' : '0.9rem', display: 'flex', alignItems: 'center', gap: '8px', alignSelf: isMobile ? 'flex-end' : 'auto' }}
                                             >
                                                 <X size={16} /> {t('arcade_exit')}
@@ -775,20 +798,89 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                             background: '#000',
                                             position: 'relative'
                                         }}>
-                                            <Suspense fallback={
-                                                <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: activeGame.color }}>
-                                                    <motion.div
-                                                        animate={{ rotate: 360 }}
-                                                        transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-                                                        style={{ marginBottom: '1rem' }}
-                                                    >
-                                                        <Gamepad2 size={isMobile ? 30 : 40} />
-                                                    </motion.div>
-                                                    <p style={{ fontFamily: 'monospace', letterSpacing: '2px', fontSize: isMobile ? '0.8rem' : '1rem' }}>INITIALIZING VIRTUAL CONTAINER...</p>
+                                            {showPreroll ? (
+                                                <div style={{
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    left: 0,
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    background: '#080808',
+                                                    zIndex: 10,
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    justifyContent: 'space-between',
+                                                    alignItems: 'center',
+                                                                    padding: isMobile ? '1rem' : '2rem',
+                                                    boxSizing: 'border-box'
+                                                }}>
+                                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                                                        ADVERTISEMENT / REKLAM
+                                                    </div>
+
+                                                    {/* Pre-roll Ad Unit Slot (Placeholder Slot ID) */}
+                                                    <div style={{ width: '100%', flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '1rem 0', minHeight: '100px' }}>
+                                                        <AdSense slot="0000000000" style={{ margin: 0, border: 'none', background: 'transparent', maxWidth: '728px', width: '100%' }} />
+                                                    </div>
+
+                                                    <div style={{ width: '100%', maxWidth: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+                                                        {prerollTimer > 0 ? (
+                                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)', fontSize: '0.85rem', fontFamily: 'monospace' }}>
+                                                                <span style={{ display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: activeGame.color, boxShadow: `0 0 8px ${activeGame.color}` }} />
+                                                                {t('game_common.loading') || 'YÜKLENİYOR...'} ({prerollTimer})
+                                                            </div>
+                                                        ) : (
+                                                            <button
+                                                                onClick={() => { playSuccess(); setShowPreroll(false); }}
+                                                                className="btn"
+                                                                style={{
+                                                                    background: activeGame.color,
+                                                                    color: '#000',
+                                                                    fontWeight: 800,
+                                                                    border: 'none',
+                                                                    padding: isMobile ? '0.5rem 1.5rem' : '0.65rem 2rem',
+                                                                    borderRadius: '8px',
+                                                                    cursor: 'pointer',
+                                                                    boxShadow: `0 0 20px ${activeGame.color}66`,
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    gap: '8px',
+                                                                    fontFamily: 'var(--font-outfit)',
+                                                                    fontSize: '0.95rem'
+                                                                }}
+                                                            >
+                                                                <Play size={15} fill="#000" /> {t('game_common.launch') || 'OYUNU BAŞLAT'}
+                                                            </button>
+                                                        )}
+
+                                                        {/* Progress bar */}
+                                                        <div style={{ width: '100%', height: '4px', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '2px', overflow: 'hidden' }}>
+                                                            <div style={{
+                                                                width: `${((5 - prerollTimer) / 5) * 100}%`,
+                                                                height: '100%',
+                                                                background: activeGame.color,
+                                                                boxShadow: `0 0 8px ${activeGame.color}`,
+                                                                transition: 'width 1s linear'
+                                                            }} />
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            }>
-                                                {activeGame.comp && <activeGame.comp onGameOver={(score) => handleGameOver(score, activeGame.id)} />}
-                                            </Suspense>
+                                            ) : (
+                                                <Suspense fallback={
+                                                    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: activeGame.color }}>
+                                                        <motion.div
+                                                            animate={{ rotate: 360 }}
+                                                            transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                                                            style={{ marginBottom: '1rem' }}
+                                                        >
+                                                            <Gamepad2 size={isMobile ? 30 : 40} />
+                                                        </motion.div>
+                                                        <p style={{ fontFamily: 'monospace', letterSpacing: '2px', fontSize: isMobile ? '0.8rem' : '1rem' }}>INITIALIZING VIRTUAL CONTAINER...</p>
+                                                    </div>
+                                                }>
+                                                    {activeGame.comp && <activeGame.comp onGameOver={(score) => handleGameOver(score, activeGame.id)} />}
+                                                </Suspense>
+                                            )}
                                         </div>
                                     </motion.div>
                                 )}
