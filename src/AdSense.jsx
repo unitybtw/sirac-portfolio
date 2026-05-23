@@ -36,7 +36,7 @@ export default function AdSense({ slot, style }) {
       <ins 
         className="adsbygoogle"
         style={{ display: 'block', width: '100%', minWidth: '250px' }}
-        data-ad-client="ca-pub-0000000000000000"
+        data-ad-client="ca-pub-6787215396510172"
         data-ad-slot={slot || "0000000000"}
         data-ad-format="auto"
         data-full-width-responsive="true"
