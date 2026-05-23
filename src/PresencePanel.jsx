@@ -144,11 +144,19 @@ export default function PresencePanel() {
         return; 
       }
       
-      const cutoff = Date.now() - 75000;
+      const now = Date.now();
+      const cutoff = now - 75000;
+      const cleanCutoff = now - 120000; // 2 minutes
       const activeVisitors = {};
+      
       Object.entries(data).forEach(([id, v]) => {
-        if (v && v.lastSeen && v.lastSeen >= cutoff) {
-          activeVisitors[id] = v;
+        if (v && v.lastSeen) {
+          if (v.lastSeen >= cutoff) {
+            activeVisitors[id] = v;
+          } else if (v.lastSeen < cleanCutoff) {
+            // Self-healing: Delete stale visitor from Firebase to prevent unbounded growth
+            fetch(`${DB_URL}/visitors/${id}.json`, { method: 'DELETE' }).catch(() => {});
+          }
         }
       });
       setVisitors(activeVisitors);

@@ -1345,7 +1345,7 @@ function App() {
       tags: ['Unity', 'C#', 'Game Design', 'Itch.io'],
       glow: 'glow-violet',
       link: 'https://unitybtw.itch.io/legend-of-the-three-masks',
-      image: `${import.meta.env.BASE_URL}assets/masks.jpeg`
+      image: `${import.meta.env.BASE_URL}assets/masks.webp`
     },
     {
       id: 2,
@@ -1354,7 +1354,7 @@ function App() {
       tags: ['Unity', 'C#', '2D', 'Casual'],
       glow: 'glow-cyan',
       link: 'https://unitybtw.itch.io/flying-bird',
-      image: `${import.meta.env.BASE_URL}assets/bird.png`
+      image: `${import.meta.env.BASE_URL}assets/bird.webp`
     }
   ];
 
