@@ -1572,83 +1572,75 @@ function App() {
                     }}
                   />
                   
-                  <motion.button 
-                    whileHover={{ scale: 1.05 }} 
-                    whileTap={{ scale: 0.95 }} 
+                  <button 
                     onMouseEnter={playHover}
                     onClick={() => { playClick(); changeLanguage('en'); }} 
+                    className="lang-btn"
                     style={{ 
-                      background: 'transparent', 
-                      border: 'none', 
-                      borderRadius: '8px', 
-                      color: i18n.language?.startsWith('en') ? 'var(--accent-cyan)' : 'var(--text-muted)', 
-                      cursor: 'pointer', 
-                      fontWeight: 700, 
-                      width: '32px',
-                      height: '24px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '0.75rem',
-                      position: 'relative',
-                      zIndex: 1,
-                      outline: 'none'
+                      color: i18n.language?.startsWith('en') ? 'var(--accent-cyan)' : 'var(--text-muted)'
                     }}
                   >
                     EN
-                  </motion.button>
-                  <motion.button 
-                    whileHover={{ scale: 1.05 }} 
-                    whileTap={{ scale: 0.95 }} 
+                  </button>
+                  <button 
                     onMouseEnter={playHover}
                     onClick={() => { playClick(); changeLanguage('tr'); }} 
+                    className="lang-btn"
                     style={{ 
-                      background: 'transparent', 
-                      border: 'none', 
-                      borderRadius: '8px', 
-                      color: i18n.language?.startsWith('tr') ? 'var(--accent-cyan)' : 'var(--text-muted)', 
-                      cursor: 'pointer', 
-                      fontWeight: 700, 
-                      width: '32px',
-                      height: '24px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '0.75rem',
-                      position: 'relative',
-                      zIndex: 1,
-                      outline: 'none'
+                      color: i18n.language?.startsWith('tr') ? 'var(--accent-cyan)' : 'var(--text-muted)'
                     }}
                   >
                     TR
-                  </motion.button>
+                  </button>
                 </div>
               </div>
 
               <Magnetic>
-                <motion.button
+                <button
                   onClick={() => { toggleMute(); playClick(); }}
                   onMouseEnter={playHover}
-                  style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '38px', height: '38px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: isMuted ? 'var(--text-muted)' : 'var(--accent-cyan)' }}
-                  whileHover={{ scale: 1.1, borderColor: isMuted ? 'var(--border-glass)' : 'var(--accent-cyan)' }}
-                  whileTap={{ scale: 0.9 }}
+                  className="nav-utility-btn"
+                  style={{ 
+                    background: 'var(--bg-glass)', 
+                    border: '1px solid var(--border-glass)', 
+                    borderRadius: '50%', 
+                    width: '38px', 
+                    height: '38px', 
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    alignItems: 'center', 
+                    cursor: 'pointer', 
+                    color: isMuted ? 'var(--text-muted)' : 'var(--accent-cyan)',
+                    '--hover-border-color': isMuted ? 'var(--border-glass)' : 'var(--accent-cyan)'
+                  }}
                 >
                   {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-                </motion.button>
+                </button>
               </Magnetic>
 
               <div className="theme-toggle-container">
                 <Magnetic>
-                  <motion.button
+                  <button
                     onClick={(e) => { toggleTheme(e); }}
                     onMouseEnter={playHover}
-                    className="theme-toggle-btn-desktop"
-                    style={{ background: 'var(--bg-glass)', border: '1px solid var(--border-glass)', borderRadius: '50%', width: '38px', height: '38px', display: 'flex', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', color: 'var(--accent-cyan)', position: 'relative' }}
-                    whileHover={{ scale: 1.1, borderColor: 'var(--accent-cyan)' }}
-                    whileTap={{ scale: 0.9 }}
+                    className="theme-toggle-btn-desktop nav-utility-btn"
+                    style={{ 
+                      background: 'var(--bg-glass)', 
+                      border: '1px solid var(--border-glass)', 
+                      borderRadius: '50%', 
+                      width: '38px', 
+                      height: '38px', 
+                      display: 'flex', 
+                      justifyContent: 'center', 
+                      alignItems: 'center', 
+                      cursor: 'pointer', 
+                      color: 'var(--accent-cyan)', 
+                      position: 'relative',
+                      '--hover-border-color': 'var(--accent-cyan)'
+                    }}
                   >
                     {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
-                  </motion.button>
+                  </button>
                 </Magnetic>
               </div>
 
