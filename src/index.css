@@ -2144,13 +2144,7 @@ body.light-mode .nav-links button.btn:hover {
 /* Mobile Overrides */
 @media (max-width: 768px) {
   .presence-panel-container {
-    bottom: 80px;
-    right: 16px;
-  }
-  
-  .presence-panel-trigger {
-    padding: 6px 10px;
-    font-size: 0.72rem;
+    display: none !important;
   }
 }
 
