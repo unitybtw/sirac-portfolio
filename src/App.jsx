@@ -77,8 +77,8 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
   return (
     <TiltCard
       className="skill-card glass-panel"
-      initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
-      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: delay / 2000 }} // Scale down delay
       style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '16px', border: '1px solid var(--border-glass)', willChange: 'transform, opacity' }}
@@ -649,8 +649,8 @@ const TypewriterTitle = ({ title1, title2 }) => {
     };
     
     const item = {
-      hidden: { opacity: 0, y: 20, filter: 'blur(10px)' },
-      show: { opacity: 1, y: 0, filter: 'blur(0px)', transition: { type: "spring", stiffness: 100 } }
+      hidden: { opacity: 0, y: 20 },
+      show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } }
     };
 
     return (
@@ -1836,8 +1836,8 @@ function App() {
           <motion.section
             id="about"
             className="about-section glass-panel"
-            initial={{ opacity: 0, y: 40, filter: "blur(12px)" }}
-            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
@@ -1898,8 +1898,8 @@ function App() {
           <section id="timeline" style={{ padding: '0 5% 5rem', position: 'relative' }}>
             <motion.div 
               className="section-header"
-              initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
-              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
@@ -1988,15 +1988,15 @@ function App() {
              id="featured-modules" 
              className="desktop-only glass-panel" 
              style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', padding: '5rem 2rem', borderRadius: '40px', willChange: 'transform, opacity' }}
-            initial={{ opacity: 0, y: 40, filter: "blur(12px)" }}
-            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <motion.div 
               className="section-header"
-              initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
-              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
@@ -2015,8 +2015,8 @@ function App() {
                 <TiltCard
                   key={i}
                   className="glass-panel"
-                  initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
-                  whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: i * 0.1 }}
                   onClick={() => { playClick(); setIsArcadeOpen(true); }}
@@ -2034,8 +2034,8 @@ function App() {
           <section id="projects" className="gallery-section">
             <motion.div 
               className="section-header"
-              initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
-              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.6, ease: "easeOut" }}
             >
@@ -2061,8 +2061,8 @@ function App() {
                     onClick={() => window.open(project.link, '_blank')}
                     style={{ padding: 0, willChange: 'transform, opacity' }}
                     variants={{
-                      hidden: { opacity: 0, y: 30, filter: "blur(8px)" },
-                      visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { type: 'spring', stiffness: 100, damping: 14, mass: 1 } }
+                      hidden: { opacity: 0, y: 30 },
+                      visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 14, mass: 1 } }
                     }}
                   >
                     {project.image && (
@@ -2125,9 +2125,9 @@ function App() {
           <motion.section
             id="skills"
             className="skills-section glass-panel"
-            style={{ borderRadius: '40px', willChange: 'transform, opacity, filter' }}
-            initial={{ opacity: 0, scale: 0.98, y: 30, filter: "blur(12px)" }}
-            whileInView={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
+            style={{ borderRadius: '40px', willChange: 'transform, opacity' }}
+            initial={{ opacity: 0, scale: 0.98, y: 30 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
@@ -2146,9 +2146,9 @@ function App() {
           {/* System Telemetry Section [NEW] - Professionalism Boost */}
           <motion.section 
             id="telemetry" 
-            style={{ padding: isMobileDevice ? '2rem 5%' : '4rem 5%', display: 'flex', justifyContent: 'center', willChange: 'transform, opacity, filter' }}
-            initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
-            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            style={{ padding: isMobileDevice ? '2rem 5%' : '4rem 5%', display: 'flex', justifyContent: 'center', willChange: 'transform, opacity' }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
@@ -2182,8 +2182,8 @@ function App() {
           <motion.footer 
             id="contact" 
             className="footer"
-            initial={{ opacity: 0, filter: "blur(12px)" }}
-            whileInView={{ opacity: 1, filter: "blur(0px)" }}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
