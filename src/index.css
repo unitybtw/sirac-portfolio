@@ -138,31 +138,32 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 
-.cyber-bg::before,
-.cyber-bg::after,
+.cyber-bg-blob-wrapper {
+  position: absolute;
+  pointer-events: none;
+  will-change: transform;
+  z-index: 0;
+}
+
+.cyber-bg-blob-1,
+.cyber-bg-blob-2,
 .cyber-bg-blob-3,
 .cyber-bg-blob-4 {
-  content: "";
-  position: absolute;
   border-radius: 50%;
   will-change: transform;
 }
 
-.cyber-bg::before {
+.cyber-bg-blob-1 {
   width: 60vw;
   height: 60vw;
   background: radial-gradient(circle, rgba(var(--accent-cyan-rgb), 0.12) 0%, rgba(var(--accent-cyan-rgb), 0.03) 45%, transparent 70%);
-  top: -10%;
-  left: -10%;
   animation: float-blob-1 25s infinite alternate ease-in-out;
 }
 
-.cyber-bg::after {
+.cyber-bg-blob-2 {
   width: 55vw;
   height: 55vw;
   background: radial-gradient(circle, rgba(var(--accent-violet-rgb), 0.12) 0%, rgba(var(--accent-violet-rgb), 0.03) 45%, transparent 70%);
-  bottom: -10%;
-  right: -10%;
   animation: float-blob-2 20s infinite alternate ease-in-out;
 }
 
@@ -170,8 +171,6 @@ h1, h2, h3, h4, h5, h6 {
   width: 48vw;
   height: 48vw;
   background: radial-gradient(circle, rgba(var(--accent-pink-rgb), 0.08) 0%, rgba(var(--accent-pink-rgb), 0.02) 45%, transparent 70%);
-  top: 35%;
-  right: 15%;
   animation: float-blob-3 30s infinite alternate ease-in-out;
 }
 
@@ -179,8 +178,6 @@ h1, h2, h3, h4, h5, h6 {
   width: 42vw;
   height: 42vw;
   background: radial-gradient(circle, rgba(var(--accent-cyan-rgb), 0.08) 0%, rgba(var(--accent-cyan-rgb), 0.02) 45%, transparent 70%);
-  bottom: 25%;
-  left: 20%;
   animation: float-blob-4 22s infinite alternate ease-in-out;
 }
 
@@ -710,11 +707,19 @@ body.light-mode .nav-links button.btn:hover {
   transform: translateY(-4px);
 }
 
+.project-card.glow-cyan {
+  --glow-color: var(--accent-cyan-rgb);
+}
+
 .project-card.glow-cyan:hover {
   box-shadow: 
     0 20px 50px rgba(0, 0, 0, 0.6),
     0 0 35px rgba(var(--accent-cyan-rgb), 0.2);
   border-color: transparent;
+}
+
+.project-card.glow-violet {
+  --glow-color: var(--accent-violet-rgb);
 }
 
 .project-card.glow-violet:hover {
@@ -955,9 +960,69 @@ body.light-mode .nav-links button.btn:hover {
   justify-content: center;
 }
 
+/* Logo responsiveness on medium desktop viewports */
+.logo-name-full {
+  display: inline !important;
+}
+
+.logo-name-short {
+  display: none !important;
+}
+
 /* Responsive visibility inline utilities */
 .mobile-only-inline {
   display: none !important;
+}
+
+@media (max-width: 1200px) {
+  .logo-name-full {
+    display: none !important;
+  }
+  .logo-name-short {
+    display: inline !important;
+  }
+  
+  .nav-logo h1 {
+    font-size: 0.9rem;
+  }
+  .nav-links {
+    gap: 0.45rem;
+  }
+  .nav-links a {
+    font-size: 0.72rem;
+    padding: 0.35rem 0.6rem;
+  }
+  .nav-links button.btn {
+    padding: 0.3rem 0.65rem !important;
+    font-size: 0.72rem !important;
+  }
+  .nav-utilities {
+    gap: 0.45rem;
+  }
+}
+
+@media (max-width: 1100px) {
+  .nav-links {
+    gap: 0.35rem;
+  }
+  .nav-links a {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+  .nav-links button.btn {
+    padding: 0.25rem 0.55rem !important;
+    font-size: 0.7rem !important;
+  }
+  .nav-utilities {
+    gap: 0.35rem;
+  }
+  .lang-selector-container {
+    padding: 0.25rem 0.45rem !important;
+    gap: 0.2rem !important;
+  }
+  .lang-selector-container button {
+    font-size: 0.72rem !important;
+  }
 }
 
 /* Animations & Responsive */

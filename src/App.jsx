@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, lazy, Suspense } from 'react';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
 import { Terminal, Github, Linkedin, Mail, ArrowRight, Code, Layers, Smartphone, Box, Gamepad2, Compass, Globe, Moon, Sun, ChevronLeft, ChevronRight, ChevronUp, Volume2, VolumeX, ChevronDown } from 'lucide-react';
@@ -33,8 +33,9 @@ const PageProgress = () => {
         top: 0,
         left: 0,
         right: 0,
-        height: '4px',
+        height: '3px',
         background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))',
+        boxShadow: '0 0 8px rgba(115, 218, 202, 0.4), 0 0 15px rgba(187, 154, 243, 0.2)',
         transformOrigin: '0%',
         zIndex: 10001,
         willChange: 'transform'
@@ -74,14 +75,12 @@ const BlenderIcon = () => (
 
 const SkillCard = ({ icon, label, percent, delay, description }) => {
   return (
-    <motion.div
+    <TiltCard
       className="skill-card glass-panel"
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
+      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: delay / 2000 }} // Scale down delay
-      whileHover={{ y: -5, scale: 1.02, boxShadow: '0 12px 30px rgba(0, 0, 0, 0.25)' }}
-      onMouseEnter={playHover}
       style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '16px', border: '1px solid var(--border-glass)', willChange: 'transform, opacity' }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -114,7 +113,7 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
           />
         </motion.div>
       </div>
-    </motion.div>
+    </TiltCard>
   );
 };
 
@@ -873,7 +872,7 @@ const KonamiGame = ({ onClose }) => {
 };
 
 // --- 3D Tilt Card Effect ---
-const TiltCard = ({ children, className }) => {
+const TiltCard = ({ children, className, style, ...props }) => {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const [isMobile, setIsMobile] = React.useState(false);
@@ -896,12 +895,12 @@ const TiltCard = ({ children, className }) => {
   const mouseXSpring = useSpring(x, springConfig);
   const mouseYSpring = useSpring(y, springConfig);
 
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["15deg", "-15deg"]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-15deg", "15deg"]);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["12deg", "-12deg"]); // Reduced slightly for smoother feel
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-12deg", "12deg"]);
 
   const flareX = useTransform(x, [-0.5, 0.5], ["0%", "100%"]);
   const flareY = useTransform(y, [-0.5, 0.5], ["0%", "100%"]);
-  const background = useMotionTemplate`radial-gradient(circle at ${flareX} ${flareY}, rgba(var(--accent-cyan-rgb), 0.12) 0%, transparent 65%)`;
+  const background = useMotionTemplate`radial-gradient(circle at ${flareX} ${flareY}, rgba(var(--glow-color, var(--accent-cyan-rgb)), 0.15) 0%, transparent 65%)`;
 
   const handleMouseMove = (e) => {
     if (isMobile) return;
@@ -922,20 +921,27 @@ const TiltCard = ({ children, className }) => {
     y.set(0);
   };
 
+  const handleMouseEnter = (e) => {
+    if (!isMobile) playHover();
+    if (props.onMouseEnter) props.onMouseEnter(e);
+  };
+
   return (
     <motion.div
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      onMouseEnter={() => { if (!isMobile) playHover(); }}
+      onMouseEnter={handleMouseEnter}
       style={{
         rotateY: isMobile ? 0 : rotateY,
         rotateX: isMobile ? 0 : rotateX,
         transformStyle: "preserve-3d",
         perspective: "1000px",
         position: "relative",
-        willChange: "transform"
+        willChange: "transform",
+        ...style
       }}
       className={className}
+      {...props}
     >
       <motion.div
         style={{
@@ -1151,7 +1157,7 @@ function App() {
       window.lenisRafPause = null;
       window.lenisRafResume = null;
     };
-  }, []);
+  }, [scrollY]);
 
   const [isArcadeOpen, setIsArcadeOpen] = useState(false);
   const [activeArcadeGame, setActiveArcadeGame] = useState(null);
@@ -1373,6 +1379,35 @@ function App() {
   const bgIconY = useTransform(springY, [0, 1080], [20, -20]);
   const bgSpotlightTemplate = useMotionTemplate`radial-gradient(800px circle at ${springX}px ${springY}px, rgba(var(--accent-cyan-rgb), 0.04) 0%, rgba(var(--accent-violet-rgb), 0.025) 50%, transparent 100%)`;
 
+  // Combined mouse and scroll parallax motion values for background blobs
+  const blob1XVal = useTransform(springX, [0, 1920], [30, -30]);
+  const blob1YVal = useTransform([springY, scrollY], ([yVal, scrollVal]) => {
+    const mouseOffset = ((yVal - 540) / 540) * -30;
+    const scrollOffset = scrollVal * -0.1;
+    return mouseOffset + scrollOffset;
+  });
+
+  const blob2XVal = useTransform(springX, [0, 1920], [-45, 45]);
+  const blob2YVal = useTransform([springY, scrollY], ([yVal, scrollVal]) => {
+    const mouseOffset = ((yVal - 540) / 540) * 45;
+    const scrollOffset = scrollVal * 0.15;
+    return mouseOffset + scrollOffset;
+  });
+
+  const blob3XVal = useTransform(springX, [0, 1920], [25, -25]);
+  const blob3YVal = useTransform([springY, scrollY], ([yVal, scrollVal]) => {
+    const mouseOffset = ((yVal - 540) / 540) * -25;
+    const scrollOffset = scrollVal * -0.08;
+    return mouseOffset + scrollOffset;
+  });
+
+  const blob4XVal = useTransform(springX, [0, 1920], [-20, 20]);
+  const blob4YVal = useTransform([springY, scrollY], ([yVal, scrollVal]) => {
+    const mouseOffset = ((yVal - 540) / 540) * 20;
+    const scrollOffset = scrollVal * 0.12;
+    return mouseOffset + scrollOffset;
+  });
+
   return (
     <>
     <AnimatePresence>
@@ -1402,8 +1437,18 @@ function App() {
                 }}
               />
             )}
-            <div className="cyber-bg-blob-3"></div>
-            <div className="cyber-bg-blob-4"></div>
+            <motion.div className="cyber-bg-blob-wrapper" style={{ top: '-10%', left: '-10%', x: isMobileDevice ? 0 : blob1XVal, y: isMobileDevice ? 0 : blob1YVal }}>
+              <div className="cyber-bg-blob-1" />
+            </motion.div>
+            <motion.div className="cyber-bg-blob-wrapper" style={{ bottom: '-10%', right: '-10%', x: isMobileDevice ? 0 : blob2XVal, y: isMobileDevice ? 0 : blob2YVal }}>
+              <div className="cyber-bg-blob-2" />
+            </motion.div>
+            <motion.div className="cyber-bg-blob-wrapper" style={{ top: '35%', right: '15%', x: isMobileDevice ? 0 : blob3XVal, y: isMobileDevice ? 0 : blob3YVal }}>
+              <div className="cyber-bg-blob-3" />
+            </motion.div>
+            <motion.div className="cyber-bg-blob-wrapper" style={{ bottom: '25%', left: '20%', x: isMobileDevice ? 0 : blob4XVal, y: isMobileDevice ? 0 : blob4YVal }}>
+              <div className="cyber-bg-blob-4" />
+            </motion.div>
             {/* Parallax Floating Icons */}
               <motion.div style={{ position: 'absolute', top: '15%', left: '10%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax1, x: isMobileDevice ? 0 : bgIconX, willChange: 'transform' }}>
                 <Code size={60} />
@@ -1422,8 +1467,8 @@ function App() {
             <div className="nav-logo" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="Logo" style={{ width: '28px', height: '28px', filter: 'drop-shadow(0 0 8px var(--accent-cyan))' }} />
               <h1 className="text-gradient">
-                <span className="desktop-only-inline">{t('nav_name') || 'SIRAÇ GÖKTUĞ ŞİMŞEK.'}</span>
-                <span className="mobile-only-inline">{t('nav_name_mobile') || 'SIRAÇ.'}</span>
+                <span className="logo-name-full">{t('nav_name') || 'SIRAÇ GÖKTUĞ ŞİMŞEK.'}</span>
+                <span className="logo-name-short">{t('nav_name_mobile') || 'SIRAÇ.'}</span>
               </h1>
             </div>
             
@@ -1790,14 +1835,13 @@ function App() {
             </motion.div>
           </section>
 
-          {/* About Section */}
           <motion.section
             id="about"
             className="about-section glass-panel"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 40, filter: "blur(12px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
             {/* Background flourish inside About */}
             <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '300px', height: '300px', background: 'radial-gradient(circle at center, rgba(var(--accent-violet-rgb), 0.15) 0%, transparent 60%)', filter: 'blur(40px)', zIndex: 0 }} />
@@ -1856,10 +1900,10 @@ function App() {
           <section id="timeline" style={{ padding: '0 5% 5rem', position: 'relative' }}>
             <motion.div 
               className="section-header"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
             >
               <h2 className="section-title text-gradient"><SyntaxHighlightedTitle text={t('timeline_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('timeline_subtitle')}</p>
@@ -1946,17 +1990,17 @@ function App() {
              id="featured-modules" 
              className="desktop-only glass-panel" 
              style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', padding: '5rem 2rem', borderRadius: '40px', willChange: 'transform, opacity' }}
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 40, filter: "blur(12px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <motion.div 
               className="section-header"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
             >
               <h2 className="section-title text-gradient"><SyntaxHighlightedTitle text={t('featured_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('featured_subtitle')}</p>
@@ -1970,22 +2014,20 @@ function App() {
                 { name: 'Doom II', desc: 'Full retro FPS engine integration.', icon: <Terminal size={32} /> },
                 { name: 'GTA Vice City', desc: 'Full 3D retro environment simulation.', icon: <Layers size={32} /> }
               ].map((game, i) => (
-                <motion.div
+                <TiltCard
                   key={i}
                   className="glass-panel"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
+                  whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: i * 0.1 }}
-                  whileHover={{ scale: 1.05, y: -10, boxShadow: '0 20px 40px rgba(0, 0, 0, 0.35)' }}
-                  onMouseEnter={playHover}
                   onClick={() => { playClick(); setIsArcadeOpen(true); }}
-                  style={{ padding: '2rem', borderRadius: '24px', cursor: 'pointer', border: '1px solid var(--border-glass)', textAlign: 'center', background: 'var(--bg-glass)' }}
+                  style={{ padding: '2rem', borderRadius: '24px', cursor: 'pointer', border: '1px solid var(--border-glass)', textAlign: 'center', background: 'var(--bg-glass)', height: '100%', willChange: 'transform, opacity' }}
                 >
                   <div style={{ color: 'var(--accent-cyan)', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>{game.icon}</div>
                   <h3 style={{ color: 'var(--text-main)', fontSize: '1.2rem', marginBottom: '0.5rem' }}>{game.name}</h3>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{game.desc}</p>
-                </motion.div>
+                </TiltCard>
               ))}
             </div>
           </motion.section>
@@ -1994,10 +2036,10 @@ function App() {
           <section id="projects" className="gallery-section">
             <motion.div 
               className="section-header"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
             >
               <h2 className="section-title text-gradient"><SyntaxHighlightedTitle text={t('archives_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('archives_subtitle')}</p>
@@ -2021,8 +2063,8 @@ function App() {
                     onClick={() => window.open(project.link, '_blank')}
                     style={{ padding: 0, willChange: 'transform, opacity' }}
                     variants={{
-                      hidden: { opacity: 0, y: 50 },
-                      visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 14, mass: 1 } }
+                      hidden: { opacity: 0, y: 30, filter: "blur(8px)" },
+                      visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { type: 'spring', stiffness: 100, damping: 14, mass: 1 } }
                     }}
                   >
                     {project.image && (
@@ -2081,15 +2123,14 @@ function App() {
             </div>
           </section>
 
-          {/* Tech Stack & Skills */}
           <motion.section
             id="skills"
             className="skills-section glass-panel"
-            style={{ borderRadius: '40px', willChange: 'transform, opacity' }}
-            initial={{ opacity: 0, scale: 0.95, y: 50 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
+            style={{ borderRadius: '40px', willChange: 'transform, opacity, filter' }}
+            initial={{ opacity: 0, scale: 0.98, y: 30, filter: "blur(12px)" }}
+            whileInView={{ opacity: 1, scale: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <div className="section-header">
               <h2 className="section-title text-gradient"><SyntaxHighlightedTitle text={t('skills_title')} /></h2>
@@ -2106,11 +2147,11 @@ function App() {
           {/* System Telemetry Section [NEW] - Professionalism Boost */}
           <motion.section 
             id="telemetry" 
-            style={{ padding: isMobileDevice ? '2rem 5%' : '4rem 5%', display: 'flex', justifyContent: 'center', willChange: 'transform, opacity' }}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            style={{ padding: isMobileDevice ? '2rem 5%' : '4rem 5%', display: 'flex', justifyContent: 'center', willChange: 'transform, opacity, filter' }}
+            initial={{ opacity: 0, y: 30, filter: "blur(10px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <div className="glass-panel" style={{ width: '100%', maxWidth: '1200px', padding: isMobileDevice ? '1.5rem 1rem' : '2.5rem', borderRadius: isMobileDevice ? '20px' : '30px', display: 'flex', flexWrap: 'wrap', gap: isMobileDevice ? '1.5rem' : '3rem', justifyContent: 'space-around', alignItems: 'center', border: '1px solid var(--border-glass)', background: 'var(--bg-glass)', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '2px', background: 'linear-gradient(90deg, transparent, var(--accent-cyan), transparent)' }} />
@@ -2139,14 +2180,13 @@ function App() {
             <ThreeDViewer t={t} theme={theme} isArcadeOpen={isArcadeOpen} />
           </Suspense>
 
-          {/* Interactive Footer */}
           <motion.footer 
             id="contact" 
             className="footer"
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, filter: "blur(12px)" }}
+            whileInView={{ opacity: 1, filter: "blur(0px)" }}
             viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 1 }}
+            transition={{ duration: 1, ease: "easeOut" }}
           >
             <div className="glass-panel status-bar">
               <div className="status-level">
