@@ -1047,6 +1047,7 @@ function App() {
   const mouseY = useMotionValue(0);
   const springX = useSpring(mouseX, { stiffness: 50, damping: 20 });
   const springY = useSpring(mouseY, { stiffness: 50, damping: 20 });
+  const scrollY = useMotionValue(0);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -1366,7 +1367,7 @@ function App() {
 
 
 
-  const scrollY = useMotionValue(0);
+  // scrollY is defined above near mouseX / mouseY to prevent TDZ errors
   // Background icon parallax — used in JSX floating icons
   const parallax1 = useTransform(scrollY, [0, 1000], [0, -150]);
   const parallax2 = useTransform(scrollY, [0, 1000], [0, 200]);
