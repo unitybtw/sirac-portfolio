@@ -1023,7 +1023,7 @@ function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
-  const [scrolled, setScrolled] = useState(false);
+  const [scrolled, setScrolled] = useState(() => typeof window !== 'undefined' ? window.scrollY > 40 : false);
 
 
 
@@ -1032,14 +1032,6 @@ function App() {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // Mouse Tracking for Parallax
@@ -1117,6 +1109,11 @@ function App() {
 
     lenis.on('scroll', (e) => {
       scrollY.set(e.scroll);
+      const currentScrolled = e.scroll > 40;
+      setScrolled(prev => {
+        if (prev !== currentScrolled) return currentScrolled;
+        return prev;
+      });
     });
 
     // Handle internal anchor links click with Lenis
@@ -2073,6 +2070,7 @@ function App() {
                         <motion.img
                           src={project.image}
                           alt={project.title}
+                          loading="lazy"
                           style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                           whileHover={{ scale: 1.08 }}
                           transition={{ duration: 0.6, ease: "easeOut" }}
