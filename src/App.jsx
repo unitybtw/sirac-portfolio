@@ -649,8 +649,17 @@ const TypewriterTitle = ({ title1, title2 }) => {
     };
     
     const item = {
-      hidden: { opacity: 0, y: 20 },
-      show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } }
+      hidden: { opacity: 0, y: 20, filter: 'blur(10px)' },
+      show: {
+        opacity: 1,
+        y: 0,
+        filter: 'blur(0px)',
+        transition: {
+          y: { type: 'spring', stiffness: 100 },
+          opacity: { duration: 0.3 },
+          filter: { type: 'tween', ease: 'easeOut', duration: 0.4 }
+        }
+      }
     };
 
     return (
