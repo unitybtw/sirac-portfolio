@@ -141,14 +141,25 @@ export default function PresencePanel() {
       
       // Try optimized query first (requires ".indexOn": "lastSeen" in Firebase rules)
       let res = await fetch(`${DB_URL}/visitors.json?orderBy="lastSeen"&startAt=${cutoff}`);
-      if (!res.ok) throw new Error('Network error');
-      let data = await res.json();
-      
-      // Fall back if index not defined
-      if (data && data.error && data.error.includes("Index not defined")) {
-        res = await fetch(`${DB_URL}/visitors.json`);
-        if (!res.ok) throw new Error('Network error');
+      let data;
+      if (res.ok) {
         data = await res.json();
+      } else {
+        try {
+          const errData = await res.json();
+          if (errData && errData.error && errData.error.includes("Index not defined")) {
+            res = await fetch(`${DB_URL}/visitors.json`);
+            if (res.ok) {
+              data = await res.json();
+            } else {
+              throw new Error('Fallback failed');
+            }
+          } else {
+            throw new Error('Network error');
+          }
+        } catch {
+          throw new Error('Network error');
+        }
       }
       
       if (!data || data.error) { 
