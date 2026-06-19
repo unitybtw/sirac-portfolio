@@ -9,6 +9,7 @@ import './i18n';
 const GameLibrary = lazy(() => import("./GameLibrary"));
 const ThreeDViewer = lazy(() => import("./ThreeDViewer"));
 import PresencePanel from './PresencePanel';
+import { gamesList } from './gamesData';
 import { playClick, playHover, playSuccess, playArcadeOpen, setMutedState, getMutedState } from './soundEffects';
 
 // Disable browser layout scroll restoration on reload
@@ -81,7 +82,7 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: delay / 2000 }} // Scale down delay
-      style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '16px', border: '1px solid var(--border-glass)', willChange: 'transform, opacity' }}
+      style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '16px', border: '1px solid var(--border-glass)', willChange: 'transform, opacity', backdropFilter: 'none', WebkitBackdropFilter: 'none', background: 'rgba(255, 255, 255, 0.02)' }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <div className="skill-icon-container" style={{ color: 'var(--text-main)', opacity: 0.8, background: 'var(--bg-glass)', padding: '10px', borderRadius: '12px', transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}>
@@ -96,9 +97,9 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
       <div style={{ width: '100%', height: '6px', background: 'var(--border-glass)', borderRadius: '10px', overflow: 'hidden', position: 'relative' }}>
         <motion.div
           className="skill-progress-bar-fill"
-          style={{ height: '100%', background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))', borderRadius: '10px', position: 'relative' }}
-          initial={{ width: 0 }}
-          whileInView={{ width: `${percent}%` }}
+          style={{ height: '100%', width: '100%', background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))', borderRadius: '10px', position: 'relative', transformOrigin: 'left', willChange: 'transform' }}
+          initial={{ scaleX: 0 }}
+          whileInView={{ scaleX: percent / 100 }}
           viewport={{ once: true }}
           transition={{ type: "spring", stiffness: 50, damping: 12, delay: 0.2 + (delay / 3000) }}
         >
@@ -106,7 +107,8 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
             style={{ 
               position: 'absolute', top: 0, left: 0, bottom: 0, width: '30%', 
               background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)', 
-              opacity: 0.8 
+              opacity: 0.8,
+              willChange: 'transform'
             }}
             animate={{ x: ['-200%', '400%'] }}
             transition={{ repeat: Infinity, duration: 2.5, ease: "linear" }}
@@ -383,7 +385,20 @@ const formatTerminalText = (text, type) => {
   return text;
 };
 
-const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMute, matrixRainMode, setMatrixRainMode, setShowSecretGame }) => {
+const InteractiveTerminal = ({ 
+  isArcadeOpen, 
+  setIsArcadeOpen, 
+  isMuted, 
+  toggleMute, 
+  matrixRainMode, 
+  setMatrixRainMode, 
+  setShowSecretGame,
+  activeVisitorCount,
+  setActiveArcadeGame,
+  theme,
+  toggleTheme,
+  activeSection
+}) => {
   const [history, setHistory] = useState([
     { type: 'log', text: 'SYSTEM ONLINE // v2.5' },
     { type: 'log', text: 'ESTABLISHING NEURAL GRID ENGINES... [OK]' },
@@ -394,6 +409,10 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMut
   const [isFocused, setIsFocused] = useState(false);
   const terminalBodyRef = React.useRef(null);
   const inputRef = React.useRef(null);
+
+  const [commandHistory, setCommandHistory] = useState([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [tempInputValue, setTempInputValue] = useState('');
 
   useEffect(() => {
     if (terminalBodyRef.current) {
@@ -411,120 +430,225 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMut
     }
   };
 
-  const handleCommand = (e) => {
-    if (e.key !== 'Enter') return;
-    
-    const commandText = input.trim();
-    if (!commandText) return;
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (commandHistory.length === 0) return;
+      
+      let nextIndex = historyIndex + 1;
+      if (nextIndex >= commandHistory.length) {
+        nextIndex = commandHistory.length - 1;
+      }
+      
+      if (historyIndex === -1) {
+        setTempInputValue(input);
+      }
+      
+      setHistoryIndex(nextIndex);
+      setInput(commandHistory[commandHistory.length - 1 - nextIndex]);
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (historyIndex === -1) return;
+      
+      let nextIndex = historyIndex - 1;
+      if (nextIndex < 0) {
+        setHistoryIndex(-1);
+        setInput(tempInputValue);
+      } else {
+        setHistoryIndex(nextIndex);
+        setInput(commandHistory[commandHistory.length - 1 - nextIndex]);
+      }
+    } else if (e.key === 'Enter') {
+      const commandText = input.trim();
+      if (!commandText) return;
 
-    playClick();
+      playClick();
 
-    const parts = commandText.split(' ');
-    const cmd = parts[0].toLowerCase();
+      setCommandHistory(prev => {
+        const last = prev[prev.length - 1];
+        if (last === commandText) return prev;
+        return [...prev, commandText];
+      });
+      setHistoryIndex(-1);
 
-    const newHistory = [...history, { type: 'input', text: `sirac@iku:~$ ${commandText}` }];
+      const parts = commandText.split(' ');
+      const cmd = parts[0].toLowerCase();
 
-    switch (cmd) {
-      case 'help':
-        newHistory.push(
-          { type: 'log', text: 'Available commands:' },
-          { type: 'info', text: '  about      - Details about Siraç Göktuğ Şimşek' },
-          { type: 'info', text: '  skills     - Load system skill tree parameters' },
-          { type: 'info', text: '  projects   - Output compiled project archives' },
-          { type: 'info', text: '  arcade     - Toggle live arcade interface module' },
-          { type: 'info', text: '  sound      - Toggle synth volume state (mute/unmute)' },
-          { type: 'info', text: '  matrix     - Toggle green matrix digital code rain mode' },
-          { type: 'info', text: '  snake      - Launch secret retro snake easter egg game' },
-          { type: 'info', text: '  clear      - Purge screen buffer log' }
-        );
-        break;
+      const newHistory = [...history, { type: 'input', text: `sirac@iku:~$ ${commandText}` }];
 
-      case 'about':
-        newHistory.push(
-          { type: 'success', text: 'CLASSIFIED IDENTITY: Siraç Göktuğ Şimşek' },
-          { type: 'log', text: 'Role: Game Developer & UI Engineer' },
-          { type: 'log', text: 'Bio: Crafting low-level custom renderers, safe memory systems (Rust/C++), and console-grade web/mobile interfaces.' },
-          { type: 'log', text: 'Currently studying Digital Game Design at IKU.' }
-        );
-        setTimeout(() => {
-          const el = document.getElementById('about');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }, 150);
-        break;
+      switch (cmd) {
+        case 'help':
+          newHistory.push(
+            { type: 'log', text: 'Available commands:' },
+            { type: 'info', text: '  about        - Details about Siraç Göktuğ Şimşek' },
+            { type: 'info', text: '  skills       - Load system skill tree parameters' },
+            { type: 'info', text: '  projects     - Output compiled project archives' },
+            { type: 'info', text: '  arcade       - Toggle live arcade interface module' },
+            { type: 'info', text: '  play <game>  - Launch any arcade/simulation game' },
+            { type: 'info', text: '  diagnostics  - Print real-time system & telemetry' },
+            { type: 'info', text: '  theme        - Toggle interface dark/light mode' },
+            { type: 'info', text: '  sound        - Toggle synth volume state (mute/unmute)' },
+            { type: 'info', text: '  matrix       - Toggle green matrix digital code rain mode' },
+            { type: 'info', text: '  snake        - Launch secret retro snake easter egg game' },
+            { type: 'info', text: '  clear        - Purge screen buffer log' }
+          );
+          break;
 
-      case 'skills':
-        newHistory.push(
-          { type: 'success', text: 'SYSTEM CAPABILITIES LOG:' },
-          { type: 'log', text: '  - Unity / C#          [|||||||||||||||||||] 95%' },
-          { type: 'log', text: '  - SwiftUI / macOS     [||||||||||||||||  ] 82%' },
-          { type: 'log', text: '  - Blender / 3D        [||||||||||||||||| ] 88%' },
-          { type: 'log', text: '  - C++ / Engine Dev    [||||||||||||||||  ] 80%' },
-          { type: 'log', text: '  - React / Web Apps    [|||||||||||||||   ] 75%' }
-        );
-        setTimeout(() => {
-          const el = document.getElementById('skills');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }, 150);
-        break;
+        case 'about':
+          newHistory.push(
+            { type: 'success', text: 'CLASSIFIED IDENTITY: Siraç Göktuğ Şimşek' },
+            { type: 'log', text: 'Role: Game Developer & UI Engineer' },
+            { type: 'log', text: 'Bio: Crafting low-level custom renderers, safe memory systems (Rust/C++), and console-grade web/mobile interfaces.' },
+            { type: 'log', text: 'Currently studying Digital Game Design at IKU.' }
+          );
+          setTimeout(() => {
+            const el = document.getElementById('about');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }, 150);
+          break;
 
-      case 'projects':
-        newHistory.push(
-          { type: 'success', text: 'ARCHIVED PROJECTS SUMMARY:' },
-          { type: 'info', text: '  1. FNAF 1 (Fan Port) - Interactive browser 2D engine' },
-          { type: 'info', text: '  2. CS 1.6 Web - Tactical shooter simulator' },
-          { type: 'info', text: '  3. Doom II - WebGL retro engine viewport integration' },
-          { type: 'log', text: 'Scroll down to the "Archives" grid to deploy any module!' }
-        );
-        setTimeout(() => {
-          const el = document.getElementById('projects');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }, 150);
-        break;
+        case 'skills':
+          newHistory.push(
+            { type: 'success', text: 'SYSTEM CAPABILITIES LOG:' },
+            { type: 'log', text: '  - Unity / C#          [|||||||||||||||||||] 95%' },
+            { type: 'log', text: '  - SwiftUI / macOS     [||||||||||||||||  ] 82%' },
+            { type: 'log', text: '  - Blender / 3D        [||||||||||||||||| ] 88%' },
+            { type: 'log', text: '  - C++ / Engine Dev    [||||||||||||||||  ] 80%' },
+            { type: 'log', text: '  - React / Web Apps    [|||||||||||||||   ] 75%' }
+          );
+          setTimeout(() => {
+            const el = document.getElementById('skills');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }, 150);
+          break;
 
-      case 'arcade':
-        if (window.innerWidth < 968) {
-          newHistory.push({ type: 'error', text: 'ERROR: Arcade module requires physical keyboard/mouse inputs and is restricted on mobile devices.' });
-        } else {
-          setIsArcadeOpen(!isArcadeOpen);
-          playArcadeOpen();
-          newHistory.push({ type: 'success', text: `Arcade module state toggled: ${!isArcadeOpen ? 'ACTIVE' : 'STANDBY'}` });
+        case 'projects':
+          newHistory.push(
+            { type: 'success', text: 'ARCHIVED PROJECTS SUMMARY:' },
+            { type: 'info', text: '  1. FNAF 1 (Fan Port) - Interactive browser 2D engine' },
+            { type: 'info', text: '  2. CS 1.6 Web - Tactical shooter simulator' },
+            { type: 'info', text: '  3. Doom II - WebGL retro engine viewport integration' },
+            { type: 'log', text: 'Scroll down to the "Archives" grid to deploy any module!' }
+          );
+          setTimeout(() => {
+            const el = document.getElementById('projects');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }, 150);
+          break;
+
+        case 'arcade':
+          if (window.innerWidth < 968) {
+            newHistory.push({ type: 'error', text: 'ERROR: Arcade module requires physical keyboard/mouse inputs and is restricted on mobile devices.' });
+          } else {
+            setIsArcadeOpen(!isArcadeOpen);
+            playArcadeOpen();
+            newHistory.push({ type: 'success', text: `Arcade module state toggled: ${!isArcadeOpen ? 'ACTIVE' : 'STANDBY'}` });
+          }
+          break;
+
+        case 'play':
+        case 'launch': {
+          const query = parts.slice(1).join(' ');
+          if (!query) {
+            newHistory.push({ type: 'error', text: 'Usage: play <game-name> (e.g. play fnaf, play cs, play doom)' });
+            break;
+          }
+          const q = query.toLowerCase().trim();
+          let matched = gamesList.find(g => g.id.toLowerCase() === q);
+          if (!matched) {
+            matched = gamesList.find(g => g.id.toLowerCase().includes(q));
+          }
+          if (!matched) {
+            matched = gamesList.find(g => g.title.toLowerCase().includes(q));
+          }
+          if (matched) {
+            newHistory.push({ type: 'success', text: `LAUNCHING ${matched.title.toUpperCase()} PROTOCOL... [OK]` });
+            if (window.innerWidth < 968) {
+              newHistory.push({ type: 'error', text: 'ERROR: Arcade module requires physical keyboard/mouse inputs and is restricted on mobile devices.' });
+            } else {
+              setActiveArcadeGame(matched.id);
+              setIsArcadeOpen(true);
+              playArcadeOpen();
+            }
+          } else {
+            newHistory.push({ type: 'error', text: `No game matching "${query}" was found.` });
+          }
+          break;
         }
-        break;
 
-      case 'sound':
-        toggleMute();
-        newHistory.push({ type: 'success', text: `Audio mute state: ${!isMuted ? 'MUTED' : 'UNMUTED'}` });
-        break;
+        case 'diagnostics':
+        case 'sysinfo':
+        case 'status':
+        case 'neofetch': {
+          const pingTime = Math.floor(Math.random() * 25) + 15;
+          newHistory.push(
+            { type: 'success', text: 'SYSTEM DIAGNOSTICS & TELEMETRY REPORT:' },
+            { type: 'log', text: '----------------------------------------' },
+            { type: 'info', text: `  Host OS:          macOS` },
+            { type: 'info', text: `  Active Theme:     ${theme.toUpperCase()}` },
+            { type: 'info', text: `  UI Language:      ${i18n.language.toUpperCase()}` },
+            { type: 'info', text: `  Sound Engine:     ${isMuted ? 'STANDBY (MUTED)' : 'ACTIVE (UNMUTED)'}` },
+            { type: 'info', text: `  Matrix Shader:    ${matrixRainMode ? 'ACTIVE (NEON GREEN)' : 'STANDBY (CYAN VIOLET)'}` },
+            { type: 'info', text: `  Viewport Section: ${activeSection.toUpperCase()}` },
+            { type: 'info', text: `  Active Visitors:  ${activeVisitorCount}` },
+            { type: 'info', text: `  Ping Latency:     ${pingTime}ms` },
+            { type: 'log', text: '----------------------------------------' }
+          );
+          break;
+        }
 
-      case 'matrix':
-        setMatrixRainMode(!matrixRainMode);
-        playSuccess();
-        newHistory.push({ type: 'success', text: `Matrix code rain theme: ${!matrixRainMode ? 'ACTIVE (NEON GREEN)' : 'STANDBY (CYAN VIOLET)'}` });
-        break;
+        case 'theme':
+          toggleTheme();
+          newHistory.push({ type: 'success', text: `Theme successfully shifted to ${(theme === 'dark' ? 'light' : 'dark').toUpperCase()}.` });
+          break;
 
-      case 'snake':
-      case 'secret':
-        if (setShowSecretGame) {
-          setShowSecretGame(true);
+        case 'sudo': {
+          const sub = parts.slice(1).join(' ').toLowerCase();
+          if (sub.includes('rm -rf') || sub.includes('rm ')) {
+            newHistory.push({ type: 'error', text: 'Nice try, hacker. Core systems are protected by neural safeguards.' });
+          } else if (sub.includes('access') || sub.includes('login')) {
+            newHistory.push({ type: 'success', text: 'Accessing mainframe... authorization bypass initialized... just kidding, you are already admin.' });
+          } else {
+            newHistory.push({ type: 'log', text: 'Authorization bypass active. Admin command access granted.' });
+          }
+          break;
+        }
+
+        case 'sound':
+          toggleMute();
+          newHistory.push({ type: 'success', text: `Audio mute state: ${!isMuted ? 'MUTED' : 'UNMUTED'}` });
+          break;
+
+        case 'matrix':
+          setMatrixRainMode(!matrixRainMode);
           playSuccess();
-          newHistory.push({ type: 'success', text: 'INITIATING SECRET NEON SNAKE MINIGAME PROTOCOL...' });
-        } else {
-          newHistory.push({ type: 'error', text: 'ERROR: Secret engine is offline.' });
-        }
-        break;
+          newHistory.push({ type: 'success', text: `Matrix code rain theme: ${!matrixRainMode ? 'ACTIVE (NEON GREEN)' : 'STANDBY (CYAN VIOLET)'}` });
+          break;
 
-      case 'clear':
-        setHistory([]);
-        setInput('');
-        return;
+        case 'snake':
+        case 'secret':
+          if (setShowSecretGame) {
+            setShowSecretGame(true);
+            playSuccess();
+            newHistory.push({ type: 'success', text: 'INITIATING SECRET NEON SNAKE MINIGAME PROTOCOL...' });
+          } else {
+            newHistory.push({ type: 'error', text: 'ERROR: Secret engine is offline.' });
+          }
+          break;
 
-      default:
-        newHistory.push({ type: 'error', text: `Command not recognized: '${cmd}'. Type 'help' for options.` });
-        break;
+        case 'clear':
+          setHistory([]);
+          setInput('');
+          return;
+
+        default:
+          newHistory.push({ type: 'error', text: `Command not recognized: '${cmd}'. Type 'help' for options.` });
+          break;
+      }
+
+      setHistory(newHistory);
+      setInput('');
     }
-
-    setHistory(newHistory);
-    setInput('');
   };
 
   return (
@@ -582,7 +706,7 @@ const InteractiveTerminal = ({ isArcadeOpen, setIsArcadeOpen, isMuted, toggleMut
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleCommand}
+          onKeyDown={handleKeyDown}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           style={{
@@ -1028,6 +1152,7 @@ const Magnetic = ({ children, className }) => {
 function App() {
   const { t, i18n } = useTranslation();
   const [theme, setTheme] = useState('dark');
+  const [activeVisitorCount, setActiveVisitorCount] = useState(1);
   const [showSecretGame, setShowSecretGame] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMobileDevice, setIsMobileDevice] = useState(false);
@@ -1480,122 +1605,132 @@ function App() {
             </div>
             
             {/* Collapsible Nav Links */}
-            <div className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}>
-              <Magnetic>
-                <a href="#about" className={activeSection === 'about' ? 'active' : ''} data-index="[01]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
-                  {t('nav_about') || 'About'}
-                  {!isMobileDevice && activeSection === 'about' && (
-                    <motion.span 
-                      key={i18n.language}
-                      layoutId="activeNavIndicator" 
-                      className="active-nav-indicator" 
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                </a>
-              </Magnetic>
-              <Magnetic>
-                <a href="#timeline" className={activeSection === 'timeline' ? 'active' : ''} data-index="[02]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
-                  {t('nav_timeline') || 'Timeline'}
-                  {!isMobileDevice && activeSection === 'timeline' && (
-                    <motion.span 
-                      key={i18n.language}
-                      layoutId="activeNavIndicator" 
-                      className="active-nav-indicator" 
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                </a>
-              </Magnetic>
-              <Magnetic>
-                <a href="#projects" className={activeSection === 'projects' ? 'active' : ''} data-index="[03]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
-                  {t('nav_work')}
-                  {!isMobileDevice && activeSection === 'projects' && (
-                    <motion.span 
-                      key={i18n.language}
-                      layoutId="activeNavIndicator" 
-                      className="active-nav-indicator" 
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                </a>
-              </Magnetic>
-              <Magnetic>
-                <a href="#skills" className={activeSection === 'skills' ? 'active' : ''} data-index="[04]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
-                  {t('nav_skills')}
-                  {!isMobileDevice && activeSection === 'skills' && (
-                    <motion.span 
-                      key={i18n.language}
-                      layoutId="activeNavIndicator" 
-                      className="active-nav-indicator" 
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                </a>
-              </Magnetic>
-              <Magnetic>
-                <a href="#contact" className={activeSection === 'contact' ? 'active' : ''} data-index="[05]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
-                  {t('nav_contact')}
-                  {!isMobileDevice && activeSection === 'contact' && (
-                    <motion.span 
-                      key={i18n.language}
-                      layoutId="activeNavIndicator" 
-                      className="active-nav-indicator" 
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                    />
-                  )}
-                </a>
-              </Magnetic>
-              
-              <Magnetic>
-                <button
-                  onClick={() => { playClick(); setIsArcadeOpen(true); setIsMobileMenuOpen(false); }}
-                  onMouseEnter={playHover}
-                  className="btn btn-outline glass-panel"
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-cyan)' }}
+            <AnimatePresence>
+              {(!isMobileDevice || isMobileMenuOpen) && (
+                <motion.div 
+                  className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}
+                  initial={isMobileDevice ? { x: '100%', opacity: 0 } : { opacity: 1 }}
+                  animate={isMobileDevice ? { x: 0, opacity: 1 } : { opacity: 1 }}
+                  exit={isMobileDevice ? { x: '100%', opacity: 0 } : { opacity: 0 }}
+                  transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                 >
-                  <Gamepad2 size={14} /> {t('arcade_button') || 'Arcade'}
-                </button>
-              </Magnetic>
+                  <Magnetic>
+                    <a href="#about" className={activeSection === 'about' ? 'active' : ''} data-index="[01]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
+                      {t('nav_about') || 'About'}
+                      {!isMobileDevice && activeSection === 'about' && (
+                        <motion.span 
+                          key={i18n.language}
+                          layoutId="activeNavIndicator" 
+                          className="active-nav-indicator" 
+                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                    </a>
+                  </Magnetic>
+                  <Magnetic>
+                    <a href="#timeline" className={activeSection === 'timeline' ? 'active' : ''} data-index="[02]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
+                      {t('nav_timeline') || 'Timeline'}
+                      {!isMobileDevice && activeSection === 'timeline' && (
+                        <motion.span 
+                          key={i18n.language}
+                          layoutId="activeNavIndicator" 
+                          className="active-nav-indicator" 
+                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                    </a>
+                  </Magnetic>
+                  <Magnetic>
+                    <a href="#projects" className={activeSection === 'projects' ? 'active' : ''} data-index="[03]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
+                      {t('nav_work')}
+                      {!isMobileDevice && activeSection === 'projects' && (
+                        <motion.span 
+                          key={i18n.language}
+                          layoutId="activeNavIndicator" 
+                          className="active-nav-indicator" 
+                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                    </a>
+                  </Magnetic>
+                  <Magnetic>
+                    <a href="#skills" className={activeSection === 'skills' ? 'active' : ''} data-index="[04]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
+                      {t('nav_skills')}
+                      {!isMobileDevice && activeSection === 'skills' && (
+                        <motion.span 
+                          key={i18n.language}
+                          layoutId="activeNavIndicator" 
+                          className="active-nav-indicator" 
+                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                    </a>
+                  </Magnetic>
+                  <Magnetic>
+                    <a href="#contact" className={activeSection === 'contact' ? 'active' : ''} data-index="[05]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
+                      {t('nav_contact')}
+                      {!isMobileDevice && activeSection === 'contact' && (
+                        <motion.span 
+                          key={i18n.language}
+                          layoutId="activeNavIndicator" 
+                          className="active-nav-indicator" 
+                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                    </a>
+                  </Magnetic>
+                  
+                  <Magnetic>
+                    <button
+                      onClick={() => { playClick(); setIsArcadeOpen(true); setIsMobileMenuOpen(false); }}
+                      onMouseEnter={playHover}
+                      className="btn btn-outline glass-panel"
+                      style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-cyan)' }}
+                    >
+                      <Gamepad2 size={14} /> {t('arcade_button') || 'Arcade'}
+                    </button>
+                  </Magnetic>
 
-              {/* Mobile-only utilities drawer */}
-              <div className="mobile-menu-utilities">
-                {/* Language Switcher */}
-                <div className="mobile-lang-switcher">
-                  <button 
-                    onClick={() => { playClick(); changeLanguage('en'); }}
-                    className={i18n.language?.startsWith('en') ? 'active' : ''}
-                  >
-                    EN
-                  </button>
-                  <button 
-                    onClick={() => { playClick(); changeLanguage('tr'); }}
-                    className={i18n.language?.startsWith('tr') ? 'active' : ''}
-                  >
-                    TR
-                  </button>
-                </div>
+                  {/* Mobile-only utilities drawer */}
+                  <div className="mobile-menu-utilities">
+                    {/* Language Switcher */}
+                    <div className="mobile-lang-switcher">
+                      <button 
+                        onClick={() => { playClick(); changeLanguage('en'); }}
+                        className={i18n.language?.startsWith('en') ? 'active' : ''}
+                      >
+                        EN
+                      </button>
+                      <button 
+                        onClick={() => { playClick(); changeLanguage('tr'); }}
+                        className={i18n.language?.startsWith('tr') ? 'active' : ''}
+                      >
+                        TR
+                      </button>
+                    </div>
 
-                {/* Sound & Theme Controls */}
-                <div className="mobile-controls">
-                  <button 
-                    onClick={() => { toggleMute(); playClick(); }} 
-                    className="mobile-control-btn"
-                    aria-label="Toggle Sound"
-                    style={{ color: isMuted ? 'var(--text-muted)' : 'var(--accent-cyan)' }}
-                  >
-                    {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-                  </button>
-                  <button 
-                    onClick={(e) => { toggleTheme(e); }} 
-                    className="mobile-control-btn"
-                    aria-label="Toggle Theme"
-                  >
-                    {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
-                  </button>
-                </div>
-              </div>
-            </div>
+                    {/* Sound & Theme Controls */}
+                    <div className="mobile-controls">
+                      <button 
+                        onClick={() => { toggleMute(); playClick(); }} 
+                        className="mobile-control-btn"
+                        aria-label="Toggle Sound"
+                        style={{ color: isMuted ? 'var(--text-muted)' : 'var(--accent-cyan)' }}
+                      >
+                        {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                      </button>
+                      <button 
+                        onClick={(e) => { toggleTheme(e); }} 
+                        className="mobile-control-btn"
+                        aria-label="Toggle Theme"
+                      >
+                        {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Nav Utilities - ALWAYS visible on right */}
             <div className="nav-utilities">
@@ -1806,6 +1941,11 @@ function App() {
                 matrixRainMode={matrixRainMode}
                 setMatrixRainMode={setMatrixRainMode}
                 setShowSecretGame={setShowSecretGame}
+                activeVisitorCount={activeVisitorCount}
+                setActiveArcadeGame={setActiveArcadeGame}
+                theme={theme}
+                toggleTheme={toggleTheme}
+                activeSection={activeSection}
               />
             </motion.div>
 
@@ -1894,7 +2034,7 @@ function App() {
                   }}
                   whileHover={{ y: -5, scale: 1.02, boxShadow: '0 12px 30px rgba(0, 0, 0, 0.25)', borderColor: 'var(--accent-cyan)' }}
                   onMouseEnter={playHover}
-                  style={{ padding: '1.5rem', borderRadius: '16px', transition: 'border-color 0.3s, box-shadow 0.3s' }}
+                  style={{ padding: '1.5rem', borderRadius: '16px', transition: 'border-color 0.3s, box-shadow 0.3s', backdropFilter: 'none', WebkitBackdropFilter: 'none', background: 'rgba(255, 255, 255, 0.02)', willChange: 'transform, opacity' }}
                 >
                   <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.8rem' }}>{t(`about_stat_${num}`)}</div>
                   <div style={{ color: 'var(--text-main)', fontSize: '1.1rem', fontWeight: 700 }}>{t(`about_stat_${num}_val`)}</div>
@@ -1915,6 +2055,7 @@ function App() {
               <h2 className="section-title text-gradient"><SyntaxHighlightedTitle text={t('timeline_title')} /></h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('timeline_subtitle')}</p>
             </motion.div>
+
             
             <div className="timeline-container" style={{ maxWidth: '900px', margin: '3rem auto 0', position: 'relative' }}>
               {/* Central Pipe */}
@@ -1933,7 +2074,8 @@ function App() {
                       justifyContent: num % 2 === 0 ? 'flex-start' : 'flex-end',
                       alignItems: 'center',
                       width: '100%',
-                      position: 'relative'
+                      position: 'relative',
+                      willChange: 'transform, opacity'
                     }}
                   >
                     {/* Node Dot */}
@@ -2029,7 +2171,7 @@ function App() {
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: i * 0.1 }}
                   onClick={() => { playClick(); setIsArcadeOpen(true); }}
-                  style={{ padding: '2rem', borderRadius: '24px', cursor: 'pointer', border: '1px solid var(--border-glass)', textAlign: 'center', background: 'var(--bg-glass)', height: '100%', willChange: 'transform, opacity' }}
+                  style={{ padding: '2rem', borderRadius: '24px', cursor: 'pointer', border: '1px solid var(--border-glass)', textAlign: 'center', background: 'rgba(255, 255, 255, 0.02)', height: '100%', willChange: 'transform, opacity', backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
                 >
                   <div style={{ color: 'var(--accent-cyan)', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>{game.icon}</div>
                   <h3 style={{ color: 'var(--text-main)', fontSize: '1.2rem', marginBottom: '0.5rem' }}>{game.name}</h3>
@@ -2065,14 +2207,18 @@ function App() {
               }}
             >
               {projects.map((project) => (
-                <TiltCard key={project.id} className={`project-card glass-panel ${project.glow}`}>
-                  <motion.div
+                <TiltCard 
+                  key={project.id} 
+                  className={`project-card glass-panel ${project.glow}`}
+                  variants={{
+                    hidden: { opacity: 0, y: 30 },
+                    visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 14, mass: 1 } }
+                  }}
+                  style={{ willChange: 'transform, opacity' }}
+                >
+                  <div
                     onClick={() => window.open(project.link, '_blank')}
-                    style={{ padding: 0, willChange: 'transform, opacity' }}
-                    variants={{
-                      hidden: { opacity: 0, y: 30 },
-                      visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 14, mass: 1 } }
-                    }}
+                    style={{ padding: 0, cursor: 'pointer' }}
                   >
                     {project.image && (
                       <div style={{ height: '180px', overflow: 'hidden', borderBottom: '1px solid var(--border-glass)', borderRadius: '20px 20px 0 0', position: 'relative' }}>
@@ -2098,7 +2244,7 @@ function App() {
                         <p className="project-desc">{project.desc}</p>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 </TiltCard>
               ))}
             </motion.div>
@@ -2166,7 +2312,13 @@ function App() {
               {[
                 { label: t('stats_games'), val: "50+", icon: <Gamepad2 size={24} /> },
                 { label: t('stats_lines'), val: "15K+", icon: <Code size={24} /> },
-                { label: t('stats_users'), val: "SYNC.", icon: <Globe size={24} /> },
+                { 
+                  label: t('stats_users'), 
+                  val: i18n.language?.startsWith('tr') 
+                    ? `${activeVisitorCount} AKTİF` 
+                    : `${activeVisitorCount} ONLINE`, 
+                  icon: <Globe size={24} /> 
+                },
                 { label: t('stats_uptime'), val: "100%", icon: <Terminal size={24} /> }
               ].map((stat, i) => (
                 <motion.div 
@@ -2326,7 +2478,7 @@ function App() {
       )}
     </AnimatePresence>
 
-    {!isArcadeOpen && <PresencePanel />}
+    {!isArcadeOpen && <PresencePanel onActiveCountChange={setActiveVisitorCount} />}
     </>
   );
 }
