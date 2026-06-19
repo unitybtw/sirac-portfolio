@@ -1604,133 +1604,87 @@ function App() {
               </h1>
             </div>
             
-            {/* Collapsible Nav Links */}
-            <AnimatePresence>
-              {(!isMobileDevice || isMobileMenuOpen) && (
-                <motion.div 
-                  className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}
-                  initial={isMobileDevice ? { x: '100%', opacity: 0 } : { opacity: 1 }}
-                  animate={isMobileDevice ? { x: 0, opacity: 1 } : { opacity: 1 }}
-                  exit={isMobileDevice ? { x: '100%', opacity: 0 } : { opacity: 0 }}
-                  transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                >
-                  <Magnetic>
-                    <a href="#about" className={activeSection === 'about' ? 'active' : ''} data-index="[01]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
-                      {t('nav_about') || 'About'}
-                      {!isMobileDevice && activeSection === 'about' && (
-                        <motion.span 
-                          key={i18n.language}
-                          layoutId="activeNavIndicator" 
-                          className="active-nav-indicator" 
-                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                        />
-                      )}
-                    </a>
-                  </Magnetic>
-                  <Magnetic>
-                    <a href="#timeline" className={activeSection === 'timeline' ? 'active' : ''} data-index="[02]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
-                      {t('nav_timeline') || 'Timeline'}
-                      {!isMobileDevice && activeSection === 'timeline' && (
-                        <motion.span 
-                          key={i18n.language}
-                          layoutId="activeNavIndicator" 
-                          className="active-nav-indicator" 
-                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                        />
-                      )}
-                    </a>
-                  </Magnetic>
-                  <Magnetic>
-                    <a href="#projects" className={activeSection === 'projects' ? 'active' : ''} data-index="[03]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
-                      {t('nav_work')}
-                      {!isMobileDevice && activeSection === 'projects' && (
-                        <motion.span 
-                          key={i18n.language}
-                          layoutId="activeNavIndicator" 
-                          className="active-nav-indicator" 
-                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                        />
-                      )}
-                    </a>
-                  </Magnetic>
-                  <Magnetic>
-                    <a href="#skills" className={activeSection === 'skills' ? 'active' : ''} data-index="[04]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
-                      {t('nav_skills')}
-                      {!isMobileDevice && activeSection === 'skills' && (
-                        <motion.span 
-                          key={i18n.language}
-                          layoutId="activeNavIndicator" 
-                          className="active-nav-indicator" 
-                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                        />
-                      )}
-                    </a>
-                  </Magnetic>
-                  <Magnetic>
-                    <a href="#contact" className={activeSection === 'contact' ? 'active' : ''} data-index="[05]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
-                      {t('nav_contact')}
-                      {!isMobileDevice && activeSection === 'contact' && (
-                        <motion.span 
-                          key={i18n.language}
-                          layoutId="activeNavIndicator" 
-                          className="active-nav-indicator" 
-                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-                        />
-                      )}
-                    </a>
-                  </Magnetic>
-                  
-                  <Magnetic>
-                    <button
-                      onClick={() => { playClick(); setIsArcadeOpen(true); setIsMobileMenuOpen(false); }}
-                      onMouseEnter={playHover}
-                      className="btn btn-outline glass-panel"
-                      style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-cyan)' }}
-                    >
-                      <Gamepad2 size={14} /> {t('arcade_button') || 'Arcade'}
-                    </button>
-                  </Magnetic>
-
-                  {/* Mobile-only utilities drawer */}
-                  <div className="mobile-menu-utilities">
-                    {/* Language Switcher */}
-                    <div className="mobile-lang-switcher">
-                      <button 
-                        onClick={() => { playClick(); changeLanguage('en'); }}
-                        className={i18n.language?.startsWith('en') ? 'active' : ''}
-                      >
-                        EN
-                      </button>
-                      <button 
-                        onClick={() => { playClick(); changeLanguage('tr'); }}
-                        className={i18n.language?.startsWith('tr') ? 'active' : ''}
-                      >
-                        TR
-                      </button>
-                    </div>
-
-                    {/* Sound & Theme Controls */}
-                    <div className="mobile-controls">
-                      <button 
-                        onClick={() => { toggleMute(); playClick(); }} 
-                        className="mobile-control-btn"
-                        aria-label="Toggle Sound"
-                        style={{ color: isMuted ? 'var(--text-muted)' : 'var(--accent-cyan)' }}
-                      >
-                        {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-                      </button>
-                      <button 
-                        onClick={(e) => { toggleTheme(e); }} 
-                        className="mobile-control-btn"
-                        aria-label="Toggle Theme"
-                      >
-                        {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* Desktop Nav Links */}
+            {!isMobileDevice && (
+              <div className="nav-links">
+                <Magnetic>
+                  <a href="#about" className={activeSection === 'about' ? 'active' : ''} data-index="[01]" onMouseEnter={playHover} onClick={() => playClick()}>
+                    {t('nav_about') || 'About'}
+                    {activeSection === 'about' && (
+                      <motion.span 
+                        key={i18n.language}
+                        layoutId="activeNavIndicator" 
+                        className="active-nav-indicator" 
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                  </a>
+                </Magnetic>
+                <Magnetic>
+                  <a href="#timeline" className={activeSection === 'timeline' ? 'active' : ''} data-index="[02]" onMouseEnter={playHover} onClick={() => playClick()}>
+                    {t('nav_timeline') || 'Timeline'}
+                    {activeSection === 'timeline' && (
+                      <motion.span 
+                        key={i18n.language}
+                        layoutId="activeNavIndicator" 
+                        className="active-nav-indicator" 
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                  </a>
+                </Magnetic>
+                <Magnetic>
+                  <a href="#projects" className={activeSection === 'projects' ? 'active' : ''} data-index="[03]" onMouseEnter={playHover} onClick={() => playClick()}>
+                    {t('nav_work')}
+                    {activeSection === 'projects' && (
+                      <motion.span 
+                        key={i18n.language}
+                        layoutId="activeNavIndicator" 
+                        className="active-nav-indicator" 
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                  </a>
+                </Magnetic>
+                <Magnetic>
+                  <a href="#skills" className={activeSection === 'skills' ? 'active' : ''} data-index="[04]" onMouseEnter={playHover} onClick={() => playClick()}>
+                    {t('nav_skills')}
+                    {activeSection === 'skills' && (
+                      <motion.span 
+                        key={i18n.language}
+                        layoutId="activeNavIndicator" 
+                        className="active-nav-indicator" 
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                  </a>
+                </Magnetic>
+                <Magnetic>
+                  <a href="#contact" className={activeSection === 'contact' ? 'active' : ''} data-index="[05]" onMouseEnter={playHover} onClick={() => playClick()}>
+                    {t('nav_contact')}
+                    {activeSection === 'contact' && (
+                      <motion.span 
+                        key={i18n.language}
+                        layoutId="activeNavIndicator" 
+                        className="active-nav-indicator" 
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                  </a>
+                </Magnetic>
+                
+                <Magnetic>
+                  <button
+                    onClick={() => { playClick(); setIsArcadeOpen(true); }}
+                    onMouseEnter={playHover}
+                    className="btn btn-outline glass-panel"
+                    style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-cyan)' }}
+                  >
+                    <Gamepad2 size={14} /> {t('arcade_button') || 'Arcade'}
+                  </button>
+                </Magnetic>
+              </div>
+            )}
 
             {/* Nav Utilities - ALWAYS visible on right */}
             <div className="nav-utilities">
@@ -1846,6 +1800,94 @@ function App() {
               </button>
             </div>
           </nav>
+
+          {/* Mobile Sliding Overlay Drawer - Escaping layout transforms */}
+          <AnimatePresence>
+            {isMobileDevice && isMobileMenuOpen && (
+              <motion.div 
+                className="nav-links active"
+                initial={{ x: '100%', opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: '100%', opacity: 0 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              >
+                <Magnetic>
+                  <a href="#about" className={activeSection === 'about' ? 'active' : ''} data-index="[01]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
+                    {t('nav_about') || 'About'}
+                  </a>
+                </Magnetic>
+                <Magnetic>
+                  <a href="#timeline" className={activeSection === 'timeline' ? 'active' : ''} data-index="[02]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
+                    {t('nav_timeline') || 'Timeline'}
+                  </a>
+                </Magnetic>
+                <Magnetic>
+                  <a href="#projects" className={activeSection === 'projects' ? 'active' : ''} data-index="[03]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
+                    {t('nav_work')}
+                  </a>
+                </Magnetic>
+                <Magnetic>
+                  <a href="#skills" className={activeSection === 'skills' ? 'active' : ''} data-index="[04]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
+                    {t('nav_skills')}
+                  </a>
+                </Magnetic>
+                <Magnetic>
+                  <a href="#contact" className={activeSection === 'contact' ? 'active' : ''} data-index="[05]" onMouseEnter={playHover} onClick={() => { playClick(); setIsMobileMenuOpen(false); }}>
+                    {t('nav_contact')}
+                  </a>
+                </Magnetic>
+                
+                <Magnetic>
+                  <button
+                    onClick={() => { playClick(); setIsArcadeOpen(true); setIsMobileMenuOpen(false); }}
+                    onMouseEnter={playHover}
+                    className="btn btn-outline glass-panel"
+                    style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-cyan)' }}
+                  >
+                    <Gamepad2 size={14} /> {t('arcade_button') || 'Arcade'}
+                  </button>
+                </Magnetic>
+
+                {/* Mobile-only utilities drawer */}
+                <div className="mobile-menu-utilities">
+                  {/* Language Switcher */}
+                  <div className="mobile-lang-switcher">
+                    <button 
+                      onClick={() => { playClick(); changeLanguage('en'); }}
+                      className={i18n.language?.startsWith('en') ? 'active' : ''}
+                    >
+                      EN
+                    </button>
+                    <button 
+                      onClick={() => { playClick(); changeLanguage('tr'); }}
+                      className={i18n.language?.startsWith('tr') ? 'active' : ''}
+                    >
+                      TR
+                    </button>
+                  </div>
+
+                  {/* Sound & Theme Controls */}
+                  <div className="mobile-controls">
+                    <button 
+                      onClick={() => { toggleMute(); playClick(); }} 
+                      className="mobile-control-btn"
+                      aria-label="Toggle Sound"
+                      style={{ color: isMuted ? 'var(--text-muted)' : 'var(--accent-cyan)' }}
+                    >
+                      {isMuted ? <VolumeX size={16} /> : <Volume2 size={16} />}
+                    </button>
+                    <button 
+                      onClick={(e) => { toggleTheme(e); }} 
+                      className="mobile-control-btn"
+                      aria-label="Toggle Theme"
+                    >
+                      {theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />}
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Hero Section */}
           <section className="hero">
