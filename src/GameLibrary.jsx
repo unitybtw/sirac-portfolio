@@ -295,6 +295,8 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                         fontSize: '0.8rem',
                                                         width: '160px',
                                                         fontFamily: 'monospace',
+                                                        minHeight: '44px',
+                                                        boxSizing: 'border-box',
                                                     }}
                                                     onFocus={(e) => { e.target.style.width = '210px'; }}
                                                     onBlur={(e) => { e.target.style.width = '160px'; }}

@@ -41,7 +41,7 @@ function getCurrentPage() {
   return 'Hero';
 }
 
-export default function PresencePanel() {
+export default function PresencePanel({ onActiveCountChange }) {
   const [myId] = useState(() => getOrCreate('visitor_id', generateVisitorId));
   const [myName] = useState(() => getOrCreate('visitor_name', generateNeonName));
   const [myColor] = useState(() => getOrCreate('visitor_color', generateColor));
@@ -257,6 +257,12 @@ export default function PresencePanel() {
 
   const onlineVisitors = Object.entries(useMock ? mockVisitors : visitors).filter(([id]) => id !== myId);
   const totalOnline = onlineVisitors.length + 1;
+
+  useEffect(() => {
+    if (onActiveCountChange) {
+      onActiveCountChange(totalOnline);
+    }
+  }, [totalOnline, onActiveCountChange]);
 
   return (
     <>

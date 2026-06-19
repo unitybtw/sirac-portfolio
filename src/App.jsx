@@ -2349,7 +2349,7 @@ function App() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className="glass-panel" style={{ width: '100%', maxWidth: '1200px', padding: isMobileDevice ? '1.5rem 1rem' : '2.5rem', borderRadius: isMobileDevice ? '20px' : '30px', display: 'flex', flexWrap: 'wrap', gap: isMobileDevice ? '1.5rem' : '3rem', justifyContent: 'space-around', alignItems: 'center', border: '1px solid var(--border-glass)', background: 'var(--bg-glass)', position: 'relative', overflow: 'hidden' }}>
+            <div className="glass-panel" style={{ width: '100%', maxWidth: '1200px', padding: isMobileDevice ? 'clamp(1rem, 4vw, 1.5rem) clamp(0.75rem, 3vw, 1.2rem)' : '2.5rem', borderRadius: isMobileDevice ? 'clamp(16px, 4vw, 24px)' : '30px', display: 'flex', flexWrap: 'wrap', gap: isMobileDevice ? 'clamp(1rem, 4vw, 1.5rem)' : '3rem', justifyContent: 'space-around', alignItems: 'center', border: '1px solid var(--border-glass)', background: 'var(--bg-glass)', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '2px', background: 'linear-gradient(90deg, transparent, var(--accent-cyan), transparent)' }} />
               {[
                 { label: t('stats_games'), val: "50+", icon: <Gamepad2 size={24} /> },
