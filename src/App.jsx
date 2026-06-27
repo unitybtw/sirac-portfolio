@@ -122,6 +122,14 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
 const MatrixBackground = ({ theme, isPaused, matrixRainMode }) => {
   useEffect(() => {
     if (isPaused) return;
+    if (window.innerWidth <= 768) {
+      const canvas = document.getElementById('matrix-canvas');
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      return;
+    }
     const canvas = document.getElementById('matrix-canvas');
     const ctx = canvas.getContext('2d');
 

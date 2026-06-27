@@ -28,7 +28,7 @@
   --font-display: "Outfit", sans-serif;
   --font-code: "Fira Code", monospace;
 
-  --glass-blur: blur(28px) saturate(220%);
+  --glass-blur: blur(16px) saturate(180%);
 }
 
 html {
@@ -1027,6 +1027,13 @@ body.light-mode .nav-links button.btn:hover {
 
 /* Animations & Responsive */
 @media (max-width: 968px) {
+  /* Disable backdrop filter blur on static glass panels to boost scroll performance on mobile */
+  .glass-panel:not(nav.glass-panel):not(.nav-links) {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(15, 17, 26, 0.95) !important;
+  }
+
   .desktop-only {
     display: none !important;
   }
