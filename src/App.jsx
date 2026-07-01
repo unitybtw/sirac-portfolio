@@ -1,7 +1,7 @@
 import React, { useEffect, useState, lazy, Suspense } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
-import { Terminal, Github, Linkedin, Mail, ArrowRight, Code, Layers, Smartphone, Box, Gamepad2, Compass, Globe, Moon, Sun, ChevronLeft, ChevronRight, ChevronUp, Volume2, VolumeX, ChevronDown } from 'lucide-react';
+import { Terminal, Github, Linkedin, Mail, ArrowRight, Code, Layers, Smartphone, Box, Gamepad2, Compass, Globe, Moon, Sun, ChevronLeft, ChevronRight, ChevronUp, Volume2, VolumeX, ChevronDown, FileText, X, Download, Briefcase, GraduationCap } from 'lucide-react';
 import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSpring, useMotionTemplate } from 'framer-motion';
 import './index.css';
 import './light-mode.css';
@@ -237,6 +237,247 @@ const MatrixBackground = ({ theme, isPaused, matrixRainMode }) => {
 
 
 // ThreeDViewer is now imported lazily from ThreeDViewer.jsx
+
+// ─── CV Modal ───────────────────────────────────────────────────────────────
+const CVModal = ({ isOpen, onClose, t, theme }) => {
+  // Close on Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [isOpen, onClose]);
+
+  const handlePrint = () => window.print();
+
+  const skills = [
+    { label: 'Unity / C#',      pct: 95, color: 'var(--accent-cyan)' },
+    { label: 'SwiftUI / macOS', pct: 82, color: 'var(--accent-violet)' },
+    { label: 'Blender / 3D',    pct: 88, color: 'var(--accent-cyan)' },
+    { label: 'React / Web',     pct: 75, color: 'var(--accent-violet)' },
+    { label: 'C++ / Engine',    pct: 80, color: 'var(--accent-pink)' },
+    { label: 'Firebase / DB',   pct: 72, color: 'var(--accent-pink)' },
+  ];
+
+  const experience = [
+    { period: '2021 – Present', title: 'Freelance Unity Developer', desc: 'Advanced game mechanics, shaders, physics in Unity/C#. Multiple titles published on itch.io.' },
+    { period: '2022 – Present', title: 'macOS Utility Developer', desc: 'Native macOS utilities using SwiftUI & Combine. Premium glassmorphism UI focus.' },
+    { period: '2024 – Present', title: 'React & UI Architect',    desc: 'Modular React frontends, WebGL integrations, Tokyo Night–inspired design systems.' },
+  ];
+
+  const projects = [
+    { name: 'Legend of the Three Masks', stack: 'Unity · C# · 3D',       link: 'https://unitybtw.itch.io/legend-of-the-three-masks' },
+    { name: 'Flying Bird',               stack: 'Unity · C# · 2D',       link: 'https://unitybtw.itch.io/flying-bird' },
+    { name: 'Cyber Arcade Platform',     stack: 'React · Canvas · WebGL', link: 'https://unitybtw.github.io/sirac-portfolio/' },
+    { name: 'macOS Glassmorphic Tools',  stack: 'SwiftUI · Combine',      link: 'https://github.com/unitybtw' },
+  ];
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+          onClick={onClose}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 99999,
+            background: 'rgba(5,5,12,0.82)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '1rem',
+          }}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.94, y: 30 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.94, y: 30 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 28 }}
+            onClick={e => e.stopPropagation()}
+            style={{
+              width: '100%', maxWidth: '820px', maxHeight: '90vh',
+              overflowY: 'auto',
+              background: theme === 'dark' ? 'rgba(15,17,26,0.97)' : 'rgba(248,250,252,0.97)',
+              border: '1px solid rgba(115,218,202,0.25)',
+              borderRadius: '28px',
+              boxShadow: '0 40px 80px -20px rgba(0,0,0,0.7), 0 0 0 1px rgba(115,218,202,0.1)',
+              fontFamily: 'var(--font-sf)',
+              position: 'relative',
+              scrollbarWidth: 'thin',
+              scrollbarColor: 'rgba(115,218,202,0.3) transparent',
+            }}
+            className="cv-modal-scroll"
+          >
+            {/* Accent top bar */}
+            <div style={{ height: '3px', background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet), var(--accent-pink))', borderRadius: '28px 28px 0 0' }} />
+
+            {/* Header */}
+            <div style={{ padding: '2rem 2.5rem 1.5rem', borderBottom: '1px solid var(--border-glass)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div>
+                <h2 style={{ margin: 0, fontSize: 'clamp(1.4rem,3vw,2rem)', fontWeight: 800, background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-violet))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', fontFamily: 'var(--font-display)' }}>
+                  Siraç Göktuğ Şimşek
+                </h2>
+                <p style={{ margin: '0.4rem 0 0', color: 'var(--accent-cyan)', fontWeight: 600, fontSize: '0.95rem', letterSpacing: '1px' }}>
+                  Game Developer · UI Engineer · Unity / SwiftUI / React
+                </p>
+                <div style={{ display: 'flex', gap: '1.2rem', marginTop: '0.8rem', flexWrap: 'wrap' }}>
+                  {[
+                    { icon: <Mail size={13}/>,     label: 'sgoktug34@gmail.com',               href: 'mailto:sgoktug34@gmail.com' },
+                    { icon: <Github size={13}/>,   label: 'github.com/unitybtw',               href: 'https://github.com/unitybtw' },
+                    { icon: <Linkedin size={13}/>, label: 'linkedin.com/in/siracsimsek',       href: 'https://linkedin.com/in/siracsimsek' },
+                    { icon: <Globe size={13}/>,    label: 'İstanbul, Türkiye',                 href: null },
+                  ].map((item, i) => (
+                    item.href
+                      ? <a key={i} href={item.href} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--text-muted)', fontSize: '0.8rem', textDecoration: 'none' }}>
+                          <span style={{ color: 'var(--accent-cyan)' }}>{item.icon}</span>{item.label}
+                        </a>
+                      : <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                          <span style={{ color: 'var(--accent-cyan)' }}>{item.icon}</span>{item.label}
+                        </span>
+                  ))}
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '0.6rem', flexShrink: 0 }}>
+                <button onClick={handlePrint} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '0.5rem 1rem', background: 'rgba(115,218,202,0.12)', border: '1px solid rgba(115,218,202,0.3)', borderRadius: '10px', color: 'var(--accent-cyan)', cursor: 'pointer', fontSize: '0.82rem', fontWeight: 600, transition: 'all 0.2s' }}>
+                  <Download size={14}/> PDF
+                </button>
+                <button onClick={onClose} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-glass)', borderRadius: '50%', color: 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.2s' }}>
+                  <X size={16}/>
+                </button>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div style={{ padding: '2rem 2.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+
+              {/* LEFT column */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+
+                {/* Experience */}
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                    <Briefcase size={16} style={{ color: 'var(--accent-cyan)' }} />
+                    <h3 style={{ margin: 0, fontSize: '0.75rem', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--accent-cyan)' }}>Experience</h3>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                    {experience.map((exp, i) => (
+                      <div key={i} style={{ paddingLeft: '1rem', borderLeft: '2px solid rgba(115,218,202,0.3)', position: 'relative' }}>
+                        <div style={{ position: 'absolute', left: '-5px', top: '6px', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-cyan)' }} />
+                        <div style={{ fontSize: '0.72rem', color: 'var(--accent-violet)', fontWeight: 600, letterSpacing: '0.5px', marginBottom: '0.2rem' }}>{exp.period}</div>
+                        <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.3rem' }}>{exp.title}</div>
+                        <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>{exp.desc}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Education */}
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                    <GraduationCap size={16} style={{ color: 'var(--accent-violet)' }} />
+                    <h3 style={{ margin: 0, fontSize: '0.75rem', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--accent-violet)' }}>Education</h3>
+                  </div>
+                  <div style={{ paddingLeft: '1rem', borderLeft: '2px solid rgba(187,154,243,0.3)', position: 'relative' }}>
+                    <div style={{ position: 'absolute', left: '-5px', top: '6px', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-violet)' }} />
+                    <div style={{ fontSize: '0.72rem', color: 'var(--accent-violet)', fontWeight: 600, letterSpacing: '0.5px', marginBottom: '0.2rem' }}>2023 – Present</div>
+                    <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.2rem' }}>B.Sc. Digital Game Design</div>
+                    <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Istanbul Kultur University (IKU)</div>
+                  </div>
+                </div>
+
+                {/* Projects */}
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                    <Code size={16} style={{ color: 'var(--accent-pink)' }} />
+                    <h3 style={{ margin: 0, fontSize: '0.75rem', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--accent-pink)' }}>Projects</h3>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                    {projects.map((proj, i) => (
+                      <a key={i} href={proj.link} target="_blank" rel="noopener noreferrer" style={{ display: 'block', padding: '0.7rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-glass)', borderRadius: '10px', textDecoration: 'none', transition: 'border-color 0.2s, background 0.2s' }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,158,100,0.4)'; e.currentTarget.style.background = 'rgba(255,158,100,0.05)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-glass)'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
+                      >
+                        <div style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.2rem' }}>{proj.name}</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--accent-pink)', fontFamily: 'monospace', letterSpacing: '0.5px' }}>{proj.stack}</div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* RIGHT column — Skills */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                    <Terminal size={16} style={{ color: 'var(--accent-cyan)' }} />
+                    <h3 style={{ margin: 0, fontSize: '0.75rem', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--accent-cyan)' }}>Technical Skills</h3>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    {skills.map((sk, i) => (
+                      <div key={i}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>{sk.label}</span>
+                          <span style={{ fontSize: '0.78rem', color: sk.color, fontFamily: 'monospace', fontWeight: 700 }}>{sk.pct}%</span>
+                        </div>
+                        <div style={{ height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '999px', overflow: 'hidden' }}>
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${sk.pct}%` }}
+                            transition={{ duration: 0.8, delay: i * 0.06, ease: 'easeOut' }}
+                            style={{ height: '100%', borderRadius: '999px', background: `linear-gradient(90deg, ${sk.color}, rgba(255,255,255,0.5))` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Tools / Stack badges */}
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                    <Layers size={16} style={{ color: 'var(--accent-violet)' }} />
+                    <h3 style={{ margin: 0, fontSize: '0.75rem', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--accent-violet)' }}>Tools & Stack</h3>
+                  </div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    {['Unity 3D', 'C#', 'SwiftUI', 'Combine', 'React', 'Vite', 'Blender', 'Figma', 'Firebase', 'WebGL', 'Three.js', 'Framer Motion', 'Git', 'macOS', 'Xcode'].map((tool, i) => (
+                      <span key={i} style={{ padding: '0.3rem 0.7rem', background: 'rgba(115,218,202,0.08)', border: '1px solid rgba(115,218,202,0.2)', borderRadius: '999px', fontSize: '0.75rem', color: 'var(--text-main)', fontFamily: 'monospace' }}>
+                        {tool}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Languages */}
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '1rem' }}>
+                    <Globe size={16} style={{ color: 'var(--accent-pink)' }} />
+                    <h3 style={{ margin: 0, fontSize: '0.75rem', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: 'var(--accent-pink)' }}>Languages</h3>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {[{ lang: 'Turkish', level: 'Native' }, { lang: 'English', level: 'Professional' }].map((l, i) => (
+                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0.8rem', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-glass)', borderRadius: '8px' }}>
+                        <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>{l.lang}</span>
+                        <span style={{ fontSize: '0.78rem', color: 'var(--accent-pink)', fontFamily: 'monospace' }}>{l.level}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer note */}
+            <div style={{ padding: '1rem 2.5rem 1.5rem', borderTop: '1px solid var(--border-glass)', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.75rem', letterSpacing: '0.5px' }}>
+              References available upon request · sgoktug34@gmail.com
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+// ────────────────────────────────────────────────────────────────────────────
 
 const ScrambleText = ({ text }) => {
   return (
@@ -1303,6 +1544,7 @@ function App() {
   const [activeArcadeGame, setActiveArcadeGame] = useState(null);
   const [isMuted, setIsMuted] = useState(getMutedState());
   const [matrixRainMode, setMatrixRainMode] = useState(false);
+  const [showCVModal, setShowCVModal] = useState(false);
 
   const toggleMute = () => {
     const nextMute = !isMuted;
@@ -1501,6 +1743,24 @@ function App() {
       glow: 'glow-cyan',
       link: 'https://unitybtw.itch.io/flying-bird',
       image: `${import.meta.env.BASE_URL}assets/bird.webp`
+    },
+    {
+      id: 3,
+      title: t('games.macos_title'),
+      desc: t('games.macos_desc'),
+      tags: ['SwiftUI', 'Combine', 'macOS', 'Native'],
+      glow: 'glow-violet',
+      link: 'https://github.com/unitybtw',
+      image: null
+    },
+    {
+      id: 4,
+      title: t('games.arcade_title'),
+      desc: t('games.arcade_desc'),
+      tags: ['React', 'Canvas', 'WebGL', 'HTML5'],
+      glow: 'glow-cyan',
+      link: 'https://unitybtw.github.io/sirac-portfolio/',
+      image: null
     }
   ];
 
@@ -1965,13 +2225,18 @@ function App() {
                   </a>
                 </Magnetic>
                 <Magnetic>
-                  <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn btn-outline glass-panel">
-                    <Github size={18} style={{ marginRight: '8px' }} /> {t('btn_repos')}
-                  </a>
+                  <button
+                    onClick={() => { playClick(); setShowCVModal(true); }}
+                    onMouseEnter={playHover}
+                    className="btn btn-outline glass-panel"
+                    style={{ color: 'var(--accent-cyan)' }}
+                  >
+                    <FileText size={18} style={{ marginRight: '8px' }} /> {t('btn_view_cv')}
+                  </button>
                 </Magnetic>
                 <Magnetic>
-                  <a href="https://unitybtw.itch.io/" target="_blank" rel="noopener noreferrer" className="btn btn-outline glass-panel" style={{ color: 'var(--accent-cyan)' }}>
-                    <Gamepad2 size={18} style={{ marginRight: '8px' }} /> Itch.io
+                  <a href="https://linkedin.com/in/siracsimsek" target="_blank" rel="noopener noreferrer" className="btn btn-outline glass-panel" style={{ color: 'var(--accent-violet)' }}>
+                    <Linkedin size={18} style={{ marginRight: '8px' }} /> LinkedIn
                   </a>
                 </Magnetic>
               </motion.div>
@@ -2270,7 +2535,7 @@ function App() {
                     onClick={() => window.open(project.link, '_blank')}
                     style={{ padding: 0, cursor: 'pointer' }}
                   >
-                    {project.image && (
+                    {project.image ? (
                       <div style={{ height: '180px', overflow: 'hidden', borderBottom: '1px solid var(--border-glass)', borderRadius: '20px 20px 0 0', position: 'relative' }}>
                         <motion.img
                           src={project.image}
@@ -2280,6 +2545,16 @@ function App() {
                           whileHover={{ scale: 1.08 }}
                           transition={{ duration: 0.6, ease: "easeOut" }}
                         />
+                        <div className="hologram-overlay" />
+                      </div>
+                    ) : (
+                      <div style={{ height: '180px', overflow: 'hidden', borderBottom: '1px solid var(--border-glass)', borderRadius: '20px 20px 0 0', position: 'relative', background: 'linear-gradient(135deg, rgba(var(--accent-cyan-rgb),0.08) 0%, rgba(var(--accent-violet-rgb),0.12) 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '0.5rem' }}>
+                        <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(var(--accent-cyan-rgb),0.12)', border: '1px solid rgba(var(--accent-cyan-rgb),0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <Code size={24} style={{ color: 'var(--accent-cyan)', opacity: 0.8 }} />
+                        </div>
+                        <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'monospace', letterSpacing: '1px', textTransform: 'uppercase' }}>
+                          {project.tags[0]}
+                        </span>
                         <div className="hologram-overlay" />
                       </div>
                     )}
@@ -2449,6 +2724,7 @@ function App() {
               >
                 {[
                   { href: 'https://github.com/unitybtw', icon: <Github size={24} />, label: 'GitHub' },
+                  { href: 'https://linkedin.com/in/siracsimsek', icon: <Linkedin size={24} />, label: 'LinkedIn' },
                   { href: 'https://unitybtw.itch.io/', icon: <Gamepad2 size={24} />, label: 'Itch.io' }
                 ].map((social, i) => (
                   <motion.div
@@ -2529,6 +2805,7 @@ function App() {
     </AnimatePresence>
 
     {!isArcadeOpen && <PresencePanel onActiveCountChange={setActiveVisitorCount} />}
+    <CVModal isOpen={showCVModal} onClose={() => setShowCVModal(false)} t={t} theme={theme} />
     </>
   );
 }
