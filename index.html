@@ -5,33 +5,38 @@
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="./logo.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Siraç Göktuğ Şimşek | Architect of Digital Realities</title>
-  <!-- Google Fonts Connection -->
+  <title>Siraç Göktuğ Şimşek | Game Developer &amp; UI Engineer</title>
+
+  <!-- Critical resource preconnects — establish TLS early -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Basic SEO tags -->
-  <meta name="description" content="Portfolio of Siraç Göktuğ Şimşek, Digital Game Design student, Unity Developer, Swift Enthusiast, and Game Developer. View projects, skills, and contact information." />
-  <meta name="keywords" content="Siraç Göktuğ Şimşek, Unity, Swift, Blender, Game Developer, Portfolio, Digital Game Design, iOS Developer, WebGL" />
+
+  <!-- Non-critical font stylesheet — async load to avoid render blocking (performance guide: CRP optimization) -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap"></noscript>
+
+  <!-- SEO -->
+  <meta name="description" content="Siraç Göktuğ Şimşek — Game Developer & UI Engineer. Unity, SwiftUI, React, Blender. Digital Game Design student at Istanbul Kultur University." />
+  <meta name="keywords" content="Siraç Göktuğ Şimşek, Unity, Swift, Blender, Game Developer, Portfolio, Digital Game Design, iOS Developer, WebGL, React, SwiftUI" />
   <meta name="author" content="Siraç Göktuğ Şimşek" />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://sirac.dev/" />
+  <link rel="canonical" href="https://unitybtw.github.io/sirac-portfolio/" />
   <meta name="theme-color" content="#0d0d0d" />
 
-  <!-- Open Graph / Facebook -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://sirac.dev/" />
-  <meta property="og:title" content="Siraç Göktuğ Şimşek | Architect of Digital Realities" />
-  <meta property="og:description" content="Portfolio of Siraç Göktuğ Şimşek, Game Developer, Unity Developer, and Swift Enthusiast. Explore interactive game projects, 3D designs, and digital mechanics." />
-  <meta property="og:image" content="https://sirac.dev/screenshot.png" />
-  <meta property="og:site_name" content="Siraç Göktuğ Şimşek Portfolio" />
+  <meta property="og:url" content="https://unitybtw.github.io/sirac-portfolio/" />
+  <meta property="og:title" content="Siraç Göktuğ Şimşek | Game Developer & UI Engineer" />
+  <meta property="og:description" content="Game Developer & UI Engineer — Unity, SwiftUI, React. Digital Game Design student at IKU. View my projects, skills and CV." />
+  <meta property="og:image" content="https://unitybtw.github.io/sirac-portfolio/screenshot.png" />
+  <meta property="og:site_name" content="Siraç Göktuğ Şimşek" />
 
-  <!-- Twitter -->
+  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="https://sirac.dev/" />
-  <meta name="twitter:title" content="Siraç Göktuğ Şimşek | Architect of Digital Realities" />
-  <meta name="twitter:description" content="Portfolio of Siraç Göktuğ Şimşek, Game Developer, Unity Developer, and Swift Enthusiast. Explore interactive game projects, 3D designs, and digital mechanics." />
-  <meta name="twitter:image" content="https://sirac.dev/screenshot.png" />
+  <meta name="twitter:url" content="https://unitybtw.github.io/sirac-portfolio/" />
+  <meta name="twitter:title" content="Siraç Göktuğ Şimşek | Game Developer & UI Engineer" />
+  <meta name="twitter:description" content="Game Developer & UI Engineer — Unity, SwiftUI, React. Digital Game Design at IKU." />
+  <meta name="twitter:image" content="https://unitybtw.github.io/sirac-portfolio/screenshot.png" />
 
   <!-- JSON-LD Structured Data Schema -->
   <script type="application/ld+json">
@@ -39,24 +44,24 @@
     "@context": "https://schema.org",
     "@type": "Person",
     "name": "Siraç Göktuğ Şimşek",
-    "jobTitle": "Game Developer & Software Engineer",
-    "url": "https://sirac.dev",
-    "image": "https://sirac.dev/screenshot.png",
+    "jobTitle": "Game Developer & UI Engineer",
+    "url": "https://unitybtw.github.io/sirac-portfolio/",
+    "image": "https://unitybtw.github.io/sirac-portfolio/screenshot.png",
     "sameAs": [
       "https://github.com/unitybtw",
+      "https://linkedin.com/in/siracsimsek",
       "https://unitybtw.itch.io"
     ],
-    "description": "Portfolio of Siraç Göktuğ Şimşek, Digital Game Design student, Unity Developer, and Swift Enthusiast.",
+    "description": "Game Developer and UI Engineer studying Digital Game Design at Istanbul Kultur University. Specializing in Unity, SwiftUI, and React.",
     "knowsAbout": [
-      "Game Development",
-      "Unity 3D",
-      "C#",
-      "Swift",
-      "iOS Development",
-      "Blender 3D Modeling",
-      "React.js",
-      "Three.js"
-    ]
+      "Game Development", "Unity 3D", "C#", "SwiftUI", "macOS Development",
+      "iOS Development", "Blender 3D Modeling", "React.js", "Three.js", "WebGL"
+    ],
+    "alumniOf": {
+      "@type": "CollegeOrUniversity",
+      "name": "Istanbul Kultur University",
+      "department": "Digital Game Design"
+    }
   }
   </script>
 </head>
@@ -65,5 +70,4 @@
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
-<!-- redeploy commit marker: May 23 2026 -->
 </html>

@@ -2652,3 +2652,160 @@ body.light-mode .nav-links button.btn:hover {
 }
 
 
+/* ═══════════════════════════════════════════════════════════════════════════
+   PERFORMANCE OPTIMIZATIONS
+   Based on modern-web-guidance: content-visibility, will-change hygiene,
+   prefers-reduced-motion, CSS containment
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* 1. content-visibility: auto for heavy below-fold sections
+   Tells the browser to skip layout/paint until near viewport.
+   MANDATORY: paired with contain-intrinsic-size to prevent layout shifts. */
+#timeline {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 600px;
+}
+
+#featured-modules {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 500px;
+}
+
+#projects {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 800px;
+}
+
+#arcade {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 700px;
+}
+
+#skills {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 500px;
+}
+
+#telemetry {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 200px;
+}
+
+/* 2. will-change hygiene — only promote layers on actual hover interaction.
+   Global will-change: transform on .glass-panel consumes excessive VRAM across
+   every panel element. Remove it from static state, only apply during hover.
+   This alone can save 20-40MB VRAM on content-heavy pages. */
+.glass-panel {
+  will-change: auto;   /* Override global permanent layer promotion */
+}
+.glass-panel:hover {
+  will-change: transform;  /* Promote only when interaction is likely */
+}
+
+/* Social icon — hover-only will-change */
+.social-icon {
+  will-change: auto;
+}
+.social-icon:hover {
+  will-change: transform;
+}
+
+/* Blob wrappers: these are always animating (CSS keyframes) so GPU promotion is valid */
+.cyber-bg-blob-wrapper,
+.cyber-bg-blob-1,
+.cyber-bg-blob-2,
+.cyber-bg-blob-3,
+.cyber-bg-blob-4 {
+  will-change: transform; /* kept — keyframe animation always runs */
+}
+
+/* 3. CSS Containment for isolated components — prevents internal changes from
+   triggering full-page reflows */
+.code-terminal {
+  contain: layout style;
+}
+
+.project-card {
+  contain: layout style paint;
+}
+
+.skill-card {
+  contain: layout style paint;
+}
+
+/* 4. prefers-reduced-motion — respect user accessibility preference.
+   Disable all transitions/animations when the user has requested reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Keep blobs visible but static */
+  .cyber-bg-blob-1,
+  .cyber-bg-blob-2,
+  .cyber-bg-blob-3,
+  .cyber-bg-blob-4 {
+    animation: none !important;
+  }
+
+  /* Remove will-change since animations are disabled */
+  .cyber-bg-blob-wrapper,
+  .cyber-bg-blob-1,
+  .cyber-bg-blob-2,
+  .cyber-bg-blob-3,
+  .cyber-bg-blob-4 {
+    will-change: auto;
+  }
+}
+
+/* 5. Image optimization helpers — explicit dimensions prevent CLS */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Smooth scrollbar for CV modal */
+.cv-modal-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.cv-modal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.cv-modal-scroll::-webkit-scrollbar-thumb {
+  background: rgba(115, 218, 202, 0.3);
+  border-radius: 999px;
+}
+.cv-modal-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(115, 218, 202, 0.5);
+}
+
+/* Print styles for CV modal PDF export */
+@media print {
+  /* Hide the entire site, show only the CV modal content */
+  body > #root {
+    display: none !important;
+  }
+
+  /* Make CV modal the only printed content */
+  .cv-modal-scroll {
+    display: block !important;
+    position: static !important;
+    max-height: none !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: white !important;
+    color: #111 !important;
+  }
+
+  /* Overlay backdrop invisible in print */
+  [style*="position: fixed"][style*="inset: 0"] {
+    background: transparent !important;
+    backdrop-filter: none !important;
+  }
+}
