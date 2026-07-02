@@ -6,6 +6,7 @@ import { motion, AnimatePresence, useScroll, useTransform, useMotionValue, useSp
 import './index.css';
 import './light-mode.css';
 import './i18n';
+import { LINKEDIN_URL } from './i18n';
 const GameLibrary = lazy(() => import("./GameLibrary"));
 const ThreeDViewer = lazy(() => import("./ThreeDViewer"));
 import PresencePanel from './PresencePanel';
@@ -326,7 +327,7 @@ const CVModal = ({ isOpen, onClose, t, theme }) => {
                   {[
                     { icon: <Mail size={13}/>,     label: 'sgoktug34@gmail.com',               href: 'mailto:sgoktug34@gmail.com' },
                     { icon: <Github size={13}/>,   label: 'github.com/unitybtw',               href: 'https://github.com/unitybtw' },
-                    { icon: <Linkedin size={13}/>, label: 'linkedin.com/in/siracsimsek',       href: 'https://linkedin.com/in/siracsimsek' },
+                    { icon: <Linkedin size={13}/>, label: 'linkedin.com/in/siracsimsek',       href: LINKEDIN_URL },
                     { icon: <Globe size={13}/>,    label: 'İstanbul, Türkiye',                 href: null },
                   ].map((item, i) => (
                     item.href
@@ -2235,7 +2236,7 @@ function App() {
                   </button>
                 </Magnetic>
                 <Magnetic>
-                  <a href="https://linkedin.com/in/siracsimsek" target="_blank" rel="noopener noreferrer" className="btn btn-outline glass-panel" style={{ color: 'var(--accent-violet)' }}>
+                  <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="btn btn-outline glass-panel" style={{ color: 'var(--accent-violet)' }}>
                     <Linkedin size={18} style={{ marginRight: '8px' }} /> LinkedIn
                   </a>
                 </Magnetic>
@@ -2617,9 +2618,10 @@ function App() {
             </div>
             <div className="skills-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2rem', marginTop: '3rem' }}>
               <SkillCard icon={<UnityIcon />} label="Unity / C#" percent={95} delay={100} description={t('skill_unity_desc')} />
-              <SkillCard icon={<SwiftIcon />} label="SwiftUI / macOS" percent={82} delay={300} description={t('skill_swift_desc')} />
-              <SkillCard icon={<BlenderIcon />} label="Blender / 3D" percent={88} delay={500} description={t('skill_blender_desc')} />
-              <SkillCard icon={<Terminal size={32} />} label="System Architecture" percent={80} delay={700} description={t('skill_sys_desc')} />
+              <SkillCard icon={<SwiftIcon />} label="SwiftUI / macOS" percent={82} delay={200} description={t('skill_swift_desc')} />
+              <SkillCard icon={<BlenderIcon />} label="Blender / 3D" percent={88} delay={300} description={t('skill_blender_desc')} />
+              <SkillCard icon={<Code size={32} />} label="React / WebGL" percent={85} delay={400} description={t('skill_sys_desc')} />
+              <SkillCard icon={<Terminal size={32} />} label="C++ & Git" percent={78} delay={500} description="Systems programming, custom engine modules, and Git workflow control." />
             </div>
           </motion.section>
 
@@ -2724,7 +2726,7 @@ function App() {
               >
                 {[
                   { href: 'https://github.com/unitybtw', icon: <Github size={24} />, label: 'GitHub' },
-                  { href: 'https://linkedin.com/in/siracsimsek', icon: <Linkedin size={24} />, label: 'LinkedIn' },
+                  { href: LINKEDIN_URL, icon: <Linkedin size={24} />, label: 'LinkedIn' },
                   { href: 'https://unitybtw.itch.io/', icon: <Gamepad2 size={24} />, label: 'Itch.io' }
                 ].map((social, i) => (
                   <motion.div
@@ -2754,10 +2756,39 @@ function App() {
                 ))}
               </motion.div>
             </motion.div>
-            <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.8rem', borderTop: '1px solid var(--border-glass)', paddingTop: '2rem', marginTop: '2rem', letterSpacing: '1px' }}>
-              <span>
-                &copy; {new Date().getFullYear()} {t('footer_copyright')}
-              </span>
+            <div style={{ borderTop: '1px solid var(--border-glass)', paddingTop: '2rem', marginTop: '2rem' }}>
+              {/* Contact info row */}
+              <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '1.2rem' }}>
+                {[
+                  { icon: <Mail size={13}/>, label: 'sgoktug34@gmail.com', href: 'mailto:sgoktug34@gmail.com' },
+                  { icon: <Github size={13}/>, label: 'github.com/unitybtw', href: 'https://github.com/unitybtw' },
+                  { icon: <Linkedin size={13}/>, label: 'LinkedIn Profile', href: LINKEDIN_URL },
+                  { icon: <Globe size={13}/>, label: 'İstanbul, TR', href: null },
+                ].map((item, i) => (
+                  item.href
+                    ? <a key={i} href={item.href} target="_blank" rel="noopener noreferrer"
+                        style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--text-muted)', fontSize: '0.78rem', textDecoration: 'none', transition: 'color 0.2s' }}
+                        onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-cyan)'}
+                        onMouseLeave={e => e.currentTarget.style.color = 'var(--text-muted)'}
+                      >
+                        <span style={{ color: 'var(--accent-cyan)' }}>{item.icon}</span>{item.label}
+                      </a>
+                    : <span key={i} style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--text-muted)', fontSize: '0.78rem' }}>
+                        <span style={{ color: 'var(--accent-cyan)' }}>{item.icon}</span>{item.label}
+                      </span>
+                ))}
+              </div>
+              {/* Availability badge */}
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '0.3rem 0.9rem', background: 'rgba(115,218,202,0.08)', border: '1px solid rgba(115,218,202,0.2)', borderRadius: '999px', fontSize: '0.72rem', fontWeight: 700, color: 'var(--accent-cyan)', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
+                  <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'var(--accent-cyan)', display: 'inline-block', animation: 'pulse 2s infinite' }} />
+                  {t('badge_hire')}
+                </span>
+              </div>
+              {/* Copyright */}
+              <div style={{ textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.75rem', letterSpacing: '1px' }}>
+                <span>&copy; {new Date().getFullYear()} {t('footer_copyright')}</span>
+              </div>
             </div>
           </motion.footer>
         </motion.div>
