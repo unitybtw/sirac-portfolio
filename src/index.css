@@ -2710,3 +2710,12 @@ img {
 .arcade-game-card:hover .arcade-card-icon img, .arcade-portal-card:hover .arcade-portal-icon img {
   filter: grayscale(0%);
 }
+
+.project-card-minimal:hover .project-img-minimal {
+  filter: grayscale(0%) !important;
+}
+
+.project-card-minimal:hover {
+  border-color: var(--accent-cyan) !important;
+  box-shadow: 0 4px 20px rgba(var(--accent-cyan-rgb), 0.1);
+}

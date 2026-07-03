@@ -2156,111 +2156,38 @@ function App() {
           </AnimatePresence>
 
           {/* Hero Section */}
-          <section className="hero">
+          <section className="hero" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start', paddingTop: '12rem', paddingBottom: '6rem', minHeight: '90vh' }}>
             <motion.div
-              layout
-              className="hero-content"
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: {
-                    staggerChildren: 0.12,
-                    delayChildren: 0.05
-                  }
-                }
-              }}
-              initial="hidden"
-              animate="visible"
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              style={{ width: '100%', maxWidth: '1000px', margin: '0 auto', padding: '0 2rem' }}
             >
-              <motion.div 
-                layout
-                variants={{
-                  hidden: { opacity: 0, y: 15 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
-                }}
-                className="glass-panel" 
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem', marginBottom: '1.5rem', borderRadius: '0' }}
-              >
-                <span className="pulsing-dot dot-green" />
-                <span style={{ fontSize: '0.85rem', fontWeight: 600, letterSpacing: '2px', color: 'var(--accent-cyan)' }}>
-                  {t('badge_hire')}
-                </span>
-              </motion.div>
+              <h1 style={{ fontSize: 'clamp(4rem, 10vw, 8rem)', fontWeight: 800, letterSpacing: '-0.04em', lineHeight: '0.9', margin: '0 0 1.5rem 0', color: 'var(--text-main)', textTransform: 'uppercase' }}>
+                SİRAÇ GÖKTUĞ<br />ŞİMŞEK.
+              </h1>
+              <p style={{ fontSize: 'clamp(1.2rem, 3vw, 1.8rem)', fontWeight: 500, color: 'var(--text-muted)', margin: '0 0 4rem 0', letterSpacing: '-0.02em', maxWidth: '600px', lineHeight: '1.4' }}>
+                Software Engineer & Digital Game Designer. Crafting structural digital experiences.
+              </p>
               
-              <motion.div
-                layout
-                variants={{
-                  hidden: { opacity: 0, y: 15 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
-                }}
-              >
-                <TypewriterTitle title1={t('hero_title_1')} title2={t('hero_title_2')} />
-              </motion.div>
-              
-              <motion.p 
-                layout
-                variants={{
-                  hidden: { opacity: 0, y: 15 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
-                }}
-                className="hero-subtitle"
-              >
-                {t('hero_subtitle_1')}<br /> {t('hero_subtitle_2')}
-              </motion.p>
-              
-              <motion.div 
-                layout
-                variants={{
-                  hidden: { opacity: 0, y: 15 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
-                }}
-                className="hero-cta"
-              >
-                <Magnetic>
-                  <a href="#projects" className="btn btn-primary glass-panel">
-                    {t('btn_explore')} <ArrowRight size={18} style={{ marginLeft: '8px' }} />
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                <a href="#projects" className="btn btn-primary" style={{ padding: '1.2rem 3rem', fontSize: '1.1rem' }}>
+                  {t('btn_explore') || 'Explore Work'} <ArrowRight size={20} style={{ marginLeft: '12px' }} />
+                </a>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', border: '1px solid var(--border-glass)', transition: 'all 0.3s', backgroundColor: 'var(--bg-dark)' }} className="social-btn-hover">
+                    <Linkedin size={24} />
                   </a>
-                </Magnetic>
-                <Magnetic>
-                  <button
-                    onClick={() => { playClick(); setShowCVModal(true); }}
-                    onMouseEnter={playHover}
-                    className="btn btn-outline glass-panel"
-                    style={{ color: 'var(--accent-cyan)' }}
-                  >
-                    <FileText size={18} style={{ marginRight: '8px' }} /> {t('btn_view_cv')}
+                  <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', border: '1px solid var(--border-glass)', transition: 'all 0.3s', backgroundColor: 'var(--bg-dark)' }} className="social-btn-hover">
+                    <Github size={24} />
+                  </a>
+                  <button onClick={() => setShowCVModal(true)} style={{ color: 'var(--text-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', border: '1px solid var(--border-glass)', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: 'var(--bg-dark)' }} className="social-btn-hover">
+                    <FileText size={24} />
                   </button>
-                </Magnetic>
-                <Magnetic>
-                  <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="btn btn-outline glass-panel" style={{ color: 'var(--accent-violet)' }}>
-                    <Linkedin size={18} style={{ marginRight: '8px' }} /> LinkedIn
-                  </a>
-                </Magnetic>
-              </motion.div>
+                </div>
+              </div>
             </motion.div>
-            <motion.div
-              className="hero-visual"
-              initial={{ opacity: 0, scale: 0.9, y: 50 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-              style={{ x: isMobileDevice ? 0 : terminalX, y: isMobileDevice ? 0 : terminalY }}
-            >
-              <InteractiveTerminal 
-                isArcadeOpen={isArcadeOpen}
-                setIsArcadeOpen={setIsArcadeOpen}
-                isMuted={isMuted}
-                toggleMute={toggleMute}
-                matrixRainMode={matrixRainMode}
-                setMatrixRainMode={setMatrixRainMode}
-                setShowSecretGame={setShowSecretGame}
-                activeVisitorCount={activeVisitorCount}
-                setActiveArcadeGame={setActiveArcadeGame}
-                theme={theme}
-                toggleTheme={toggleTheme}
-                activeSection={activeSection}
-              />
-            </motion.div>
+
 
             {/* Scroll Indicator */}
             <motion.div 
@@ -2295,153 +2222,39 @@ function App() {
             </motion.div>
           </section>
 
-          <motion.section
-            id="about"
-            className="about-section glass-panel"
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            {/* Background flourish inside About */}
-            <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '300px', height: '300px', background: 'radial-gradient(circle at center, rgba(var(--accent-violet-rgb), 0.15) 0%, transparent 60%)', filter: 'blur(40px)', zIndex: 0 }} />
-            
-            <div className="about-left">
-              <div className="about-header">
-                <h2 className="section-title text-gradient" style={{ letterSpacing: '-0.02em' }}><SyntaxHighlightedTitle text={t('about_title')} /></h2>
-                <p style={{ color: 'var(--accent-cyan)', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase', fontSize: '0.85rem' }}>{t('about_subtitle')}</p>
+          {/* About Section */}
+          <section id="about" style={{ padding: '6rem 2rem', maxWidth: '1000px', margin: '0 auto', borderBottom: '1px solid var(--border-glass)' }}>
+            <h2 style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 3rem 0', color: 'var(--text-main)', letterSpacing: '-0.03em', textTransform: 'uppercase' }}>{t('about_title') || 'ABOUT'}</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '4rem' }}>
+              <div>
+                <p style={{ color: 'var(--text-main)', fontSize: '1.1rem', lineHeight: '1.8', marginBottom: '1.5rem', fontWeight: 500 }}>{t('about_text_1')}</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: '1.8', marginBottom: '1.5rem' }}>{t('about_text_2')}</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: '1.8' }}>{t('about_text_3')}</p>
               </div>
-              <p style={{ color: 'var(--text-main)', fontSize: '1.2rem', lineHeight: 1.8, marginBottom: '1.5rem', fontWeight: 500 }}>
-                {t('about_text_1')}
-              </p>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: 1.8, marginBottom: '1.5rem' }}>
-                {t('about_text_2')}
-              </p>
-              <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: 1.8 }}>
-                {t('about_text_3')}
-              </p>
-            </div>
-            
-            <motion.div 
-              className="about-right"
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: {
-                    staggerChildren: 0.12
-                  }
-                }
-              }}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-            >
-              {[1, 2, 3, 4].map((num) => (
-                <motion.div 
-                  key={num} 
-                  className="glass-panel" 
-                  variants={{
-                    hidden: { opacity: 0, y: 30 },
-                    visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 15 } }
-                  }}
-                  whileHover={{ y: -5, scale: 1.02, boxShadow: '0 12px 30px rgba(0, 0, 0, 0.25)', borderColor: 'var(--accent-cyan)' }}
-                  onMouseEnter={playHover}
-                  style={{ padding: '1.5rem', borderRadius: '0', transition: 'border-color 0.3s, box-shadow 0.3s', backdropFilter: 'none', WebkitBackdropFilter: 'none', background: 'rgba(255, 255, 255, 0.02)', }}
-                >
-                  <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.8rem' }}>{t(`about_stat_${num}`)}</div>
-                  <div style={{ color: 'var(--text-main)', fontSize: '1.1rem', fontWeight: 700 }}>{t(`about_stat_${num}_val`)}</div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </motion.section>
-
-          {/* Timeline Section */}
-          <section id="timeline" style={{ padding: '0 5% 5rem', position: 'relative' }}>
-            <motion.div 
-              className="section-header"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            >
-              <h2 className="section-title text-gradient"><SyntaxHighlightedTitle text={t('timeline_title')} /></h2>
-              <p style={{ color: 'var(--text-muted)' }}>{t('timeline_subtitle')}</p>
-            </motion.div>
-
-            
-            <div className="timeline-container" style={{ maxWidth: '900px', margin: '3rem auto 0', position: 'relative' }}>
-              {/* Central Pipe */}
-              <div style={{ position: 'absolute', left: '50%', transform: 'translateX(-50%)', top: 0, bottom: 0, width: '2px', background: 'linear-gradient(to bottom, transparent, var(--accent-cyan), var(--accent-violet), transparent)', opacity: 0.3 }} />
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                 {[1, 2, 3, 4].map((num) => (
-                  <motion.div 
-                    key={num}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-50px" }}
-                    transition={{ type: "spring", stiffness: 80, damping: 15, mass: 1, delay: num * 0.1 }}
-                    style={{ 
-                      display: 'flex', 
-                      justifyContent: num % 2 === 0 ? 'flex-start' : 'flex-end',
-                      alignItems: 'center',
-                      width: '100%',
-                      position: 'relative',
-                      }}
-                  >
-                    {/* Node Dot */}
-                    <div 
-                      className={`timeline-dot ${num > 2 ? 'violet' : 'cyan'}`}
-                      style={{ 
-                        position: 'absolute', left: '50%', transform: 'translateX(-50%)', 
-                        zIndex: 2
-                      }} 
-                    />
-
-                    {/* Content Card */}
-                    <motion.div 
-                      className="glass-panel"
-                      whileHover={{ 
-                        y: -5, 
-                        scale: 1.02, 
-                        borderColor: num > 2 ? 'rgba(var(--accent-violet-rgb), 0.4)' : 'rgba(var(--accent-cyan-rgb), 0.4)',
-                        boxShadow: '0 12px 30px rgba(0, 0, 0, 0.25)'
-                      }}
-                      onMouseEnter={playHover}
-                      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
-                      style={{ 
-                        width: '42%', 
-                        padding: '1.5rem', 
-                        borderRadius: '0', 
-                        textAlign: num % 2 === 0 ? 'left' : 'right',
-                        cursor: 'pointer',
-                        }}
-                    >
-                      <div style={{
-                        display: 'inline-block',
-                        padding: '0.2rem 0.6rem',
-                        fontSize: '0.75rem',
-                        fontWeight: 700,
-                        color: num > 2 ? 'var(--accent-violet)' : 'var(--accent-cyan)',
-                        background: num > 2 ? 'rgba(var(--accent-violet-rgb), 0.1)' : 'rgba(var(--accent-cyan-rgb), 0.1)',
-                        border: num > 2 ? '1px solid rgba(var(--accent-violet-rgb), 0.2)' : '1px solid rgba(var(--accent-cyan-rgb), 0.2)',
-                        borderRadius: '0',
-                        marginBottom: '0.5rem',
-                        letterSpacing: '1px'
-                      }}>
-                        {t(`timeline_event_${num}_year`)}
-                      </div>
-                      <h3 style={{ fontSize: '1.2rem', fontWeight: 700, margin: '0 0 0.5rem 0', color: 'var(--text-main)' }}>
-                        {t(`timeline_event_${num}_title`)}
-                      </h3>
-                      <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.6', margin: 0 }}>
-                        {t(`timeline_event_${num}_desc`)}
-                      </p>
-                    </motion.div>
-                  </motion.div>
+                  <div key={num} style={{ borderBottom: '1px solid var(--border-glass)', paddingBottom: '1rem' }}>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem' }}>{t(`about_stat_${num}`)}</div>
+                    <div style={{ color: 'var(--text-main)', fontSize: '1.5rem', fontWeight: 700 }}>{t(`about_stat_${num}_val`)}</div>
+                  </div>
                 ))}
               </div>
+            </div>
+          </section>
+
+          {/* Timeline Section */}
+          <section id="timeline" style={{ padding: '6rem 2rem', maxWidth: '1000px', margin: '0 auto', borderBottom: '1px solid var(--border-glass)' }}>
+            <h2 style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 3rem 0', color: 'var(--text-main)', letterSpacing: '-0.03em', textTransform: 'uppercase' }}>{t('timeline_title') || 'EXPERIENCE'}</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}>
+              {[1, 2, 3, 4].map((num) => (
+                <div key={num} style={{ display: 'grid', gridTemplateColumns: 'minmax(100px, 150px) 1fr', gap: '2rem', alignItems: 'start' }} className="timeline-item">
+                  <div style={{ color: 'var(--text-muted)', fontSize: '0.95rem', fontWeight: 600, paddingTop: '0.3rem', borderRight: '1px solid var(--border-glass)' }}>{t(`timeline_event_${num}_year`)}</div>
+                  <div>
+                    <h3 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 0.5rem 0', color: 'var(--text-main)' }}>{t(`timeline_event_${num}_title`)}</h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1rem', lineHeight: '1.6', margin: 0 }}>{t(`timeline_event_${num}_desc`)}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </section>
 
@@ -2492,175 +2305,70 @@ function App() {
             </div>
           </motion.section>
 
-          {/* Projects Timeline (Gallery) */}
-          <section id="projects" className="gallery-section">
-            <motion.div 
-              className="section-header"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            >
-              <h2 className="section-title text-gradient"><SyntaxHighlightedTitle text={t('archives_title')} /></h2>
+          {/* Projects Gallery */}
+          <section id="projects" style={{ padding: '6rem 2rem', maxWidth: '1200px', margin: '0 auto', borderBottom: '1px solid var(--border-glass)' }}>
+            <div className="section-header" style={{ marginBottom: '4rem' }}>
+              <h2 style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 1rem 0', color: 'var(--text-main)', letterSpacing: '-0.03em', textTransform: 'uppercase' }}>{t('archives_title') || 'PROJECTS'}</h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('archives_subtitle')}</p>
-            </motion.div>
-            <motion.div 
-              className="masonry-grid"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: { staggerChildren: 0.15 }
-                }
-              }}
-            >
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '2rem' }}>
               {projects.map((project) => (
-                <TiltCard 
+                <a 
                   key={project.id} 
-                  className={`project-card glass-panel ${project.glow}`}
-                  variants={{
-                    hidden: { opacity: 0, y: 30 },
-                    visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 14, mass: 1 } }
-                  }}
-                  style={{ }}
+                  href={project.link} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ display: 'flex', flexDirection: 'column', border: '1px solid var(--border-glass)', background: 'var(--bg-dark)', textDecoration: 'none', transition: 'all 0.3s' }}
+                  className="project-card-minimal"
                 >
-                  <div
-                    onClick={() => window.open(project.link, '_blank')}
-                    style={{ padding: 0, cursor: 'pointer' }}
-                  >
-                    {project.image ? (
-                      <div style={{ height: '180px', overflow: 'hidden', borderBottom: '1px solid var(--border-glass)', borderRadius: '20px 20px 0 0', position: 'relative' }}>
-                        <motion.img
-                          src={project.image}
-                          alt={project.title}
-                          loading="lazy"
-                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                          whileHover={{ scale: 1.08 }}
-                          transition={{ duration: 0.6, ease: "easeOut" }}
-                        />
-                        <div className="hologram-overlay" />
-                      </div>
-                    ) : (
-                      <div style={{ height: '180px', overflow: 'hidden', borderBottom: '1px solid var(--border-glass)', borderRadius: '20px 20px 0 0', position: 'relative', background: 'linear-gradient(135deg, rgba(var(--accent-cyan-rgb),0.08) 0%, rgba(var(--accent-violet-rgb),0.12) 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '0.5rem' }}>
-                        <div style={{ width: '48px', height: '48px', borderRadius: '0', background: 'rgba(var(--accent-cyan-rgb),0.12)', border: '1px solid rgba(var(--accent-cyan-rgb),0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          <Code size={24} style={{ color: 'var(--accent-cyan)', opacity: 0.8 }} />
-                        </div>
-                        <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'monospace', letterSpacing: '1px', textTransform: 'uppercase' }}>
-                          {project.tags[0]}
-                        </span>
-                        <div className="hologram-overlay" />
-                      </div>
-                    )}
-                    <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                      <div className="project-tags">
-                        {project.tags.map((tag, idx) => (
-                          <span key={idx} className="tag">{tag}</span>
-                        ))}
-                      </div>
-                      <div className="project-info">
-                        <h3 className="project-title text-gradient">{project.title}</h3>
-                        <p className="project-desc">{project.desc}</p>
-                      </div>
+                  {project.image ? (
+                    <div style={{ height: '220px', overflow: 'hidden', borderBottom: '1px solid var(--border-glass)' }}>
+                      <img
+                        src={project.image}
+                        alt={project.title}
+                        loading="lazy"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(100%)', transition: 'filter 0.3s' }}
+                        className="project-img-minimal"
+                      />
+                    </div>
+                  ) : (
+                    <div style={{ height: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid var(--border-glass)', backgroundColor: 'var(--bg-darker)' }}>
+                      <Code size={40} style={{ color: 'var(--text-muted)' }} />
+                    </div>
+                  )}
+                  <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <h3 style={{ color: 'var(--text-main)', fontSize: '1.3rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>{project.title}</h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: '1.6', flex: 1, margin: '0 0 1.5rem 0' }}>{project.desc}</p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                      {project.tags.map((tag, idx) => (
+                        <span key={idx} style={{ fontSize: '0.75rem', padding: '0.2rem 0.6rem', border: '1px solid var(--border-glass)', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>{tag}</span>
+                      ))}
                     </div>
                   </div>
-                </TiltCard>
+                </a>
               ))}
-            </motion.div>
-          </section>
-
-          {/* Arcade Section */}
-          <section 
-            id="arcade" 
-            style={{ padding: '0 5% 5rem', textAlign: 'center', position: 'relative' }}
-          >
-            <motion.div 
-              className="section-header"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <h2 className="section-title text-gradient"><SyntaxHighlightedTitle text={t('arcade_section_title') || 'ARCADE UNIVERSE'} /></h2>
-              <p style={{ color: 'var(--text-muted)' }}>{t('arcade_section_subtitle')}</p>
-            </motion.div>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <Suspense fallback={<div className="glass-panel" style={{ padding: '1rem 3rem', color: 'var(--accent-cyan)' }}>INITIALIZING ARCADE...</div>}>
-                <GameLibrary
-                  isOpen={isArcadeOpen}
-                  setIsOpen={setIsArcadeOpen}
-                  activeGameId={activeArcadeGame}
-                  setActiveGameId={setActiveArcadeGame}
-                />
-              </Suspense>
             </div>
           </section>
 
-          <motion.section
-            id="skills"
-            className="skills-section glass-panel"
-            style={{ borderRadius: '0', }}
-            initial={{ opacity: 0, scale: 0.98, y: 30 }}
-            whileInView={{ opacity: 1, scale: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <div className="section-header">
-              <h2 className="section-title text-gradient"><SyntaxHighlightedTitle text={t('skills_title')} /></h2>
-              <p style={{ color: 'var(--text-muted)' }}>{t('skills_subtitle')}</p>
+          {/* Skills Section */}
+          <section id="skills" style={{ padding: '6rem 2rem', maxWidth: '1000px', margin: '0 auto', borderBottom: '1px solid var(--border-glass)' }}>
+            <h2 style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 3rem 0', color: 'var(--text-main)', letterSpacing: '-0.03em', textTransform: 'uppercase' }}>{t('skills_title') || 'SKILLS'}</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '3rem' }}>
+              <div>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '1rem', borderBottom: '1px solid var(--border-glass)', paddingBottom: '0.5rem' }}>Development</h3>
+                <p style={{ color: 'var(--text-muted)', lineHeight: '1.8', fontSize: '1.05rem' }}>React, Next.js, Node.js, TypeScript, C++, C#</p>
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '1rem', borderBottom: '1px solid var(--border-glass)', paddingBottom: '0.5rem' }}>Game & Graphics</h3>
+                <p style={{ color: 'var(--text-muted)', lineHeight: '1.8', fontSize: '1.05rem' }}>Unity, WebGL, Three.js, Blender, SwiftUI</p>
+              </div>
+              <div>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '1rem', borderBottom: '1px solid var(--border-glass)', paddingBottom: '0.5rem' }}>Tools & Systems</h3>
+                <p style={{ color: 'var(--text-muted)', lineHeight: '1.8', fontSize: '1.05rem' }}>Git, Docker, Figma, Linux, CI/CD</p>
+              </div>
             </div>
-            <div className="skills-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2rem', marginTop: '3rem' }}>
-              <SkillCard icon={<UnityIcon />} label="Unity / C#" percent={95} delay={100} description={t('skill_unity_desc')} />
-              <SkillCard icon={<SwiftIcon />} label="SwiftUI / macOS" percent={82} delay={200} description={t('skill_swift_desc')} />
-              <SkillCard icon={<BlenderIcon />} label="Blender / 3D" percent={88} delay={300} description={t('skill_blender_desc')} />
-              <SkillCard icon={<Code size={32} />} label="React / WebGL" percent={85} delay={400} description={t('skill_sys_desc')} />
-              <SkillCard icon={<Terminal size={32} />} label="C++ & Git" percent={78} delay={500} description="Systems programming, custom engine modules, and Git workflow control." />
-            </div>
-          </motion.section>
+          </section>
 
-          {/* System Telemetry Section [NEW] - Professionalism Boost */}
-          <motion.section 
-            id="telemetry" 
-            style={{ padding: isMobileDevice ? '2rem 5%' : '4rem 5%', display: 'flex', justifyContent: 'center', }}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <div className="glass-panel" style={{ width: '100%', maxWidth: '1200px', padding: isMobileDevice ? 'clamp(1rem, 4vw, 1.5rem) clamp(0.75rem, 3vw, 1.2rem)' : '2.5rem', borderRadius: '0', display: 'flex', flexWrap: 'wrap', gap: isMobileDevice ? 'clamp(1rem, 4vw, 1.5rem)' : '3rem', justifyContent: 'space-around', alignItems: 'center', border: '1px solid var(--border-glass)', background: 'var(--bg-glass)', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '2px', background: 'linear-gradient(90deg, transparent, var(--accent-cyan), transparent)' }} />
-              {[
-                { label: t('stats_games'), val: "50+", icon: <Gamepad2 size={24} /> },
-                { label: t('stats_lines'), val: "15K+", icon: <Code size={24} /> },
-                { 
-                  label: t('stats_users'), 
-                  val: i18n.language?.startsWith('tr') 
-                    ? `${activeVisitorCount} AKTİF` 
-                    : `${activeVisitorCount} ONLINE`, 
-                  icon: <Globe size={24} /> 
-                },
-                { label: t('stats_uptime'), val: "100%", icon: <Terminal size={24} /> }
-              ].map((stat, i) => (
-                <motion.div 
-                  key={i} 
-                  className="telemetry-item"
-                  whileHover={{ scale: 1.15, transition: { type: 'spring', stiffness: 400, damping: 15 } }}
-                  onMouseEnter={playHover}
-                  style={{ textAlign: 'center', minWidth: '120px', cursor: 'default' }}
-                >
-                  <div className="stat-icon-wrapper" style={{ color: 'var(--accent-cyan)', marginBottom: '0.5rem', display: 'flex', justifyContent: 'center', transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}>{stat.icon}</div>
-                  <div style={{ fontSize: isMobileDevice ? '1.4rem' : '1.8rem', fontWeight: 800, color: 'var(--text-main)', marginBottom: '0.2rem' }}>{stat.val}</div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>{stat.label}</div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.section>
-
-          <Suspense fallback={<div className="viewer-section glass-panel" style={{ height: '500px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'var(--accent-cyan)' }}>LOADING 3D ENGINE...</div>}>
-            <ThreeDViewer t={t} theme={theme} isArcadeOpen={isArcadeOpen} />
-          </Suspense>
 
           <motion.footer 
             id="contact" 
@@ -2670,16 +2378,6 @@ function App() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            <div className="glass-panel status-bar">
-              <div className="status-level">
-                <div className="pulsing-dot"></div>
-                {t('status_level')}
-              </div>
-              <div className="status-quest">
-                <Compass size={18} />
-                <span>{t('status_quest')}</span>
-              </div>
-            </div>
 
             <motion.div
               style={{ textAlign: 'center', marginBottom: '3rem' }}
