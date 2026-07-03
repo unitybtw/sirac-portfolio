@@ -82,10 +82,10 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: delay / 2000 }} // Scale down delay
-      style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '16px', border: '1px solid var(--border-glass)', backdropFilter: 'none', WebkitBackdropFilter: 'none', background: 'rgba(255, 255, 255, 0.02)' }}
+      style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '0', border: '1px solid var(--border-glass)', backdropFilter: 'none', WebkitBackdropFilter: 'none', background: 'rgba(255, 255, 255, 0.02)' }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        <div className="skill-icon-container" style={{ color: 'var(--text-main)', opacity: 0.8, background: 'var(--bg-glass)', padding: '10px', borderRadius: '12px', transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}>
+        <div className="skill-icon-container" style={{ color: 'var(--text-main)', opacity: 0.8, background: 'var(--bg-glass)', padding: '10px', borderRadius: '0', transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}>
           {icon}
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
@@ -94,10 +94,10 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
         </div>
       </div>
       <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.5', margin: '0.5rem 0' }}>{description}</p>
-      <div style={{ width: '100%', height: '6px', background: 'var(--border-glass)', borderRadius: '10px', overflow: 'hidden', position: 'relative' }}>
+      <div style={{ width: '100%', height: '6px', background: 'var(--border-glass)', borderRadius: '0', overflow: 'hidden', position: 'relative' }}>
         <motion.div
           className="skill-progress-bar-fill"
-          style={{ height: '100%', width: '100%', background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))', borderRadius: '10px', position: 'relative', transformOrigin: 'left', }}
+          style={{ height: '100%', width: '100%', background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))', borderRadius: '0', position: 'relative', transformOrigin: 'left', }}
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: percent / 100 }}
           viewport={{ once: true }}
@@ -299,13 +299,13 @@ const CVModal = ({ isOpen, onClose, t, theme }) => {
               width: '100%', maxWidth: '820px', maxHeight: '90vh',
               overflowY: 'auto',
               background: theme === 'dark' ? 'rgba(15,17,26,0.97)' : 'rgba(248,250,252,0.97)',
-              border: '1px solid rgba(115,218,202,0.25)',
-              borderRadius: '28px',
-              boxShadow: '0 40px 80px -20px rgba(0,0,0,0.7), 0 0 0 1px rgba(115,218,202,0.1)',
+              border: '1px solid rgba(255,255,255,0.25)',
+              borderRadius: '0',
+              boxShadow: '0 40px 80px -20px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.1)',
               fontFamily: 'var(--font-sf)',
               position: 'relative',
               scrollbarWidth: 'thin',
-              scrollbarColor: 'rgba(115,218,202,0.3) transparent',
+              scrollbarColor: 'rgba(255,255,255,0.3) transparent',
             }}
             className="cv-modal-scroll"
           >
@@ -339,7 +339,7 @@ const CVModal = ({ isOpen, onClose, t, theme }) => {
                 </div>
               </div>
               <div style={{ display: 'flex', gap: '0.6rem', flexShrink: 0 }}>
-                <button onClick={handlePrint} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '0.5rem 1rem', background: 'rgba(115,218,202,0.12)', border: '1px solid rgba(115,218,202,0.3)', borderRadius: '10px', color: 'var(--accent-cyan)', cursor: 'pointer', fontSize: '0.82rem', fontWeight: 600, transition: 'all 0.2s' }}>
+                <button onClick={handlePrint} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '0', color: 'var(--accent-cyan)', cursor: 'pointer', fontSize: '0.82rem', fontWeight: 600, transition: 'all 0.2s' }}>
                   <Download size={14}/> PDF
                 </button>
                 <button onClick={onClose} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '36px', height: '36px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-glass)', borderRadius: '50%', color: 'var(--text-muted)', cursor: 'pointer', transition: 'all 0.2s' }}>
@@ -362,7 +362,7 @@ const CVModal = ({ isOpen, onClose, t, theme }) => {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                     {experience.map((exp, i) => (
-                      <div key={i} style={{ paddingLeft: '1rem', borderLeft: '2px solid rgba(115,218,202,0.3)', position: 'relative' }}>
+                      <div key={i} style={{ paddingLeft: '1rem', borderLeft: '2px solid rgba(255,255,255,0.3)', position: 'relative' }}>
                         <div style={{ position: 'absolute', left: '-5px', top: '6px', width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-cyan)' }} />
                         <div style={{ fontSize: '0.72rem', color: 'var(--accent-violet)', fontWeight: 600, letterSpacing: '0.5px', marginBottom: '0.2rem' }}>{exp.period}</div>
                         <div style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.3rem' }}>{exp.title}</div>
@@ -394,7 +394,7 @@ const CVModal = ({ isOpen, onClose, t, theme }) => {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                     {projects.map((proj, i) => (
-                      <a key={i} href={proj.link} target="_blank" rel="noopener noreferrer" style={{ display: 'block', padding: '0.7rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-glass)', borderRadius: '10px', textDecoration: 'none', transition: 'border-color 0.2s, background 0.2s' }}
+                      <a key={i} href={proj.link} target="_blank" rel="noopener noreferrer" style={{ display: 'block', padding: '0.7rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-glass)', borderRadius: '0', textDecoration: 'none', transition: 'border-color 0.2s, background 0.2s' }}
                         onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,158,100,0.4)'; e.currentTarget.style.background = 'rgba(255,158,100,0.05)'; }}
                         onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-glass)'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
                       >
@@ -420,12 +420,12 @@ const CVModal = ({ isOpen, onClose, t, theme }) => {
                           <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>{sk.label}</span>
                           <span style={{ fontSize: '0.78rem', color: sk.color, fontFamily: 'monospace', fontWeight: 700 }}>{sk.pct}%</span>
                         </div>
-                        <div style={{ height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '999px', overflow: 'hidden' }}>
+                        <div style={{ height: '6px', background: 'rgba(255,255,255,0.06)', borderRadius: '0', overflow: 'hidden' }}>
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${sk.pct}%` }}
                             transition={{ duration: 0.8, delay: i * 0.06, ease: 'easeOut' }}
-                            style={{ height: '100%', borderRadius: '999px', background: `linear-gradient(90deg, ${sk.color}, rgba(255,255,255,0.5))` }}
+                            style={{ height: '100%', borderRadius: '0', background: `linear-gradient(90deg, ${sk.color}, rgba(255,255,255,0.5))` }}
                           />
                         </div>
                       </div>
@@ -441,7 +441,7 @@ const CVModal = ({ isOpen, onClose, t, theme }) => {
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
                     {['Unity 3D', 'C#', 'SwiftUI', 'Combine', 'React', 'Vite', 'Blender', 'Figma', 'Firebase', 'WebGL', 'Three.js', 'Framer Motion', 'Git', 'macOS', 'Xcode'].map((tool, i) => (
-                      <span key={i} style={{ padding: '0.3rem 0.7rem', background: 'rgba(115,218,202,0.08)', border: '1px solid rgba(115,218,202,0.2)', borderRadius: '999px', fontSize: '0.75rem', color: 'var(--text-main)', fontFamily: 'monospace' }}>
+                      <span key={i} style={{ padding: '0.3rem 0.7rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '0', fontSize: '0.75rem', color: 'var(--text-main)', fontFamily: 'monospace' }}>
                         {tool}
                       </span>
                     ))}
@@ -456,7 +456,7 @@ const CVModal = ({ isOpen, onClose, t, theme }) => {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                     {[{ lang: 'Turkish', level: 'Native' }, { lang: 'English', level: 'Professional' }].map((l, i) => (
-                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0.8rem', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-glass)', borderRadius: '8px' }}>
+                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0.8rem', background: 'rgba(255,255,255,0.03)', border: '1px solid var(--border-glass)', borderRadius: '0' }}>
                         <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-main)' }}>{l.lang}</span>
                         <span style={{ fontSize: '0.78rem', color: 'var(--accent-pink)', fontFamily: 'monospace' }}>{l.level}</span>
                       </div>
@@ -904,7 +904,7 @@ const InteractiveTerminal = ({
       className="glass-panel code-terminal" 
       onClick={handleFocus}
       style={{
-        width: '100%', maxWidth: '500px', borderRadius: '16px', overflow: 'hidden',
+        width: '100%', maxWidth: '500px', borderRadius: '0', overflow: 'hidden',
         border: isFocused ? '1px solid var(--accent-cyan)' : '1px solid var(--border-glass)', 
         boxShadow: isFocused 
           ? '0 20px 40px -10px rgba(var(--accent-cyan-rgb), 0.25), 0 0 15px rgba(var(--accent-cyan-rgb), 0.1)' 
@@ -916,9 +916,9 @@ const InteractiveTerminal = ({
     >
       <div style={{ background: 'var(--bg-glass)', padding: '12px 20px', display: 'flex', alignItems: 'center', borderBottom: '1px solid var(--border-glass)', userSelect: 'none' }}>
         <div style={{ display: 'flex', gap: '8px' }}>
-          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56' }} />
-          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e' }} />
-          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f' }} />
+          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#444' }} />
+          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#666' }} />
+          <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#888' }} />
         </div>
         <div style={{ flex: 1, textTransform: 'uppercase', textAlign: 'center', fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-sf)', letterSpacing: '1px' }}>
           sirac@iku: ~/shell
@@ -1140,7 +1140,7 @@ const KonamiGame = ({ onClose }) => {
     }}>
       <div className="glass-panel" style={{ 
         padding: '2.5rem', 
-        borderRadius: '32px', 
+        borderRadius: '0', 
         border: '1px solid var(--border-glass)', 
         boxShadow: '0 30px 60px rgba(0, 0, 0, 0.6)',
         display: 'flex', 
@@ -1159,7 +1159,7 @@ const KonamiGame = ({ onClose }) => {
           height: '300px', 
           border: '2px solid var(--border-glass)', 
           background: 'var(--bg-dark)',
-          borderRadius: '16px',
+          borderRadius: '0',
           position: 'relative', 
           overflow: 'hidden',
           boxShadow: 'inset 0 0 20px rgba(0,0,0,0.8)' 
@@ -1587,7 +1587,7 @@ function App() {
             background: 'rgba(10, 12, 16, 0.95)',
             border: '1px solid var(--accent-cyan)',
             boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
-            padding: '20px 40px', borderRadius: '12px',
+            padding: '20px 40px', borderRadius: '0',
             zIndex: '999999', fontFamily: 'monospace',
             color: 'var(--text-main)', textAlign: 'center',
             pointerEvents: 'none'
@@ -1954,7 +1954,7 @@ function App() {
 
             {/* Nav Utilities - ALWAYS visible on right */}
             <div className="nav-utilities">
-              <div className="lang-selector-container" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'var(--bg-glass)', padding: '0.3rem 0.6rem', borderRadius: '20px', border: '1px solid var(--border-glass)', position: 'relative' }}>
+              <div className="lang-selector-container" style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'var(--bg-glass)', padding: '0.3rem 0.6rem', borderRadius: '0', border: '1px solid var(--border-glass)', position: 'relative' }}>
                 <Globe size={14} style={{ color: 'var(--text-muted)', marginRight: '2px', zIndex: 1 }} />
                 <div style={{ position: 'relative', display: 'flex', gap: '5px', alignItems: 'center' }}>
                   {/* Sliding Background */}
@@ -1968,7 +1968,7 @@ function App() {
                       background: 'linear-gradient(135deg, rgba(var(--accent-cyan-rgb), 0.15), rgba(var(--accent-cyan-rgb), 0.05))',
                       backdropFilter: 'blur(8px)',
                       WebkitBackdropFilter: 'blur(8px)',
-                      borderRadius: '8px',
+                      borderRadius: '0',
                       border: '1px solid rgba(var(--accent-cyan-rgb), 0.3)',
                       borderTop: '1px solid rgba(255, 255, 255, 0.2)',
                       borderLeft: '1px solid rgba(255, 255, 255, 0.1)',
@@ -2059,9 +2059,9 @@ function App() {
                 aria-label="Toggle Menu"
               >
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                  <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '2px', display: 'block', transition: 'all 0.3s', transform: isMobileMenuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none', transformOrigin: 'center' }}></span>
-                  <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '2px', display: 'block', transition: 'all 0.3s', opacity: isMobileMenuOpen ? 0 : 1 }}></span>
-                  <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '2px', display: 'block', transition: 'all 0.3s', transform: isMobileMenuOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none', transformOrigin: 'center' }}></span>
+                  <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '0', display: 'block', transition: 'all 0.3s', transform: isMobileMenuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none', transformOrigin: 'center' }}></span>
+                  <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '0', display: 'block', transition: 'all 0.3s', opacity: isMobileMenuOpen ? 0 : 1 }}></span>
+                  <span style={{ width: '20px', height: '2px', backgroundColor: 'currentColor', borderRadius: '0', display: 'block', transition: 'all 0.3s', transform: isMobileMenuOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none', transformOrigin: 'center' }}></span>
                 </div>
               </button>
             </div>
@@ -2180,7 +2180,7 @@ function App() {
                   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
                 }}
                 className="glass-panel" 
-                style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem', marginBottom: '1.5rem', borderRadius: '30px' }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '0.5rem 1rem', marginBottom: '1.5rem', borderRadius: '0' }}
               >
                 <span className="pulsing-dot dot-green" />
                 <span style={{ fontSize: '0.85rem', fontWeight: 600, letterSpacing: '2px', color: 'var(--accent-cyan)' }}>
@@ -2347,7 +2347,7 @@ function App() {
                   }}
                   whileHover={{ y: -5, scale: 1.02, boxShadow: '0 12px 30px rgba(0, 0, 0, 0.25)', borderColor: 'var(--accent-cyan)' }}
                   onMouseEnter={playHover}
-                  style={{ padding: '1.5rem', borderRadius: '16px', transition: 'border-color 0.3s, box-shadow 0.3s', backdropFilter: 'none', WebkitBackdropFilter: 'none', background: 'rgba(255, 255, 255, 0.02)', }}
+                  style={{ padding: '1.5rem', borderRadius: '0', transition: 'border-color 0.3s, box-shadow 0.3s', backdropFilter: 'none', WebkitBackdropFilter: 'none', background: 'rgba(255, 255, 255, 0.02)', }}
                 >
                   <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.8rem' }}>{t(`about_stat_${num}`)}</div>
                   <div style={{ color: 'var(--text-main)', fontSize: '1.1rem', fontWeight: 700 }}>{t(`about_stat_${num}_val`)}</div>
@@ -2413,7 +2413,7 @@ function App() {
                       style={{ 
                         width: '42%', 
                         padding: '1.5rem', 
-                        borderRadius: '24px', 
+                        borderRadius: '0', 
                         textAlign: num % 2 === 0 ? 'left' : 'right',
                         cursor: 'pointer',
                         }}
@@ -2426,7 +2426,7 @@ function App() {
                         color: num > 2 ? 'var(--accent-violet)' : 'var(--accent-cyan)',
                         background: num > 2 ? 'rgba(var(--accent-violet-rgb), 0.1)' : 'rgba(var(--accent-cyan-rgb), 0.1)',
                         border: num > 2 ? '1px solid rgba(var(--accent-violet-rgb), 0.2)' : '1px solid rgba(var(--accent-cyan-rgb), 0.2)',
-                        borderRadius: '8px',
+                        borderRadius: '0',
                         marginBottom: '0.5rem',
                         letterSpacing: '1px'
                       }}>
@@ -2449,7 +2449,7 @@ function App() {
           <motion.section 
              id="featured-modules" 
              className="desktop-only glass-panel" 
-             style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', padding: '5rem 2rem', borderRadius: '40px', }}
+             style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', padding: '5rem 2rem', borderRadius: '0', }}
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -2482,7 +2482,7 @@ function App() {
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: i * 0.1 }}
                   onClick={() => { playClick(); setIsArcadeOpen(true); }}
-                  style={{ padding: '2rem', borderRadius: '24px', cursor: 'pointer', border: '1px solid var(--border-glass)', textAlign: 'center', background: 'rgba(255, 255, 255, 0.02)', height: '100%', backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
+                  style={{ padding: '2rem', borderRadius: '0', cursor: 'pointer', border: '1px solid var(--border-glass)', textAlign: 'center', background: 'rgba(255, 255, 255, 0.02)', height: '100%', backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
                 >
                   <div style={{ color: 'var(--accent-cyan)', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>{game.icon}</div>
                   <h3 style={{ color: 'var(--text-main)', fontSize: '1.2rem', marginBottom: '0.5rem' }}>{game.name}</h3>
@@ -2545,7 +2545,7 @@ function App() {
                       </div>
                     ) : (
                       <div style={{ height: '180px', overflow: 'hidden', borderBottom: '1px solid var(--border-glass)', borderRadius: '20px 20px 0 0', position: 'relative', background: 'linear-gradient(135deg, rgba(var(--accent-cyan-rgb),0.08) 0%, rgba(var(--accent-violet-rgb),0.12) 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '0.5rem' }}>
-                        <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'rgba(var(--accent-cyan-rgb),0.12)', border: '1px solid rgba(var(--accent-cyan-rgb),0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ width: '48px', height: '48px', borderRadius: '0', background: 'rgba(var(--accent-cyan-rgb),0.12)', border: '1px solid rgba(var(--accent-cyan-rgb),0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           <Code size={24} style={{ color: 'var(--accent-cyan)', opacity: 0.8 }} />
                         </div>
                         <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontFamily: 'monospace', letterSpacing: '1px', textTransform: 'uppercase' }}>
@@ -2601,7 +2601,7 @@ function App() {
           <motion.section
             id="skills"
             className="skills-section glass-panel"
-            style={{ borderRadius: '40px', }}
+            style={{ borderRadius: '0', }}
             initial={{ opacity: 0, scale: 0.98, y: 30 }}
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -2629,7 +2629,7 @@ function App() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <div className="glass-panel" style={{ width: '100%', maxWidth: '1200px', padding: isMobileDevice ? 'clamp(1rem, 4vw, 1.5rem) clamp(0.75rem, 3vw, 1.2rem)' : '2.5rem', borderRadius: isMobileDevice ? 'clamp(16px, 4vw, 24px)' : '30px', display: 'flex', flexWrap: 'wrap', gap: isMobileDevice ? 'clamp(1rem, 4vw, 1.5rem)' : '3rem', justifyContent: 'space-around', alignItems: 'center', border: '1px solid var(--border-glass)', background: 'var(--bg-glass)', position: 'relative', overflow: 'hidden' }}>
+            <div className="glass-panel" style={{ width: '100%', maxWidth: '1200px', padding: isMobileDevice ? 'clamp(1rem, 4vw, 1.5rem) clamp(0.75rem, 3vw, 1.2rem)' : '2.5rem', borderRadius: '0', display: 'flex', flexWrap: 'wrap', gap: isMobileDevice ? 'clamp(1rem, 4vw, 1.5rem)' : '3rem', justifyContent: 'space-around', alignItems: 'center', border: '1px solid var(--border-glass)', background: 'var(--bg-glass)', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '2px', background: 'linear-gradient(90deg, transparent, var(--accent-cyan), transparent)' }} />
               {[
                 { label: t('stats_games'), val: "50+", icon: <Gamepad2 size={24} /> },
@@ -2775,7 +2775,7 @@ function App() {
               </div>
               {/* Availability badge */}
               <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '0.3rem 0.9rem', background: 'rgba(115,218,202,0.08)', border: '1px solid rgba(115,218,202,0.2)', borderRadius: '999px', fontSize: '0.72rem', fontWeight: 700, color: 'var(--accent-cyan)', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '0.3rem 0.9rem', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '0', fontSize: '0.72rem', fontWeight: 700, color: 'var(--accent-cyan)', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
                   <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: 'var(--accent-cyan)', display: 'inline-block', animation: 'pulse 2s infinite' }} />
                   {t('badge_hire')}
                 </span>
