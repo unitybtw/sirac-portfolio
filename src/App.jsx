@@ -40,8 +40,7 @@ const PageProgress = () => {
         boxShadow: '0 0 8px rgba(115, 218, 202, 0.4), 0 0 15px rgba(187, 154, 243, 0.2)',
         transformOrigin: '0%',
         zIndex: 10001,
-        willChange: 'transform'
-      }}
+        }}
     />
   );
 };
@@ -83,7 +82,7 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: delay / 2000 }} // Scale down delay
-      style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '16px', border: '1px solid var(--border-glass)', willChange: 'transform, opacity', backdropFilter: 'none', WebkitBackdropFilter: 'none', background: 'rgba(255, 255, 255, 0.02)' }}
+      style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', borderRadius: '16px', border: '1px solid var(--border-glass)', backdropFilter: 'none', WebkitBackdropFilter: 'none', background: 'rgba(255, 255, 255, 0.02)' }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
         <div className="skill-icon-container" style={{ color: 'var(--text-main)', opacity: 0.8, background: 'var(--bg-glass)', padding: '10px', borderRadius: '12px', transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)' }}>
@@ -98,7 +97,7 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
       <div style={{ width: '100%', height: '6px', background: 'var(--border-glass)', borderRadius: '10px', overflow: 'hidden', position: 'relative' }}>
         <motion.div
           className="skill-progress-bar-fill"
-          style={{ height: '100%', width: '100%', background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))', borderRadius: '10px', position: 'relative', transformOrigin: 'left', willChange: 'transform' }}
+          style={{ height: '100%', width: '100%', background: 'linear-gradient(90deg, var(--accent-cyan), var(--accent-violet))', borderRadius: '10px', position: 'relative', transformOrigin: 'left', }}
           initial={{ scaleX: 0 }}
           whileInView={{ scaleX: percent / 100 }}
           viewport={{ once: true }}
@@ -109,8 +108,7 @@ const SkillCard = ({ icon, label, percent, delay, description }) => {
               position: 'absolute', top: 0, left: 0, bottom: 0, width: '30%', 
               background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)', 
               opacity: 0.8,
-              willChange: 'transform'
-            }}
+              }}
             animate={{ x: ['-200%', '400%'] }}
             transition={{ repeat: Infinity, duration: 2.5, ease: "linear" }}
           />
@@ -1320,7 +1318,6 @@ const TiltCard = ({ children, className, style, ...props }) => {
         transformStyle: "preserve-3d",
         perspective: "1000px",
         position: "relative",
-        willChange: "transform",
         ...style
       }}
       className={className}
@@ -1851,13 +1848,13 @@ function App() {
               <div className="cyber-bg-blob-4" />
             </motion.div>
             {/* Parallax Floating Icons */}
-              <motion.div style={{ position: 'absolute', top: '15%', left: '10%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax1, x: isMobileDevice ? 0 : bgIconX, willChange: 'transform' }}>
+              <motion.div style={{ position: 'absolute', top: '15%', left: '10%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax1, x: isMobileDevice ? 0 : bgIconX, }}>
                 <Code size={60} />
               </motion.div>
-              <motion.div style={{ position: 'absolute', top: '45%', right: '10%', opacity: 0.15, color: 'var(--accent-violet)', y: parallax2, x: isMobileDevice ? 0 : bgIconY, willChange: 'transform' }}>
+              <motion.div style={{ position: 'absolute', top: '45%', right: '10%', opacity: 0.15, color: 'var(--accent-violet)', y: parallax2, x: isMobileDevice ? 0 : bgIconY, }}>
                 <Layers size={80} />
               </motion.div>
-              <motion.div style={{ position: 'absolute', top: '75%', left: '15%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax3, x: isMobileDevice ? 0 : bgIconX, willChange: 'transform' }}>
+              <motion.div style={{ position: 'absolute', top: '75%', left: '15%', opacity: 0.15, color: 'var(--accent-cyan)', y: parallax3, x: isMobileDevice ? 0 : bgIconX, }}>
                 <Box size={70} />
               </motion.div>
           </div>
@@ -1866,7 +1863,7 @@ function App() {
 
           <nav className={`glass-panel ${scrolled ? 'scrolled' : ''}`}>
             <div className="nav-logo" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="Logo" style={{ width: '28px', height: '28px', filter: 'drop-shadow(0 0 8px var(--accent-cyan))' }} />
+              <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="Logo" fetchpriority="high" loading="eager" decoding="sync" style={{ width: '28px', height: '28px', filter: 'drop-shadow(0 0 8px var(--accent-cyan))' }} />
               <h1 className="text-gradient">
                 <span className="logo-name-full">{t('nav_name') || 'SIRAÇ GÖKTUĞ ŞİMŞEK.'}</span>
                 <span className="logo-name-short">{t('nav_name_mobile') || 'SIRAÇ.'}</span>
@@ -2350,7 +2347,7 @@ function App() {
                   }}
                   whileHover={{ y: -5, scale: 1.02, boxShadow: '0 12px 30px rgba(0, 0, 0, 0.25)', borderColor: 'var(--accent-cyan)' }}
                   onMouseEnter={playHover}
-                  style={{ padding: '1.5rem', borderRadius: '16px', transition: 'border-color 0.3s, box-shadow 0.3s', backdropFilter: 'none', WebkitBackdropFilter: 'none', background: 'rgba(255, 255, 255, 0.02)', willChange: 'transform, opacity' }}
+                  style={{ padding: '1.5rem', borderRadius: '16px', transition: 'border-color 0.3s, box-shadow 0.3s', backdropFilter: 'none', WebkitBackdropFilter: 'none', background: 'rgba(255, 255, 255, 0.02)', }}
                 >
                   <div style={{ color: 'var(--text-muted)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '0.8rem' }}>{t(`about_stat_${num}`)}</div>
                   <div style={{ color: 'var(--text-main)', fontSize: '1.1rem', fontWeight: 700 }}>{t(`about_stat_${num}_val`)}</div>
@@ -2391,8 +2388,7 @@ function App() {
                       alignItems: 'center',
                       width: '100%',
                       position: 'relative',
-                      willChange: 'transform, opacity'
-                    }}
+                      }}
                   >
                     {/* Node Dot */}
                     <div 
@@ -2420,8 +2416,7 @@ function App() {
                         borderRadius: '24px', 
                         textAlign: num % 2 === 0 ? 'left' : 'right',
                         cursor: 'pointer',
-                        willChange: "transform"
-                      }}
+                        }}
                     >
                       <div style={{
                         display: 'inline-block',
@@ -2454,7 +2449,7 @@ function App() {
           <motion.section 
              id="featured-modules" 
              className="desktop-only glass-panel" 
-             style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', padding: '5rem 2rem', borderRadius: '40px', willChange: 'transform, opacity' }}
+             style={{ maxWidth: '1200px', margin: '0 auto 5rem auto', padding: '5rem 2rem', borderRadius: '40px', }}
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -2487,7 +2482,7 @@ function App() {
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1, delay: i * 0.1 }}
                   onClick={() => { playClick(); setIsArcadeOpen(true); }}
-                  style={{ padding: '2rem', borderRadius: '24px', cursor: 'pointer', border: '1px solid var(--border-glass)', textAlign: 'center', background: 'rgba(255, 255, 255, 0.02)', height: '100%', willChange: 'transform, opacity', backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
+                  style={{ padding: '2rem', borderRadius: '24px', cursor: 'pointer', border: '1px solid var(--border-glass)', textAlign: 'center', background: 'rgba(255, 255, 255, 0.02)', height: '100%', backdropFilter: 'none', WebkitBackdropFilter: 'none' }}
                 >
                   <div style={{ color: 'var(--accent-cyan)', marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>{game.icon}</div>
                   <h3 style={{ color: 'var(--text-main)', fontSize: '1.2rem', marginBottom: '0.5rem' }}>{game.name}</h3>
@@ -2530,7 +2525,7 @@ function App() {
                     hidden: { opacity: 0, y: 30 },
                     visible: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 100, damping: 14, mass: 1 } }
                   }}
-                  style={{ willChange: 'transform, opacity' }}
+                  style={{ }}
                 >
                   <div
                     onClick={() => window.open(project.link, '_blank')}
@@ -2606,7 +2601,7 @@ function App() {
           <motion.section
             id="skills"
             className="skills-section glass-panel"
-            style={{ borderRadius: '40px', willChange: 'transform, opacity' }}
+            style={{ borderRadius: '40px', }}
             initial={{ opacity: 0, scale: 0.98, y: 30 }}
             whileInView={{ opacity: 1, scale: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -2628,7 +2623,7 @@ function App() {
           {/* System Telemetry Section [NEW] - Professionalism Boost */}
           <motion.section 
             id="telemetry" 
-            style={{ padding: isMobileDevice ? '2rem 5%' : '4rem 5%', display: 'flex', justifyContent: 'center', willChange: 'transform, opacity' }}
+            style={{ padding: isMobileDevice ? '2rem 5%' : '4rem 5%', display: 'flex', justifyContent: 'center', }}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}

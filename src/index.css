@@ -2809,3 +2809,12 @@ img {
     backdrop-filter: none !important;
   }
 }
+
+
+/* Mobile Performance Override */
+@media (max-width: 768px) {
+  .glass-panel {
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+  }
+}
