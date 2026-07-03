@@ -2533,6 +2533,14 @@ function App() {
     </AnimatePresence>
 
     {!isArcadeOpen && <PresencePanel onActiveCountChange={setActiveVisitorCount} />}
+    <Suspense fallback={null}>
+      <GameLibrary
+        isOpen={isArcadeOpen}
+        setIsOpen={setIsArcadeOpen}
+        activeGameId={activeArcadeGame}
+        setActiveGameId={setActiveArcadeGame}
+      />
+    </Suspense>
     <CVModal isOpen={showCVModal} onClose={() => setShowCVModal(false)} t={t} theme={theme} />
     </>
   );
