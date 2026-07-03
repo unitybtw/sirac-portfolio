@@ -1819,7 +1819,7 @@ function App() {
         animate={{ opacity: 1 }}
         transition={{ duration: 1, ease: "easeOut" }}
       >
-          <MatrixBackground theme={theme} isPaused={isArcadeOpen} matrixRainMode={matrixRainMode} />
+          {/* <MatrixBackground theme={theme} isPaused={isArcadeOpen} matrixRainMode={matrixRainMode} /> */}
           <div className="cyber-bg">
             {!isMobileDevice && (
               <motion.div
