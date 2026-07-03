@@ -646,6 +646,7 @@ const InteractiveTerminal = ({
   toggleTheme,
   activeSection
 }) => {
+  const { i18n } = useTranslation();
   const [history, setHistory] = useState([
     { type: 'log', text: 'SYSTEM ONLINE // v2.5' },
     { type: 'log', text: 'ESTABLISHING NEURAL GRID ENGINES... [OK]' },
