@@ -11,7 +11,6 @@ const Model = ({ path }) => {
 
 export default function ThreeDViewer({ t, theme }) {
   const models = [
-    "model.glb", "model2.glb", "model3.glb", 
     "barrel.glb", "bottle.glb", "horn.glb", 
     "mug.glb", "shield.glb", "waterbottle.glb"
   ];
@@ -113,8 +112,7 @@ export default function ThreeDViewer({ t, theme }) {
               <ambientLight intensity={theme === 'light' ? 1.0 : 0.6} />
               <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} castShadow />
               <pointLight position={[-10, -10, -10]} />
-              
-              <Stage environment={theme === 'light' ? 'studio' : 'city'} intensity={theme === 'light' ? 1.0 : 0.7} shadows={false} adjustCamera={true}>
+              <Stage environment={theme === 'light' ? 'studio' : 'city'} intensity={theme === 'light' ? 1.0 : 0.7} shadows={false} adjustCamera={0.9}>
                 <Float speed={2.5} rotationIntensity={0.6} floatIntensity={0.6}>
                   <Model path={`${import.meta.env.BASE_URL}${models[currentModelIndex]}`} />
                 </Float>
