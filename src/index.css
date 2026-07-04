@@ -377,3 +377,10 @@ section {
   display: flex;
   flex-direction: column;
 }
+
+/* --- Performance Optimization: CSS Containment --- */
+/* The browser will skip rendering these sections completely when they are far off-screen */
+#timeline, #projects, #contact {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}

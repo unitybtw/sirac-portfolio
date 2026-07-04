@@ -5,7 +5,8 @@ import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe } from 'lucide-react';
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
-import ThreeDViewer from './ThreeDViewer';
+
+const ThreeDViewer = React.lazy(() => import('./ThreeDViewer'));
 
 // ── Page Progress Indicator ──────────────────────────────────────────────
 const PageProgress = () => {
@@ -301,7 +302,9 @@ function App() {
               </div>
             </div>
 
-            <ThreeDViewer t={t} theme={theme} />
+            <React.Suspense fallback={<div className="bento-card bento-col-12" style={{ minHeight: '520px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'var(--text-secondary)' }}>INITIALIZING 3D ENGINE...</div>}>
+              <ThreeDViewer t={t} theme={theme} />
+            </React.Suspense>
           </div>
         </section>
 
