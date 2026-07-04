@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
-import { motion, useScroll, useSpring } from 'framer-motion';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { ArrowRight, Github, Linkedin, Briefcase, Mail } from 'lucide-react';
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
@@ -20,6 +20,38 @@ const PageProgress = () => {
       className="page-progress-bar"
       style={{ scaleX }}
     />
+  );
+};
+
+// ── Magnetic Button Wrapper ──────────────────────────────────────────────
+const Magnetic = ({ children }) => {
+  const ref = React.useRef(null);
+  const [position, setPosition] = React.useState({ x: 0, y: 0 });
+
+  const handleMouse = (e) => {
+    const { clientX, clientY } = e;
+    const { height, width, left, top } = ref.current.getBoundingClientRect();
+    const middleX = clientX - (left + width / 2);
+    const middleY = clientY - (top + height / 2);
+    setPosition({ x: middleX * 0.1, y: middleY * 0.1 });
+  };
+
+  const reset = () => {
+    setPosition({ x: 0, y: 0 });
+  };
+
+  const { x, y } = position;
+  return (
+    <motion.div
+      style={{ position: 'relative' }}
+      ref={ref}
+      onMouseMove={handleMouse}
+      onMouseLeave={reset}
+      animate={{ x, y }}
+      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+    >
+      {children}
+    </motion.div>
   );
 };
 
@@ -51,16 +83,20 @@ function App() {
     if (!CSS.supports('(animation-timeline: view()) and (animation-range: entry)')) {
       const observer = new IntersectionObserver(
         (entries) => {
-          for (const entry of entries) {
+          entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
-              entry.target.classList.add('is-revealed');
+              // Add a slight stagger based on index if multiple enter at once
+              setTimeout(() => {
+                entry.target.classList.add('is-revealed');
+              }, index * 100);
+              observer.unobserve(entry.target); // Only reveal once for clean minimal feel
             }
-          }
+          });
         },
-        { threshold: 0.1, rootMargin: "0px 0px -10% 0px" }
+        { threshold: 0.15, rootMargin: "0px 0px -50px 0px" }
       );
 
-      document.querySelectorAll('.bento-card').forEach((el) => {
+      document.querySelectorAll('.bento-card, .section-title, .section-subtitle').forEach((el) => {
         el.classList.add('js-scroll-reveal');
         observer.observe(el);
       });
@@ -73,6 +109,11 @@ function App() {
 
     return () => lenis.destroy();
   }, []);
+
+  // Parallax for Hero
+  const { scrollY } = useScroll();
+  const y1 = useTransform(scrollY, [0, 1000], [0, 200]);
+  const opacity1 = useTransform(scrollY, [0, 300], [1, 0]);
 
   return (
     <>
@@ -97,9 +138,10 @@ function App() {
         {/* ── Hero Section ── */}
         <section className="hero-section" id="hero">
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+            style={{ y: y1, opacity: opacity1 }}
+            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }} // Custom spring-like bezier
           >
             <div style={{ display: 'inline-block', padding: '0.4rem 1rem', background: 'var(--border-subtle)', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 600, marginBottom: '1.5rem' }}>
               {t('badge_hire')}
@@ -113,12 +155,16 @@ function App() {
               {t('hero_subtitle_2')}
             </p>
             <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-              <a href="#projects" className="btn-primary">
-                {t('btn_explore')} <ArrowRight size={18} />
-              </a>
-              <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn-outline">
-                <Github size={18} /> {t('btn_repos')}
-              </a>
+              <Magnetic>
+                <a href="#projects" className="btn-primary">
+                  {t('btn_explore')} <ArrowRight size={18} />
+                </a>
+              </Magnetic>
+              <Magnetic>
+                <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn-outline">
+                  <Github size={18} /> {t('btn_repos')}
+                </a>
+              </Magnetic>
             </div>
           </motion.div>
         </section>

@@ -273,7 +273,7 @@ section {
       }
     }
 
-    .bento-card {
+    .bento-card, .section-title, .section-subtitle {
       animation: scroll-reveal auto linear both;
       animation-timeline: view();
       animation-range: entry 5% cover 15%;
