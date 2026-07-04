@@ -35,7 +35,7 @@ const resources = {
             "cv_close_btn": "Close",
 
             // ── About / Summary ───────────────────────────────────────────
-            "about_title": "// 01. <About />",
+            "about_title": "About",
             "about_subtitle": "PROFESSIONAL SUMMARY",
             "about_text_1": "I'm Siraç Göktuğ Şimşek — a game developer based in İstanbul. I build interactive software and games across Unity and C#, with a focus on gameplay programming, mechanics design, and optimized 3D pipelines.",
             "about_text_2": "I entered Istanbul Kultur University in 2025 to study Digital Game Design, where I have successfully completed my 1st year. My work focuses on creating responsive game mechanics and clean, maintainable systems.",
@@ -50,7 +50,7 @@ const resources = {
             "about_stat_4_val": "Open to Work",
 
             // ── Skills ────────────────────────────────────────────────────
-            "skills_title": "// 04. <Skills />",
+            "skills_title": "Skills",
             "skills_subtitle": "Technical proficiency across engines, languages and tools.",
             "skill_sys": "System Architecture",
             "skill_unity_desc": "Advanced C# scripting, URP/HDRP render pipelines, physics-based systems, shader graphs. Unity game projects.",
@@ -62,18 +62,18 @@ const resources = {
             "skill_cat_tools": "3D Design & DevOps",
 
             // ── Timeline / Experience ─────────────────────────────────────
-            "timeline_title": "// 02. <Education />",
+            "timeline_title": "Education",
             "timeline_subtitle": "Academic and development history.",
             "timeline_event_3_year": "2025 – PRESENT",
             "timeline_event_3_title": "B.Sc. Digital Game Design — IKU",
             "timeline_event_3_desc": "Entered Istanbul Kultur University in 2025. Successfully completed the 1st year. Coursework in game engine architecture, 3D art pipelines, game theory, and interactive systems design.",
 
             // ── Projects ──────────────────────────────────────────────────
-            "archives_title": "// 03. <Projects />",
+            "archives_title": "Projects",
             "archives_subtitle": "Selected projects.",
 
             // ── Featured modules ──────────────────────────────────────────
-            "featured_title": "// 03. <Builds />",
+            "featured_title": "Builds",
             "featured_subtitle": "Interactive browser prototypes.",
 
             // ── Stats / Telemetry ─────────────────────────────────────────
@@ -100,11 +100,11 @@ const resources = {
             "arcade_save_continue": "AUTHORIZE",
             "arcade_scoreboard": "LEADERBOARD",
             "arcade_games": "LIBRARY",
-            "arcade_section_title": "// 05. <Playground />",
+            "arcade_section_title": "Playground",
             "arcade_section_subtitle": "Custom-coded browser games.",
 
             // ── Contact / Footer ──────────────────────────────────────────
-            "footer_title": "// 04. <Contact />",
+            "footer_title": "Contact",
             "footer_subtitle": "Available for game development roles and internship opportunities.",
             "footer_copyright": "SIRAÇ GÖKTUĞ ŞİMŞEK · OPEN TO WORK",
             "btn_transmit": "Send Message",
@@ -188,7 +188,7 @@ const resources = {
             "cv_close_btn": "Kapat",
 
             // ── About / Summary ───────────────────────────────────────────
-            "about_title": "// 01. <Hakkımda />",
+            "about_title": "Hakkımda",
             "about_subtitle": "PROFESYONEL ÖZET",
             "about_text_1": "Ben Siraç Göktuğ Şimşek — İstanbul merkezli bir oyun geliştiricisiyim. Unity ve C# kullanarak; oynanış programlama, mekanik tasarımı ve optimize edilmiş 3D pipeline'lar üzerine odaklanarak yazılım geliştiriyorum.",
             "about_text_2": "İstanbul Kültür Üniversitesi'nde Dijital Oyun Tasarımı bölümüne 2025 yılında girdim ve 1. sınıfı başarıyla tamamladım. Çalışmalarım, duyarlı oyun mekanikleri ve temiz, bakımı kolay sistemler oluşturmaya odaklanıyor.",
@@ -203,7 +203,7 @@ const resources = {
             "about_stat_4_val": "İş Tekliflerine Açık",
 
             // ── Skills ────────────────────────────────────────────────────
-            "skills_title": "// 04. <Beceriler />",
+            "skills_title": "Beceriler",
             "skills_subtitle": "Teknik yetkinlik seviyeleri.",
             "skill_sys": "Sistem Mimarisi",
             "skill_unity_desc": "İleri düzey C# script, URP/HDRP render pipeline, fizik tabanlı sistemler ve shader graph.",
@@ -215,18 +215,18 @@ const resources = {
             "skill_cat_tools": "3D Tasarım & Araçlar",
 
             // ── Timeline / Experience ─────────────────────────────────────
-            "timeline_title": "// 02. <Eğitim />",
+            "timeline_title": "Eğitim",
             "timeline_subtitle": "Akademik geçmiş ve gelişim süreci.",
             "timeline_event_3_year": "2025 – GÜNÜMÜZ",
             "timeline_event_3_title": "Lisans: Dijital Oyun Tasarımı — İKÜ",
             "timeline_event_3_desc": "İstanbul Kültür Üniversitesi'ne 2025 yılında giriş yaptı. 1. sınıfı başarıyla tamamladı. Oyun motoru mimarisi, 3D sanat pipeline'ları, oyun teorisi ve etkileşimli sistem tasarımı dersleri.",
 
             // ── Projects ──────────────────────────────────────────────────
-            "archives_title": "// 03. <Projeler />",
+            "archives_title": "Projeler",
             "archives_subtitle": "Seçilmiş çalışmalar.",
 
             // ── Featured modules ──────────────────────────────────────────
-            "featured_title": "// 03. <Yapılar />",
+            "featured_title": "Yapılar",
             "featured_subtitle": "Tarayıcı prototipleri.",
 
             // ── Stats / Telemetry ─────────────────────────────────────────
@@ -253,11 +253,11 @@ const resources = {
             "arcade_save_continue": "BAĞLAN",
             "arcade_scoreboard": "SKOR TABLOSU",
             "arcade_games": "KÜTÜPHANE",
-            "arcade_section_title": "// 05. <Oyun Alanı />",
+            "arcade_section_title": "Oyun Alanı",
             "arcade_section_subtitle": "Tarayıcı oyunları.",
 
             // ── Contact / Footer ──────────────────────────────────────────
-            "footer_title": "// 04. <İletişim />",
+            "footer_title": "İletişim",
             "footer_subtitle": "Oyun geliştirme rolleri ve staj fırsatlarına açığım.",
             "footer_copyright": "SİRAÇ GÖKTUĞ ŞİMŞEK · İŞE AÇIK",
             "btn_transmit": "Mesaj Gönder",
