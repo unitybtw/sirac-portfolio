@@ -328,6 +328,12 @@ function App() {
                 <div>
                   <h3 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>{t('games.m_title')}</h3>
                   <p style={{ color: 'var(--text-secondary)', maxWidth: '800px' }}>{t('games.m_desc')}</p>
+                  
+                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
+                    <a href="https://unitybtw.itch.io" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.4rem 1rem', fontSize: '0.85rem', gap: '0.4rem' }}>
+                      <Gamepad2 size={16} /> Itch.io
+                    </a>
+                  </div>
                 </div>
                 <Gamepad2 size={32} color="var(--text-secondary)" style={{ opacity: 0.3 }} />
               </div>
@@ -339,21 +345,41 @@ function App() {
                 <div>
                   <h3 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>{t('games.arcade_engine_title')}</h3>
                   <p style={{ color: 'var(--text-secondary)', maxWidth: '800px' }}>{t('games.arcade_engine_desc')}</p>
+                  
+                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
+                    <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.4rem 1rem', fontSize: '0.85rem', gap: '0.4rem' }}>
+                      <Github size={16} /> GitHub
+                    </a>
+                  </div>
                 </div>
                 <Cpu size={32} color="var(--text-secondary)" style={{ opacity: 0.3 }} />
               </div>
             </div>
 
             {/* Signal */}
-            <div className="bento-card bento-col-6">
-              <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>{t('games.signal_title')}</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>{t('games.signal_desc')}</p>
+            <div className="bento-card bento-col-6" style={{ justifyContent: 'space-between' }}>
+              <div>
+                <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>{t('games.signal_title')}</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>{t('games.signal_desc')}</p>
+              </div>
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
+                <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.4rem 1rem', fontSize: '0.85rem', gap: '0.4rem', width: 'fit-content' }}>
+                  <Github size={16} /> GitHub
+                </a>
+              </div>
             </div>
 
             {/* Aether Command */}
-            <div className="bento-card bento-col-6">
-              <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>{t('games.aether_title')}</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>{t('games.aether_desc')}</p>
+            <div className="bento-card bento-col-6" style={{ justifyContent: 'space-between' }}>
+              <div>
+                <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>{t('games.aether_title')}</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>{t('games.aether_desc')}</p>
+              </div>
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
+                <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.4rem 1rem', fontSize: '0.85rem', gap: '0.4rem', width: 'fit-content' }}>
+                  <Github size={16} /> GitHub
+                </a>
+              </div>
             </div>
           </div>
         </section>
