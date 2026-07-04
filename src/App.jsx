@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
-import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe } from 'lucide-react';
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
 
@@ -57,7 +57,35 @@ const Magnetic = ({ children }) => {
 
 // ── Main App Component ────────────────────────────────────────────────────
 function App() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('theme') || 'light';
+    }
+    return 'light';
+  });
+
+  // Apply Theme class to document element
+  useEffect(() => {
+    const root = window.document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  // Toggle Theme
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
+
+  // Toggle Language
+  const toggleLanguage = () => {
+    const nextLang = i18n.language === 'tr' ? 'en' : 'tr';
+    i18n.changeLanguage(nextLang);
+  };
 
   // Smooth Scrolling
   useEffect(() => {
@@ -148,9 +176,33 @@ function App() {
           <a href="#timeline">{t('timeline_title')}</a>
           <a href="#projects">{t('archives_title')}</a>
         </div>
-        <a href="#contact" className="btn-primary" style={{ padding: '0.4rem 1rem' }}>
-          {t('nav_contact')}
-        </a>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          {/* Language Switcher */}
+          <button 
+            onClick={toggleLanguage} 
+            className="btn-outline" 
+            style={{ padding: '0.4rem', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            title="Change Language"
+          >
+            <span style={{ fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase' }}>
+              {i18n.language === 'tr' ? 'EN' : 'TR'}
+            </span>
+          </button>
+
+          {/* Theme Switcher */}
+          <button 
+            onClick={toggleTheme} 
+            className="btn-outline" 
+            style={{ padding: '0.4rem', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            title="Toggle Theme"
+          >
+            {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+          </button>
+
+          <a href="#contact" className="btn-primary" style={{ padding: '0.4rem 1rem' }}>
+            {t('nav_contact')}
+          </a>
+        </div>
       </nav>
 
       <main className="app-container">

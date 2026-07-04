@@ -20,6 +20,21 @@
   --bento-radius: 24px;
 }
 
+/* Minimal Dark Theme */
+.dark {
+  --bg-primary: #09090B;     /* Zinc 950 */
+  --bg-card: #18181B;        /* Zinc 900 */
+  --bg-nav: rgba(24, 24, 27, 0.8);
+  
+  --text-primary: #FAFAFA;   /* Zinc 50 */
+  --text-secondary: #A1A1AA; /* Zinc 400 */
+  
+  --border-subtle: #27272A;  /* Zinc 800 */
+  
+  --accent-cta: #3B82F6;     /* Blue 500 */
+  --accent-cta-hover: #60A5FA; /* Blue 400 */
+}
+
 html {
   scroll-behavior: initial;
   overflow-x: hidden;
