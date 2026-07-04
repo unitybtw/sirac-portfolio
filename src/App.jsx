@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
-import { ArrowRight, Github, Linkedin, Briefcase, Mail } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail } from 'lucide-react';
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
 
@@ -233,7 +233,7 @@ function App() {
                   <h3 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>{t('games.m_title')}</h3>
                   <p style={{ color: 'var(--text-secondary)', maxWidth: '800px' }}>{t('games.m_desc')}</p>
                 </div>
-                <Briefcase size={32} color="var(--border-subtle)" />
+                <Gamepad2 size={32} color="var(--text-secondary)" style={{ opacity: 0.3 }} />
               </div>
             </div>
 
@@ -244,7 +244,7 @@ function App() {
                   <h3 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>{t('games.arcade_engine_title')}</h3>
                   <p style={{ color: 'var(--text-secondary)', maxWidth: '800px' }}>{t('games.arcade_engine_desc')}</p>
                 </div>
-                <Briefcase size={32} color="var(--border-subtle)" />
+                <Cpu size={32} color="var(--text-secondary)" style={{ opacity: 0.3 }} />
               </div>
             </div>
 
