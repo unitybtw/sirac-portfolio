@@ -146,7 +146,11 @@ const resources = {
                 "macos_title": "macOS Glassmorphic Utilities",
                 "macos_desc": "Native macOS utility projects built with SwiftUI. Focus on clean layout patterns.",
                 "arcade_title": "Arcade Core",
-                "arcade_desc": "Custom browser-based prototypes."
+                "arcade_desc": "Custom browser-based prototypes.",
+                "signal_title": "Signal: Audio Feedback Utility",
+                "signal_desc": "A premium macOS menu bar application providing real-time mechanical keyboard sound feedback (15+ audio profiles) with a pure glassmorphic UI, dynamic audio pulse visualizer, and WPM analytics. Built with native Swift and low-latency Core Audio.",
+                "aether_title": "Aether Command: Gesture Controller",
+                "aether_desc": "Touchless gesture-based desktop control app using your Mac's camera. Map movements (Pinch, Fist, Swipes) to system actions. Built with power-efficient tracking and a premium glassmorphic UI."
             }
         }
     },
@@ -290,7 +294,11 @@ const resources = {
                 "macos_title": "macOS Cam Tasarımlı Araçlar",
                 "macos_desc": "SwiftUI ile geliştirilen native macOS araç projeleri. Temiz arayüz düzenleri odağı.",
                 "arcade_title": "Arcade Portalı",
-                "arcade_desc": "Özel tarayıcı prototipleri."
+                "arcade_desc": "Özel tarayıcı prototipleri.",
+                "signal_title": "Signal: Tuş Sesi Geri Bildirimi",
+                "signal_desc": "Yazdığın her tuşa gerçek zamanlı mekanik klavye ses geri bildirimi veren (15+ ses profili), saf cam arayüzlü (glassmorphism), WPM takipli premium macOS menü çubuğu uygulaması. Native Swift ve düşük gecikmeli Core Audio ile geliştirildi.",
+                "aether_title": "Aether Command: Hareket Denetleyici",
+                "aether_desc": "Mac kamerasını kullanarak sistemi el hareketleriyle (Pinch, Fist, Swipes) yönetmeni sağlayan native macOS uygulaması. Güç tasarruflu izleme motoru ve premium cam görsel efekt paneline sahiptir."
             }
         }
     }

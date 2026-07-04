@@ -237,15 +237,16 @@ function App() {
               </div>
             </div>
 
-            {/* Minor Projects */}
+            {/* Signal */}
             <div className="bento-card bento-col-6">
-              <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>{t('games.macos_title')}</h3>
-              <p style={{ color: 'var(--text-secondary)' }}>{t('games.macos_desc')}</p>
+              <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>{t('games.signal_title')}</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>{t('games.signal_desc')}</p>
             </div>
 
+            {/* Aether Command */}
             <div className="bento-card bento-col-6">
-              <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>Classic Arcade Core</h3>
-              <p style={{ color: 'var(--text-secondary)' }}>{t('games.fb_desc')}</p>
+              <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>{t('games.aether_title')}</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>{t('games.aether_desc')}</p>
             </div>
           </div>
         </section>
