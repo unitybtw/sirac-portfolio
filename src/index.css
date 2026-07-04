@@ -155,7 +155,7 @@ nav.glass-panel {
 
 .btn-primary {
   background: var(--text-primary);
-  color: #FFFFFF;
+  color: var(--bg-primary);
   padding: 0.6rem 1.25rem;
   border-radius: 100px;
   font-weight: 600;
