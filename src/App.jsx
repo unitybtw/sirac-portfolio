@@ -177,33 +177,58 @@ function App() {
           <a href="#projects">{t('archives_title')}</a>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          {/* Language Switcher */}
-          <button 
-            onClick={toggleLanguage} 
-            className="btn-outline" 
-            style={{ padding: '0.4rem', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            title="Change Language"
-          >
-            <span style={{ fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase' }}>
-              {i18n.language === 'tr' ? 'EN' : 'TR'}
-            </span>
-          </button>
+          <div className="desktop-only-controls" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            {/* Language Switcher */}
+            <button 
+              onClick={toggleLanguage} 
+              className="btn-outline" 
+              style={{ padding: '0.4rem', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              title="Change Language"
+            >
+              <span style={{ fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase' }}>
+                {i18n.language === 'tr' ? 'EN' : 'TR'}
+              </span>
+            </button>
 
-          {/* Theme Switcher */}
-          <button 
-            onClick={toggleTheme} 
-            className="btn-outline" 
-            style={{ padding: '0.4rem', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            title="Toggle Theme"
-          >
-            {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
-          </button>
+            {/* Theme Switcher */}
+            <button 
+              onClick={toggleTheme} 
+              className="btn-outline" 
+              style={{ padding: '0.4rem', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              title="Toggle Theme"
+            >
+              {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+            </button>
+          </div>
 
           <a href="#contact" className="btn-primary" style={{ padding: '0.4rem 1rem' }}>
             {t('nav_contact')}
           </a>
         </div>
       </nav>
+
+      {/* Floating Action Controls for Mobile */}
+      <div className="mobile-settings-pill">
+        <button 
+          onClick={toggleLanguage} 
+          className="btn-outline" 
+          style={{ padding: '0.4rem', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}
+          title="Change Language"
+        >
+          <span style={{ fontSize: '0.8rem', fontWeight: 'bold', textTransform: 'uppercase' }}>
+            {i18n.language === 'tr' ? 'EN' : 'TR'}
+          </span>
+        </button>
+
+        <button 
+          onClick={toggleTheme} 
+          className="btn-outline" 
+          style={{ padding: '0.4rem', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}
+          title="Toggle Theme"
+        >
+          {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+        </button>
+      </div>
 
       <main className="app-container">
         {/* ── Hero Section ── */}

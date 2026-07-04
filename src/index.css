@@ -326,3 +326,34 @@ section {
   transform-origin: 0%;
   z-index: 10001;
 }
+
+.mobile-settings-pill {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-only-controls {
+    display: none !important;
+  }
+  
+  .mobile-settings-pill {
+    display: flex;
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: var(--bg-nav);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--border-subtle);
+    border-radius: 100px;
+    padding: 0.4rem;
+    gap: 0.4rem;
+    z-index: 9999;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .mobile-settings-pill .btn-outline {
+    background: var(--bg-card);
+    border-color: var(--border-subtle);
+  }
+}
