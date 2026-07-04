@@ -260,7 +260,7 @@ function App() {
               {t('hero_subtitle_1')} <br/>
               {t('hero_subtitle_2')}
             </p>
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
+            <div className="hero-buttons">
               <Magnetic>
                 <a href="#projects" className="btn-primary">
                   {t('btn_explore')} <ArrowRight size={18} />

@@ -276,6 +276,30 @@ section {
   margin: 0 auto 3rem auto;
 }
 
+.hero-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  .hero-buttons > div {
+    width: 100%;
+  }
+  .hero-buttons a {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* Optimization & Animations */
 #about, #timeline, #projects {
   content-visibility: auto;
@@ -290,10 +314,12 @@ section {
 }
 
 @supports (animation-timeline: scroll()) {
-  .hero-parallax-content {
-    animation: hero-fade-down auto linear both;
-    animation-timeline: scroll(root);
-    animation-range: 0 500px;
+  @media (min-width: 769px) {
+    .hero-parallax-content {
+      animation: hero-fade-down auto linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 500px;
+    }
   }
 }
 
