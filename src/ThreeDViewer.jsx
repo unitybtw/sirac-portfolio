@@ -10,7 +10,11 @@ const Model = ({ path }) => {
 };
 
 export default function ThreeDViewer({ t, theme }) {
-  const models = ["model.glb", "model2.glb", "model3.glb"];
+  const models = [
+    "model.glb", "model2.glb", "model3.glb", 
+    "barrel.glb", "bottle.glb", "horn.glb", 
+    "mug.glb", "shield.glb", "waterbottle.glb"
+  ];
   const [currentModelIndex, setCurrentModelIndex] = useState(0);
   const containerRef = useRef(null);
   const [isVisible, setIsVisible] = useState(false);
