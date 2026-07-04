@@ -5,6 +5,7 @@ import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
 import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe } from 'lucide-react';
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
+import ThreeDViewer from './ThreeDViewer';
 
 // ── Page Progress Indicator ──────────────────────────────────────────────
 const PageProgress = () => {
@@ -299,6 +300,8 @@ function App() {
                 </div>
               </div>
             </div>
+
+            <ThreeDViewer t={t} theme={theme} />
           </div>
         </section>
 
