@@ -145,6 +145,7 @@ nav.glass-panel {
   transition: color 0.2s ease;
   position: relative;
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .nav-links a:hover, .nav-links a.active {
