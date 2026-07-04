@@ -1770,6 +1770,37 @@ function App() {
   const parallax2 = useTransform(scrollY, [0, 1000], [0, 200]);
   const parallax3 = useTransform(scrollY, [0, 1000], [0, -100]);
 
+  // Fallback for browsers that don't support scroll-driven animations
+  useEffect(() => {
+    if (!CSS.supports('(animation-timeline: view()) and (animation-range: entry)')) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-revealed');
+            } else {
+              // Optional: remove class to re-animate on scroll up
+              entry.target.classList.remove('is-revealed');
+            }
+          }
+        },
+        {
+          threshold: 0.1,
+          rootMargin: "0px 0px -10% 0px"
+        }
+      );
+
+      // Add JS fallback class so they are initially hidden
+      document.querySelectorAll('.bento-card, .timeline-item').forEach((el) => {
+        el.classList.add('js-scroll-reveal');
+        observer.observe(el);
+      });
+
+      return () => observer.disconnect();
+    }
+  }, []);
+
+
   // Mouse-driven transforms
   const terminalX = useTransform(springX, [0, 1920], [-15, 15]);
   const terminalY = useTransform(springY, [0, 1080], [-15, 15]);

@@ -2822,3 +2822,41 @@ img {
 @media (max-width: 768px) {
   .ambient-orb { filter: blur(60px); opacity: 0.3; }
 }
+
+/* Optimization & Animations */
+#about, #timeline, #projects, .gallery-section {
+  content-visibility: auto;
+  contain-intrinsic-block-size: auto 800px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports ((animation-timeline: view()) and (animation-range: entry)) {
+    @keyframes scroll-reveal {
+      from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .bento-card, .timeline-item {
+      animation: scroll-reveal auto linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 20%;
+    }
+  }
+}
+
+.js-scroll-reveal {
+  opacity: 0;
+  transform: translateY(40px) scale(0.95);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.js-scroll-reveal.is-revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
