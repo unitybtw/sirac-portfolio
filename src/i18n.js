@@ -57,6 +57,9 @@ const resources = {
             "skill_swift_desc": "Native iOS/macOS layout patterns.",
             "skill_blender_desc": "Hard-surface modeling, procedural texturing, and low-poly optimization for real-time game engines.",
             "skill_sys_desc": "WebGL integration, custom interactive rendering layers.",
+            "skill_cat_engines": "Engines & Renderers",
+            "skill_cat_languages": "Languages & Frameworks",
+            "skill_cat_tools": "3D Design & DevOps",
 
             // ── Timeline / Experience ─────────────────────────────────────
             "timeline_title": "// 02. <Education />",
@@ -207,6 +210,9 @@ const resources = {
             "skill_swift_desc": "SwiftUI ile arayüz düzenleri.",
             "skill_blender_desc": "Hard-surface modelleme, prosedürel doku ve oyun motorları için low-poly optimizasyonu.",
             "skill_sys_desc": "WebGL ve canvas render entegrasyonu.",
+            "skill_cat_engines": "Oyun & Render Motorları",
+            "skill_cat_languages": "Diller & Teknolojiler",
+            "skill_cat_tools": "3D Tasarım & Araçlar",
 
             // ── Timeline / Experience ─────────────────────────────────────
             "timeline_title": "// 02. <Eğitim />",

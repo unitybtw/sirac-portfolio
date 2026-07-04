@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
 import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
-import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database } from 'lucide-react';
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
 
@@ -177,6 +177,9 @@ function App() {
           <a href="#about">{t('nav_about')}</a>
           <a href="#timeline">{t('timeline_title')}</a>
           <a href="#projects">{t('archives_title')}</a>
+          <a href={`${import.meta.env.BASE_URL}cv.pdf`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '4px', borderLeft: '1px solid var(--border-subtle)', paddingLeft: '1rem', marginLeft: '0.5rem' }}>
+            <Download size={14} /> {t('btn_view_cv')}
+          </a>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div className="desktop-only-controls" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
@@ -259,6 +262,11 @@ function App() {
                 </a>
               </Magnetic>
               <Magnetic>
+                <a href={`${import.meta.env.BASE_URL}cv.pdf`} target="_blank" rel="noopener noreferrer" className="btn-outline">
+                  <Download size={18} /> {t('btn_view_cv')}
+                </a>
+              </Magnetic>
+              <Magnetic>
                 <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn-outline">
                   <Github size={18} /> {t('btn_repos')}
                 </a>
@@ -305,6 +313,52 @@ function App() {
             <React.Suspense fallback={<div className="bento-card bento-col-12" style={{ minHeight: '520px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'var(--text-secondary)' }}>INITIALIZING 3D ENGINE...</div>}>
               <ThreeDViewer t={t} theme={theme} />
             </React.Suspense>
+          </div>
+        </section>
+
+        {/* ── Skills / Tech Stack Section ── */}
+        <section id="skills">
+          <h2 className="section-title">{t('skills_title')}</h2>
+          <p className="section-subtitle">{t('skills_subtitle')}</p>
+          
+          <div className="bento-grid">
+            <div className="bento-card bento-col-4">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+                <Gamepad2 size={24} />
+                <h3 style={{ fontSize: '1.2rem' }}>{t('skill_cat_engines')}</h3>
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <li style={{ display: 'flex', justifyContent: 'space-between' }}><strong>Unity</strong> <span>Advanced</span></li>
+                <li style={{ display: 'flex', justifyContent: 'space-between' }}><strong>URP / HDRP</strong> <span>Advanced</span></li>
+              </ul>
+              <p style={{ marginTop: '1rem', fontSize: '0.9rem', opacity: 0.8 }}>{t('skill_unity_desc')}</p>
+            </div>
+
+            <div className="bento-card bento-col-4">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+                <Code size={24} />
+                <h3 style={{ fontSize: '1.2rem' }}>{t('skill_cat_languages')}</h3>
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <li style={{ display: 'flex', justifyContent: 'space-between' }}><strong>C#</strong> <span>Advanced</span></li>
+                <li style={{ display: 'flex', justifyContent: 'space-between' }}><strong>Swift (SwiftUI)</strong> <span>Intermediate</span></li>
+                <li style={{ display: 'flex', justifyContent: 'space-between' }}><strong>JavaScript / React</strong> <span>Intermediate</span></li>
+              </ul>
+              <p style={{ marginTop: '1rem', fontSize: '0.9rem', opacity: 0.8 }}>{t('skill_swift_desc')}</p>
+            </div>
+
+            <div className="bento-card bento-col-4">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
+                <Box size={24} />
+                <h3 style={{ fontSize: '1.2rem' }}>{t('skill_cat_tools')}</h3>
+              </div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <li style={{ display: 'flex', justifyContent: 'space-between' }}><strong>Blender</strong> <span>Advanced</span></li>
+                <li style={{ display: 'flex', justifyContent: 'space-between' }}><strong>Git & GitHub</strong> <span>Advanced</span></li>
+                <li style={{ display: 'flex', justifyContent: 'space-between' }}><strong>Figma</strong> <span>Intermediate</span></li>
+              </ul>
+              <p style={{ marginTop: '1rem', fontSize: '0.9rem', opacity: 0.8 }}>{t('skill_blender_desc')}</p>
+            </div>
           </div>
         </section>
 
