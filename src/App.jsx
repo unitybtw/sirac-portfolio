@@ -206,34 +206,16 @@ function App() {
           </div>
         </section>
 
-        {/* ── Experience Section ── */}
+        {/* ── Experience/Education Section ── */}
         <section id="timeline">
           <h2 className="section-title">{t('timeline_title')}</h2>
           <p className="section-subtitle">{t('timeline_subtitle')}</p>
 
           <div className="bento-grid">
-            <div className="bento-card bento-col-6">
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', fontWeight: 600 }}>{t('timeline_event_4_year')}</div>
-              <h3 style={{ fontSize: '1.3rem', marginBottom: '1rem' }}>{t('timeline_event_4_title')}</h3>
-              <p style={{ color: 'var(--text-secondary)' }}>{t('timeline_event_4_desc')}</p>
-            </div>
-            
-            <div className="bento-card bento-col-6">
+            <div className="bento-card bento-col-12">
               <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', fontWeight: 600 }}>{t('timeline_event_3_year')}</div>
-              <h3 style={{ fontSize: '1.3rem', marginBottom: '1rem' }}>{t('timeline_event_3_title')}</h3>
-              <p style={{ color: 'var(--text-secondary)' }}>{t('timeline_event_3_desc')}</p>
-            </div>
-
-            <div className="bento-card bento-col-6">
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', fontWeight: 600 }}>{t('timeline_event_2_year')}</div>
-              <h3 style={{ fontSize: '1.3rem', marginBottom: '1rem' }}>{t('timeline_event_2_title')}</h3>
-              <p style={{ color: 'var(--text-secondary)' }}>{t('timeline_event_2_desc')}</p>
-            </div>
-
-            <div className="bento-card bento-col-6">
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', fontWeight: 600 }}>{t('timeline_event_1_year')}</div>
-              <h3 style={{ fontSize: '1.3rem', marginBottom: '1rem' }}>{t('timeline_event_1_title')}</h3>
-              <p style={{ color: 'var(--text-secondary)' }}>{t('timeline_event_1_desc')}</p>
+              <h3 style={{ fontSize: '1.4rem', marginBottom: '1rem' }}>{t('timeline_event_3_title')}</h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>{t('timeline_event_3_desc')}</p>
             </div>
           </div>
         </section>
