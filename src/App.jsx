@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
-import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database } from 'lucide-react';
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
@@ -10,19 +10,27 @@ const ThreeDViewer = React.lazy(() => import('./ThreeDViewer'));
 
 // ── Page Progress Indicator ──────────────────────────────────────────────
 const PageProgress = () => {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
+  const barRef = React.useRef(null);
+  
+  useEffect(() => {
+    // Only run JS fallback if browser doesn't support native CSS scroll-timeline
+    if (!CSS.supports('animation-timeline: scroll()')) {
+      const handleScroll = () => {
+        if (!barRef.current) return;
+        const scrollTop = window.scrollY;
+        const docHeight = document.body.scrollHeight - window.innerHeight;
+        const scrollPercent = docHeight > 0 ? scrollTop / docHeight : 0;
+        barRef.current.style.transform = `scaleX(${scrollPercent})`;
+      };
+      
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      handleScroll(); // Initial set
+      
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
+  }, []);
 
-  return (
-    <motion.div
-      className="page-progress-bar"
-      style={{ scaleX }}
-    />
-  );
+  return <div className="page-progress-bar" ref={barRef} />;
 };
 
 // ── Magnetic Button Wrapper ──────────────────────────────────────────────
@@ -159,10 +167,7 @@ function App() {
     };
   }, []);
 
-  // Parallax for Hero
-  const { scrollY } = useScroll();
-  const y1 = useTransform(scrollY, [0, 1000], [0, 200]);
-  const opacity1 = useTransform(scrollY, [0, 300], [1, 0]);
+  // Parallax for Hero is now handled purely in CSS via .hero-parallax-content
 
   return (
     <>
@@ -238,12 +243,12 @@ function App() {
       <main className="app-container">
         {/* ── Hero Section ── */}
         <section className="hero-section" id="hero">
-          <motion.div 
-            style={{ y: y1, opacity: opacity1 }}
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }} // Custom spring-like bezier
-          >
+          <div className="hero-parallax-content">
+            <motion.div 
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }} 
+            >
             <div style={{ display: 'inline-block', padding: '0.4rem 1rem', background: 'var(--border-subtle)', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 600, marginBottom: '1.5rem' }}>
               {t('badge_hire')}
             </div>
@@ -272,7 +277,8 @@ function App() {
                 </a>
               </Magnetic>
             </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </section>
 
         {/* ── About Section ── */}

@@ -282,6 +282,21 @@ section {
   contain-intrinsic-block-size: auto 800px;
 }
 
+@keyframes hero-fade-down {
+  to {
+    transform: translateY(200px);
+    opacity: 0;
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  .hero-parallax-content {
+    animation: hero-fade-down auto linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 500px;
+  }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   @supports ((animation-timeline: view()) and (animation-range: entry)) {
     @keyframes scroll-reveal {
@@ -323,6 +338,11 @@ section {
 }
 
 /* Page Progress Bar */
+@keyframes scroll-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
 .page-progress-bar {
   position: fixed;
   top: 0;
@@ -332,6 +352,14 @@ section {
   background: var(--text-primary);
   transform-origin: 0%;
   z-index: 10001;
+  transform: scaleX(0); /* Initial state for JS fallback */
+}
+
+@supports (animation-timeline: scroll()) {
+  .page-progress-bar {
+    animation: scroll-progress auto linear both;
+    animation-timeline: scroll(root);
+  }
 }
 
 .mobile-settings-pill {
