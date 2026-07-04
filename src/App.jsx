@@ -226,12 +226,23 @@ function App() {
           <p className="section-subtitle">{t('archives_subtitle')}</p>
 
           <div className="bento-grid">
-            {/* Featured Project */}
+            {/* Featured Project 1: Legend of the Three Masks */}
             <div className="bento-card bento-col-12" style={{ borderTop: '4px solid var(--text-primary)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                   <h3 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>{t('games.m_title')}</h3>
-                  <p style={{ color: 'var(--text-secondary)', maxWidth: '600px' }}>{t('games.m_desc')}</p>
+                  <p style={{ color: 'var(--text-secondary)', maxWidth: '800px' }}>{t('games.m_desc')}</p>
+                </div>
+                <Briefcase size={32} color="var(--border-subtle)" />
+              </div>
+            </div>
+
+            {/* Featured Project 2: Zero-Ads Arcade Engine */}
+            <div className="bento-card bento-col-12" style={{ borderTop: '4px solid var(--text-primary)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>{t('games.arcade_engine_title')}</h3>
+                  <p style={{ color: 'var(--text-secondary)', maxWidth: '800px' }}>{t('games.arcade_engine_desc')}</p>
                 </div>
                 <Briefcase size={32} color="var(--border-subtle)" />
               </div>

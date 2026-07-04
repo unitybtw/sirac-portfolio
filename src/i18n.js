@@ -150,7 +150,9 @@ const resources = {
                 "signal_title": "Signal: Audio Feedback Utility",
                 "signal_desc": "A premium macOS menu bar application providing real-time mechanical keyboard sound feedback (15+ audio profiles) with a pure glassmorphic UI, dynamic audio pulse visualizer, and WPM analytics. Built with native Swift and low-latency Core Audio.",
                 "aether_title": "Aether Command: Gesture Controller",
-                "aether_desc": "Touchless gesture-based desktop control app using your Mac's camera. Map movements (Pinch, Fist, Swipes) to system actions. Built with power-efficient tracking and a premium glassmorphic UI."
+                "aether_desc": "Touchless gesture-based desktop control app using your Mac's camera. Map movements (Pinch, Fist, Swipes) to system actions. Built with power-efficient tracking and a premium glassmorphic UI.",
+                "arcade_engine_title": "Zero-Ads Arcade Engine",
+                "arcade_engine_desc": "A lightweight, open-source (MIT) TypeScript engine for embedding ad-free games into any web app. Features built-in gamepad support, multi-touch virtual controls (joysticks/buttons), persistent session analytics, global sound management, and strict origin validation—all under a 50KB footprint."
             }
         }
     },
@@ -298,7 +300,9 @@ const resources = {
                 "signal_title": "Signal: Tuş Sesi Geri Bildirimi",
                 "signal_desc": "Yazdığın her tuşa gerçek zamanlı mekanik klavye ses geri bildirimi veren (15+ ses profili), saf cam arayüzlü (glassmorphism), WPM takipli premium macOS menü çubuğu uygulaması. Native Swift ve düşük gecikmeli Core Audio ile geliştirildi.",
                 "aether_title": "Aether Command: Hareket Denetleyici",
-                "aether_desc": "Mac kamerasını kullanarak sistemi el hareketleriyle (Pinch, Fist, Swipes) yönetmeni sağlayan native macOS uygulaması. Güç tasarruflu izleme motoru ve premium cam görsel efekt paneline sahiptir."
+                "aether_desc": "Mac kamerasını kullanarak sistemi el hareketleriyle (Pinch, Fist, Swipes) yönetmeni sağlayan native macOS uygulaması. Güç tasarruflu izleme motoru ve premium cam görsel efekt paneline sahiptir.",
+                "arcade_engine_title": "Zero-Ads Arcade Engine",
+                "arcade_engine_desc": "Herhangi bir web uygulamasına reklamsız oyunlar gömmek için geliştirilmiş hafif, açık kaynaklı (MIT) TypeScript motoru. Entegre gamepad desteği, dokunmatik sanal denetleyiciler (joystick/butonlar), kalıcı oturum analitikleri, ses yönetimi ve iframe güvenlik katmanına sahiptir (50KB altı boyut)."
             }
         }
     }
