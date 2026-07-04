@@ -114,13 +114,11 @@ export default function ThreeDViewer({ t, theme }) {
               <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} castShadow />
               <pointLight position={[-10, -10, -10]} />
               
-              <PresentationControls speed={1.5} global zoom={0.8} polar={[-0.1, Math.PI / 4]}>
-                <Stage environment={theme === 'light' ? 'studio' : 'city'} intensity={theme === 'light' ? 1.0 : 0.7} contactShadow={false}>
-                  <Float speed={2.5} rotationIntensity={0.6} floatIntensity={0.6}>
-                    <Model path={`${import.meta.env.BASE_URL}${models[currentModelIndex]}`} />
-                  </Float>
-                </Stage>
-              </PresentationControls>
+              <Stage environment={theme === 'light' ? 'studio' : 'city'} intensity={theme === 'light' ? 1.0 : 0.7} contactShadow={false} adjustCamera={true}>
+                <Float speed={2.5} rotationIntensity={0.6} floatIntensity={0.6}>
+                  <Model path={`${import.meta.env.BASE_URL}${models[currentModelIndex]}`} />
+                </Float>
+              </Stage>
               
               <OrbitControls enableZoom={true} enablePan={false} makeDefault />
             </Canvas>
