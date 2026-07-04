@@ -256,7 +256,7 @@ function App() {
               </p>
             </div>
             
-            <div className="bento-card bento-col-4" style={{ background: 'var(--text-primary)', color: 'white' }}>
+            <div className="bento-card bento-col-4" style={{ background: 'var(--text-primary)', color: 'var(--bg-primary)' }}>
               <h3 style={{ marginBottom: '1.5rem', fontSize: '1.2rem', opacity: 0.9 }}>Quick Stats</h3>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
