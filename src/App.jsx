@@ -79,6 +79,21 @@ function App() {
     }
     requestAnimationFrame(raf);
 
+    // Handle Anchor Clicks smoothly with Lenis
+    const handleAnchorClick = (e) => {
+      const target = e.target.closest('a');
+      if (target && target.getAttribute('href')?.startsWith('#')) {
+        const id = target.getAttribute('href');
+        if (id === '#') return;
+        const targetElement = document.querySelector(id);
+        if (targetElement) {
+          e.preventDefault();
+          lenis.scrollTo(targetElement, { offset: -40, duration: 1.2 });
+        }
+      }
+    };
+    document.addEventListener('click', handleAnchorClick);
+
     // Fallback for browsers that don't support scroll-driven animations
     if (!CSS.supports('(animation-timeline: view()) and (animation-range: entry)')) {
       const observer = new IntersectionObserver(
@@ -103,11 +118,15 @@ function App() {
 
       return () => {
         observer.disconnect();
+        document.removeEventListener('click', handleAnchorClick);
         lenis.destroy();
       };
     }
 
-    return () => lenis.destroy();
+    return () => {
+      document.removeEventListener('click', handleAnchorClick);
+      lenis.destroy();
+    };
   }, []);
 
   // Parallax for Hero
