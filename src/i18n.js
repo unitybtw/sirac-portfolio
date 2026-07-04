@@ -16,7 +16,7 @@ const resources = {
             "nav_about": "about.jsx",
             "nav_timeline": "experience.json",
             "nav_arcade": "arcade.exe",
-            "nav_contact": "contact.sh",
+            "nav_contact": "contact",
 
             // ── Hero ──────────────────────────────────────────────────────
             "badge_hire": "OPEN TO OPPORTUNITIES",
@@ -169,7 +169,7 @@ const resources = {
             "nav_about": "about.jsx",
             "nav_timeline": "experience.json",
             "nav_arcade": "arcade.exe",
-            "nav_contact": "contact.sh",
+            "nav_contact": "contact",
 
             // ── Hero ──────────────────────────────────────────────────────
             "badge_hire": "İŞ TEKLİFLERİNE AÇIK",
