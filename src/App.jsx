@@ -2230,17 +2230,17 @@ function App() {
           {/* About Section */}
           <section id="about" style={{ padding: '6rem 2rem', maxWidth: '1000px', margin: '0 auto' }}>
             <h2 style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 3rem 0', color: 'var(--text-main)', letterSpacing: '-0.03em', textTransform: 'uppercase' }}>{t('about_title') || 'ABOUT'}</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
-              <div className="glass-panel" style={{ padding: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                <p style={{ color: 'var(--text-main)', fontSize: '1.1rem', lineHeight: '1.8', fontWeight: 500, margin: 0 }}>{t('about_text_1')}</p>
-                <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: '1.8', margin: 0 }}>{t('about_text_2')}</p>
+            <div className="bento-grid">
+              <div className="bento-card bento-col-8">
+                <p style={{ color: 'var(--text-main)', fontSize: '1.1rem', lineHeight: '1.8', fontWeight: 500, margin: 0, marginBottom: '1.5rem' }}>{t('about_text_1')}</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: '1.8', margin: 0, marginBottom: '1.5rem' }}>{t('about_text_2')}</p>
                 <p style={{ color: 'var(--text-muted)', fontSize: '1.05rem', lineHeight: '1.8', margin: 0 }}>{t('about_text_3')}</p>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
+              <div className="bento-col-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
                 {[1, 2, 3, 4].map((num) => (
-                  <div key={num} className="glass-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', transition: 'transform 0.3s' }}>
+                  <div key={num} className="bento-card clickable" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
                     <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem' }}>{t(`about_stat_${num}`)}</div>
-                    <div style={{ color: 'var(--accent-cyan)', fontSize: '2.5rem', fontWeight: 700 }}>{t(`about_stat_${num}_val`)}</div>
+                    <div style={{ color: 'var(--accent-cyan)', fontSize: '2rem', fontWeight: 700 }}>{t(`about_stat_${num}_val`)}</div>
                   </div>
                 ))}
               </div>
@@ -2250,13 +2250,13 @@ function App() {
           {/* Timeline Section */}
           <section id="timeline" style={{ padding: '6rem 2rem', maxWidth: '1000px', margin: '0 auto', marginBottom: '4rem' }}>
             <h2 style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 3rem 0', color: 'var(--text-main)', letterSpacing: '-0.03em', textTransform: 'uppercase' }}>{t('timeline_title') || 'EXPERIENCE'}</h2>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+            <div className="bento-grid">
               {[1, 2, 3, 4].map((num) => (
-                <div key={num} className="timeline-item glass-panel" style={{ padding: '2.5rem', display: 'grid', gridTemplateColumns: 'minmax(100px, 150px) 1fr', gap: '2rem', alignItems: 'start', transition: 'all 0.3s' }}>
-                  <div style={{ color: 'var(--accent-violet)', fontSize: '1rem', fontWeight: 700, paddingTop: '0.3rem' }}>{t(`timeline_event_${num}_year`)}</div>
+                <div key={num} className="bento-card clickable bento-col-12" style={{ padding: '2.5rem', display: 'grid', gridTemplateColumns: 'minmax(100px, 150px) 1fr', gap: '2rem', alignItems: 'start' }}>
+                  <div style={{ color: 'var(--accent-violet)', fontSize: '1.2rem', fontWeight: 700, paddingTop: '0.3rem' }}>{t(`timeline_event_${num}_year`)}</div>
                   <div>
-                    <h3 style={{ fontSize: '1.3rem', fontWeight: 700, margin: '0 0 0.5rem 0', color: 'var(--text-main)' }}>{t(`timeline_event_${num}_title`)}</h3>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '1rem', lineHeight: '1.6', margin: 0 }}>{t(`timeline_event_${num}_desc`)}</p>
+                    <h3 style={{ fontSize: '1.5rem', fontWeight: 700, margin: '0 0 0.75rem 0', color: 'var(--text-main)' }}>{t(`timeline_event_${num}_title`)}</h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', lineHeight: '1.6', margin: 0 }}>{t(`timeline_event_${num}_desc`)}</p>
                   </div>
                 </div>
               ))}
@@ -2316,37 +2316,36 @@ function App() {
               <h2 style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 1rem 0', color: 'var(--text-main)', letterSpacing: '-0.03em', textTransform: 'uppercase' }}>{t('archives_title') || 'PROJECTS'}</h2>
               <p style={{ color: 'var(--text-muted)' }}>{t('archives_subtitle')}</p>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '2rem' }}>
-              {projects.map((project) => (
+            <div className="bento-grid">
+              {projects.map((project, i) => (
                 <a 
                   key={project.id} 
                   href={project.link} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  style={{ display: 'flex', flexDirection: 'column', textDecoration: 'none', transition: 'all 0.3s' }}
-                  className="project-card-minimal glass-panel"
+                  style={{ textDecoration: 'none', padding: 0 }}
+                  className={`bento-card clickable ${i % 3 === 0 ? 'bento-col-12' : 'bento-col-6'} glow-cyan`}
                 >
                   {project.image ? (
-                    <div style={{ height: '220px', borderBottom: '1px solid var(--border-glass)' }}>
+                    <div style={{ height: '300px', borderBottom: '1px solid var(--border-glass)' }}>
                       <img
                         src={project.image}
                         alt={project.title}
                         loading="lazy"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(100%)', transition: 'filter 0.3s' }}
-                        className="project-img-minimal"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                       />
                     </div>
                   ) : (
-                    <div style={{ height: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid var(--border-glass)', backgroundColor: 'var(--bg-glass)' }}>
-                      <Code size={40} style={{ color: 'var(--text-muted)' }} />
+                    <div style={{ height: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderBottom: '1px solid var(--border-glass)', backgroundColor: 'var(--bg-glass-hover)' }}>
+                      <Code size={48} style={{ color: 'var(--accent-cyan)' }} />
                     </div>
                   )}
-                  <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                    <h3 style={{ color: 'var(--text-main)', fontSize: '1.3rem', fontWeight: 700, margin: '0 0 0.5rem 0' }}>{project.title}</h3>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: '1.6', flex: 1, margin: '0 0 1.5rem 0' }}>{project.desc}</p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  <div style={{ padding: '2rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                    <h3 style={{ color: 'var(--text-main)', fontSize: '1.8rem', fontWeight: 700, margin: '0 0 1rem 0' }}>{project.title}</h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', lineHeight: '1.6', flex: 1, margin: '0 0 2rem 0' }}>{project.desc}</p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
                       {project.tags.map((tag, idx) => (
-                        <span key={idx} style={{ fontSize: '0.75rem', padding: '0.3rem 0.8rem', border: '1px solid var(--border-glass)', borderRadius: '100px', color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '1px', background: 'var(--bg-glass)' }}>{tag}</span>
+                        <span key={idx} style={{ fontSize: '0.85rem', padding: '0.4rem 1rem', border: '1px solid rgba(255, 255, 255, 0.2)', borderRadius: '100px', color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '1px', background: 'rgba(255, 255, 255, 0.05)' }}>{tag}</span>
                       ))}
                     </div>
                   </div>

@@ -1,37 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
 :root {
-  --bg-dark: #020617;        /* Deep Slate Blue */
-  --bg-darker: #000000;      
-  --bg-glass: rgba(255, 255, 255, 0.03); /* Liquid Glass */
+  /* Apple Bento Grid Palette */
+  --bg-dark: #000000;        /* Deep Black */
+  --bg-darker: #09090B;      /* Zinc 950 */
+  --bg-glass: rgba(255, 255, 255, 0.04);
   --bg-glass-hover: rgba(255, 255, 255, 0.08);
-  --border-glass: rgba(255, 255, 255, 0.08);
-  --border-glass-glow: rgba(255, 255, 255, 0.15);
-  --bento-radius: 24px;
+  --border-glass: rgba(255, 255, 255, 0.1);
+  --border-glass-glow: rgba(255, 255, 255, 0.2);
+  --bento-radius: 32px;
   
-  /* Premium Glass Palette */
-  --accent-cyan: #38bdf8;
-  --accent-violet: #818cf8;
-  --accent-pink: #e879f9;
-  --accent-cyan-rgb: 56, 189, 248;
-  --accent-violet-rgb: 129, 140, 248;
-  --accent-pink-rgb: 232, 121, 249;
+  /* Vibrant Accents */
+  --accent-cyan: #2563EB; /* Vibrant Blue */
+  --accent-violet: #8B5CF6; /* Vibrant Violet */
+  --accent-pink: #EC4899;
+  --accent-cyan-rgb: 37, 99, 235;
+  --accent-violet-rgb: 139, 92, 246;
+  --accent-pink-rgb: 236, 72, 153;
 
   /* Terminal Colors */
   --terminal-prompt: rgba(255, 255, 255, 0.5);
   --terminal-input: #ffffff;
-  --terminal-success: #34d399;
-  --terminal-error: #f87171;
-  --terminal-info: #38bdf8;
-  --terminal-orange: #fbbf24;
+  --terminal-success: #10B981;
+  --terminal-error: #EF4444;
+  --terminal-info: #3B82F6;
+  --terminal-orange: #F59E0B;
   --terminal-progress-bg: rgba(255, 255, 255, 0.1);
 
-  --text-main: #fafafa;      
-  --text-headers: #ffffff;   
-  --text-muted: #94a3b8;     
-  --font-sf: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
-  --font-display: "Inter", sans-serif; 
+  --text-main: #FAFAFA;      
+  --text-headers: #FFFFFF;   
+  --text-muted: #A1A1AA;     /* Zinc 400 */
+  --font-sf: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  --font-display: "Space Grotesk", sans-serif; 
   --font-code: "Fira Code", monospace;
 
-  --glass-blur: blur(24px) saturate(180%);
+  --glass-blur: blur(40px) saturate(200%);
 }
 
 html {
@@ -166,12 +169,21 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: var(--bento-radius);
   position: relative;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease, border-color 0.4s ease;
   transform: translate3d(0, 0, 0);
   -webkit-transform: translate3d(0, 0, 0);
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+.glass-panel.clickable {
+  cursor: pointer;
+}
+
+.glass-panel.clickable:hover, .glass-panel.hover-effect:hover, a.glass-panel:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--border-glass-glow);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
 .glass-panel::before {
@@ -207,6 +219,58 @@ h1, h2, h3, h4, h5, h6 {
 
 .text-accent-gradient {
   color: #ffffff;
+}
+
+/* Bento Grid System */
+.bento-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(12, 1fr);
+  width: 100%;
+}
+
+.bento-card {
+  background: var(--bg-glass);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--bento-radius);
+  padding: 2.5rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.4s ease, border-color 0.4s ease;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+.bento-card.clickable {
+  cursor: pointer;
+}
+
+.bento-card.clickable:hover {
+  background: var(--bg-glass-hover);
+  border-color: var(--border-glass-glow);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+.bento-col-12 { grid-column: span 12; }
+.bento-col-8 { grid-column: span 8; }
+.bento-col-6 { grid-column: span 6; }
+.bento-col-4 { grid-column: span 4; }
+.bento-col-3 { grid-column: span 3; }
+
+@media (max-width: 1024px) {
+  .bento-col-8 { grid-column: span 12; }
+  .bento-col-6 { grid-column: span 12; }
+  .bento-col-4 { grid-column: span 6; }
+  .bento-col-3 { grid-column: span 6; }
+}
+
+@media (max-width: 768px) {
+  .bento-col-4 { grid-column: span 12; }
+  .bento-col-3 { grid-column: span 12; }
 }
 
 /* Navbar */
