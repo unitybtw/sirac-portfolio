@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/sirac-portfolio/',
+  base: '/',
   build: {
     // Raise the warning threshold — vendor-three is intentionally large
     chunkSizeWarningLimit: 1500,
