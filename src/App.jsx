@@ -168,7 +168,7 @@ function App() {
       
       {/* ── Navbar ── */}
       <nav className="glass-panel">
-        <div style={{ fontWeight: 700, fontSize: '1.2rem', letterSpacing: '-0.02em' }}>
+        <div className="nav-name">
           {t('nav_name')}
         </div>
         <div className="nav-links">

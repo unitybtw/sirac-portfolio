@@ -123,6 +123,14 @@ nav.glass-panel {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
+.nav-name {
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+
 .nav-links {
   display: flex;
   gap: 1.5rem;
@@ -242,8 +250,6 @@ section {
   .bento-col-8, .bento-col-6, .bento-col-4 { grid-column: span 12; }
   .app-container { padding: 0 1.5rem; padding-bottom: 4rem; }
   section { padding-top: 6rem; }
-  nav.glass-panel { width: 90%; gap: 1rem; }
-  .nav-links { display: none; }
 }
 
 /* Hero Section Specifics */
@@ -331,7 +337,10 @@ section {
   display: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+  nav.glass-panel { width: 90%; gap: 1rem; }
+  .nav-links { display: none; }
+
   .desktop-only-controls {
     display: none !important;
   }
