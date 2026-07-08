@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database, X, GraduationCap, Award, BookOpen, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database, X, GraduationCap, Award, BookOpen, ChevronDown, ChevronUp, Volume2, VolumeX } from 'lucide-react';
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
+import { getMutedState, setMutedState, playClick, playHover, playSuccess, playSoundOn, playSoundOff } from './soundEffects';
 
 const ThreeDViewer = React.lazy(() => import('./ThreeDViewer'));
 
@@ -77,7 +78,21 @@ function App() {
 
   // Contact Form State
   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
-  const [submitStatus, setSubmitStatus] = useState('idle'); // idle | sending | success | error
+  const [submitStatus, setSubmitStatus] = useState('idle');
+
+  // Sound State — default OFF, user opts in
+  const [isSoundOn, setIsSoundOn] = useState(() => !getMutedState());
+
+  const toggleSound = () => {
+    const nextOn = !isSoundOn;
+    setIsSoundOn(nextOn);
+    setMutedState(!nextOn);
+    if (nextOn) {
+      playSoundOn();
+    } else {
+      playSoundOff();
+    }
+  };
 
   // Timeline Expand State
   const [expandedEventId, setExpandedEventId] = useState(null);
@@ -248,6 +263,26 @@ function App() {
     };
   }, []);
 
+  // Global delegated hover/click sound effects
+  useEffect(() => {
+    const INTERACTIVE = 'a, button, [role="button"], .bento-card, .timeline-item';
+
+    const handleGlobalClick = (e) => {
+      if (e.target.closest(INTERACTIVE)) playClick();
+    };
+    const handleGlobalHover = (e) => {
+      if (e.target.closest(INTERACTIVE)) playHover();
+    };
+
+    document.addEventListener('click', handleGlobalClick, { passive: true });
+    document.addEventListener('mouseenter', handleGlobalHover, { passive: true, capture: true });
+
+    return () => {
+      document.removeEventListener('click', handleGlobalClick);
+      document.removeEventListener('mouseenter', handleGlobalHover, { capture: true });
+    };
+  }, [isSoundOn]);
+
   // Parallax for Hero is now handled purely in CSS via .hero-parallax-content
 
   return (
@@ -290,6 +325,16 @@ function App() {
             >
               {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
             </button>
+
+            {/* Sound Toggle */}
+            <button
+              onClick={toggleSound}
+              className="btn-outline"
+              style={{ padding: '0.4rem', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              title={isSoundOn ? 'Mute sounds' : 'Enable sounds'}
+            >
+              {isSoundOn ? <Volume2 size={16} /> : <VolumeX size={16} />}
+            </button>
           </div>
 
           <a href="#contact" className="btn-primary" style={{ padding: '0.4rem 1rem' }}>
@@ -318,6 +363,16 @@ function App() {
           title="Toggle Theme"
         >
           {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+        </button>
+
+        {/* Mobile Sound Toggle */}
+        <button
+          onClick={toggleSound}
+          className="btn-outline"
+          style={{ padding: '0.4rem', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}
+          title={isSoundOn ? 'Mute sounds' : 'Enable sounds'}
+        >
+          {isSoundOn ? <Volume2 size={18} /> : <VolumeX size={18} />}
         </button>
       </div>
 
