@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
-import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database, X, GraduationCap, Award, BookOpen, ChevronDown, ChevronUp } from 'lucide-react';
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
 
@@ -78,6 +78,40 @@ function App() {
   // Contact Form State
   const [formState, setFormState] = useState({ name: '', email: '', message: '' });
   const [submitStatus, setSubmitStatus] = useState('idle'); // idle | sending | success | error
+
+  // Timeline Expand State
+  const [expandedEventId, setExpandedEventId] = useState(null);
+
+  const toggleExpandEvent = (id) => {
+    setExpandedEventId(prev => prev === id ? null : id);
+  };
+
+  const timelineEvents = [
+    {
+      id: 'event_3',
+      yearKey: 'timeline_event_3_year',
+      titleKey: 'timeline_event_3_title',
+      descKey: 'timeline_event_3_desc',
+      detailsKey: 'timeline_event_3_details',
+      icon: <GraduationCap size={18} />
+    },
+    {
+      id: 'event_2',
+      yearKey: 'timeline_event_2_year',
+      titleKey: 'timeline_event_2_title',
+      descKey: 'timeline_event_2_desc',
+      detailsKey: 'timeline_event_2_details',
+      icon: <Award size={18} />
+    },
+    {
+      id: 'event_1',
+      yearKey: 'timeline_event_1_year',
+      titleKey: 'timeline_event_1_title',
+      descKey: 'timeline_event_1_desc',
+      detailsKey: 'timeline_event_1_details',
+      icon: <BookOpen size={18} />
+    }
+  ];
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -415,17 +449,57 @@ function App() {
           </div>
         </section>
 
-        {/* ── Experience/Education Section ── */}
         <section id="timeline">
           <h2 className="section-title">{t('timeline_title')}</h2>
           <p className="section-subtitle">{t('timeline_subtitle')}</p>
 
-          <div className="bento-grid">
-            <div className="bento-card bento-col-12">
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', fontWeight: 600 }}>{t('timeline_event_3_year')}</div>
-              <h3 style={{ fontSize: '1.4rem', marginBottom: '1rem' }}>{t('timeline_event_3_title')}</h3>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>{t('timeline_event_3_desc')}</p>
-            </div>
+          <div className="timeline-container">
+            <div className="timeline-line"></div>
+            
+            {timelineEvents.map((event) => {
+              const isExpanded = expandedEventId === event.id;
+              return (
+                <div 
+                  key={event.id} 
+                  className={`timeline-item ${isExpanded ? 'active' : ''}`}
+                  onClick={() => toggleExpandEvent(event.id)}
+                >
+                  <div className="timeline-icon-node">
+                    {event.icon}
+                  </div>
+                  
+                  <div className="timeline-content bento-card">
+                    <div className="timeline-header-meta">
+                      <span className="timeline-year">{t(event.yearKey)}</span>
+                      <span className="timeline-toggle-chevron">
+                        {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                      </span>
+                    </div>
+                    
+                    <h3 className="timeline-item-title">{t(event.titleKey)}</h3>
+                    <p className="timeline-item-desc">{t(event.descKey)}</p>
+                    
+                    <AnimatePresence initial={false}>
+                      {isExpanded && (
+                        <motion.div 
+                          className="timeline-expanded-details"
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                        >
+                          <ul className="timeline-details-list">
+                            {t(event.detailsKey, { returnObjects: true }).map((detail, idx) => (
+                              <li key={idx} className="timeline-details-item">{detail}</li>
+                            ))}
+                          </ul>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </section>
 
