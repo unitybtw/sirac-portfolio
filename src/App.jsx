@@ -75,6 +75,47 @@ function App() {
     return 'light';
   });
 
+  // Contact Form State
+  const [formState, setFormState] = useState({ name: '', email: '', message: '' });
+  const [submitStatus, setSubmitStatus] = useState('idle'); // idle | sending | success | error
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormState(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitStatus('sending');
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          access_key: 'YOUR_ACCESS_KEY_HERE', // Replace with your Web3Forms access key
+          name: formState.name,
+          email: formState.email,
+          message: formState.message,
+          subject: `New Portfolio Message from ${formState.name}`
+        })
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setSubmitStatus('success');
+        setFormState({ name: '', email: '', message: '' });
+      } else {
+        setSubmitStatus('error');
+      }
+    } catch (err) {
+      setSubmitStatus('error');
+    }
+  };
+
   // Apply Theme class to document element
   useEffect(() => {
     const root = window.document.documentElement;
@@ -451,21 +492,97 @@ function App() {
         </section>
       </main>
 
-      {/* ── Footer ── */}
+      {/* ── Footer / Contact ── */}
       <footer id="contact" className="footer app-container">
-        <h2 style={{ fontSize: '2rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>{t('footer_title')}</h2>
-        <p style={{ marginBottom: '2rem' }}>{t('footer_subtitle')}</p>
-        
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', marginBottom: '4rem' }}>
-          <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="btn-outline">
-            <Linkedin size={18} /> LinkedIn
-          </a>
-          <a href="mailto:contact@example.com" className="btn-primary">
-            <Mail size={18} /> {t('btn_transmit')}
-          </a>
+        <div className="contact-grid">
+          <div className="contact-info">
+            <h2 className="section-title" style={{ textAlign: 'left', marginBottom: '1rem' }}>{t('footer_title')}</h2>
+            <p className="contact-subtitle" style={{ marginBottom: '2rem' }}>{t('footer_subtitle')}</p>
+            
+            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
+              <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="btn-outline">
+                <Linkedin size={18} /> LinkedIn
+              </a>
+              <a href="mailto:contact@example.com" className="btn-outline">
+                <Mail size={18} /> Email
+              </a>
+            </div>
+            
+            <div className="availability-card glass-panel" style={{ padding: '1.25rem', border: '1px solid var(--border-subtle)', borderRadius: '12px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+              <span className="dot-pulse" style={{ display: 'inline-block', width: '8px', height: '8px', background: '#22c55e', borderRadius: '50%', marginRight: '8px' }}></span>
+              {t('about_stat_4_val')}
+            </div>
+          </div>
+          
+          <div className="contact-form-container glass-panel">
+            <form onSubmit={handleFormSubmit} className="contact-form">
+              <div className="form-group">
+                <label htmlFor="name">{t('form_name')}</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formState.name}
+                  onChange={handleFormChange}
+                  placeholder={t('form_placeholder_name')}
+                  required
+                  disabled={submitStatus === 'sending'}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="email">{t('form_email')}</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formState.email}
+                  onChange={handleFormChange}
+                  placeholder={t('form_placeholder_email')}
+                  required
+                  disabled={submitStatus === 'sending'}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="message">{t('form_message')}</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formState.message}
+                  onChange={handleFormChange}
+                  placeholder={t('form_placeholder_message')}
+                  required
+                  rows={4}
+                  disabled={submitStatus === 'sending'}
+                ></textarea>
+              </div>
+
+              {submitStatus === 'success' && (
+                <div className="form-alert alert-success">
+                  {t('form_success')}
+                </div>
+              )}
+
+              {submitStatus === 'error' && (
+                <div className="form-alert alert-danger">
+                  {t('form_error')}
+                </div>
+              )}
+              
+              <button 
+                type="submit" 
+                className="btn-primary" 
+                style={{ width: '100%', justifyContent: 'center', marginTop: '0.5rem' }}
+                disabled={submitStatus === 'sending'}
+              >
+                {submitStatus === 'sending' ? t('form_sending') : t('form_submit')}
+              </button>
+            </form>
+          </div>
         </div>
         
-        <div style={{ fontSize: '0.85rem', opacity: 0.6 }}>
+        <div style={{ fontSize: '0.85rem', opacity: 0.6, marginTop: '4rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '2rem' }}>
           © {new Date().getFullYear()} {t('footer_copyright')}
         </div>
       </footer>

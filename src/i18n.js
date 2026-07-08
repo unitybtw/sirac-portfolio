@@ -108,6 +108,16 @@ const resources = {
             "footer_subtitle": "Available for game development roles and internship opportunities.",
             "footer_copyright": "SIRAÇ GÖKTUĞ ŞİMŞEK · OPEN TO WORK",
             "btn_transmit": "Send Message",
+            "form_name": "Name",
+            "form_email": "Email Address",
+            "form_message": "Message",
+            "form_submit": "Send Message",
+            "form_sending": "Sending...",
+            "form_success": "Message sent successfully! I will get back to you soon.",
+            "form_error": "Something went wrong. Please try again or email me directly at sgoktug34@gmail.com.",
+            "form_placeholder_name": "Your Name",
+            "form_placeholder_email": "your.email@example.com",
+            "form_placeholder_message": "Write your message here...",
 
             // ── 3D Viewer ─────────────────────────────────────────────────
             "viewer_title": "3D Workspace",
@@ -261,6 +271,16 @@ const resources = {
             "footer_subtitle": "Oyun geliştirme rolleri ve staj fırsatlarına açığım.",
             "footer_copyright": "SİRAÇ GÖKTUĞ ŞİMŞEK · İŞE AÇIK",
             "btn_transmit": "Mesaj Gönder",
+            "form_name": "İsim",
+            "form_email": "E-posta Adresi",
+            "form_message": "Mesaj",
+            "form_submit": "Mesaj Gönder",
+            "form_sending": "Gönderiliyor...",
+            "form_success": "Mesajınız başarıyla gönderildi! En kısa sürede geri dönüş yapacağım.",
+            "form_error": "Bir hata oluştu. Lütfen tekrar deneyin veya doğrudan sgoktug34@gmail.com adresinden bana e-posta gönderin.",
+            "form_placeholder_name": "Adınız Soyadınız",
+            "form_placeholder_email": "e-posta.adresiniz@ornek.com",
+            "form_placeholder_message": "Mesajınızı buraya yazın...",
 
             // ── 3D Viewer ─────────────────────────────────────────────────
             "viewer_title": "3D Çalışma Alanı",
