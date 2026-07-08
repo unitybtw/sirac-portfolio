@@ -191,11 +191,13 @@ nav.glass-panel {
   border-radius: 100px;
   font-weight: 600;
   font-size: 0.9rem;
-  transition: all 0.2s ease;
+  /* Only transition GPU-composited properties to avoid layout reflow */
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  will-change: transform;
 }
 
 .btn-primary:hover {
@@ -210,12 +212,14 @@ nav.glass-panel {
   border-radius: 100px;
   font-weight: 600;
   font-size: 0.9rem;
-  transition: all 0.2s ease;
+  /* border-color is cheap; avoid transition:all which recalculates layout */
+  transition: border-color 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
   background: var(--bg-card);
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  will-change: transform;
 }
 
 .btn-outline:hover {
@@ -256,7 +260,9 @@ section {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
   display: flex;
   flex-direction: column;
+  /* Explicitly target only compositor-friendly properties */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  will-change: transform;
 }
 
 .bento-card:hover {
@@ -503,7 +509,7 @@ section {
   background: var(--bg-primary);
   border: 1px solid var(--border-subtle);
   color: var(--text-primary);
-  transition: all 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   width: 100%;
 }
 
@@ -606,9 +612,10 @@ section {
   align-items: center;
   justify-content: center;
   color: var(--text-secondary);
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
   z-index: 3;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  will-change: transform;
 }
 
 .timeline-item:hover .timeline-icon-node,
@@ -622,7 +629,7 @@ section {
   padding: 1.75rem 2rem;
   margin: 0;
   border: 1px solid var(--border-subtle);
-  transition: all 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .timeline-item.active .timeline-content.bento-card {

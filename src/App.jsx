@@ -333,8 +333,7 @@ function App() {
         className="app-container"
         animate={{
           opacity: isLangTransitioning ? 0 : 1,
-          y: isLangTransitioning ? -6 : 0,
-          filter: isLangTransitioning ? 'blur(4px)' : 'blur(0px)',
+          y: isLangTransitioning ? -8 : 0,
         }}
         transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
       >
@@ -594,8 +593,7 @@ function App() {
         className="footer app-container"
         animate={{
           opacity: isLangTransitioning ? 0 : 1,
-          y: isLangTransitioning ? -6 : 0,
-          filter: isLangTransitioning ? 'blur(4px)' : 'blur(0px)',
+          y: isLangTransitioning ? -8 : 0,
         }}
         transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
       >
