@@ -179,7 +179,7 @@ const resources = {
             "nav_about": "hakkımda",
             "nav_timeline": "experience.json",
             "nav_arcade": "arcade.exe",
-            "nav_contact": "contact",
+            "nav_contact": "İletişim",
 
             // ── Hero ──────────────────────────────────────────────────────
             "badge_hire": "İŞ TEKLİFLERİNE AÇIK",
