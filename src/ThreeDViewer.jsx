@@ -19,6 +19,14 @@ export default function ThreeDViewer({ t, theme }) {
   const [isVisible, setIsVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
+  const [hasBeenVisible, setHasBeenVisible] = useState(false);
+
+  useEffect(() => {
+    if (isVisible) {
+      setHasBeenVisible(true);
+    }
+  }, [isVisible]);
+
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= 768);
     checkMobile();
@@ -31,7 +39,7 @@ export default function ThreeDViewer({ t, theme }) {
     
     const observer = new IntersectionObserver(([entry]) => {
       setIsVisible(entry.isIntersecting);
-    }, { threshold: 0.05 });
+    }, { threshold: 0.02 }); // Lower threshold for earlier activation
 
     observer.observe(containerRef.current);
     
@@ -101,16 +109,21 @@ export default function ThreeDViewer({ t, theme }) {
           <ChevronRight size={18} />
         </button>
 
-        {isVisible ? (
+        {hasBeenVisible ? (
           <Suspense fallback={
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
               INITIALIZING 3D ENGINE...
             </div>
           }>
-            <Canvas dpr={[1, 1.5]} performance={{ min: 0.5 }} camera={{ position: [0, 0, 4.5], fov: 45 }}>
+            <Canvas 
+              dpr={isMobile ? [1, 1.2] : [1, 1.5]} 
+              performance={{ min: 0.5 }} 
+              camera={{ position: [0, 0, 4.5], fov: 45 }}
+              frameloop={isVisible ? 'always' : 'never'}
+            >
               <color attach="background" args={[theme === 'light' ? '#f9f9fb' : '#111113']} />
               <ambientLight intensity={theme === 'light' ? 1.0 : 0.6} />
-              <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} castShadow />
+              <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} />
               <pointLight position={[-10, -10, -10]} />
               <Stage environment={theme === 'light' ? 'studio' : 'city'} intensity={theme === 'light' ? 1.0 : 0.7} shadows={false} adjustCamera={0.9}>
                 <Float speed={2.5} rotationIntensity={0.6} floatIntensity={0.6}>
