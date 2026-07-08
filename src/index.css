@@ -1,22 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
 
-/* ── View Transitions: Theme Toggle Circular Reveal ──────────────────────────
-   Disable the default cross-fade so our JS clip-path animation takes full
-   control. The ::view-transition-new(root) layer sits on top and reveals
-   the new theme from the click origin outward.
+/* ── View Transitions: Theme Toggle Vertical Wipe ────────────────────────────
+   Old snapshot fades out while new snapshot wipes in from top to bottom.
+   Works perfectly on all screen sizes including mobile.
    ─────────────────────────────────────────────────────────────────────────── */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;         /* We drive the animation from JS */
-  mix-blend-mode: normal;
+::view-transition-old(root) {
+  animation: theme-fade-out 0.4s ease forwards;
 }
 
-/* New theme layer sits on top of the old snapshot */
 ::view-transition-new(root) {
-  z-index: 1;
+  animation: theme-wipe-in 0.45s cubic-bezier(0.76, 0, 0.24, 1) forwards;
 }
-::view-transition-old(root) {
-  z-index: 0;
+
+@keyframes theme-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes theme-wipe-in {
+  from {
+    clip-path: inset(0 0 100% 0);
+    opacity: 0.6;
+  }
+  to {
+    clip-path: inset(0 0 0% 0);
+    opacity: 1;
+  }
 }
 
 /* Respect user's motion preferences */
