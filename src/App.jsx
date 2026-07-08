@@ -161,9 +161,44 @@ function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  // Toggle Theme
-  const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  // Toggle Theme — premium circular clip-path reveal via View Transitions API
+  const toggleTheme = (e) => {
+    const nextTheme = theme === 'light' ? 'dark' : 'light';
+
+    // Get click coordinates for the reveal origin
+    const x = e?.clientX ?? window.innerWidth / 2;
+    const y = e?.clientY ?? window.innerHeight / 2;
+
+    // Max radius needed to cover the entire screen from click origin
+    const maxRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    // Fallback for browsers without View Transitions (progressive enhancement)
+    if (!document.startViewTransition) {
+      setTheme(nextTheme);
+      return;
+    }
+
+    const transition = document.startViewTransition(() => {
+      setTheme(nextTheme);
+    });
+
+    transition.ready.then(() => {
+      // Animate ::view-transition-new(root) from a point circle to full screen
+      document.documentElement.animate(
+        [
+          { clipPath: `circle(0px at ${x}px ${y}px)` },
+          { clipPath: `circle(${maxRadius}px at ${x}px ${y}px)` },
+        ],
+        {
+          duration: 500,
+          easing: 'ease-in-out',
+          pseudoElement: '::view-transition-new(root)',
+        }
+      );
+    });
   };
 
   // Language transition state
@@ -291,7 +326,7 @@ function App() {
 
             {/* Theme Switcher */}
             <button 
-              onClick={toggleTheme} 
+              onClick={(e) => toggleTheme(e)} 
               className="btn-outline" 
               style={{ padding: '0.4rem', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               title="Toggle Theme"
@@ -320,7 +355,7 @@ function App() {
         </button>
 
         <button 
-          onClick={toggleTheme} 
+          onClick={(e) => toggleTheme(e)} 
           className="btn-outline" 
           style={{ padding: '0.4rem', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}
           title="Toggle Theme"
