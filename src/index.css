@@ -358,6 +358,7 @@ section {
       animation: scroll-reveal auto linear both;
       animation-timeline: view();
       animation-range: entry 5% cover 15%;
+      will-change: transform, opacity;
     }
   }
 }
@@ -366,6 +367,7 @@ section {
   opacity: 0;
   transform: translateY(30px) scale(0.98);
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  will-change: transform, opacity;
 }
 
 .js-scroll-reveal.is-revealed {
