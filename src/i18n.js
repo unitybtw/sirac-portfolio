@@ -121,24 +121,8 @@ const resources = {
 
             // ── 3D Viewer ─────────────────────────────────────────────────
             "viewer_title": "3D Workspace",
-            "viewer_subtitle": "Real-time model viewer",
-            "viewer_hint": "Drag to orbit · scroll to zoom",
-
-            // ── Terminal ──────────────────────────────────────────────────
-            "terminal_title": "Interactive Console",
-            "terminal_subtitle": "Explore the developer environment using the CLI terminal.",
-            "terminal_welcome_1": "Welcome to Sirac's Shell v1.0.0 (Type 'help' for command list)",
-            "terminal_welcome_2": "System status: ONLINE. Connection type: GUEST",
-            "terminal_matrix_hint": "Press any key to exit Matrix Rain Mode",
-            "terminal_matrix_start": "Loading Matrix Core... Initialization complete. Spawning grid.",
-            "terminal_matrix_exit": "Matrix Mode terminated. Back to console.",
-            "terminal_cmd_help": "Available commands:\n  - about     : Prints biography\n  - projects  : Lists key projects\n  - theme     : Toggles site theme\n  - clear     : Clears the terminal screen\n  - matrix    : Runs retro falling matrix rain animation\n  - contact   : Displays social links & email",
-            "terminal_cmd_about": "Siraç Göktuğ Şimşek — Game Developer & UI Engineer based in Istanbul. Studying Digital Game Design at IKU. Specializes in Unity, SwiftUI, C# and React.",
-            "terminal_cmd_projects": "Projects List:\n  1. Zero-Ads Arcade Engine (MIT TS Game Engine)\n  2. Legend of the Three Masks (3D Unity Adventure Game)\n  3. Signal macOS (Audio Feedback Keyboard App)\n  4. Aether Command (Touchless Desktop Gesture Controller)",
-            "terminal_cmd_contact": "Contact Info:\n  - Email    : sgoktug34@gmail.com\n  - LinkedIn : linkedin.com/in/siracsimsek\n  - GitHub   : github.com/unitybtw",
-            "terminal_cmd_theme": "Toggling theme... System style changed.",
-            "terminal_cmd_not_found": "Command not found:",
-            "terminal_cmd_not_found_help": "Type 'help' to see list of valid commands.",
+            "viewer_subtitle": "Real-time Blender artifacts.",
+            "viewer_hint": "Drag to rotate",
 
             // ── Drone companion messages ───────────────────────────────────
             "drone_m_morning": "Good morning! Ready to build?",
@@ -300,24 +284,8 @@ const resources = {
 
             // ── 3D Viewer ─────────────────────────────────────────────────
             "viewer_title": "3D Çalışma Alanı",
-            "viewer_subtitle": "Gerçek zamanlı model izleyici",
-            "viewer_hint": "Döndürmek için sürükle · Yakınlaşmak için kaydır",
-
-            // ── Terminal ──────────────────────────────────────────────────
-            "terminal_title": "İnteraktif Konsol",
-            "terminal_subtitle": "Geliştirici ortamını komut satırı terminali ile keşfedin.",
-            "terminal_welcome_1": "Siraç'ın Konsoluna Hoş Geldiniz v1.0.0 (Komut listesi için 'help' yazın)",
-            "terminal_welcome_2": "Sistem durumu: ÇEVRİMİÇİ. Bağlantı türü: MİSAFİR",
-            "terminal_matrix_hint": "Matrix Kod Yağmurundan çıkmak için herhangi bir tuşa basın",
-            "terminal_matrix_start": "Matrix Çekirdeği Yükleniyor... Kurulum tamamlandı.",
-            "terminal_matrix_exit": "Matrix Modu kapatıldı. Konsola dönüldü.",
-            "terminal_cmd_help": "Geçerli komutlar:\n  - about     : Kısa biyografi yazdırır\n  - projects  : Projeleri listeler\n  - theme     : Site temasını değiştirir\n  - clear     : Konsol ekranını temizler\n  - matrix    : Retro yeşil kod yağmuru animasyonunu başlatır\n  - contact   : İletişim bilgilerini ve sosyal linkleri gösterir",
-            "terminal_cmd_about": "Siraç Göktuğ Şimşek — İstanbul'da yaşayan Oyun Geliştiricisi ve Arayüz Mühendisi. İKÜ'de Dijital Oyun Tasarımı okuyor. Unity, C#, SwiftUI ve React üzerine odaklanıyor.",
-            "terminal_cmd_projects": "Proje Listesi:\n  1. Zero-Ads Arcade Engine (TS Oyun Motoru)\n  2. Üç Maskenin Efsanesi (3D Unity Macera Oyunu)\n  3. Signal macOS (Mekanik Klavye Ses Geri Bildirim Uygulaması)\n  4. Aether Command (Temassız Hareket Algılama Arayüzü)",
-            "terminal_cmd_contact": "İletişim Bilgileri:\n  - E-posta  : sgoktug34@gmail.com\n  - LinkedIn : linkedin.com/in/siracsimsek\n  - GitHub   : github.com/unitybtw",
-            "terminal_cmd_theme": "Tema değiştiriliyor... Sistem arayüz stili güncellendi.",
-            "terminal_cmd_not_found": "Komut bulunamadı:",
-            "terminal_cmd_not_found_help": "Komut listesini görmek için 'help' yazabilirsiniz.",
+            "viewer_subtitle": "Gerçek zamanlı Blender modelleri.",
+            "viewer_hint": "Döndürmek için sürükle",
 
             // ── Drone companion messages ───────────────────────────────────
             "drone_m_morning": "Günaydın!",

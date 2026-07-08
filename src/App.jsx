@@ -7,7 +7,6 @@ import './index.css';
 import { LINKEDIN_URL } from './i18n';
 
 const ThreeDViewer = React.lazy(() => import('./ThreeDViewer'));
-import TerminalConsole from './TerminalConsole';
 
 // ── Page Progress Indicator ──────────────────────────────────────────────
 const PageProgress = () => {
@@ -491,8 +490,6 @@ function App() {
             </div>
           </div>
         </section>
-        {/* ── Interactive Terminal ── */}
-        <TerminalConsole t={t} theme={theme} toggleTheme={toggleTheme} />
       </main>
 
       {/* ── Footer / Contact ── */}
