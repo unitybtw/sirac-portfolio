@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database, X } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database } from 'lucide-react';
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
 
@@ -68,7 +68,6 @@ const Magnetic = ({ children }) => {
 // ── Main App Component ────────────────────────────────────────────────────
 function App() {
   const { t, i18n } = useTranslation();
-  const [activeProject, setActiveProject] = useState(null);
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
       return localStorage.getItem('theme') || 'light';
@@ -167,64 +166,6 @@ function App() {
       lenis.destroy();
     };
   }, []);
-
-  // Escape key handler for closing project modal
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') {
-        setActiveProject(null);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
-  const projectsList = [
-    {
-      id: 'three_masks',
-      titleKey: 'games.m_title',
-      descKey: 'games.m_desc',
-      detailsKey: 'games.m_details',
-      tagsKey: 'games.m_tags',
-      image: `${import.meta.env.BASE_URL}assets/projects/three_masks.jpg`,
-      icon: <Gamepad2 size={20} />,
-      link: 'https://unitybtw.itch.io/legend-of-the-three-masks',
-      linkText: 'Itch.io'
-    },
-    {
-      id: 'arcade_engine',
-      titleKey: 'games.arcade_engine_title',
-      descKey: 'games.arcade_engine_desc',
-      detailsKey: 'games.arcade_engine_details',
-      tagsKey: 'games.arcade_engine_tags',
-      image: `${import.meta.env.BASE_URL}assets/projects/arcade_engine.jpg`,
-      icon: <Cpu size={20} />,
-      link: 'https://github.com/unitybtw',
-      linkText: 'GitHub'
-    },
-    {
-      id: 'signal',
-      titleKey: 'games.signal_title',
-      descKey: 'games.signal_desc',
-      detailsKey: 'games.signal_details',
-      tagsKey: 'games.signal_tags',
-      image: `${import.meta.env.BASE_URL}assets/projects/signal.jpg`,
-      icon: <MonitorSmartphone size={20} />,
-      link: 'https://github.com/unitybtw/Signal-macOS',
-      linkText: 'GitHub'
-    },
-    {
-      id: 'aether',
-      titleKey: 'games.aether_title',
-      descKey: 'games.aether_desc',
-      detailsKey: 'games.aether_details',
-      tagsKey: 'games.aether_tags',
-      image: `${import.meta.env.BASE_URL}assets/projects/aether.jpg`,
-      icon: <Box size={20} />,
-      link: 'https://github.com/unitybtw/aether-command',
-      linkText: 'GitHub'
-    }
-  ];
 
   // Parallax for Hero is now handled purely in CSS via .hero-parallax-content
 
@@ -447,38 +388,65 @@ function App() {
           <p className="section-subtitle">{t('archives_subtitle')}</p>
 
           <div className="bento-grid">
-            {projectsList.map((project) => {
-              const isCol12 = project.id === 'three_masks' || project.id === 'arcade_engine';
-              return (
-                <div 
-                  key={project.id}
-                  className={`bento-card ${isCol12 ? 'bento-col-12' : 'bento-col-6'} project-card`}
-                  style={{ 
-                    borderTop: '4px solid var(--text-primary)',
-                    cursor: 'pointer'
-                  }}
-                  onClick={() => setActiveProject(project)}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%', height: '100%' }}>
-                    <div style={{ flex: 1, paddingRight: '1rem', display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
-                      <div>
-                        <h3 style={{ fontSize: isCol12 ? '1.8rem' : '1.3rem', marginBottom: '0.5rem' }}>{t(project.titleKey)}</h3>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: isCol12 ? '1rem' : '0.95rem', maxWidth: isCol12 ? '800px' : 'none' }}>{t(project.descKey)}</p>
-                      </div>
-                      
-                      <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
-                        <span className="btn-outline" style={{ padding: '0.4rem 1rem', fontSize: '0.85rem', gap: '0.4rem' }}>
-                          {project.icon} {t('btn_explore')}
-                        </span>
-                      </div>
-                    </div>
-                    <div style={{ opacity: 0.3, color: 'var(--text-secondary)' }}>
-                      {project.icon}
-                    </div>
+            {/* Featured Project 1: Legend of the Three Masks */}
+            <div className="bento-card bento-col-12" style={{ borderTop: '4px solid var(--text-primary)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>{t('games.m_title')}</h3>
+                  <p style={{ color: 'var(--text-secondary)', maxWidth: '800px' }}>{t('games.m_desc')}</p>
+                  
+                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
+                    <a href="https://unitybtw.itch.io/legend-of-the-three-masks" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.4rem 1rem', fontSize: '0.85rem', gap: '0.4rem' }}>
+                      <Gamepad2 size={16} /> Itch.io
+                    </a>
                   </div>
                 </div>
-              );
-            })}
+                <Gamepad2 size={32} color="var(--text-secondary)" style={{ opacity: 0.3 }} />
+              </div>
+            </div>
+
+            {/* Featured Project 2: Zero-Ads Arcade Engine */}
+            <div className="bento-card bento-col-12" style={{ borderTop: '4px solid var(--text-primary)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <h3 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>{t('games.arcade_engine_title')}</h3>
+                  <p style={{ color: 'var(--text-secondary)', maxWidth: '800px' }}>{t('games.arcade_engine_desc')}</p>
+                  
+                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
+                    <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.4rem 1rem', fontSize: '0.85rem', gap: '0.4rem' }}>
+                      <Github size={16} /> GitHub
+                    </a>
+                  </div>
+                </div>
+                <Cpu size={32} color="var(--text-secondary)" style={{ opacity: 0.3 }} />
+              </div>
+            </div>
+
+            {/* Signal */}
+            <div className="bento-card bento-col-6" style={{ justifyContent: 'space-between' }}>
+              <div>
+                <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>{t('games.signal_title')}</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>{t('games.signal_desc')}</p>
+              </div>
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
+                <a href="https://github.com/unitybtw/Signal-macOS" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.4rem 1rem', fontSize: '0.85rem', gap: '0.4rem', width: 'fit-content' }}>
+                  <Github size={16} /> GitHub
+                </a>
+              </div>
+            </div>
+
+            {/* Aether Command */}
+            <div className="bento-card bento-col-6" style={{ justifyContent: 'space-between' }}>
+              <div>
+                <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>{t('games.aether_title')}</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>{t('games.aether_desc')}</p>
+              </div>
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
+                <a href="https://github.com/unitybtw/aether-command" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.4rem 1rem', fontSize: '0.85rem', gap: '0.4rem', width: 'fit-content' }}>
+                  <Github size={16} /> GitHub
+                </a>
+              </div>
+            </div>
           </div>
         </section>
       </main>
@@ -501,64 +469,8 @@ function App() {
           © {new Date().getFullYear()} {t('footer_copyright')}
         </div>
       </footer>
-      <ProjectModal activeProject={activeProject} setActiveProject={setActiveProject} t={t} />
     </>
   );
 }
-
-const ProjectModal = ({ activeProject, setActiveProject, t }) => {
-  if (!activeProject) return null;
-  return (
-    <AnimatePresence>
-      <motion.div 
-        className="modal-backdrop"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        onClick={() => setActiveProject(null)}
-      >
-        <motion.div 
-          className="modal-content glass-panel"
-          initial={{ scale: 0.95, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.95, opacity: 0, y: 20 }}
-          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <button className="modal-close-btn btn-outline" onClick={() => setActiveProject(null)}>
-            <X size={16} />
-          </button>
-          
-          <div className="modal-image-wrapper">
-            <img src={activeProject.image} alt={t(activeProject.titleKey)} />
-          </div>
-          
-          <div className="modal-body">
-            <h3 className="modal-title">{t(activeProject.titleKey)}</h3>
-            
-            <div className="modal-tags">
-              {t(activeProject.tagsKey, { returnObjects: true }).map((tag, idx) => (
-                <span key={idx} className="modal-tag">{tag}</span>
-              ))}
-            </div>
-            
-            <p className="modal-desc">{t(activeProject.detailsKey)}</p>
-            
-            <div className="modal-actions">
-              <a 
-                href={activeProject.link} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="btn-primary"
-              >
-                {activeProject.icon} {activeProject.linkText}
-              </a>
-            </div>
-          </div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
-  );
-};
 
 export default App;
