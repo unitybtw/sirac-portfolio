@@ -166,10 +166,18 @@ function App() {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
-  // Toggle Language
+  // Language transition state
+  const [isLangTransitioning, setIsLangTransitioning] = useState(false);
+
+  // Toggle Language with smooth transition
   const toggleLanguage = () => {
-    const nextLang = i18n.language === 'tr' ? 'en' : 'tr';
-    i18n.changeLanguage(nextLang);
+    if (isLangTransitioning) return;
+    setIsLangTransitioning(true);
+    setTimeout(() => {
+      const nextLang = i18n.language === 'tr' ? 'en' : 'tr';
+      i18n.changeLanguage(nextLang);
+      setTimeout(() => setIsLangTransitioning(false), 350);
+    }, 250);
   };
 
   // Smooth Scrolling
@@ -321,7 +329,15 @@ function App() {
         </button>
       </div>
 
-      <main className="app-container">
+      <motion.main
+        className="app-container"
+        animate={{
+          opacity: isLangTransitioning ? 0 : 1,
+          y: isLangTransitioning ? -6 : 0,
+          filter: isLangTransitioning ? 'blur(4px)' : 'blur(0px)',
+        }}
+        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+      >
         {/* ── Hero Section ── */}
         <section className="hero-section" id="hero">
           <div className="hero-parallax-content">
@@ -570,10 +586,19 @@ function App() {
             </div>
           </div>
         </section>
-      </main>
+      </motion.main>
 
       {/* ── Footer / Contact ── */}
-      <footer id="contact" className="footer app-container">
+      <motion.footer
+        id="contact"
+        className="footer app-container"
+        animate={{
+          opacity: isLangTransitioning ? 0 : 1,
+          y: isLangTransitioning ? -6 : 0,
+          filter: isLangTransitioning ? 'blur(4px)' : 'blur(0px)',
+        }}
+        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+      >
         <div className="contact-grid">
           <div className="contact-info">
             <h2 className="section-title" style={{ textAlign: 'left', marginBottom: '1rem' }}>{t('footer_title')}</h2>
@@ -665,7 +690,7 @@ function App() {
         <div style={{ fontSize: '0.85rem', opacity: 0.6, marginTop: '4rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '2rem' }}>
           © {new Date().getFullYear()} {t('footer_copyright')}
         </div>
-      </footer>
+      </motion.footer>
     </>
   );
 }
