@@ -96,7 +96,7 @@ function App() {
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          access_key: 'YOUR_ACCESS_KEY_HERE', // Replace with your Web3Forms access key
+          access_key: '7c9d6acc-05c7-4755-8eb3-d54bdb350b39', // Web3Forms access key
           name: formState.name,
           email: formState.email,
           message: formState.message,
