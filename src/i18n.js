@@ -145,17 +145,20 @@ const resources = {
             "games": {
                 "m_title": "Legend of the Three Masks",
                 "m_desc": "3D adventure game published on Itch.io — explore levels, find ancient masks, and uncover mysteries. Built with Unity and C#.",
-                "fb_desc": "Classic arcade-style reflex game with high-score tracking and tight gameplay loops.",
-                "macos_title": "macOS Glassmorphic Utilities",
-                "macos_desc": "Native macOS utility projects built with SwiftUI. Focus on clean layout patterns.",
-                "arcade_title": "Arcade Core",
-                "arcade_desc": "Custom browser-based prototypes.",
+                "m_details": "Legend of the Three Masks is an immersive action-adventure game. Players navigate through atmospheric, carefully constructed ruins, solving ancient environmental puzzles while finding hidden relics. It showcase-engineers Unity's physics systems and features dynamic light baking and clean gameplay state architectures.",
+                "m_tags": ["Unity 3D", "C# Scripting", "3D Level Design", "URP Render Pipeline", "Itch.io Publish"],
                 "signal_title": "Signal: Audio Feedback Utility",
                 "signal_desc": "A premium macOS menu bar application providing real-time mechanical keyboard sound feedback (15+ audio profiles) with a pure glassmorphic UI, dynamic audio pulse visualizer, and WPM analytics. Built with native Swift and low-latency Core Audio.",
+                "signal_details": "Signal runs in the background of macOS, listening to keyboard events and triggering low-latency audio playbacks for selected mechanical switches. It features custom-designed audio profiles, an in-memory active key tracking algorithm for speed analytics, and is written natively using Swift and Core Graphics/Core Audio frameworks.",
+                "signal_tags": ["Swift", "SwiftUI", "Core Audio", "macOS SDK", "Data Analytics"],
                 "aether_title": "Aether Command: Gesture Controller",
                 "aether_desc": "Touchless gesture-based desktop control app using your Mac's camera. Map movements (Pinch, Fist, Swipes) to system actions. Built with power-efficient tracking and a premium glassmorphic UI.",
+                "aether_details": "Aether Command bridges human motion and desktop interaction. It utilizes lightweight computer vision models to track hand movement and posture locally. Hand states are translated into virtual pointer control, system shortcuts, and window navigation. Designed with power efficiency in mind to run smoothly in the background without draining resources.",
+                "aether_tags": ["Swift", "Computer Vision", "AppKit", "Camera API", "Accessibility Core"],
                 "arcade_engine_title": "Zero-Ads Arcade Engine",
-                "arcade_engine_desc": "A lightweight, open-source (MIT) TypeScript engine for embedding ad-free games into any web app. Features built-in gamepad support, multi-touch virtual controls (joysticks/buttons), persistent session analytics, global sound management, and strict origin validation—all under a 50KB footprint."
+                "arcade_engine_desc": "A lightweight, open-source (MIT) TypeScript engine for embedding ad-free games into any web app. Features built-in gamepad support, multi-touch virtual controls (joysticks/buttons), persistent session analytics, global sound management, and strict origin validation—all under a 50KB footprint.",
+                "arcade_engine_details": "The Zero-Ads Arcade Engine is a highly optimized library for embedding responsive mini-games. Built from scratch in TypeScript, it integrates virtual screen joystick configurations and keyboard event mappings, allowing retro game bundles to work natively across desktop browsers, tablets, and mobile devices without external advertisements.",
+                "arcade_engine_tags": ["TypeScript", "HTML5 Canvas", "Gamepads API", "AudioContext", "Session Storage"]
             }
         }
     },
@@ -298,17 +301,20 @@ const resources = {
             "games": {
                 "m_title": "Üç Maskenin Efsanesi",
                 "m_desc": "Itch.io'da yayınlanmış 3D macera oyunu — bölümleri keşfet, eski maskeleri bul, gizemleri çöz. Unity / C#.",
-                "fb_desc": "Klasik arcade tarzı refleks oyunu, yüksek skor takibi ile.",
-                "macos_title": "macOS Cam Tasarımlı Araçlar",
-                "macos_desc": "SwiftUI ile geliştirilen native macOS araç projeleri. Temiz arayüz düzenleri odağı.",
-                "arcade_title": "Arcade Portalı",
-                "arcade_desc": "Özel tarayıcı prototipleri.",
+                "m_details": "Üç Maskenin Efsanesi, derinlemesine atmosferik bir 3D aksiyon-macera oyunudur. Oyuncular gizemli harabeleri keşfeder, antik bulmacaları çözer ve kayıp maskelerin sırrını açığa çıkarır. Unity'nin fizik motoru, ışık haritalama sistemleri ve temiz durum makineleri ile geliştirilmiştir.",
+                "m_tags": ["Unity 3D", "C# Yazılım", "3D Bölüm Tasarımı", "URP Işıklandırma", "Itch.io"],
                 "signal_title": "Signal: Tuş Sesi Geri Bildirimi",
                 "signal_desc": "Yazdığın her tuşa gerçek zamanlı mekanik klavye ses geri bildirimi veren (15+ ses profili), saf cam arayüzlü (glassmorphism), WPM takipli premium macOS menü çubuğu uygulaması. Native Swift ve düşük gecikmeli Core Audio ile geliştirildi.",
+                "signal_details": "Signal, macOS sisteminde arka planda çalışarak klavye girdilerini yakalar ve sıfıra yakın ses gecikmesi ile seçilen tuş profilini çalar. Özel stüdyo kaydı sesleri, aktif WPM hız analitiğini ve macOS menü çubuğu entegrasyonunu barındırır. Swift ve Core Audio frameworkleri ile native olarak yazılmıştır.",
+                "signal_tags": ["Swift", "SwiftUI", "Core Audio", "macOS SDK", "Analitik Takip"],
                 "aether_title": "Aether Command: Hareket Denetleyici",
                 "aether_desc": "Mac kamerasını kullanarak sistemi el hareketleriyle (Pinch, Fist, Swipes) yönetmeni sağlayan native macOS uygulaması. Güç tasarruflu izleme motoru ve premium cam görsel efekt paneline sahiptir.",
+                "aether_details": "Aether Command, insan el hareketleri ile işletim sistemi arayüzü arasında bir köprü kurar. Mac kamerası üzerinden bilgisayarla temas etmeden el işaretlerini okur ve bunları tıklama, kaydırma ve pencere değiştirme gibi komutlara çevirir. Düşük işlemci tüketimi için optimize edilmiştir.",
+                "aether_tags": ["Swift", "Görüntü İşleme", "AppKit", "Kamera API", "Erişilebilirlik"],
                 "arcade_engine_title": "Zero-Ads Arcade Engine",
-                "arcade_engine_desc": "Herhangi bir web uygulamasına reklamsız oyunlar gömmek için geliştirilmiş hafif, açık kaynaklı (MIT) TypeScript motoru. Entegre gamepad desteği, dokunmatik sanal denetleyiciler (joystick/butonlar), kalıcı oturum analitikleri, ses yönetimi ve iframe güvenlik katmanına sahiptir (50KB altı boyut)."
+                "arcade_engine_desc": "Herhangi bir web uygulamasına reklamsız oyunlar gömmek için geliştirilmiş hafif, açık kaynaklı (MIT) TypeScript motoru. Entegre gamepad desteği, dokunmatik sanal denetleyiciler (joystick/butonlar), kalıcı oturum analitikleri, ses yönetimi ve iframe güvenlik katmanına sahiptir (50KB altı boyut).",
+                "arcade_engine_details": "Zero-Ads Arcade Engine, reklamsız mini oyunların hızlıca web uygulamalarına entegre edilmesi için tasarlanmıştır. TypeScript ile sıfırdan geliştirilen motor; sanal ekran kontrolcüleri (dokunmatik joystickler) ve fiziksel klavye-gamepad eşlemelerini destekleyerek mobil, tablet ve bilgisayarlarda yüksek performansla çalışır.",
+                "arcade_engine_tags": ["TypeScript", "HTML5 Canvas", "Gamepad API", "Web Audio", "Oturum Yönetimi"]
             }
         }
     }
