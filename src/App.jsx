@@ -130,7 +130,7 @@ function App() {
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          access_key: '7c9d6acc-05c7-4755-8eb3-d54bdb350b39', // Web3Forms access key
+          access_key: import.meta.env.VITE_WEB3FORMS_KEY,
           name: formState.name,
           email: formState.email,
           message: formState.message,

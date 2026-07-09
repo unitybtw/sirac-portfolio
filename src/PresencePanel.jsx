@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Users } from 'lucide-react';
 import { playClick, playHover } from './soundEffects';
 
-const DB_URL = 'https://sirac-portfolio-default-rtdb.europe-west1.firebasedatabase.app';
+const DB_URL = import.meta.env.VITE_FIREBASE_DB_URL;
 
 const NEON_NAMES = [
   'Ghost', 'Phantom', 'Shadow', 'Void', 'Flux', 'Hex', 'Neon', 'Cyber',
