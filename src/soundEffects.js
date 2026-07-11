@@ -10,11 +10,15 @@ export const setMutedState = (muted) => {
 export const getMutedState = () => isMuted;
 
 const getAudioContext = () => {
+  if (typeof window === 'undefined') return null;
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return null;
+  
   if (!audioCtx) {
-    audioCtx = window.sharedAudioCtx || (window.sharedAudioCtx = new (window.AudioContext || window.webkitAudioContext)());
+    audioCtx = window.sharedAudioCtx || (window.sharedAudioCtx = new AudioContextClass());
   }
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
+  if (audioCtx && audioCtx.state === 'suspended' && typeof audioCtx.resume === 'function') {
+    audioCtx.resume().catch(() => {});
   }
   return audioCtx;
 };
@@ -24,6 +28,7 @@ const playTone = (freqs, durations, type = 'sine', volume = 0.1) => {
   if (isMuted) return;
   try {
     const ctx = getAudioContext();
+    if (!ctx) return;
     const now = ctx.currentTime;
     
     const osc = ctx.createOscillator();
