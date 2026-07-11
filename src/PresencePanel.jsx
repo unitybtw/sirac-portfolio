@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Users } from 'lucide-react';
-import { playClick, playHover } from './soundEffects';
+
 
 const DB_URL = import.meta.env.VITE_FIREBASE_DB_URL;
 
@@ -348,8 +348,7 @@ export default function PresencePanel({ onActiveCountChange }) {
                       key={emoji}
                       whileHover={{ scale: 1.35, y: -2 }}
                       whileTap={{ scale: 0.85 }}
-                      onMouseEnter={playHover}
-                      onClick={() => { playClick(); sendEmoji(emoji); }}
+                      onClick={() => { sendEmoji(emoji); }}
                       style={{
                         background: 'rgba(255,255,255,0.04)',
                         border: '1px solid rgba(255,255,255,0.08)',
@@ -370,10 +369,8 @@ export default function PresencePanel({ onActiveCountChange }) {
           )}
         </AnimatePresence>
 
-        {/* Trigger Button */}
         <motion.button
-          onClick={() => { playClick(); setIsExpanded(p => !p); }}
-          onMouseEnter={playHover}
+          onClick={() => { setIsExpanded(p => !p); }}
           whileHover={{ scale: 1.05, boxShadow: '0 0 30px rgba(0,240,255,0.2)' }}
           whileTap={{ scale: 0.95 }}
           className={`presence-panel-trigger ${isExpanded ? 'expanded' : ''}`}
