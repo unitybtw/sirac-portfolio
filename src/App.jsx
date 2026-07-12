@@ -33,37 +33,7 @@ const PageProgress = () => {
   return <div className="page-progress-bar" ref={barRef} />;
 };
 
-// ── Magnetic Button Wrapper ──────────────────────────────────────────────
-const Magnetic = ({ children }) => {
-  const ref = React.useRef(null);
-  const [position, setPosition] = React.useState({ x: 0, y: 0 });
 
-  const handleMouse = (e) => {
-    const { clientX, clientY } = e;
-    const { height, width, left, top } = ref.current.getBoundingClientRect();
-    const middleX = clientX - (left + width / 2);
-    const middleY = clientY - (top + height / 2);
-    setPosition({ x: middleX * 0.1, y: middleY * 0.1 });
-  };
-
-  const reset = () => {
-    setPosition({ x: 0, y: 0 });
-  };
-
-  const { x, y } = position;
-  return (
-    <motion.div
-      style={{ position: 'relative' }}
-      ref={ref}
-      onMouseMove={handleMouse}
-      onMouseLeave={reset}
-      animate={{ x, y }}
-      transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
-    >
-      {children}
-    </motion.div>
-  );
-};
 
 // ── Main App Component ────────────────────────────────────────────────────
 function App() {
@@ -367,21 +337,15 @@ function App() {
               {t('hero_subtitle_2')}
             </p>
             <div className="hero-buttons">
-              <Magnetic>
-                <a href="#projects" className="btn-primary">
-                  {t('btn_explore')} <ArrowRight size={18} />
-                </a>
-              </Magnetic>
-              <Magnetic>
-                <a href={`${import.meta.env.BASE_URL}cv.pdf`} target="_blank" rel="noopener noreferrer" className="btn-outline">
-                  <Download size={18} /> {t('btn_view_cv')}
-                </a>
-              </Magnetic>
-              <Magnetic>
-                <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn-outline">
-                  <Github size={18} /> {t('btn_repos')}
-                </a>
-              </Magnetic>
+              <a href="#projects" className="btn-primary">
+                {t('btn_explore')} <ArrowRight size={18} />
+              </a>
+              <a href={`${import.meta.env.BASE_URL}cv.pdf`} target="_blank" rel="noopener noreferrer" className="btn-outline">
+                <Download size={18} /> {t('btn_view_cv')}
+              </a>
+              <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn-outline">
+                <Github size={18} /> {t('btn_repos')}
+              </a>
             </div>
             </motion.div>
           </div>
