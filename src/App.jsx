@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database, X, GraduationCap, Award, BookOpen, ChevronDown, ChevronUp } from 'lucide-react';
@@ -158,15 +159,32 @@ function App() {
     }, 250);
   };
 
-  // Smooth Scrolling and Reveal Animations
+  // Smooth Scrolling (Optimized)
   useEffect(() => {
-    // Force browser to start at the top on page refresh
     if (typeof window !== 'undefined') {
       window.history.scrollRestoration = 'manual';
       window.scrollTo(0, 0);
     }
 
-    // Handle Anchor Clicks for native smooth scroll
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      direction: 'vertical',
+      gestureDirection: 'vertical',
+      smooth: true,
+      mouseMultiplier: 1,
+      smoothTouch: false,
+      touchMultiplier: 2,
+      infinite: false,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    // Handle Anchor Clicks smoothly with Lenis
     const handleAnchorClick = (e) => {
       const target = e.target.closest('a');
       if (target && target.getAttribute('href')?.startsWith('#')) {
@@ -175,15 +193,16 @@ function App() {
         const targetElement = document.querySelector(id);
         if (targetElement) {
           e.preventDefault();
-          targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          lenis.scrollTo(targetElement, { offset: -40, duration: 1.2 });
         }
       }
     };
     document.addEventListener('click', handleAnchorClick);
 
-    // Fallback for browsers that don't support scroll-driven animations
+    // Clean up fallback observer if it exists
+    let observer;
     if (!CSS.supports('(animation-timeline: view()) and (animation-range: entry)')) {
-      const observer = new IntersectionObserver(
+      observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
@@ -201,15 +220,12 @@ function App() {
         el.classList.add('js-scroll-reveal');
         observer.observe(el);
       });
-
-      return () => {
-        observer.disconnect();
-        document.removeEventListener('click', handleAnchorClick);
-      };
     }
 
     return () => {
+      if (observer) observer.disconnect();
       document.removeEventListener('click', handleAnchorClick);
+      lenis.destroy();
     };
   }, []);
 
