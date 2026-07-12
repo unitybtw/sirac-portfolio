@@ -293,7 +293,6 @@ section {
   flex-direction: column;
   /* Explicitly target only compositor-friendly properties */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  will-change: transform;
 }
 
 .bento-card:hover {
@@ -395,7 +394,6 @@ section {
       animation: scroll-reveal auto linear both;
       animation-timeline: view();
       animation-range: entry 5% cover 15%;
-      will-change: transform, opacity;
     }
   }
 }
@@ -404,7 +402,6 @@ section {
   opacity: 0;
   transform: translateY(30px) scale(0.98);
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-  will-change: transform, opacity;
 }
 
 .js-scroll-reveal.is-revealed {
@@ -646,7 +643,6 @@ section {
   transition: border-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
   z-index: 3;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  will-change: transform;
 }
 
 .timeline-item:hover .timeline-icon-node,
