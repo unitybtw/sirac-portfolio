@@ -5,7 +5,6 @@ import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Do
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
 
-const ThreeDViewer = React.lazy(() => import('./ThreeDViewer'));
 
 // ── Page Progress Indicator ──────────────────────────────────────────────
 const PageProgress = () => {
@@ -364,9 +363,7 @@ function App() {
               </div>
             </div>
 
-            <React.Suspense fallback={<div className="bento-card bento-col-12" style={{ minHeight: '520px', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'var(--text-secondary)' }}>INITIALIZING 3D ENGINE...</div>}>
-              <ThreeDViewer t={t} theme={theme} />
-            </React.Suspense>
+
           </div>
         </section>
 
