@@ -495,15 +495,6 @@ nav.dock.is-compact {
 /* Sections */
 section {
   padding-top: 8rem;
-  /* Ekran dışındaki section'ların layout/paint'ini atla — 120Hz scroll'un
-     en büyük kazancı. contain-intrinsic-size ile scrollbar zıplamaz. */
-  content-visibility: auto;
-  contain-intrinsic-size: auto 600px;
-}
-
-/* Hero ve ilk ekran her zaman render edilsin (LCP'yi geciktirme) */
-#hero, #about {
-  content-visibility: visible;
 }
 
 .section-title {
@@ -657,11 +648,11 @@ section {
     @keyframes scroll-reveal {
       from {
         opacity: 0;
-        transform: translateY(30px) scale(0.98);
+        transform: translateY(20px);
       }
       to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0);
       }
     }
 
@@ -676,13 +667,13 @@ section {
 
 .js-scroll-reveal {
   opacity: 0;
-  transform: translateY(30px) scale(0.98);
-  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  transform: translateY(20px);
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
 }
 
 .js-scroll-reveal.is-revealed {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
 }
 
 .footer {
@@ -1058,7 +1049,7 @@ section {
 }
 
 /* Nova slideshow: kap 16:10 + foto absolute-fill cover — letterbox yok,
-   siyah köşe/kenar kalmaz. Geçiş clip-path ile GPU'da olur. */
+   siyah köşe/kenar kalmaz. GPU composited opacity & transform. */
 .nova-shot {
   position: absolute;
   inset: 0;
@@ -1066,13 +1057,7 @@ section {
   height: 100%;
   object-fit: cover;
   display: block;
-  will-change: clip-path, transform;
+  will-change: opacity, transform;
   user-select: none;
   -webkit-user-drag: none;
-}
-
-/* Görüntü decode'u scroll'u bloklamasın (boyutu bilinen görsellerde güvenli) */
-.bento-card img {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 300px;
 }

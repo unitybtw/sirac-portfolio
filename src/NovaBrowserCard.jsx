@@ -174,17 +174,16 @@ export default function NovaBrowserCard() {
         </div>
       </div>
 
-      {/* Foto kutusu: kapalı ince şerit gibi başlar, ekrana gelince
-          perde gibi aşağı doğru açılır, foto içeride belirir */}
+      {/* Foto kutusu: ekrana gelince kutucuk genişleyerek yumuşakça açılır */}
       <motion.div
         ref={frameRef}
         initial={false}
         animate={opened ? 'open' : 'closed'}
         variants={{
-          closed: { height: 0, opacity: 0 },
-          open: { height: 'auto', opacity: 1 },
+          closed: { opacity: 0, scale: 0.94, y: 16 },
+          open: { opacity: 1, scale: 1, y: 0 },
         }}
-        transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         style={{
           position: 'relative',
           borderRadius: '16px',
@@ -193,34 +192,30 @@ export default function NovaBrowserCard() {
           border: '1px solid var(--border-subtle)',
           boxShadow: '0 8px 30px rgba(0,0,0,0.12)',
           marginTop: '1.25rem',
-          userSelect: 'none'
+          userSelect: 'none',
+          willChange: 'transform, opacity'
         }}
       >
-        {/* Foto alanı tam boyda durur; kutu açılırken üstten alta perde gibi belirir */}
+        {/* Foto alanı tam boyda durur (16:10) */}
         <div
           style={{
             position: 'relative',
             width: '100%',
-            /* Fotoğrafların hepsi 2880x1800 (16:10) — kap da aynı oranda olursa
-               letterbox boşluğu kalmaz, siyah köşe/kenar görünmez */
             aspectRatio: '16 / 10',
             overflow: 'hidden',
             background: '#0a0d12'
           }}
         >
-          {/* Yeni foto altyazı kartından yukarı doğru genişleyerek açılır,
-              eski foto altta hızlıca solar — "karttan büyüyen" hissi */}
+          {/* Yeni foto GPU composited opacity & scale ile kaymak gibi akar */}
           <AnimatePresence initial={false}>
             <motion.img
               key={activePhoto.id}
               src={activePhoto.src}
               alt={isTr ? activePhoto.titleTr : activePhoto.titleEn}
-              initial={{ clipPath: 'inset(100% 0% 0% 0%)', scale: 1.06 }}
-              animate={{ clipPath: 'inset(0% 0% 0% 0%)', scale: 1 }}
-              /* Çıkış: anında yok olmak yerine bir süre altta küçülerek kalır,
-                 yeni foto üstte açılırken derinlik hissi verir */
-              exit={{ opacity: 0, scale: 0.9, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              initial={{ opacity: 0, scale: 1.04 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.97 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
               loading={activeIdx === 0 ? 'eager' : 'lazy'}
               fetchPriority={activeIdx === 0 ? 'high' : 'low'}
               decoding="async"

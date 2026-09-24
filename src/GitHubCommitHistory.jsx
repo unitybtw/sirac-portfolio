@@ -196,7 +196,7 @@ export default function GitHubCommitHistory() {
 
 
   return (
-    <section id="github-activity" style={{ paddingTop: '5rem' }}>
+    <div className="gh-activity-wrapper">
       {/* Section Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
         <div>
@@ -509,6 +509,6 @@ export default function GitHubCommitHistory() {
           </a>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

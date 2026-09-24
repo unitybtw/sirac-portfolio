@@ -1,4 +1,4 @@
-import React, { useEffect, useState, lazy, Suspense } from 'react';
+import React, { useEffect, useState, useRef, lazy, Suspense } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,23 +15,30 @@ const GameLibrary = lazy(() => import('./GameLibrary'));
 
 // ── Page Progress Indicator ──────────────────────────────────────────────
 const PageProgress = () => {
-  const barRef = React.useRef(null);
+  const barRef = useRef(null);
   
   useEffect(() => {
     // Only run JS fallback if browser doesn't support native CSS scroll-timeline
     if (!CSS.supports('animation-timeline: scroll()')) {
+      let docHeight = Math.max(1, document.body.scrollHeight - window.innerHeight);
+      const updateDocHeight = () => {
+        docHeight = Math.max(1, document.body.scrollHeight - window.innerHeight);
+      };
+      window.addEventListener('resize', updateDocHeight, { passive: true });
+
       const handleScroll = () => {
         if (!barRef.current) return;
-        const scrollTop = window.scrollY;
-        const docHeight = document.body.scrollHeight - window.innerHeight;
-        const scrollPercent = docHeight > 0 ? scrollTop / docHeight : 0;
-        barRef.current.style.transform = `scaleX(${scrollPercent})`;
+        const scrollPercent = window.scrollY / docHeight;
+        barRef.current.style.transform = `scaleX(${Math.min(1, Math.max(0, scrollPercent))})`;
       };
       
       window.addEventListener('scroll', handleScroll, { passive: true });
       handleScroll(); // Initial set
       
-      return () => window.removeEventListener('scroll', handleScroll);
+      return () => {
+        window.removeEventListener('scroll', handleScroll);
+        window.removeEventListener('resize', updateDocHeight);
+      };
     }
   }, []);
 
@@ -190,9 +197,9 @@ function App() {
     }
 
     const lenis = new Lenis({
-      lerp: 0.1, // 120Hz'de kaymak hissi: düşük lerp = daha yumuşak, hala tepkisel
+      lerp: 0.14, // Akıcı ve gecikmesiz 120Hz/60Hz tepki
       wheelMultiplier: 1,
-      touchMultiplier: 2,
+      touchMultiplier: 1.5,
       smoothWheel: true,
       smoothTouch: false,
     });
@@ -266,18 +273,25 @@ function App() {
 
   // Parallax for Hero is now handled purely in CSS via .hero-parallax-content
 
-  // Dock durumu: scroll'da kompaktlaşma + aktif bölüm takibi (scrollspy)
-  const [docked, setDocked] = useState(false);
+  // Dock durumu: DOM üzerinden doğrudan classList yönetimi (App re-render etmez)
+  const dockRef = useRef(null);
   const [activeSection, setActiveSection] = useState(null);
 
   useEffect(() => {
     let ticking = false;
+    let isCompact = false;
     const onScroll = () => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
         ticking = false;
-        setDocked(window.scrollY > 48);
+        const compact = window.scrollY > 48;
+        if (compact !== isCompact) {
+          isCompact = compact;
+          if (dockRef.current) {
+            dockRef.current.classList.toggle('is-compact', compact);
+          }
+        }
       });
     };
     onScroll();
@@ -293,26 +307,16 @@ function App() {
       },
       { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
     );
-    // Aktivite bölümü lazy yüklendiği için ilk mount'ta DOM'da olmayabilir.
-    // Var olanı hemen izle, geç geleni MutationObserver ile yakala.
+
     const spyIds = ['hero', 'projects', 'arcade', 'github-activity', 'contact'];
-    const spied = new Set();
-    const trySpy = () => {
-      spyIds.forEach((id) => {
-        if (spied.has(id)) return;
-        const el = document.getElementById(id);
-        if (el) { spy.observe(el); spied.add(id); }
-      });
-      if (spied.size === spyIds.length) mo.disconnect();
-    };
-    trySpy();
-    const mo = new MutationObserver(trySpy);
-    mo.observe(document.getElementById('root'), { childList: true, subtree: true });
+    spyIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) spy.observe(el);
+    });
 
     return () => {
       window.removeEventListener('scroll', onScroll);
       spy.disconnect();
-      mo.disconnect();
     };
   }, []);
 
@@ -332,10 +336,9 @@ function App() {
       <PageProgress />
       
       {/* ── Floating Dock ── */}
-      <motion.nav
-        layout
-        transition={{ layout: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } }}
-        className={`dock${docked ? ' is-compact' : ''}`}
+      <nav
+        ref={dockRef}
+        className="dock"
         aria-label="Primary"
       >
         <a href="#hero" className="dock-mono" title="Siraç G. Şimşek" aria-label="Back to top">
@@ -401,7 +404,7 @@ function App() {
           <Download size={15} />
           <span key={t('btn_view_cv')} className="dock-label dock-label-swap">{t('btn_view_cv')}</span>
         </a>
-      </motion.nav>
+      </nav>
 
       {/* Floating Action Controls for Mobile */}
       <div className="mobile-settings-pill">
@@ -681,9 +684,11 @@ function App() {
         </section>
 
         {/* ── GitHub Commit History Section ── */}
-        <Suspense fallback={null}>
-          <GitHubCommitHistory />
-        </Suspense>
+        <section id="github-activity">
+          <Suspense fallback={<div className="bento-card bento-col-12" style={{ minHeight: '300px' }} />}>
+            <GitHubCommitHistory />
+          </Suspense>
+        </section>
 
         {/* ── Arcade / Game Library ── */}
         <section id="arcade">
