@@ -81,6 +81,15 @@ const resources = {
             "archives_title": "Projects",
             "archives_subtitle": "Selected projects.",
 
+            // ── GitHub Activity ───────────────────────────────────────────
+            "github_section_title": "Commit Activity",
+            "github_section_subtitle": "Real-time commit logs and open-source updates from @unitybtw.",
+            "github_badge_live": "LIVE FROM GITHUB",
+            "github_filter_all": "All Repositories",
+            "github_view_profile": "View @unitybtw on GitHub",
+            "github_commit_hash": "Commit",
+            "github_synced_desc": "Auto-synced with GitHub REST API across active public repositories.",
+
             // ── Featured modules ──────────────────────────────────────────
             "featured_title": "Builds",
             "featured_subtitle": "Interactive browser prototypes.",
@@ -105,6 +114,8 @@ const resources = {
             "arcade_inside_sub": "Interactive Modules",
             "arcade_play": "PLAY",
             "arcade_exit": "EXIT",
+            "arcade_fullscreen": "FULLSCREEN",
+            "arcade_minimize": "MINIMIZE",
             "arcade_set_nickname": "Set Identity",
             "arcade_save_continue": "AUTHORIZE",
             "arcade_scoreboard": "LEADERBOARD",
@@ -162,17 +173,19 @@ const resources = {
 
             // ── Game titles & descriptions ────────────────────────────────
             "games": {
+                "nova_title": "Nova Browser",
+                "nova_desc": "An open-source desktop browser for developers & coding agents built with Electron, React, TypeScript, and Vite. Features a native Model Context Protocol (MCP) server (Port 3020), on-device WebGPU neural execution, zero-knowledge E2EE multi-device sync, Chrome Web Store extension support, and a dual-view split screen.",
                 "m_title": "Legend of the Three Masks",
                 "m_desc": "3D adventure game published on Itch.io — explore levels, find ancient masks, and uncover mysteries. Built with Unity and C#.",
                 "fb_desc": "Classic arcade-style reflex game with high-score tracking and tight gameplay loops.",
-                "macos_title": "macOS Glassmorphic Utilities",
+                "macos_title": "macOS Modern System Utilities",
                 "macos_desc": "Native macOS utility projects built with SwiftUI. Focus on clean layout patterns.",
                 "arcade_title": "Arcade Core",
                 "arcade_desc": "Custom browser-based prototypes.",
                 "signal_title": "Signal: Audio Feedback Utility",
-                "signal_desc": "A premium macOS menu bar application providing real-time mechanical keyboard sound feedback (15+ audio profiles) with a pure glassmorphic UI, dynamic audio pulse visualizer, and WPM analytics. Built with native Swift and low-latency Core Audio.",
+                "signal_desc": "A premium macOS menu bar application providing real-time mechanical keyboard sound feedback (15+ audio profiles) with a refined native UI, dynamic audio pulse visualizer, and WPM analytics. Built with native Swift and low-latency Core Audio.",
                 "aether_title": "Aether Command: Gesture Controller",
-                "aether_desc": "Touchless gesture-based desktop control app using your Mac's camera. Map movements (Pinch, Fist, Swipes) to system actions. Built with power-efficient tracking and a premium glassmorphic UI.",
+                "aether_desc": "Touchless gesture-based desktop control app using your Mac's camera. Map movements (Pinch, Fist, Swipes) to system actions. Built with power-efficient tracking and a polished native UI.",
                 "arcade_engine_title": "Zero-Ads Arcade Engine",
                 "arcade_engine_desc": "A lightweight, open-source (MIT) TypeScript engine for embedding ad-free games into any web app. Features built-in gamepad support, multi-touch virtual controls (joysticks/buttons), persistent session analytics, global sound management, and strict origin validation—all under a 50KB footprint."
             }
@@ -253,6 +266,15 @@ const resources = {
             "archives_title": "Projeler",
             "archives_subtitle": "Seçilmiş çalışmalar.",
 
+            // ── GitHub Activity ───────────────────────────────────────────
+            "github_section_title": "GitHub Commit Geçmişi",
+            "github_section_subtitle": "@unitybtw hesabı altındaki güncel kod commit'leri ve geliştirme akışı.",
+            "github_badge_live": "GITHUB CANLI AKIŞ",
+            "github_filter_all": "Tüm Repolar",
+            "github_view_profile": "GitHub'da @unitybtw Profilini Gör",
+            "github_commit_hash": "Commit",
+            "github_synced_desc": "Açık kaynaklı repolardan GitHub REST API ile anlık senkronize edilir.",
+
             // ── Featured modules ──────────────────────────────────────────
             "featured_title": "Yapılar",
             "featured_subtitle": "Tarayıcı prototipleri.",
@@ -277,6 +299,8 @@ const resources = {
             "arcade_inside_sub": "Etkileşimli Modüller",
             "arcade_play": "OYNA",
             "arcade_exit": "ÇIKIŞ",
+            "arcade_fullscreen": "TAM EKRAN",
+            "arcade_minimize": "KÜÇÜLT",
             "arcade_set_nickname": "Kimlik Belirle",
             "arcade_save_continue": "BAĞLAN",
             "arcade_scoreboard": "SKOR TABLOSU",
@@ -334,17 +358,19 @@ const resources = {
 
             // ── Game titles & descriptions ────────────────────────────────
             "games": {
+                "nova_title": "Nova Browser",
+                "nova_desc": "Yazılımcılar ve yapay zeka ajanları için Electron, React, TypeScript ve Vite ile geliştirilmiş açık kaynaklı masaüstü web tarayıcısı. Dahili Model Context Protocol (MCP) sunucusu (Port 3020), cihaz üzerinde WebGPU yerel yapay zeka çalıştırma, sıfır-bilgi (E2EE) cihazlar arası bulut senkronizasyonu, Chrome Web Store eklenti desteği ve çift ekran bölünmüş görünüm sunar.",
                 "m_title": "Üç Maskenin Efsanesi",
                 "m_desc": "Itch.io'da yayınlanmış 3D macera oyunu — bölümleri keşfet, eski maskeleri bul, gizemleri çöz. Unity / C#.",
                 "fb_desc": "Klasik arcade tarzı refleks oyunu, yüksek skor takibi ile.",
-                "macos_title": "macOS Cam Tasarımlı Araçlar",
+                "macos_title": "macOS Native Araçlar",
                 "macos_desc": "SwiftUI ile geliştirilen native macOS araç projeleri. Temiz arayüz düzenleri odağı.",
                 "arcade_title": "Arcade Portalı",
                 "arcade_desc": "Özel tarayıcı prototipleri.",
                 "signal_title": "Signal: Tuş Sesi Geri Bildirimi",
-                "signal_desc": "Yazdığın her tuşa gerçek zamanlı mekanik klavye ses geri bildirimi veren (15+ ses profili), saf cam arayüzlü (glassmorphism), WPM takipli premium macOS menü çubuğu uygulaması. Native Swift ve düşük gecikmeli Core Audio ile geliştirildi.",
+                "signal_desc": "Yazdığın her tuşa gerçek zamanlı mekanik klavye ses geri bildirimi veren (15+ ses profili), modern ve akıcı arayüzlü, WPM takipli premium macOS menü çubuğu uygulaması. Native Swift ve düşük gecikmeli Core Audio ile geliştirildi.",
                 "aether_title": "Aether Command: Hareket Denetleyici",
-                "aether_desc": "Mac kamerasını kullanarak sistemi el hareketleriyle (Pinch, Fist, Swipes) yönetmeni sağlayan native macOS uygulaması. Güç tasarruflu izleme motoru ve premium cam görsel efekt paneline sahiptir.",
+                "aether_desc": "Mac kamerasını kullanarak sistemi el hareketleriyle (Pinch, Fist, Swipes) yönetmeni sağlayan native macOS uygulaması. Güç tasarruflu izleme motoru ve modern görsel arayüze sahiptir.",
                 "arcade_engine_title": "Zero-Ads Arcade Engine",
                 "arcade_engine_desc": "Herhangi bir web uygulamasına reklamsız oyunlar gömmek için geliştirilmiş hafif, açık kaynaklı (MIT) TypeScript motoru. Entegre gamepad desteği, dokunmatik sanal denetleyiciler (joystick/butonlar), kalıcı oturum analitikleri, ses yönetimi ve iframe güvenlik katmanına sahiptir (50KB altı boyut)."
             }

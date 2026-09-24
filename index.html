@@ -10,6 +10,9 @@
   <!-- Critical resource preconnects — establish TLS early -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Idle'da çekilen API'lerin DNS/TLS'sini önden çöz: scroll anında takılma yapmasın -->
+  <link rel="dns-prefetch" href="https://github-contributions-api.jogruber.de">
+  <link rel="dns-prefetch" href="https://api.web3forms.com">
 
   <!-- Security Headers (meta fallback — HTTP headers preferred when available) -->
   <!-- Referrer: only send origin on cross-origin requests, no path/query leakage -->
@@ -17,23 +20,27 @@
   <!-- Prevent MIME-type sniffing attacks -->
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <!-- Block this page from being embedded in iframes (clickjacking) -->
-  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <!-- NOTE: X-Frame-Options is only honored as an HTTP header; it is ignored (and
+       logs a console error) as a <meta> tag. The host (GitHub Pages) must send
+       it as a header — see the CSP frame-ancestors equivalent if needed. -->
   <!-- Content Security Policy: allow only trusted sources -->
+  <!-- Arcade oyunları harici sitelerden iframe ile gömülür (frame-src listesi aşağıda) -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
     script-src 'self' 'unsafe-inline';
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     font-src 'self' https://fonts.gstatic.com;
     img-src 'self' data: https:;
-    connect-src 'self' https://api.web3forms.com https://sirac-portfolio-default-rtdb.europe-west1.firebasedatabase.app https://firebasedatabase.app;
-    frame-src 'none';
+    connect-src 'self' https://api.web3forms.com https://github-contributions-api.jogruber.de https://sirac-portfolio-default-rtdb.europe-west1.firebasedatabase.app https://firebasedatabase.app;
+    frame-src 'self' https://3kh0.github.io https://64.js.org https://classic.minecraft.net https://d07riv.github.io https://diekmann.github.io https://gabrielecirulli.github.io https://html-classic.itch.zone https://htmlxm.github.io https://kirka.io https://macek.github.io https://mathiasgredal.github.io https://q3js.com https://raw.githack.com https://staticquasar931.github.io https://ubg365.github.io https://wayou.github.io https://www.youtube.com https://x8bitrain.github.io;
     object-src 'none';
     base-uri 'self';
   " />
 
   <!-- Non-critical font stylesheet — async load to avoid render blocking (performance guide: CRP optimization) -->
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap" as="style" fetchpriority="low" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Fira+Code:wght@400;500;600&display=swap"></noscript>
+  <!-- Fira Code kaldırıldı: kodda hiç kullanılmıyordu, boşuna bir font ailesi indiriliyordu -->
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" as="style" fetchpriority="low" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap"></noscript>
 
   <!-- SEO -->
   <meta name="description" content="Siraç Göktuğ Şimşek — Game Developer & UI Engineer. Unity, SwiftUI, React, Blender. Digital Game Design student at Istanbul Kultur University." />

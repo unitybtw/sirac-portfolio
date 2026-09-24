@@ -1,10 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, lazy, Suspense } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database, X, GraduationCap, Award, BookOpen, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database, X, GraduationCap, Award, BookOpen, ChevronDown, ChevronUp, FolderGit2, Activity } from 'lucide-react';
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
+
+// Ekranın altında kalan ağır bileşenler: ilk paint'i bloklamasın,
+// main thread boş kalsın ki scroll 120Hz'de takılmasın.
+const GitHubCommitHistory = lazy(() => import('./GitHubCommitHistory'));
+const NovaBrowserCard = lazy(() => import('./NovaBrowserCard'));
+const GameLibrary = lazy(() => import('./GameLibrary'));
 
 
 // ── Page Progress Indicator ──────────────────────────────────────────────
@@ -32,6 +38,18 @@ const PageProgress = () => {
   return <div className="page-progress-bar" ref={barRef} />;
 };
 
+
+
+// ── Hero giriş varyantları (kademeli: rozet → başlık → alt yazı → butonlar) ──
+const heroParent = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } }
+};
+
+const heroChild = {
+  hidden: { opacity: 0, y: 26 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } }
+};
 
 
 // ── Main App Component ────────────────────────────────────────────────────
@@ -114,7 +132,7 @@ function App() {
       } else {
         setSubmitStatus('error');
       }
-    } catch (err) {
+    } catch {
       setSubmitStatus('error');
     }
   };
@@ -131,7 +149,7 @@ function App() {
   }, [theme]);
 
   // Toggle Theme — smooth vertical wipe via View Transitions API
-  const toggleTheme = (e) => {
+  const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';
 
     // Fallback for browsers without View Transitions
@@ -159,30 +177,43 @@ function App() {
     }, 250);
   };
 
-  // Smooth Scrolling (Optimized)
+  // Smooth Scrolling (120Hz-tuned: lerp-based, leaksiz rAF, reduced-motion saygılı)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       window.history.scrollRestoration = 'manual';
       window.scrollTo(0, 0);
     }
 
+    // Hareket hassasiyeti olan kullanıcıda smooth-scroll'u kapat (erişilebilirlik + pil)
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
     const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      direction: 'vertical',
-      gestureDirection: 'vertical',
-      smooth: true,
-      mouseMultiplier: 1,
-      smoothTouch: false,
+      lerp: 0.1, // 120Hz'de kaymak hissi: düşük lerp = daha yumuşak, hala tepkisel
+      wheelMultiplier: 1,
       touchMultiplier: 2,
-      infinite: false,
+      smoothWheel: true,
+      smoothTouch: false,
     });
 
+    let rafId = 0;
     function raf(time) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
-    requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
+
+    // Expose the real instance + RAF pause/resume helpers so GameLibrary (arcade
+    // modal) can freeze background scrolling. Guards inside GameLibrary treat
+    // anything without a start/stop function (e.g. Vite's leaked module shim on
+    // window.lenis) as absent instead of crashing.
+    window.lenis = lenis;
+    window.lenisRafPause = () => cancelAnimationFrame(rafId);
+    window.lenisRafResume = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(raf);
+    };
 
     // Handle Anchor Clicks smoothly with Lenis
     const handleAnchorClick = (e) => {
@@ -216,7 +247,7 @@ function App() {
         { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
       );
 
-      document.querySelectorAll('.bento-card, .section-title, .section-subtitle').forEach((el) => {
+      document.querySelectorAll('.bento-card, .section-title, .section-subtitle, .contact-info, .contact-form-container').forEach((el) => {
         el.classList.add('js-scroll-reveal');
         observer.observe(el);
       });
@@ -225,59 +256,152 @@ function App() {
     return () => {
       if (observer) observer.disconnect();
       document.removeEventListener('click', handleAnchorClick);
+      cancelAnimationFrame(rafId);
+      if (window.lenis === lenis) window.lenis = undefined;
+      window.lenisRafPause = undefined;
+      window.lenisRafResume = undefined;
       lenis.destroy();
     };
   }, []);
 
   // Parallax for Hero is now handled purely in CSS via .hero-parallax-content
 
+  // Dock durumu: scroll'da kompaktlaşma + aktif bölüm takibi (scrollspy)
+  const [docked, setDocked] = useState(false);
+  const [activeSection, setActiveSection] = useState(null);
+
+  useEffect(() => {
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        setDocked(window.scrollY > 48);
+      });
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    const spy = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            setActiveSection(e.target.id === 'hero' ? null : e.target.id);
+          }
+        });
+      },
+      { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
+    );
+    // Aktivite bölümü lazy yüklendiği için ilk mount'ta DOM'da olmayabilir.
+    // Var olanı hemen izle, geç geleni MutationObserver ile yakala.
+    const spyIds = ['hero', 'projects', 'arcade', 'github-activity', 'contact'];
+    const spied = new Set();
+    const trySpy = () => {
+      spyIds.forEach((id) => {
+        if (spied.has(id)) return;
+        const el = document.getElementById(id);
+        if (el) { spy.observe(el); spied.add(id); }
+      });
+      if (spied.size === spyIds.length) mo.disconnect();
+    };
+    trySpy();
+    const mo = new MutationObserver(trySpy);
+    mo.observe(document.getElementById('root'), { childList: true, subtree: true });
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      spy.disconnect();
+      mo.disconnect();
+    };
+  }, []);
+
+  const dockLinks = [
+    { id: 'projects', anim: 'projects', href: '#projects', label: t('archives_title'), icon: <FolderGit2 size={17} /> },
+    { id: 'github-activity', anim: 'github-activity', href: '#github-activity', label: i18n.language === 'tr' ? 'Aktivite' : 'Activity', icon: <Activity size={17} /> },
+    { id: 'arcade', anim: 'arcade', href: '#arcade', label: t('arcade_section_title'), icon: <Gamepad2 size={17} /> },
+    { id: 'contact', anim: 'contact', href: '#contact', label: t('nav_contact'), icon: <Mail size={17} /> },
+  ];
+
+  // Arcade (oyun kütüphanesi) modal durumu
+  const [isArcadeOpen, setIsArcadeOpen] = useState(false);
+  const [activeGameId, setActiveGameId] = useState(null);
+
   return (
     <>
       <PageProgress />
       
-      {/* ── Navbar ── */}
-      <nav className="glass-panel">
-        <div className="nav-name">
-          {t('nav_name')}
-        </div>
-        <div className="nav-links">
-          <a href="#about">{t('nav_about')}</a>
-          <a href="#timeline">{t('timeline_title')}</a>
-          <a href="#projects">{t('archives_title')}</a>
-          <a href={`${import.meta.env.BASE_URL}cv.pdf`} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '4px', borderLeft: '1px solid var(--border-subtle)', paddingLeft: '1rem', marginLeft: '0.5rem' }}>
-            <Download size={14} /> {t('btn_view_cv')}
-          </a>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div className="desktop-only-controls" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-            {/* Language Switcher */}
-            <button 
-              onClick={toggleLanguage} 
-              className="btn-outline" 
-              style={{ padding: '0.4rem', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              title="Change Language"
-            >
-              <span style={{ fontSize: '0.75rem', fontWeight: 'bold', textTransform: 'uppercase' }}>
-                {i18n.language === 'tr' ? 'EN' : 'TR'}
-              </span>
-            </button>
+      {/* ── Floating Dock ── */}
+      <motion.nav
+        layout
+        transition={{ layout: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } }}
+        className={`dock${docked ? ' is-compact' : ''}`}
+        aria-label="Primary"
+      >
+        <a href="#hero" className="dock-mono" title="Siraç G. Şimşek" aria-label="Back to top">
+          S
+        </a>
 
-            {/* Theme Switcher */}
-            <button 
-              onClick={(e) => toggleTheme(e)} 
-              className="btn-outline" 
-              style={{ padding: '0.4rem', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-              title="Toggle Theme"
-            >
-              {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
-            </button>
-          </div>
+        <span className="dock-sep" aria-hidden="true" />
 
-          <a href="#contact" className="btn-primary" style={{ padding: '0.4rem 1rem' }}>
-            {t('nav_contact')}
+        {dockLinks.map((l) => (
+          <a
+            key={l.id}
+            href={l.href}
+            data-anim={l.anim}
+            title={l.label}
+            aria-label={l.label}
+            aria-current={activeSection === l.id ? 'true' : undefined}
+            className={`dock-item${activeSection === l.id ? ' is-active' : ''}`}
+          >
+            {activeSection === l.id && (
+              <motion.span
+                layoutId="dock-pill"
+                className="dock-pill"
+                transition={{ type: 'spring', stiffness: 500, damping: 38 }}
+              />
+            )}
+            <span className="dock-icon">{l.icon}</span>
+            <span key={l.label} className="dock-label dock-label-swap">{l.label}</span>
           </a>
-        </div>
-      </nav>
+        ))}
+
+        <span className="dock-sep" aria-hidden="true" />
+
+        {/* Language */}
+        <button
+          onClick={toggleLanguage}
+          className="dock-icon-btn dock-control"
+          title="Change Language"
+          aria-label="Change Language"
+        >
+          <span key={i18n.language} className="dock-swap dock-lang">{i18n.language === 'tr' ? 'EN' : 'TR'}</span>
+        </button>
+
+        {/* Theme */}
+        <button
+          onClick={toggleTheme}
+          className="dock-icon-btn dock-control"
+          title="Toggle Theme"
+          aria-label="Toggle Theme"
+        >
+          <span key={theme} className="dock-swap">
+            {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
+          </span>
+        </button>
+
+        {/* CV — öne çıkan buton */}
+        <a
+          href={`${import.meta.env.BASE_URL}cv.pdf`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="dock-cv"
+          title={t('btn_view_cv')}
+        >
+          <Download size={15} />
+          <span key={t('btn_view_cv')} className="dock-label dock-label-swap">{t('btn_view_cv')}</span>
+        </a>
+      </motion.nav>
 
       {/* Floating Action Controls for Mobile */}
       <div className="mobile-settings-pill">
@@ -313,23 +437,23 @@ function App() {
         {/* ── Hero Section ── */}
         <section className="hero-section" id="hero">
           <div className="hero-parallax-content">
-            <motion.div 
-              initial={{ opacity: 0, y: 30, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }} 
+            <motion.div
+              variants={heroParent}
+              initial="hidden"
+              animate="show"
             >
-            <div style={{ display: 'inline-block', padding: '0.4rem 1rem', background: 'var(--border-subtle)', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 600, marginBottom: '1.5rem' }}>
+            <motion.div variants={heroChild} style={{ display: 'inline-block', padding: '0.4rem 1rem', background: 'var(--border-subtle)', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 600, marginBottom: '1.5rem' }}>
               {t('badge_hire')}
-            </div>
-            <h1 className="hero-title">
+            </motion.div>
+            <motion.h1 variants={heroChild} className="hero-title">
               {t('hero_title_1')}<br/>
               <span style={{ color: 'var(--text-secondary)' }}>{t('hero_title_2')}</span>
-            </h1>
-            <p className="hero-subtitle">
+            </motion.h1>
+            <motion.p variants={heroChild} className="hero-subtitle">
               {t('hero_subtitle_1')} <br/>
               {t('hero_subtitle_2')}
-            </p>
-            <div className="hero-buttons">
+            </motion.p>
+            <motion.div variants={heroChild} className="hero-buttons">
               <a href="#projects" className="btn-primary">
                 {t('btn_explore')} <ArrowRight size={18} />
               </a>
@@ -339,7 +463,7 @@ function App() {
               <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn-outline">
                 <Github size={18} /> {t('btn_repos')}
               </a>
-            </div>
+            </motion.div>
             </motion.div>
           </div>
         </section>
@@ -466,7 +590,7 @@ function App() {
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: 'auto', opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                          transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                         >
                           <ul className="timeline-details-list">
                             {t(event.detailsKey, { returnObjects: true }).map((detail, idx) => (
@@ -489,8 +613,13 @@ function App() {
           <p className="section-subtitle">{t('archives_subtitle')}</p>
 
           <div className="bento-grid">
+            {/* Flagship Project: Nova Browser with Screenshot Showcase */}
+            <Suspense fallback={<div className="bento-card bento-col-12" style={{ minHeight: '300px' }} />}>
+              <NovaBrowserCard />
+            </Suspense>
+
             {/* Featured Project 1: Legend of the Three Masks */}
-            <div className="bento-card bento-col-12" style={{ borderTop: '4px solid var(--text-primary)' }}>
+            <div className="bento-card bento-col-12">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                   <h3 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>{t('games.m_title')}</h3>
@@ -507,7 +636,7 @@ function App() {
             </div>
 
             {/* Featured Project 2: Zero-Ads Arcade Engine */}
-            <div className="bento-card bento-col-12" style={{ borderTop: '4px solid var(--text-primary)' }}>
+            <div className="bento-card bento-col-12">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                   <h3 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>{t('games.arcade_engine_title')}</h3>
@@ -550,6 +679,25 @@ function App() {
             </div>
           </div>
         </section>
+
+        {/* ── GitHub Commit History Section ── */}
+        <Suspense fallback={null}>
+          <GitHubCommitHistory />
+        </Suspense>
+
+        {/* ── Arcade / Game Library ── */}
+        <section id="arcade">
+          <h2 className="section-title">{t('arcade_section_title')}</h2>
+          <p className="section-subtitle">{t('arcade_section_subtitle')}</p>
+          <Suspense fallback={<div className="bento-card bento-col-12" style={{ minHeight: '320px' }} />}>
+            <GameLibrary
+              isOpen={isArcadeOpen}
+              setIsOpen={setIsArcadeOpen}
+              activeGameId={activeGameId}
+              setActiveGameId={setActiveGameId}
+            />
+          </Suspense>
+        </section>
       </motion.main>
 
       {/* ── Footer / Contact ── */}
@@ -576,13 +724,13 @@ function App() {
               </a>
             </div>
             
-            <div className="availability-card glass-panel" style={{ padding: '1.25rem', border: '1px solid var(--border-subtle)', borderRadius: '12px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+            <div className="availability-card" style={{ padding: '1.25rem', border: '1px solid var(--border-subtle)', borderRadius: '12px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
               <span className="dot-pulse" style={{ display: 'inline-block', width: '8px', height: '8px', background: '#22c55e', borderRadius: '50%', marginRight: '8px' }}></span>
               {t('about_stat_4_val')}
             </div>
           </div>
           
-          <div className="contact-form-container glass-panel">
+          <div className="contact-form-container">
             <form onSubmit={handleFormSubmit} className="contact-form">
               <div className="form-group">
                 <label htmlFor="name">{t('form_name')}</label>
@@ -626,17 +774,33 @@ function App() {
                 ></textarea>
               </div>
 
-              {submitStatus === 'success' && (
-                <div className="form-alert alert-success">
-                  {t('form_success')}
-                </div>
-              )}
+              <AnimatePresence initial={false}>
+                {submitStatus === 'success' && (
+                  <motion.div
+                    key="ok"
+                    initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    className="form-alert alert-success"
+                  >
+                    {t('form_success')}
+                  </motion.div>
+                )}
 
-              {submitStatus === 'error' && (
-                <div className="form-alert alert-danger">
-                  {t('form_error')}
-                </div>
-              )}
+                {submitStatus === 'error' && (
+                  <motion.div
+                    key="err"
+                    initial={{ opacity: 0, y: -8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    className="form-alert alert-danger"
+                  >
+                    {t('form_error')}
+                  </motion.div>
+                )}
+              </AnimatePresence>
               
               <button 
                 type="submit" 

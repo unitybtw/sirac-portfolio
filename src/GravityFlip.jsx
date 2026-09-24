@@ -1,12 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Play } from 'lucide-react';
 
-const AimTrainer = ({ onGameOver }) => {
+const GravityFlip = ({ onGameOver }) => {
     const canvasRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [score, setScore] = useState(0);
-    const onGameOverRef = useRef(onGameOver);
-    useEffect(() => { onGameOverRef.current = onGameOver; }, [onGameOver]);
 
   
 // --- Audio Helper ---
@@ -77,51 +75,38 @@ const playSound = (type) => {
         if (!isPlaying) return;
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
-        let target = { x: 200, y: 200, r: 20, timer: 60 };
-        let currentScore = 0;
+        let p = { y: 350, grav: 1 }, walls = [], frame = 0, curr = 0;
 
-        const clickHandler = (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-      const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-            if (Math.hypot(x - target.x, y - target.y) < target.r) {
-                currentScore++; setScore(currentScore);
-                target = {
-                    x: Math.random() * (canvas.width - 100) + 50,
-                    y: Math.random() * (canvas.height - 100) + 50,
-                    r: Math.max(10, 30 - currentScore * 0.5),
-                    timer: Math.max(20, 60 - currentScore)
-                };
-            } else {
-                if (onGameOverRef.current) onGameOverRef.current(currentScore); setIsPlaying(false);
-            }
-        };
-        canvas.addEventListener('mousedown', clickHandler);
+        const flip = (e) => { if (e.type === 'mousedown' || e.code === 'Space') p.grav *= -1; };
+        window.addEventListener('mousedown', flip); window.addEventListener('keydown', flip);
 
-        let animId;
+        let anim;
         
     let _lastFrameTime = 0;
     const draw = () => {
       let _now = Date.now();
       if (_now - _lastFrameTime < 15) {
-          animId = window.requestAnimationFrame(draw);
+          anim = window.requestAnimationFrame(draw);
           return;
       }
       _lastFrameTime = _now;
             ctx.fillStyle = '#050508'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            target.timer--;
+            p.y += p.grav * 8;
+            if (p.y < 20) p.y = 20; if (p.y > 350) p.y = 350;
 
-            if (target.timer <= 0) { { playSound('boom'); if (onGameOverRef.current) onGameOverRef.current(currentScore); setIsPlaying(false); return; } }
+            ctx.fillStyle = '#00ff00'; ctx.fillRect(50, p.y, 30, 30);
 
-            ctx.fillStyle = '#00f0ff';
-            ctx.shadowBlur = 15; ctx.shadowColor = '#00f0ff';
-            ctx.beginPath(); ctx.arc(target.x, target.y, target.r, 0, Math.PI * 2); ctx.fill();
-            ctx.shadowBlur = 0;
+            if (frame++ % 40 === 0) walls.push({ x: canvas.width, y: Math.random() > 0.5 ? 20 : 350, w: 30, h: 30 });
+            for (let w of walls) {
+                w.x -= 6; ctx.fillStyle = '#ffaa00'; ctx.fillRect(w.x, w.y, w.w, w.h);
+                if (50 < w.x + w.w && 80 > w.x && p.y < w.y + w.h && p.y + 30 > w.y) { { playSound('boom'); if (onGameOver) onGameOver(score); setIsPlaying(false); return; } }
+            }
 
-            animId = requestAnimationFrame(draw);
-        };
-        draw();
-        return () => { cancelAnimationFrame(animId); canvas.removeEventListener('mousedown', clickHandler); }
+            curr += 0.1; setScore(Math.floor(curr));
+            anim = requestAnimationFrame(draw);
+        }; draw();
+
+        return () => { cancelAnimationFrame(anim); window.removeEventListener('mousedown', flip); window.removeEventListener('keydown', flip); };
     }, [isPlaying]);
 
     
@@ -130,18 +115,18 @@ const playSound = (type) => {
     useEffect(() => { scoreRef.current = score; }, [score]);
     useEffect(() => {
         return () => {
-            if (onGameOverRef.current) onGameOverRef.current(scoreRef.current);
+            if (onGameOver) onGameOver(scoreRef.current);
         };
-    }, []);
+    }, [onGameOver]);
 
     return <div style={{ position: 'relative', width: '100%', height: '100%', background: '#050508' }}>
-        <canvas ref={canvasRef} width={600} height={400} style={{ width: '100%', height: '100%', objectFit: 'contain', cursor: isPlaying ? 'crosshair' : 'default' }} />
-        {isPlaying ? <div style={{ position: 'absolute', top: 10, left: 10, color: '#fff', fontFamily: 'monospace' }}>Score: {score}</div>
-            : <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.8)' }}>
-                <h2 className="text-gradient" style={{ marginBottom: '1rem' }}>Aim Trainer</h2>
-                {score > 0 && <p style={{ color: '#00f0ff', marginBottom: '1rem' }}>Score: {score}</p>}
-                <button className="btn btn-primary" onClick={() => { setScore(0); setIsPlaying(true); }}><Play size={18} /> START</button>
+        <canvas ref={canvasRef} width={600} height={400} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+        {isPlaying ? <div style={{ position: 'absolute', top: 10, left: 10, color: '#fff' }}>Score: {score}</div> :
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'rgba(0,0,0,0.8)', flexDirection: 'column' }}>
+                <h2 className="text-gradient" style={{ marginBottom: '1rem' }}>Gravity Flip</h2>
+                {score > 0 && <p style={{ color: '#00ff00', marginBottom: '1rem' }}>Score: {score}</p>}
+                <button className="btn btn-primary" onClick={() => { setScore(0); setIsPlaying(true); }}><Play size={18} /> PLAY</button>
             </div>}
     </div>;
 };
-export default AimTrainer;
+export default GravityFlip;

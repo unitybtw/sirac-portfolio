@@ -1,12 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Play } from 'lucide-react';
 
-const AimTrainer = ({ onGameOver }) => {
+const SimonSays = ({ onGameOver }) => {
     const canvasRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [score, setScore] = useState(0);
-    const onGameOverRef = useRef(onGameOver);
-    useEffect(() => { onGameOverRef.current = onGameOver; }, [onGameOver]);
 
   
 // --- Audio Helper ---
@@ -76,52 +74,77 @@ const playSound = (type) => {
   useEffect(() => {
         if (!isPlaying) return;
         const canvas = canvasRef.current;
+        if (!canvas) return;
         const ctx = canvas.getContext('2d');
-        let target = { x: 200, y: 200, r: 20, timer: 60 };
-        let currentScore = 0;
 
-        const clickHandler = (e) => {
+        let seq = [], userSeq = [], showing = false, flash = -1, frame = 0;
+        const colors = ['#ff00ff', '#00f0ff', '#00ff00', '#ffaa00'];
+        const rects = [
+            { x: canvas.width / 2 - 110, y: canvas.height / 2 - 110 },
+            { x: canvas.width / 2 + 10, y: canvas.height / 2 - 110 },
+            { x: canvas.width / 2 - 110, y: canvas.height / 2 + 10 },
+            { x: canvas.width / 2 + 10, y: canvas.height / 2 + 10 }
+        ];
+
+        const nextLvl = () => {
+            seq.push(Math.floor(Math.random() * 4));
+            userSeq = []; showing = true; frame = 0; flash = -1;
+            setScore(seq.length);
+        };
+        nextLvl();
+
+        const clk = (e) => {
+            if (showing) return;
             const rect = canvas.getBoundingClientRect();
-            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-      const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-            if (Math.hypot(x - target.x, y - target.y) < target.r) {
-                currentScore++; setScore(currentScore);
-                target = {
-                    x: Math.random() * (canvas.width - 100) + 50,
-                    y: Math.random() * (canvas.height - 100) + 50,
-                    r: Math.max(10, 30 - currentScore * 0.5),
-                    timer: Math.max(20, 60 - currentScore)
-                };
-            } else {
-                if (onGameOverRef.current) onGameOverRef.current(currentScore); setIsPlaying(false);
+            const x = e.clientX - rect.left, y = e.clientY - rect.top;
+
+            for (let i = 0; i < 4; i++) {
+                if (x > rects[i].x && x < rects[i].x + 100 && y > rects[i].y && y < rects[i].y + 100) {
+                    userSeq.push(i); flash = i;
+                    setTimeout(() => flash = -1, 250);
+
+                    if (seq[userSeq.length - 1] !== i) { { playSound('boom'); if (onGameOver) onGameOver(score); setIsPlaying(false); return; } }
+                    if (userSeq.length === seq.length) setTimeout(nextLvl, 1000);
+                    break;
+                }
             }
         };
-        canvas.addEventListener('mousedown', clickHandler);
+        canvas.addEventListener('mousedown', clk);
 
-        let animId;
+        let anim;
         
     let _lastFrameTime = 0;
     const draw = () => {
       let _now = Date.now();
       if (_now - _lastFrameTime < 15) {
-          animId = window.requestAnimationFrame(draw);
+          anim = window.requestAnimationFrame(draw);
           return;
       }
       _lastFrameTime = _now;
             ctx.fillStyle = '#050508'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            target.timer--;
 
-            if (target.timer <= 0) { { playSound('boom'); if (onGameOverRef.current) onGameOverRef.current(currentScore); setIsPlaying(false); return; } }
+            if (showing) {
+                if (frame % 45 === 0) {
+                    let idx = Math.floor(frame / 45) - 1;
+                    if (idx >= seq.length) { showing = false; flash = -1; }
+                    else { flash = seq[idx]; setTimeout(() => flash = -1, 300); }
+                }
+                frame++;
+            }
 
-            ctx.fillStyle = '#00f0ff';
-            ctx.shadowBlur = 15; ctx.shadowColor = '#00f0ff';
-            ctx.beginPath(); ctx.arc(target.x, target.y, target.r, 0, Math.PI * 2); ctx.fill();
-            ctx.shadowBlur = 0;
+            for (let i = 0; i < 4; i++) {
+                ctx.globalAlpha = flash === i ? 1 : 0.2;
+                ctx.fillStyle = colors[i];
+                if (flash === i) { ctx.shadowBlur = 20; ctx.shadowColor = colors[i]; }
+                ctx.fillRect(rects[i].x, rects[i].y, 100, 100);
+                ctx.shadowBlur = 0;
+            }
+            ctx.globalAlpha = 1;
 
-            animId = requestAnimationFrame(draw);
-        };
-        draw();
-        return () => { cancelAnimationFrame(animId); canvas.removeEventListener('mousedown', clickHandler); }
+            anim = requestAnimationFrame(draw);
+        }; draw();
+
+        return () => { cancelAnimationFrame(anim); canvas.removeEventListener('mousedown', clk); };
     }, [isPlaying]);
 
     
@@ -130,18 +153,19 @@ const playSound = (type) => {
     useEffect(() => { scoreRef.current = score; }, [score]);
     useEffect(() => {
         return () => {
-            if (onGameOverRef.current) onGameOverRef.current(scoreRef.current);
+            if (onGameOver) onGameOver(scoreRef.current);
         };
-    }, []);
+    }, [onGameOver]);
 
     return <div style={{ position: 'relative', width: '100%', height: '100%', background: '#050508' }}>
-        <canvas ref={canvasRef} width={600} height={400} style={{ width: '100%', height: '100%', objectFit: 'contain', cursor: isPlaying ? 'crosshair' : 'default' }} />
-        {isPlaying ? <div style={{ position: 'absolute', top: 10, left: 10, color: '#fff', fontFamily: 'monospace' }}>Score: {score}</div>
-            : <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.8)' }}>
-                <h2 className="text-gradient" style={{ marginBottom: '1rem' }}>Aim Trainer</h2>
-                {score > 0 && <p style={{ color: '#00f0ff', marginBottom: '1rem' }}>Score: {score}</p>}
-                <button className="btn btn-primary" onClick={() => { setScore(0); setIsPlaying(true); }}><Play size={18} /> START</button>
+        <canvas ref={canvasRef} width={600} height={400} style={{ width: '100%', height: '100%', objectFit: 'contain', cursor: 'pointer' }} />
+        {isPlaying ? <div style={{ position: 'absolute', top: 10, left: 10, color: '#fff', fontFamily: 'monospace' }}>Level: {score}</div> :
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', justifyContent: 'center', alignItems: 'center', background: 'rgba(0,0,0,0.8)', flexDirection: 'column' }}>
+                <h2 className="text-gradient" style={{ marginBottom: '1rem' }}>Simon Says</h2>
+                <p style={{ color: '#aaa', marginBottom: '1rem', fontFamily: 'monospace' }}>Memorize the pattern.</p>
+                {score > 1 && <p style={{ color: '#00f0ff', marginBottom: '1rem' }}>Level: {score}</p>}
+                <button className="btn btn-primary" onClick={() => { setScore(0); setIsPlaying(true); }}><Play size={18} /> PLAY</button>
             </div>}
     </div>;
 };
-export default AimTrainer;
+export default SimonSays;

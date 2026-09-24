@@ -1,0 +1,550 @@
+/* ── Arcade / Oyun Kütüphanesi ─────────────────────────────────────
+   Dış çerçeve (portal kartı, modal, sekmeler, kartlar, butonlar)
+   sitenin tasarım sistemini kullanır: Zinc renk tokenları, Outfit
+   başlıklar, 100px pill butonlar. Böylece açık ve koyu temada
+   sitenin geri kalanıyla aynı görünür.
+   Oyunun İÇ yüzeyi (canvas/iframe sahne alanı) kasıtlı olarak koyu
+   kalır — oyunlar neon-on-black tasarlandı; sinema modu oyun içi.
+   Bu dosya lazy chunk ile birlikte yüklenir. */
+
+/* Site tokenlarını kullan; oyun içi yüzeyler için lokal fallback */
+.arcade-portal-card,
+.arcade-modal-overlay {
+  --text-muted: var(--text-secondary, #71717a);
+  --text-headers: var(--text-primary, #09090b);
+  --text-main: var(--text-primary, #09090b);
+  --accent-cyan: var(--accent-cta, #2563eb);
+  --accent-violet: var(--accent-cta-hover, #1d4ed8);
+  --accent-cyan-rgb: 37, 99, 235;
+}
+
+/* ── Portal kartı (bölümde duran giriş kartı) ── */
+.arcade-portal-card {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: var(--bento-radius, 24px);
+  padding: 3.5rem 2rem;
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border-subtle, #e4e4e7);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.arcade-portal-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--text-primary, #09090b);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.1);
+}
+
+.arcade-portal-scanline {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.015) 4px
+  );
+}
+
+.arcade-portal-bg-rotate {
+  position: absolute;
+  top: -40%;
+  left: -40%;
+  width: 180%;
+  height: 180%;
+  pointer-events: none;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(var(--accent-cyan-rgb), 0.05) 60deg,
+    transparent 120deg,
+    rgba(var(--accent-violet-rgb), 0.05) 200deg,
+    transparent 260deg
+  );
+  animation: arcade-spin 14s linear infinite;
+}
+
+@keyframes arcade-spin {
+  to { transform: rotate(360deg); }
+}
+
+.arcade-portal-icon {
+  width: 92px;
+  height: 92px;
+  border-radius: 26px;
+  background: var(--text-primary, #09090b);
+  color: var(--bg-primary, #fff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.75rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+.arcade-portal-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.75rem;
+  padding: 0.9rem 1.5rem;
+  background: var(--bg-primary, #fafafa);
+  border: 1px solid var(--border-subtle, #e4e4e7);
+  border-radius: 100px;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.arcade-portal-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-subtle, #e4e4e7);
+}
+
+@keyframes bar-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* Site başlıklarıyla aynı degrade davranışı */
+.arcade-portal-card .text-gradient,
+.arcade-modal-overlay .text-gradient {
+  background: linear-gradient(135deg, var(--text-primary, #09090b) 0%, var(--accent-cta, #2563eb) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── Modal ── */
+.arcade-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100005; /* Must sit above page-progress-bar (10001) and mobile nav (9999) */
+  background: var(--bg-primary, #fafafa);
+  color: var(--text-primary, #09090b);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+.arcade-modal-header {
+  position: relative;
+  z-index: 20;
+  flex-shrink: 0;
+  width: 100%;
+  background: var(--bg-primary, #fafafa);
+  border-bottom: 1px solid var(--border-subtle, #e4e4e7);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  padding: 0.85rem 1.5rem;
+  box-sizing: border-box;
+}
+
+.arcade-modal-header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.arcade-modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.arcade-header-controls {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.arcade-close-btn {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary, #71717a);
+  border: 1px solid var(--border-subtle, #e4e4e7);
+  background: var(--bg-card, #fff);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.arcade-close-btn:hover {
+  color: var(--text-primary, #09090b);
+  border-color: var(--text-primary, #09090b);
+  transform: scale(1.08);
+}
+
+.arcade-modal-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.arcade-modal-body-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Modal içi ortak elemanlar */
+.arcade-panel {
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border-subtle, #e4e4e7);
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+}
+
+.arcade-input {
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border-subtle, #e4e4e7);
+  border-radius: 12px;
+  color: var(--text-primary, #09090b);
+  outline: none;
+  transition: border-color 0.2s ease, width 0.25s ease;
+}
+
+.arcade-input::placeholder {
+  color: var(--text-secondary, #71717a);
+}
+
+.arcade-input:focus {
+  border-color: var(--accent-cta, #2563eb);
+}
+
+.arcade-select {
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border-subtle, #e4e4e7);
+  border-radius: 100px;
+  color: var(--text-primary, #09090b);
+  padding: 0.5rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  outline: none;
+}
+
+/* Site .btn sistemiyle aynı pill görünüm */
+.arcade-modal-overlay .btn {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 100px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.arcade-modal-overlay .btn:active {
+  transform: scale(0.96);
+}
+
+.arcade-modal-overlay .btn-primary {
+  background: var(--text-primary, #09090b);
+  color: var(--bg-primary, #fff);
+  border: 1px solid transparent;
+}
+
+.arcade-modal-overlay .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.arcade-modal-overlay .btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.arcade-modal-overlay .btn-outline {
+  background: var(--bg-card, #fff);
+  color: var(--text-primary, #09090b);
+  border: 1px solid var(--border-subtle, #e4e4e7);
+}
+
+.arcade-modal-overlay .btn-outline:hover {
+  border-color: var(--text-primary, #09090b);
+}
+
+/* ── Sekme butonları (site tag/pill stili) ── */
+.arcade-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 100px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary, #71717a);
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border-subtle, #e4e4e7);
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+}
+
+.arcade-tab-btn:hover {
+  color: var(--text-primary, #09090b);
+  border-color: var(--text-primary, #09090b);
+  transform: translateY(-1px);
+}
+
+.arcade-tab-btn.active {
+  color: var(--bg-primary, #fff);
+  background: var(--text-primary, #09090b);
+  border-color: var(--text-primary, #09090b);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* ── Oyun ızgarası + kartlar ── */
+.arcade-games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.arcade-games-grid.is-scrolling .arcade-game-card {
+  pointer-events: none;
+}
+
+.arcade-game-card {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 18px;
+  padding: 1.4rem 1.25rem;
+  background: var(--bg-card, #fff);
+  border: 1px solid var(--border-subtle, #e4e4e7);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.arcade-game-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--game-color, var(--accent-cta, #2563eb));
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+}
+
+.arcade-card-glow {
+  position: absolute;
+  top: -30%;
+  right: -30%;
+  width: 70%;
+  height: 70%;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--game-color, var(--accent-cta, #2563eb)) 14%, transparent), transparent 70%);
+  pointer-events: none;
+}
+
+.arcade-card-badge {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary, #71717a);
+  background: var(--bg-primary, #fafafa);
+  border: 1px solid var(--border-subtle, #e4e4e7);
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+
+.arcade-card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  color: var(--game-color, var(--accent-cta, #2563eb));
+  background: color-mix(in srgb, var(--game-color, var(--accent-cta, #2563eb)) 10%, var(--bg-card, #fff));
+  border: 1px solid color-mix(in srgb, var(--game-color, var(--accent-cta, #2563eb)) 30%, transparent);
+}
+
+.arcade-card-info h3 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  font-family: var(--font-heading, 'Outfit', sans-serif);
+  letter-spacing: -0.01em;
+  color: var(--text-primary, #09090b);
+}
+
+.arcade-card-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.arcade-card-score {
+  font-size: 0.72rem;
+  font-family: var(--font-body, 'Inter', sans-serif);
+}
+
+.arcade-score-value {
+  color: var(--accent-cta, #2563eb);
+}
+
+.arcade-score-number {
+  font-weight: 800;
+}
+
+.arcade-score-empty {
+  color: var(--text-secondary, #71717a);
+  letter-spacing: 0.06em;
+  opacity: 0.7;
+}
+
+.arcade-card-launch {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: var(--game-color, var(--accent-cta, #2563eb));
+}
+
+/* ── Oyun sahnesi (pencere) ──
+   Genişlik sadece içerik kadar; oran oyunun kendisine bırakılır.
+   max-height viewport'a göre clamp'lenir; mobilde genişlik-zorlamalı
+   yükseklik yok (taşma/kırılma giderildi). */
+.arcade-game-frame {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  height: min(70vh, 620px);
+  min-height: 320px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #050508; /* oyun içi yüzey her zaman koyu */
+  border: 1px solid var(--border-subtle, #e4e4e7);
+  box-shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.35);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Oyun içeriği çerçeveye HAPSEDİLİR: absolute + inset, intrinsic genişlik
+   (geniş iframe/canvas içerikleri) yüzünden taşmayı imkânsız kılar. */
+.arcade-game-frame > *:not(.arcade-frame-overlay-controls) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Tam Ekran (Fullscreen) Modu */
+.arcade-game-frame:fullscreen,
+.arcade-game-frame:-webkit-full-screen,
+.arcade-game-frame.is-fullscreen {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  border-radius: 0 !important;
+  border: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #000000 !important;
+  box-shadow: none !important;
+}
+
+/* Çerçeve içi Hızlı Kontrol Katmanı */
+.arcade-frame-overlay-controls {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.arcade-floating-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(15, 15, 20, 0.75);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.arcade-game-frame:hover .arcade-floating-btn,
+.arcade-floating-btn:focus,
+.arcade-floating-btn:hover {
+  opacity: 1;
+  background: rgba(20, 20, 30, 0.95);
+  transform: scale(1.05);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+@media (max-width: 768px) {
+  .arcade-game-frame:not(:fullscreen) {
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* ── Skor tablosu ── */
+.arcade-scoreboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .arcade-portal-card {
+    padding: 2.5rem 1.25rem;
+  }
+  .arcade-scoreboard-grid {
+    grid-template-columns: 1fr;
+  }
+  .arcade-modal-header {
+    padding: 0.75rem 1rem;
+  }
+  .arcade-modal-header-left {
+    gap: 0.75rem;
+  }
+  .arcade-modal-body {
+    padding: 1.25rem 0.75rem 3rem;
+  }
+  .arcade-games-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arcade-portal-bg-rotate {
+    animation: none;
+  }
+}

@@ -6,6 +6,21 @@ export default defineConfig({
   plugins: [react()],
   base: '/',
   build: {
+    target: 'es2020',
+    minify: 'terser',
+    cssMinify: true,
+    sourcemap: false,
+    reportCompressedSize: false,
+    // Küçük ikonları inline'la: HTTP isteği + scroll'da geç yüklenme takılması azalır
+    assetsInlineLimit: 4096,
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        passes: 2,
+      },
+      format: { comments: false },
+    },
     // Raise the warning threshold — vendor-three is intentionally large
     chunkSizeWarningLimit: 1500,
     rollupOptions: {

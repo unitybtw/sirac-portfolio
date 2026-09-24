@@ -1,12 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Play } from 'lucide-react';
 
-const AimTrainer = ({ onGameOver }) => {
+const NeonSnakeGame = ({ onGameOver }) => {
     const canvasRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [score, setScore] = useState(0);
-    const onGameOverRef = useRef(onGameOver);
-    useEffect(() => { onGameOverRef.current = onGameOver; }, [onGameOver]);
 
   
 // --- Audio Helper ---
@@ -77,51 +75,89 @@ const playSound = (type) => {
         if (!isPlaying) return;
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
-        let target = { x: 200, y: 200, r: 20, timer: 60 };
+        let animationId;
+
+        let grid = 20;
+        let snake = [{ x: 160, y: 160 }, { x: 140, y: 160 }, { x: 120, y: 160 }];
+        let dx = grid; let dy = 0;
+        let food = { x: 300, y: 200 };
         let currentScore = 0;
+        let frame = 0;
 
-        const clickHandler = (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-      const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-            if (Math.hypot(x - target.x, y - target.y) < target.r) {
-                currentScore++; setScore(currentScore);
-                target = {
-                    x: Math.random() * (canvas.width - 100) + 50,
-                    y: Math.random() * (canvas.height - 100) + 50,
-                    r: Math.max(10, 30 - currentScore * 0.5),
-                    timer: Math.max(20, 60 - currentScore)
-                };
-            } else {
-                if (onGameOverRef.current) onGameOverRef.current(currentScore); setIsPlaying(false);
-            }
+        const spawnFood = () => {
+            food.x = Math.floor(Math.random() * (canvas.width / grid)) * grid;
+            food.y = Math.floor(Math.random() * (canvas.height / grid)) * grid;
         };
-        canvas.addEventListener('mousedown', clickHandler);
 
-        let animId;
+        const handleKeyDown = (e) => {
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) e.preventDefault();
+            if(["ArrowUp","ArrowDown","Space","w","s"].includes(e.code) || ["ArrowUp","ArrowDown","Space","w","s"].includes(e.key)) e.preventDefault();
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) e.preventDefault();
+            if ((e.key === 'ArrowUp' || e.key === 'w') && dy === 0) { dx = 0; dy = -grid; }
+            else if ((e.key === 'ArrowDown' || e.key === 's') && dy === 0) { dx = 0; dy = grid; }
+            else if ((e.key === 'ArrowLeft' || e.key === 'a') && dx === 0) { dx = -grid; dy = 0; }
+            else if ((e.key === 'ArrowRight' || e.key === 'd') && dx === 0) { dx = grid; dy = 0; }
+        };
+        window.addEventListener('keydown', handleKeyDown, { passive: false });
+
         
     let _lastFrameTime = 0;
     const draw = () => {
       let _now = Date.now();
       if (_now - _lastFrameTime < 15) {
-          animId = window.requestAnimationFrame(draw);
+          animationId = window.requestAnimationFrame(draw);
           return;
       }
       _lastFrameTime = _now;
-            ctx.fillStyle = '#050508'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            target.timer--;
+            animationId = requestAnimationFrame(draw);
+            if (++frame < 5) return; // control speed
+            frame = 0;
 
-            if (target.timer <= 0) { { playSound('boom'); if (onGameOverRef.current) onGameOverRef.current(currentScore); setIsPlaying(false); return; } }
+            ctx.fillStyle = 'rgba(5, 5, 8, 0.4)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.fillStyle = '#00f0ff';
-            ctx.shadowBlur = 15; ctx.shadowColor = '#00f0ff';
-            ctx.beginPath(); ctx.arc(target.x, target.y, target.r, 0, Math.PI * 2); ctx.fill();
+            let head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+            // Wall wrap
+            if (head.x < 0) head.x = canvas.width - grid;
+            else if (head.x >= canvas.width) head.x = 0;
+            if (head.y < 0) head.y = canvas.height - grid;
+            else if (head.y >= canvas.height) head.y = 0;
+
+            // Self collision
+            if (snake.some(s => s.x === head.x && s.y === head.y)) {
+                { playSound('boom'); if (onGameOver) onGameOver(currentScore); setIsPlaying(false); return; }
+            }
+
+            snake.unshift(head);
+
+            if (head.x === food.x && head.y === food.y) {
+                currentScore += 10; setScore(currentScore);
+                spawnFood();
+            } else {
+                snake.pop();
+            }
+
+            ctx.shadowBlur = 10;
+
+            // Draw Food
+            ctx.fillStyle = '#f0f'; ctx.shadowColor = '#f0f';
+            ctx.fillRect(food.x + 2, food.y + 2, grid - 4, grid - 4);
+
+            // Draw Snake
+            ctx.fillStyle = '#00f0ff'; ctx.shadowColor = '#00f0ff';
+            snake.forEach((s, i) => {
+                ctx.fillStyle = i === 0 ? '#fff' : '#00f0ff';
+                ctx.fillRect(s.x + 1, s.y + 1, grid - 2, grid - 2);
+            });
+
             ctx.shadowBlur = 0;
-
-            animId = requestAnimationFrame(draw);
         };
         draw();
-        return () => { cancelAnimationFrame(animId); canvas.removeEventListener('mousedown', clickHandler); }
+        return () => {
+            cancelAnimationFrame(animationId);
+            window.removeEventListener('keydown', handleKeyDown);
+        };
     }, [isPlaying]);
 
     
@@ -130,18 +166,23 @@ const playSound = (type) => {
     useEffect(() => { scoreRef.current = score; }, [score]);
     useEffect(() => {
         return () => {
-            if (onGameOverRef.current) onGameOverRef.current(scoreRef.current);
+            if (onGameOver) onGameOver(scoreRef.current);
         };
-    }, []);
+    }, [onGameOver]);
 
-    return <div style={{ position: 'relative', width: '100%', height: '100%', background: '#050508' }}>
-        <canvas ref={canvasRef} width={600} height={400} style={{ width: '100%', height: '100%', objectFit: 'contain', cursor: isPlaying ? 'crosshair' : 'default' }} />
-        {isPlaying ? <div style={{ position: 'absolute', top: 10, left: 10, color: '#fff', fontFamily: 'monospace' }}>Score: {score}</div>
-            : <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.8)' }}>
-                <h2 className="text-gradient" style={{ marginBottom: '1rem' }}>Aim Trainer</h2>
-                {score > 0 && <p style={{ color: '#00f0ff', marginBottom: '1rem' }}>Score: {score}</p>}
-                <button className="btn btn-primary" onClick={() => { setScore(0); setIsPlaying(true); }}><Play size={18} /> START</button>
-            </div>}
-    </div>;
+    return (
+        <div style={{ position: 'relative', width: '100%', height: '100%', background: '#050508' }}>
+            <canvas ref={canvasRef} width={600} height={400} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            {isPlaying ? (
+                <div style={{ position: 'absolute', top: 10, left: 10, color: '#fff', fontFamily: 'monospace' }}>Score: {score}</div>
+            ) : (
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.7)' }}>
+                    <h2 className="text-gradient" style={{ marginBottom: '1rem' }}>Neon Snake</h2>
+                    {score > 0 && <p style={{ color: 'white', marginBottom: '1rem' }}>Score: {score}</p>}
+                    <button className="btn btn-primary" onClick={() => { setScore(0); setIsPlaying(true); }}><Play size={18} /> PLAY</button>
+                </div>
+            )}
+        </div>
+    );
 };
-export default AimTrainer;
+export default NeonSnakeGame;

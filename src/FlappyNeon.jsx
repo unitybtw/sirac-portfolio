@@ -1,12 +1,10 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Play } from 'lucide-react';
 
-const AimTrainer = ({ onGameOver }) => {
+const FlappyNeon = ({ onGameOver }) => {
     const canvasRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [score, setScore] = useState(0);
-    const onGameOverRef = useRef(onGameOver);
-    useEffect(() => { onGameOverRef.current = onGameOver; }, [onGameOver]);
 
   
 // --- Audio Helper ---
@@ -77,51 +75,89 @@ const playSound = (type) => {
         if (!isPlaying) return;
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
-        let target = { x: 200, y: 200, r: 20, timer: 60 };
+        let animationId;
+
+        let bird = { x: 100, y: canvas.height / 2, velocity: 0, gravity: 0.5, jump: -8, size: 12 };
+        let pipes = [];
+        let frame = 0;
         let currentScore = 0;
 
-        const clickHandler = (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const x = (e.clientX - rect.left) * (canvas.width / rect.width);
-      const y = (e.clientY - rect.top) * (canvas.height / rect.height);
-            if (Math.hypot(x - target.x, y - target.y) < target.r) {
-                currentScore++; setScore(currentScore);
-                target = {
-                    x: Math.random() * (canvas.width - 100) + 50,
-                    y: Math.random() * (canvas.height - 100) + 50,
-                    r: Math.max(10, 30 - currentScore * 0.5),
-                    timer: Math.max(20, 60 - currentScore)
-                };
-            } else {
-                if (onGameOverRef.current) onGameOverRef.current(currentScore); setIsPlaying(false);
+        const pushPipe = () => {
+            let gap = 120;
+            let topH = Math.random() * (canvas.height - gap - 40) + 20;
+            pipes.push({ x: canvas.width, top: topH, bottom: canvas.height - topH - gap, w: 40, passed: false });
+        };
+        pushPipe();
+
+        const handleJump = (e) => {
+            if ((e.type === 'keydown' && (e.code === 'Space' || e.code === 'ArrowUp')) || e.type === 'mousedown') {
+                e.preventDefault();
+                bird.velocity = bird.jump;
             }
         };
-        canvas.addEventListener('mousedown', clickHandler);
+        window.addEventListener('keydown', handleJump, { passive: false });
+        window.addEventListener('mousedown', handleJump);
 
-        let animId;
         
     let _lastFrameTime = 0;
     const draw = () => {
       let _now = Date.now();
       if (_now - _lastFrameTime < 15) {
-          animId = window.requestAnimationFrame(draw);
+          animationId = window.requestAnimationFrame(draw);
           return;
       }
       _lastFrameTime = _now;
-            ctx.fillStyle = '#050508'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-            target.timer--;
+            ctx.fillStyle = '#050508';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            if (target.timer <= 0) { { playSound('boom'); if (onGameOverRef.current) onGameOverRef.current(currentScore); setIsPlaying(false); return; } }
+            bird.velocity += bird.gravity;
+            bird.y += bird.velocity;
 
+            // Draw Bird
             ctx.fillStyle = '#00f0ff';
             ctx.shadowBlur = 15; ctx.shadowColor = '#00f0ff';
-            ctx.beginPath(); ctx.arc(target.x, target.y, target.r, 0, Math.PI * 2); ctx.fill();
-            ctx.shadowBlur = 0;
+            ctx.beginPath();
+            ctx.arc(bird.x, bird.y, bird.size, 0, Math.PI * 2);
+            ctx.fill();
 
-            animId = requestAnimationFrame(draw);
+            // Pipes
+            ctx.fillStyle = '#8a2be2';
+            ctx.shadowColor = '#8a2be2';
+            for (let i = pipes.length - 1; i >= 0; i--) {
+                let p = pipes[i];
+                p.x -= 3;
+                ctx.fillRect(p.x, 0, p.w, p.top);
+                ctx.fillRect(p.x, canvas.height - p.bottom, p.w, p.bottom);
+
+                if (p.x + p.w < bird.x - bird.size && !p.passed) {
+                    p.passed = true; currentScore++; setScore(currentScore);
+                }
+
+                // Collision
+                if (bird.x + bird.size > p.x && bird.x - bird.size < p.x + p.w) {
+                    if (bird.y - bird.size < p.top || bird.y + bird.size > canvas.height - p.bottom) {
+                        { playSound('boom'); if (onGameOver) onGameOver(currentScore); setIsPlaying(false); return; }
+                    }
+                }
+                if (p.x + p.w < 0) pipes.splice(i, 1);
+            }
+
+            if (bird.y + bird.size > canvas.height || bird.y - bird.size < 0) {
+                { playSound('boom'); if (onGameOver) onGameOver(currentScore); setIsPlaying(false); return; }
+            }
+
+            frame++;
+            if (frame % 100 === 0) pushPipe();
+
+            ctx.shadowBlur = 0;
+            animationId = requestAnimationFrame(draw);
         };
         draw();
-        return () => { cancelAnimationFrame(animId); canvas.removeEventListener('mousedown', clickHandler); }
+        return () => {
+            cancelAnimationFrame(animationId);
+            window.removeEventListener('keydown', handleJump);
+            window.removeEventListener('mousedown', handleJump);
+        };
     }, [isPlaying]);
 
     
@@ -130,18 +166,23 @@ const playSound = (type) => {
     useEffect(() => { scoreRef.current = score; }, [score]);
     useEffect(() => {
         return () => {
-            if (onGameOverRef.current) onGameOverRef.current(scoreRef.current);
+            if (onGameOver) onGameOver(scoreRef.current);
         };
-    }, []);
+    }, [onGameOver]);
 
-    return <div style={{ position: 'relative', width: '100%', height: '100%', background: '#050508' }}>
-        <canvas ref={canvasRef} width={600} height={400} style={{ width: '100%', height: '100%', objectFit: 'contain', cursor: isPlaying ? 'crosshair' : 'default' }} />
-        {isPlaying ? <div style={{ position: 'absolute', top: 10, left: 10, color: '#fff', fontFamily: 'monospace' }}>Score: {score}</div>
-            : <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.8)' }}>
-                <h2 className="text-gradient" style={{ marginBottom: '1rem' }}>Aim Trainer</h2>
-                {score > 0 && <p style={{ color: '#00f0ff', marginBottom: '1rem' }}>Score: {score}</p>}
-                <button className="btn btn-primary" onClick={() => { setScore(0); setIsPlaying(true); }}><Play size={18} /> START</button>
-            </div>}
-    </div>;
+    return (
+        <div style={{ position: 'relative', width: '100%', height: '100%', background: '#050508' }}>
+            <canvas ref={canvasRef} width={600} height={400} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            {isPlaying ? (
+                <div style={{ position: 'absolute', top: 20, width: '100%', textAlign: 'center', color: '#fff', fontFamily: 'monospace', fontSize: '2rem', fontWeight: 'bold' }}>{score}</div>
+            ) : (
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.7)' }}>
+                    <h2 className="text-gradient" style={{ marginBottom: '1rem' }}>Flappy Neon</h2>
+                    {score > 0 && <p style={{ color: 'white', marginBottom: '1rem' }}>Score: {score}</p>}
+                    <button className="btn btn-primary" onClick={() => { setScore(0); setIsPlaying(true); }}><Play size={18} /> PLAY</button>
+                </div>
+            )}
+        </div>
+    );
 };
-export default AimTrainer;
+export default FlappyNeon;

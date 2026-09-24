@@ -1,10 +1,24 @@
 import { motion } from 'framer-motion';
 import React, { useState, useRef, useEffect } from 'react';
-import { Maximize, ExternalLink, Info } from 'lucide-react';
+import { Maximize, ExternalLink, Info, Gamepad2 } from 'lucide-react';
 
 const VoxelWorld = () => {
     const [started, setStarted] = useState(true);
     const iframeRef = useRef(null);
+
+    const toggleFullScreen = () => {
+        const elem = document.getElementById("minecraft-game-wrapper");
+        if (!elem) return;
+        if (!document.fullscreenElement) {
+            elem.requestFullscreen().catch(err => {
+                console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+            });
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        }
+    };
 
     useEffect(() => {
         if (started && iframeRef.current) {
@@ -26,7 +40,9 @@ const VoxelWorld = () => {
                         <h2 className="text-gradient" style={{ fontSize: '1.8rem', marginBottom: '1rem', color: '#1ba51b' }}>MINECRAFT 1.5.2</h2>
 
                         <div style={{ background: 'rgba(27, 165, 27, 0.05)', padding: '1rem', borderRadius: '8px', border: '1px solid rgba(27, 165, 27, 0.2)', marginBottom: '1.5rem', textAlign: 'left', fontSize: '0.85rem' }}>
-                            <p style={{ color: '#1ba51b', fontWeight: 'bold', marginBottom: '0.3rem' }}>🎮 Klavyeyi Aktif Etmek İçin:</p>
+                            <p style={{ color: '#1ba51b', fontWeight: 'bold', marginBottom: '0.3rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <Gamepad2 size={15} /> Klavyeyi Aktif Etmek İçin:
+                            </p>
                             <p style={{ color: '#bbb' }}>Oyun açıldıktan sonra klavyenin çalışması için <strong>oyun ekranına bir kez tıklaman</strong> yeterlidir.</p>
                         </div>
 
@@ -56,13 +72,19 @@ const VoxelWorld = () => {
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Minecraft 1.5.2"
                         allow="keyboard-map *; pointer-lock *; fullscreen *"
-                        allowFullScreen
                         tabIndex="0"
                         onLoad={() => {
                             if (iframeRef.current) iframeRef.current.focus();
                         }}
                         onPointerEnter={(e) => e.target.focus()}
                     />
+                    <button
+                        onClick={toggleFullScreen}
+                        style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '6px', borderRadius: '6px', cursor: 'pointer', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                        title="Fullscreen"
+                    >
+                        <Maximize size={16} />
+                    </button>
                 </div>
             )}
         </div>
