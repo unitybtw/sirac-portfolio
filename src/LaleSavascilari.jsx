@@ -1,22 +1,9 @@
 import React, { useState } from 'react';
-import { Download, MonitorPlay, XCircle, Maximize } from 'lucide-react';
+import { Download, MonitorPlay, XCircle } from 'lucide-react';
 
 const LaleSavascilari = ({ onGameOver }) => {
     const [view, setView] = useState('menu'); // menu, watch
 
-    const toggleFullScreen = () => {
-        const elem = document.getElementById("lale-game-wrapper");
-        if (!elem) return;
-        if (!document.fullscreenElement) {
-            elem.requestFullscreen().catch(err => {
-                console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-            });
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        }
-    };
 
     return (
         <div id="lale-game-wrapper" style={{ width: '100%', height: '100%', background: '#000', color: '#0f0', fontFamily: 'monospace', padding: '20px', position: 'relative', overflow: 'hidden' }}>
@@ -77,13 +64,6 @@ const LaleSavascilari = ({ onGameOver }) => {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0' }}>
                         <span>LALE SAVAŞÇILARI OYNANIŞ (YOUTUBE STREAM)</span>
                         <div style={{ display: 'flex', gap: '10px' }}>
-                            <button 
-                                onClick={toggleFullScreen}
-                                style={{ background: 'transparent', border: '1px solid #0f0', color: '#0f0', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', padding: '4px 8px' }}
-                                title="Tam Ekran"
-                            >
-                                <Maximize size={16} /> TAM EKRAN
-                            </button>
                             <button 
                                 onClick={() => setView('menu')}
                                 style={{ background: 'transparent', border: '1px solid #0f0', color: '#0f0', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', padding: '4px 8px' }}

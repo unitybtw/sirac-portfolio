@@ -667,27 +667,27 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                         </div>
 
                                         <div className={`arcade-game-frame ${isFullscreen ? 'is-fullscreen' : ''}`} ref={frameRef}>
-                                            {/* Floating Quick Action Overlay inside Game Frame */}
-                                            <div className="arcade-frame-overlay-controls">
-                                                <button
-                                                    onClick={() => { playClick(); toggleFullScreen(); }}
-                                                    className="arcade-floating-btn"
-                                                    title={isFullscreen ? t('arcade_minimize') : t('arcade_fullscreen')}
-                                                    aria-label="Tam Ekran"
-                                                >
-                                                    {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
-                                                </button>
-                                                {isFullscreen && (
+                                            {/* Floating Quick Action Overlay inside Game Frame (Only during fullscreen) */}
+                                            {isFullscreen && (
+                                                <div className="arcade-frame-overlay-controls">
+                                                    <button
+                                                        onClick={() => { playClick(); toggleFullScreen(); }}
+                                                        className="arcade-floating-btn"
+                                                        title={t('arcade_minimize')}
+                                                        aria-label={t('arcade_minimize')}
+                                                    >
+                                                        <Minimize size={18} />
+                                                    </button>
                                                     <button
                                                         onClick={handleExitActiveGame}
                                                         className="arcade-floating-btn"
                                                         title={t('arcade_exit')}
-                                                        aria-label="Çıkış"
+                                                        aria-label={t('arcade_exit')}
                                                     >
                                                         <X size={18} />
                                                     </button>
-                                                )}
-                                            </div>
+                                                </div>
+                                            )}
                                             <div
                                                 className="arcade-scaled-viewport"
                                                 style={isMobile ? {

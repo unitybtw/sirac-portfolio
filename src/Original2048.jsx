@@ -1,24 +1,11 @@
 import { motion } from 'framer-motion';
 import React, { useState, useRef, useEffect } from 'react';
-import { Maximize, MousePointer2 } from 'lucide-react';
+import { MousePointer2 } from 'lucide-react';
 
 export default function Original2048() {
     const [started, setStarted] = useState(true);
     const iframeRef = useRef(null);
 
-    const toggleFullScreen = () => {
-        const elem = document.getElementById("game2048-game-wrapper");
-        if (!elem) return;
-        if (!document.fullscreenElement) {
-            elem.requestFullscreen().catch(err => {
-                console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-            });
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        }
-    };
 
     useEffect(() => {
         if (started && iframeRef.current) {
@@ -65,12 +52,6 @@ export default function Original2048() {
                             if (iframeRef.current) iframeRef.current.focus();
                         }}
                     />
-                    <button
-                        onClick={toggleFullScreen}
-                        style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', padding: '5px', borderRadius: '5px', cursor: 'pointer', zIndex: 10 }}
-                    >
-                        <Maximize size={16} />
-                    </button>
                 </div>
             )}
         </div>

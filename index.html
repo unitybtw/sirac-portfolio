@@ -27,12 +27,14 @@
   <!-- Arcade oyunları harici sitelerden iframe ile gömülür (frame-src listesi aşağıda) -->
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:;
+    worker-src 'self' blob:;
+    child-src 'self' blob:;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     font-src 'self' https://fonts.gstatic.com;
-    img-src 'self' data: https:;
-    connect-src 'self' https://api.web3forms.com https://github-contributions-api.jogruber.de https://sirac-portfolio-default-rtdb.europe-west1.firebasedatabase.app https://firebasedatabase.app;
-    frame-src 'self' https://3kh0.github.io https://64.js.org https://classic.minecraft.net https://d07riv.github.io https://diekmann.github.io https://gabrielecirulli.github.io https://html-classic.itch.zone https://htmlxm.github.io https://kirka.io https://macek.github.io https://mathiasgredal.github.io https://q3js.com https://raw.githack.com https://staticquasar931.github.io https://ubg365.github.io https://wayou.github.io https://www.youtube.com https://x8bitrain.github.io;
+    img-src 'self' data: https: blob:;
+    connect-src 'self' https://api.web3forms.com https://github-contributions-api.jogruber.de https://sirac-portfolio-default-rtdb.europe-west1.firebasedatabase.app https://firebasedatabase.app https: wss: ws: blob: data:;
+    frame-src 'self' https://3kh0.github.io https://64.js.org https://classic.minecraft.net https://d07riv.github.io https://diekmann.github.io https://gabrielecirulli.github.io https://html-classic.itch.zone https://htmlxm.github.io https://kirka.io https://macek.github.io https://mathiasgredal.github.io https://q3js.com https://raw.githack.com https://staticquasar931.github.io https://ubg365.github.io https://wayou.github.io https://www.youtube.com https://x8bitrain.github.io blob: data:;
     object-src 'none';
     base-uri 'self';
   " />

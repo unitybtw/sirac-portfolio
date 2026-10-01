@@ -1,24 +1,10 @@
 import { motion } from 'framer-motion';
 import React, { useState, useRef, useEffect } from 'react';
-import { Maximize, ExternalLink, Info, Gamepad2 } from 'lucide-react';
+import { ExternalLink, Gamepad2 } from 'lucide-react';
 
 const VoxelWorld = () => {
     const [started, setStarted] = useState(true);
     const iframeRef = useRef(null);
-
-    const toggleFullScreen = () => {
-        const elem = document.getElementById("minecraft-game-wrapper");
-        if (!elem) return;
-        if (!document.fullscreenElement) {
-            elem.requestFullscreen().catch(err => {
-                console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-            });
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        }
-    };
 
     useEffect(() => {
         if (started && iframeRef.current) {
@@ -71,20 +57,13 @@ const VoxelWorld = () => {
                         src={`${import.meta.env.BASE_URL}minecraft_1_5_2.html`}
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Minecraft 1.5.2"
-                        allow="keyboard-map *; pointer-lock *; fullscreen *"
+                        allow="autoplay *; keyboard-map *; pointer-lock *; fullscreen *"
                         tabIndex="0"
                         onLoad={() => {
                             if (iframeRef.current) iframeRef.current.focus();
                         }}
                         onPointerEnter={(e) => e.target.focus()}
                     />
-                    <button
-                        onClick={toggleFullScreen}
-                        style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '6px', borderRadius: '6px', cursor: 'pointer', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                        title="Fullscreen"
-                    >
-                        <Maximize size={16} />
-                    </button>
                 </div>
             )}
         </div>

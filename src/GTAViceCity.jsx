@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import React, { useState, useRef, useEffect } from 'react';
-import { Maximize, Map, Car, AlertTriangle } from 'lucide-react';
+import { Map, Car, AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export default function GTAViceCity() {
@@ -8,19 +8,6 @@ export default function GTAViceCity() {
     const [started, setStarted] = useState(true);
     const iframeRef = useRef(null);
 
-    const toggleFullScreen = () => {
-        const elem = document.getElementById("gta-game-wrapper");
-        if (!elem) return;
-        if (!document.fullscreenElement) {
-            elem.requestFullscreen().catch(err => {
-                console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-            });
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        }
-    };
 
     useEffect(() => {
         if (started && iframeRef.current) {
@@ -365,12 +352,6 @@ loadGameData();
                             if (iframeRef.current) iframeRef.current.focus();
                         }}
                     />
-                    <button
-                        onClick={toggleFullScreen}
-                        style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', padding: '5px', borderRadius: '5px', cursor: 'pointer', zIndex: 10, backdropFilter: 'blur(5px)' }}
-                    >
-                        <Maximize size={16} />
-                    </button>
                 </div>
             )}
         </div>

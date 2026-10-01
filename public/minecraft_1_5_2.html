@@ -104,9 +104,18 @@ This version of eaglercraft you are using right now is from 10/25/2022
 
 <script type="text/javascript">
 window.addEventListener("load", function() {
-	countdown();
+	var loc = document.getElementById("locally");
+	if (loc) loc.remove();
+	var unlockAudio = function() {
+		try {
+			window.dispatchEvent(new KeyboardEvent("keydown", { key: " ", code: "Space", bubbles: true }));
+		} catch(e) {}
+	};
+	window.addEventListener("click", unlockAudio);
+	window.addEventListener("pointerdown", unlockAudio);
 	setTimeout(function(){
-		document.getElementById("locally").remove();
+		var loc2 = document.getElementById("locally");
+		if (loc2) loc2.remove();
 		const relayId = Math.floor(Math.random() * 3);
 		window.eaglercraftOpts = {
 			container: "game_frame", assetsURI: getAssetsURI(),
@@ -120,7 +129,7 @@ window.addEventListener("load", function() {
 	        { addr: "wss://relay.shhnowisnottheti.me/", name: "ayunami relay #1", primary: relayId == 2 } ]
 		};
 		main();
-	}, 6000);
+	}, 50);
 });
 </script>
 
@@ -3270,7 +3279,7 @@ null;A.A1H=0.029999999329447746;A.A1I=Cw();A.A1J=null;A.A1K=0;A.A1L=0;A.A1M=null
 =(-1);c[148]=(-1);c[149]=(-1);c[150]=(-1);c[151]=(-1);c[152]=(-1);c[153]=(-1);c[154]=(-1);c[155]=(-1);c[156]=(-1);c[157]=(-1);c[158]=(-1);c[159]=(-1);c[160]=(-1);c[161]=(-1);c[162]=(-1);c[163]=(-1);c[164]=(-1);c[165]=(-1);c[166]=(-1);c[167]=(-1);c[168]=(-1);c[169]=(-1);c[170]=(-1);c[171]=(-1);c[172]=(-1);c[173]=(-1);c[174]=(-1);c[175]=(-1);c[176]=(-1);c[177]=(-1);c[178]=(-1);c[179]=(-1);c[180]=(-1);c[181]=(-1);c[182]=(-1);c[183]=(-1);c[184]=(-1);c[185]=(-1);c[186]=39;c[187]=13;c[188]=51;c[189]=12;c[190]=52;c[191]
 =53;c[192]=(-1);c[193]=(-1);c[194]=(-1);c[195]=(-1);c[196]=(-1);c[197]=(-1);c[198]=(-1);c[199]=(-1);c[200]=(-1);c[201]=(-1);c[202]=(-1);c[203]=(-1);c[204]=(-1);c[205]=(-1);c[206]=(-1);c[207]=(-1);c[208]=(-1);c[209]=(-1);c[210]=(-1);c[211]=(-1);c[212]=(-1);c[213]=(-1);c[214]=(-1);c[215]=(-1);c[216]=(-1);c[217]=(-1);c[218]=(-1);c[219]=26;c[220]=43;c[221]=27;c[222]=40;A.A10=b;A.A11=0;A.A12=new Int32Array(new ArrayBuffer(2100000));A.A13=Cw();A.A14=null;A.A15=0;A.AZt=B(13);A.A16=0;A.A17=null;A.A18=0;A.A19=0;A.A1$
 =0;A.A1_=Cw();A.A2a=Cw();A.A2b=null;A.A2c=0;A.A2d=B8();A.A2e=null;A.A2f=null;A.A2g=0;A.A2h=1;A.A2i=null;A.A2j=0;A.A2k=I$();};
-function A4e(){if(window.navigator.userActivation){return window.navigator.userActivation.hasBeenActive;}else {return false;}}
+function A4e(){return true;}
 function Bv$(b){try {return ""+window.navigator[b];}catch(e){return "<error>";}}
 function BNl(){if (!BNl.$native){
 BNl.$native=function(){return (function(){window.eagsFileChooser = {
@@ -7704,7 +7713,7 @@ function AEs(a){return a.yr;}
 function Js(){var a=this;CC.call(a);a.sB=null;a.L6=Long_ZERO;a.bMD=0;a.bIO=null;a.Em=null;a.bIe=0;a.bH9=0;a.PS=0;a.PA=0;a.bq5=0;a.bj_=0;a.i6=0;a.MD=0;a.a6b=0;a.ol=null;a.pB=0;a.bB3=0;a.bi5=0;}
 A.A_T=null;A.A_U=0;A.A_V=0;A.A_W=0;A.A_X=0;A.A_Y=0;A.A_Z=null;A.A_0=null;A.A_1=null;A.A_2=null;A.A_3=null;A.A_4=null;A.EZ=function(){A.EZ=Be(Js);A.C8();};
 function P3(){var a=new Js();BtU(a);return a;}
-function BtU(a){var b;A.EZ();Dp(a);a.sB=null;a.bMD=1;a.bIO=new D;a.i6=0;a.MD=(-1);a.a6b=(-1);a.pB=0;a.bB3=0;a.bi5=0;b=A.A0l;if(b!==null){if(b.x<=0)a.sB=B(1340);else a.sB=Z(b,Bc(ET(),b.x));}a.Em=!ANS()?B(1341):B(1342);a.L6=BG();a.L6=Long_add(a.L6,Long_rem(a.L6,Long_fromInt(10000)));a.ol=B8();if(!DA(A.AZv,B(1343)))a.pB=1;}
+function BtU(a){var b;A.EZ();Dp(a);a.sB=null;a.bMD=1;a.bIO=new D;a.i6=0;a.MD=(-1);a.a6b=(-1);a.pB=0;a.bB3=0;a.bi5=0;b=A.A0l;if(b!==null){if(b.x<=0)a.sB=B(1340);else a.sB=Z(b,Bc(ET(),b.x));}a.Em=!ANS()?B(1341):B(1342);a.L6=BG();a.L6=Long_add(a.L6,Long_rem(a.L6,Long_fromInt(10000)));a.ol=B8();if(false)a.pB=1;}
 function Cu4(a){return 0;}
 function BOC(a){var b,$p,$z;$p=0;if(St()){var $T=IJ();$p=$T.l();b=$T.l();a=$T.l();}_:while(true){switch($p){case 0:$p=1;case 1:BeE(a);if(C()){break _;}if(a.pB){b=MJ();if(b<0)a.i6=a.i6+3|0;if(b>0)a.i6=a.i6-3|0;}return;default:Sh();}}IJ().s(a,b,$p);}
 function By3(a,b,c){if(c==1)AWP(a);}
@@ -35920,12 +35929,7 @@ function countdown() {
 }
 </script>
 </head>
-<body style="margin:0px;width:100vw;height:100vh;font-family:sans-serif;" id="game_frame">
-<div id="locally" style="text-align:center;">
-<div style="height:5vh;"></div>
-<h2>you are running eaglercraft locally, check <a href="https://github.com/LAX1DUDE/eaglercraft/blob/main/stable-download/Offline_Download_Version.html" target="_blank">this link</a> regularly for an updated version</h2>
-<h3>the version you are currently using is from <span style="color:#cc0000;font-size:larger;">10/25/2022</span></h3>
-<p id="countdown" style="text-align:center;">(Game will launch in 5)</p>
-</div>
+<body style="margin:0px;width:100vw;height:100vh;background:#000000;color:#ffffff;overflow:hidden;font-family:sans-serif;" id="game_frame">
+<div id="locally" style="display:none;"></div>
 </body>
 </html>

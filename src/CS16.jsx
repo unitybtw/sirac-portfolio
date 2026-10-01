@@ -1,22 +1,11 @@
 import { motion } from 'framer-motion';
 import React, { useState, useRef, useEffect } from 'react';
-import { Maximize, Target, Wifi } from 'lucide-react';
+import { Target, Wifi } from 'lucide-react';
 
 export default function CS16() {
     const [started, setStarted] = useState(true);
     const iframeRef = useRef(null);
 
-    const toggleFullScreen = () => {
-        const elem = document.getElementById("cs16-game-wrapper");
-        if (!elem) return;
-        if (!document.fullscreenElement) {
-            elem.requestFullscreen().catch(err => {
-                console.error(`Fullscreen error: ${err.message}`);
-            });
-        } else {
-            document.exitFullscreen && document.exitFullscreen();
-        }
-    };
 
     useEffect(() => {
         if (started && iframeRef.current) {
@@ -143,17 +132,6 @@ export default function CS16() {
                         allow="autoplay; fullscreen; microphone; camera"
                         onLoad={() => { if (iframeRef.current) iframeRef.current.focus(); }}
                     />
-                    <button
-                        onClick={toggleFullScreen}
-                        style={{
-                            position: 'absolute', bottom: '10px', right: '10px',
-                            background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.3)',
-                            color: '#fff', padding: '8px', borderRadius: '6px',
-                            cursor: 'pointer', zIndex: 10, backdropFilter: 'blur(5px)',
-                        }}
-                    >
-                        <Maximize size={16} />
-                    </button>
                 </div>
             )}
         </div>

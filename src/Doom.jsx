@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import React, { useState, useRef, useEffect } from 'react';
-import { Maximize, RotateCcw, Info, MousePointer2 } from 'lucide-react';
+import { RotateCcw, Info, MousePointer2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export default function Doom() {
@@ -8,19 +8,6 @@ export default function Doom() {
     const [started, setStarted] = useState(true);
     const iframeRef = useRef(null);
 
-    const toggleFullScreen = () => {
-        const elem = document.getElementById("doom-game-wrapper");
-        if (!elem) return;
-        if (!document.fullscreenElement) {
-            elem.requestFullscreen().catch(err => {
-                console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
-            });
-        } else {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-        }
-    };
 
     useEffect(() => {
         if (started && iframeRef.current) {
@@ -76,13 +63,6 @@ export default function Doom() {
                             if (iframeRef.current) iframeRef.current.focus();
                         }}
                     />
-                    <button
-                        onClick={toggleFullScreen}
-                        style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', padding: '6px', borderRadius: '6px', cursor: 'pointer', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                        title="Fullscreen"
-                    >
-                        <Maximize size={16} />
-                    </button>
                 </div>
             )}
         </div>
