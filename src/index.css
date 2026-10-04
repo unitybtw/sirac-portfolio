@@ -495,17 +495,20 @@ section {
 /* ── Large-Format 1-Bit Dot-Matrix Mario Corner Runner ── */
 .hero-corner-mario-anchor {
   position: absolute;
-  bottom: 1.5rem;
-  left: max(2rem, calc((100vw - 1220px) / 2));
-  width: min(520px, calc(100vw - 4rem));
+  bottom: 0;
+  left: calc(50% - 50vw);
+  width: min(760px, 95vw);
+  height: 120px;
   z-index: 5;
   pointer-events: auto;
+  -webkit-mask-image: linear-gradient(to right, black 72%, transparent 100%);
+  mask-image: linear-gradient(to right, black 72%, transparent 100%);
 }
 
 .corner-pixel-mario-runner {
   position: relative;
   width: 100%;
-  height: 116px;
+  height: 120px;
   background: transparent;
   cursor: pointer;
   user-select: none;
@@ -513,12 +516,12 @@ section {
   outline: none;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .corner-pixel-canvas {
   width: 100%;
-  height: 116px;
+  height: 120px;
   display: block;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
@@ -527,11 +530,11 @@ section {
 
 .corner-mario-hint {
   position: absolute;
-  top: 4px;
-  right: 6px;
+  top: 6px;
+  left: 16px;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.07em;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
   color: var(--text-secondary);
   opacity: 0.65;
   pointer-events: none;
@@ -558,10 +561,11 @@ section {
   .hero-corner-mario-anchor {
     position: relative;
     bottom: auto;
-    left: auto;
-    margin: 2.5rem auto 0 auto;
-    width: 100%;
-    max-width: 440px;
+    left: calc(50% - 50vw);
+    margin: 2.5rem 0 0 0;
+    width: 100vw;
+    -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
+    mask-image: linear-gradient(to right, black 80%, transparent 100%);
   }
 }
 
