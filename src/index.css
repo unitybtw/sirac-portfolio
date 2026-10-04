@@ -69,7 +69,7 @@
 
 html {
   scroll-behavior: initial;
-  overflow-x: hidden;
+  overflow-x: clip;
   background-color: var(--bg-primary);
   color: var(--text-primary);
 }
@@ -125,6 +125,7 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
 }
 
 ::selection {
@@ -155,6 +156,7 @@ button {
   margin: 0 auto;
   padding: 0 2rem;
   padding-bottom: 6rem;
+  overflow-x: clip;
 }
 
 /* ── Apple MacBook Notch / Dynamic Island Navbar ────────────────── */
@@ -1356,6 +1358,30 @@ section {
 }
 
 /* ── GitHub Heatmap Slots & Bird Hop Landing Animation ──────────── */
+.gh-activity-wrapper {
+  position: relative;
+  overflow-x: clip;
+  width: 100%;
+}
+
+.gh-heatmap-card {
+  position: relative;
+  overflow: visible !important;
+}
+
+.gh-heatmap-scroll {
+  position: relative;
+  overflow: visible;
+  min-height: 200px;
+}
+
+@media (max-width: 820px) {
+  .gh-heatmap-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 .gh-day-slot {
   position: relative;
   width: 11px;
@@ -1380,51 +1406,72 @@ section {
   flex-shrink: 0;
 }
 
-/* Active green square hopping in like a bird from sides */
+/* Active green square hopping in like a bird from offscreen */
 .gh-day-bird-hopping {
   position: absolute;
   inset: 0;
+  border-radius: 2px;
   opacity: 0;
-  animation: birdHopLanding 0.72s cubic-bezier(0.25, 1.25, 0.4, 1) forwards;
+  pointer-events: none;
+  animation: birdHopLanding 1.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
 }
 
 @keyframes birdHopLanding {
   0% {
     opacity: 0;
-    transform: translate3d(var(--bird-x, -220px), var(--bird-y, -45px), 0) scale(1.65) rotate(var(--bird-rot, -16deg));
+    /* Starts completely outside the site / offscreen */
+    transform: translate3d(var(--bird-x, -1200px), var(--bird-y, -260px), 0) scale(1.6) rotate(var(--bird-rot, -18deg));
   }
-  28% {
+  15% {
     opacity: 1;
-    /* Swooping down in an arc */
-    transform: translate3d(calc(var(--bird-x, -220px) * 0.52), -26px, 0) scale(1.32) rotate(calc(var(--bird-rot, -16deg) * 0.5));
+    /* Swooping down from high outside the screen */
+    transform: translate3d(calc(var(--bird-x, -1200px) * 0.68), calc(var(--bird-y, -260px) * 0.5), 0) scale(1.36) rotate(calc(var(--bird-rot, -18deg) * 0.75));
   }
-  56% {
-    /* Mid-air hop */
-    transform: translate3d(calc(var(--bird-x, -220px) * 0.2), -16px, 0) scale(1.18) rotate(var(--bird-rot-counter, 8deg));
+  42% {
+    /* First graceful mid-air swoop & hop */
+    transform: translate3d(calc(var(--bird-x, -1200px) * 0.32), -46px, 0) scale(1.22) rotate(var(--bird-rot-counter, 10deg));
   }
-  78% {
-    /* Final hop right over its square */
-    transform: translate3d(calc(var(--bird-x, -220px) * 0.05), -6px, 0) scale(1.08) rotate(calc(var(--bird-rot, -16deg) * -0.2));
+  68% {
+    /* Second soft hop right before touchdown */
+    transform: translate3d(calc(var(--bird-x, -1200px) * 0.08), -18px, 0) scale(1.1) rotate(calc(var(--bird-rot, -18deg) * -0.2));
   }
-  89% {
-    /* Touchdown squash: bird lands and squashes gently */
+  86% {
+    /* Touchdown: soft squash as the bird lands on its square */
     opacity: 1;
-    transform: translate3d(0, 1.2px, 0) scale(1.22, 0.82) rotate(0deg);
+    transform: translate3d(0, 1.2px, 0) scale(1.18, 0.84) rotate(0deg);
   }
-  95% {
-    /* Tiny rebound settle */
-    transform: translate3d(0, -0.6px, 0) scale(0.96, 1.04) rotate(0deg);
+  93% {
+    /* Subtle soft elastic rebound settle */
+    transform: translate3d(0, -0.5px, 0) scale(0.97, 1.03) rotate(0deg);
   }
   100% {
     opacity: 1;
+    pointer-events: auto;
     transform: translate3d(0, 0, 0) scale(1, 1) rotate(0deg);
+  }
+}
+
+@media (max-width: 768px) {
+  .gh-day-bird-hopping {
+    --bird-x: calc(var(--bird-x, -600px) * 0.35);
+    --bird-y: calc(var(--bird-y, -180px) * 0.5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gh-day-bird-hopping {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    pointer-events: auto !important;
   }
 }
 
 @media (hover: hover) {
   .gh-day:hover {
-    transform: scale(1.45) !important;
-    filter: brightness(1.25) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+    transform: scale(1.4) !important;
+    filter: brightness(1.22) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
     z-index: 10;
   }
 }

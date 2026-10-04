@@ -249,7 +249,7 @@ export default function GitHubCommitHistory() {
       </div>
 
       {/* Main Container */}
-      <div className="bento-card bento-col-12" style={{ padding: '2rem 2.2rem', overflow: 'hidden' }}>
+      <div className="bento-card bento-col-12 gh-heatmap-card" style={{ padding: '2rem 2.2rem' }}>
         {/* Top Header Row of the Graph */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
           <div style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.02em', minHeight: '32px', display: 'flex', alignItems: 'center' }}>
@@ -341,169 +341,163 @@ export default function GitHubCommitHistory() {
           {/* Heatmap Border Box */}
           <div 
             ref={containerRef}
+            className="gh-heatmap-scroll"
             style={{
               flex: 1,
               background: 'transparent',
               border: '1px solid var(--border-subtle)',
               borderRadius: '8px',
               padding: '1.25rem',
-              overflowX: 'auto',
               position: 'relative'
             }}
           >
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`${selectedYear}-${animKey}`}
-                initial={{ opacity: 0, x: 20, filter: 'blur(4px)' }}
-                animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, x: -20, filter: 'blur(4px)' }}
-                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                style={{ minWidth: '720px', position: 'relative' }}
-              >
-                {/* Month Labels Row */}
-                <div style={{ display: 'flex', marginLeft: '32px', marginBottom: '8px', fontSize: '11px', color: 'var(--text-secondary)', height: '16px', position: 'relative' }}>
-                  {monthLabels.map((m, mIdx) => (
-                    <span
-                      key={mIdx}
-                      style={{
-                        position: 'absolute',
-                        left: `${m.colIndex * 14}px`,
-                        fontWeight: 500
-                      }}
-                    >
-                      {m.name}
-                    </span>
-                  ))}
-                </div>
-
-                {/* Grid with Day Labels on the Left */}
-                <div style={{ display: 'flex', gap: '6px' }}>
-                  {/* Day Labels (Mon, Wed, Fri) */}
-                  <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '96px', width: '26px', fontSize: '10px', color: 'var(--text-secondary)', paddingTop: '15px', paddingBottom: '12px' }}>
-                    <span>Mon</span>
-                    <span>Wed</span>
-                    <span>Fri</span>
-                  </div>
-
-                  {/* 53 Columns of Squares */}
-                  <div style={{ display: 'flex', gap: '3px' }} onMouseOver={handleGridOver} onMouseOut={handleGridOut}>
-                    {weeks.map((week, colIdx) => (
-                      <div key={colIdx} style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                        {week.map((day, rowIdx) => {
-                          if (!day) {
-                            return (
-                              <div 
-                                key={rowIdx} 
-                                style={{ width: '11px', height: '11px', background: 'transparent' }} 
-                              />
-                            );
-                          }
-
-                          const isActive = day.activeIdx >= 0;
-                          const levelColor = palette[day.level || 0];
-                          const baseColor = palette[0];
-
-                          if (!isActive) {
-                            // Empty day: renders immediately as the base slot ("ilk beyaz/taban kısım")
-                            return (
-                              <div
-                                key={day.date}
-                                className="gh-day gh-day-empty"
-                                data-date={day.date}
-                                style={{ backgroundColor: baseColor }}
-                              />
-                            );
-                          }
-
-                          // Active green day: base slot underneath, green square hops in like a bird from sides
-                          const fromLeft = day.activeIdx % 2 === 0;
-                          const sideSign = fromLeft ? -1 : 1;
-                          const flightDistX = sideSign * (180 + (day.activeIdx % 7) * 32);
-                          const flightDistY = - (38 + (day.activeIdx % 8) * 12);
-                          const flightRot = (fromLeft ? -1 : 1) * (14 + (day.activeIdx % 5) * 4);
-                          const flightRotCounter = (fromLeft ? 1 : -1) * (8 + (day.activeIdx % 4) * 3);
-                          const delaySec = 0.35 + (day.activeIdx * 0.0075);
-
-                          return (
-                            <div
-                              key={day.date}
-                              className="gh-day-slot"
-                              style={{ backgroundColor: baseColor }}
-                            >
-                              <div
-                                className="gh-day gh-day-bird-hopping"
-                                data-date={day.date}
-                                style={{
-                                  backgroundColor: levelColor,
-                                  animationDelay: `${delaySec}s`,
-                                  '--bird-x': `${flightDistX}px`,
-                                  '--bird-y': `${flightDistY}px`,
-                                  '--bird-rot': `${flightRot}deg`,
-                                  '--bird-rot-counter': `${flightRotCounter}deg`
-                                }}
-                              />
-                            </div>
-                          );
-                        })}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Tooltip */}
-                {hoveredDay && (
-                  <div
+            <div
+              key={`${selectedYear}-${animKey}`}
+              style={{ minWidth: '720px', position: 'relative' }}
+            >
+              {/* Month Labels Row */}
+              <div style={{ display: 'flex', marginLeft: '32px', marginBottom: '8px', fontSize: '11px', color: 'var(--text-secondary)', height: '16px', position: 'relative' }}>
+                {monthLabels.map((m, mIdx) => (
+                  <span
+                    key={mIdx}
                     style={{
                       position: 'absolute',
-                      left: `${tooltipPos.x}px`,
-                      top: `${tooltipPos.y}px`,
-                      transform: 'translate(-50%, -100%)',
-                      background: '#1f2328',
-                      color: '#ffffff',
-                      padding: '0.35rem 0.6rem',
-                      borderRadius: '6px',
-                      fontSize: '11px',
-                      whiteSpace: 'nowrap',
-                      pointerEvents: 'none',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
-                      zIndex: 100,
+                      left: `${m.colIndex * 14}px`,
                       fontWeight: 500
                     }}
                   >
-                    <strong>{hoveredDay.count > 0 ? (isTr ? `${hoveredDay.count} katkı` : `${hoveredDay.count} contributions`) : (isTr ? 'Katkı yok' : 'No contributions')}</strong> {isTr ? '— ' : 'on '}{formatTooltipDate(hoveredDay.date)}
-                  </div>
-                )}
+                    {m.name}
+                  </span>
+                ))}
+              </div>
 
-                {/* Bottom Footer inside Box */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.2rem', paddingTop: '0.5rem', fontSize: '11px', color: 'var(--text-secondary)' }}>
-                  <a
-                    href="https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/why-are-my-contributions-not-showing-up-on-my-profile"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}
-                  >
-                    {isTr ? 'Katkıların nasıl sayıldığını öğrenin' : 'Learn how we count contributions'}
-                  </a>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <span>{isTr ? 'Daha az' : 'Less'}</span>
-                    {palette.map((color, cIdx) => (
-                      <span
-                        key={cIdx}
-                        style={{
-                          display: 'inline-block',
-                          width: '10px',
-                          height: '10px',
-                          borderRadius: '2px',
-                          backgroundColor: color
-                        }}
-                      />
-                    ))}
-                    <span>{isTr ? 'Daha çok' : 'More'}</span>
-                  </div>
+              {/* Grid with Day Labels on the Left */}
+              <div style={{ display: 'flex', gap: '6px' }}>
+                {/* Day Labels (Mon, Wed, Fri) */}
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '96px', width: '26px', fontSize: '10px', color: 'var(--text-secondary)', paddingTop: '15px', paddingBottom: '12px' }}>
+                  <span>Mon</span>
+                  <span>Wed</span>
+                  <span>Fri</span>
                 </div>
-              </motion.div>
-            </AnimatePresence>
+
+                {/* 53 Columns of Squares */}
+                <div style={{ display: 'flex', gap: '3px' }} onMouseOver={handleGridOver} onMouseOut={handleGridOut}>
+                  {weeks.map((week, colIdx) => (
+                    <div key={colIdx} style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                      {week.map((day, rowIdx) => {
+                        if (!day) {
+                          return (
+                            <div 
+                              key={rowIdx} 
+                              style={{ width: '11px', height: '11px', background: 'transparent' }} 
+                            />
+                          );
+                        }
+
+                        const isActive = day.activeIdx >= 0;
+                        const levelColor = palette[day.level || 0];
+                        const baseColor = palette[0];
+
+                        if (!isActive) {
+                          // Empty day: renders immediately as the base slot ("ilk beyaz/taban kısım")
+                          return (
+                            <div
+                              key={day.date}
+                              className="gh-day gh-day-empty"
+                              data-date={day.date}
+                              style={{ backgroundColor: baseColor }}
+                            />
+                          );
+                        }
+
+                        // Active green day: base slot underneath, green square hops in like a bird from outside
+                        const fromLeft = (colIdx + rowIdx) % 2 === 0;
+                        const baseOffscreen = 1100;
+                        const flightDistX = (fromLeft ? -1 : 1) * (baseOffscreen + ((colIdx * 23 + rowIdx * 37) % 320));
+                        const flightDistY = - (190 + ((colIdx * 19 + rowIdx * 29) % 150));
+                        const flightRot = (fromLeft ? -1 : 1) * (18 + (day.activeIdx % 5) * 4);
+                        const flightRotCounter = (fromLeft ? 1 : -1) * (10 + (day.activeIdx % 4) * 3);
+                        const delaySec = 0.45 + (colIdx * 0.038) + (rowIdx * 0.008);
+
+                        return (
+                          <div
+                            key={day.date}
+                            className="gh-day gh-day-slot"
+                            data-date={day.date}
+                            style={{ backgroundColor: baseColor }}
+                          >
+                            <div
+                              className="gh-day-bird-hopping"
+                              style={{
+                                backgroundColor: levelColor,
+                                animationDelay: `${delaySec.toFixed(3)}s`,
+                                '--bird-x': `${flightDistX}px`,
+                                '--bird-y': `${flightDistY}px`,
+                                '--bird-rot': `${flightRot}deg`,
+                                '--bird-rot-counter': `${flightRotCounter}deg`
+                              }}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tooltip */}
+              {hoveredDay && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    left: `${tooltipPos.x}px`,
+                    top: `${tooltipPos.y}px`,
+                    transform: 'translate(-50%, -100%)',
+                    background: '#1f2328',
+                    color: '#ffffff',
+                    padding: '0.35rem 0.6rem',
+                    borderRadius: '6px',
+                    fontSize: '11px',
+                    whiteSpace: 'nowrap',
+                    pointerEvents: 'none',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
+                    zIndex: 100,
+                    fontWeight: 500
+                  }}
+                >
+                  <strong>{hoveredDay.count > 0 ? (isTr ? `${hoveredDay.count} katkı` : `${hoveredDay.count} contributions`) : (isTr ? 'Katkı yok' : 'No contributions')}</strong> {isTr ? '— ' : 'on '}{formatTooltipDate(hoveredDay.date)}
+                </div>
+              )}
+
+              {/* Bottom Footer inside Box */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.2rem', paddingTop: '0.5rem', fontSize: '11px', color: 'var(--text-secondary)' }}>
+                <a
+                  href="https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/why-are-my-contributions-not-showing-up-on-my-profile"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}
+                >
+                  {isTr ? 'Katkıların nasıl sayıldığını öğrenin' : 'Learn how we count contributions'}
+                </a>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <span>{isTr ? 'Daha az' : 'Less'}</span>
+                  {palette.map((color, cIdx) => (
+                    <span
+                      key={cIdx}
+                      style={{
+                        display: 'inline-block',
+                        width: '10px',
+                        height: '10px',
+                        borderRadius: '2px',
+                        backgroundColor: color
+                      }}
+                    />
+                  ))}
+                  <span>{isTr ? 'Daha çok' : 'More'}</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Year Buttons on the Right with Animated Smooth Highlight */}
