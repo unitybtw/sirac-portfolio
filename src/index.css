@@ -22,6 +22,41 @@
   to   { opacity: 1; }
 }
 
+/* ── View Transitions: Language Switch Directional Blur & Float ─────── */
+html.transition-lang::view-transition-old(root) {
+  animation: lang-fade-out 0.22s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+html.transition-lang::view-transition-new(root) {
+  animation: lang-fade-in 0.26s cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+@keyframes lang-fade-out {
+  from {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    filter: blur(3px);
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes lang-fade-in {
+  from {
+    opacity: 0;
+    filter: blur(3px);
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0);
+  }
+}
+
 /* Respect user's motion preferences */
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-group(*),

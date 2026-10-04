@@ -246,8 +246,20 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
               className="slide-circle-btn"
               title={lang === "tr" ? "Switch to English" : "Türkçe'ye Geç"}
               aria-label="Toggle language"
+              style={{ overflow: "hidden", position: "relative" }}
             >
-              <span>{lang === "tr" ? "EN" : "TR"}</span>
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={lang}
+                  initial={{ y: 10, opacity: 0, rotateX: -60 }}
+                  animate={{ y: 0, opacity: 1, rotateX: 0 }}
+                  exit={{ y: -10, opacity: 0, rotateX: 60 }}
+                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ display: "inline-block", transformOrigin: "center" }}
+                >
+                  {lang === "tr" ? "EN" : "TR"}
+                </motion.span>
+              </AnimatePresence>
             </motion.button>
           )}
 

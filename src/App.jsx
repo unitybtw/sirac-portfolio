@@ -172,18 +172,29 @@ function App() {
     });
   };
 
-  // Language transition state
-  const [isLangTransitioning, setIsLangTransitioning] = useState(false);
+  // Language change state for reactive updates
+  const [currentLang, setCurrentLang] = useState(i18n.language || 'tr');
 
-  // Toggle Language with smooth transition
+  // Toggle Language with native View Transitions & directional micro-animations
   const toggleLanguage = () => {
-    if (isLangTransitioning) return;
-    setIsLangTransitioning(true);
-    setTimeout(() => {
-      const nextLang = i18n.language === 'tr' ? 'en' : 'tr';
+    const nextLang = i18n.language === 'tr' ? 'en' : 'tr';
+
+    // Fallback if View Transitions API is not available
+    if (!document.startViewTransition) {
       i18n.changeLanguage(nextLang);
-      setTimeout(() => setIsLangTransitioning(false), 350);
-    }, 250);
+      setCurrentLang(nextLang);
+      return;
+    }
+
+    document.documentElement.classList.add('transition-lang');
+    const transition = document.startViewTransition(() => {
+      i18n.changeLanguage(nextLang);
+      setCurrentLang(nextLang);
+    });
+
+    transition.finished.finally(() => {
+      document.documentElement.classList.remove('transition-lang');
+    });
   };
 
   // Smooth Scrolling (120Hz-tuned: lerp-based, leaksiz rAF, reduced-motion saygılı)
@@ -314,20 +325,14 @@ function App() {
         activeSection={activeSection}
         theme={theme}
         onToggleTheme={toggleTheme}
-        lang={i18n.language}
+        lang={currentLang}
         onToggleLang={toggleLanguage}
       />
 
       {/* ── Hero Section (Full-Width with Corner Pinned Mario) ── */}
       <section className="hero-section" id="hero">
-        <div
-          className="hero-parallax-content"
-          style={{
-            opacity: isLangTransitioning ? 0 : 1,
-            transition: 'opacity 0.25s ease',
-          }}
-        >
-            <div className="hero-layout-grid">
+        <div className="hero-parallax-content">
+          <div className="hero-layout-grid">
               {/* Left Column: Asymmetric Typography & Actions */}
               <motion.div
                 className="hero-left-column"
@@ -443,14 +448,7 @@ function App() {
           </div>
         </section>
 
-        <motion.main
-          className="app-container"
-          animate={{
-            opacity: isLangTransitioning ? 0 : 1,
-            y: isLangTransitioning ? -8 : 0,
-          }}
-          transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-        >
+        <main className="app-container">
           {/* ── About Section ── */}
           <section id="about">
           <h2 className="section-title">{t('about_title')}</h2>
@@ -722,17 +720,12 @@ function App() {
             />
           </Suspense>
         </section>
-      </motion.main>
+      </main>
 
       {/* ── Footer / Contact ── */}
-      <motion.footer
+      <footer
         id="contact"
         className="footer app-container"
-        animate={{
-          opacity: isLangTransitioning ? 0 : 1,
-          y: isLangTransitioning ? -8 : 0,
-        }}
-        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
       >
         <div className="contact-grid">
           <div className="contact-info">
@@ -841,7 +834,7 @@ function App() {
         <div style={{ fontSize: '0.85rem', opacity: 0.6, marginTop: '4rem', borderTop: '1px solid var(--border-subtle)', paddingTop: '2rem' }}>
           © {new Date().getFullYear()} {t('footer_copyright')}
         </div>
-      </motion.footer>
+      </footer>
     </>
   );
 }
