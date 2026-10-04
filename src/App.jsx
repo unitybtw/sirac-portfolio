@@ -437,37 +437,149 @@ function App() {
         }}
         transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
       >
-        {/* ── Hero Section ── */}
+        {/* ── Hero Section (Asymmetric & Typographic) ── */}
         <section className="hero-section" id="hero">
-          <div className="hero-parallax-content">
-            <motion.div
-              variants={heroParent}
-              initial="hidden"
-              animate="show"
-            >
-            <motion.div variants={heroChild} style={{ display: 'inline-block', padding: '0.4rem 1rem', background: 'var(--border-subtle)', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 600, marginBottom: '1.5rem' }}>
-              {t('badge_hire')}
-            </motion.div>
-            <motion.h1 variants={heroChild} className="hero-title">
-              {t('hero_title_1')}<br/>
-              <span style={{ color: 'var(--text-secondary)' }}>{t('hero_title_2')}</span>
-            </motion.h1>
-            <motion.p variants={heroChild} className="hero-subtitle">
-              {t('hero_subtitle_1')} <br/>
-              {t('hero_subtitle_2')}
-            </motion.p>
-            <motion.div variants={heroChild} className="hero-buttons">
-              <a href="#projects" className="btn-primary">
-                {t('btn_explore')} <ArrowRight size={18} />
-              </a>
-              <a href={`${import.meta.env.BASE_URL}cv.pdf`} target="_blank" rel="noopener noreferrer" className="btn-outline">
-                <Download size={18} /> {t('btn_view_cv')}
-              </a>
-              <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn-outline">
-                <Github size={18} /> {t('btn_repos')}
-              </a>
-            </motion.div>
-            </motion.div>
+          <div className="hero-parallax-content" style={{ width: '100%' }}>
+            <div className="hero-layout-grid">
+              {/* Left Column: Asymmetric Typography & Actions */}
+              <motion.div
+                className="hero-left-column"
+                variants={heroParent}
+                initial="hidden"
+                animate="show"
+              >
+                <motion.div variants={heroChild} className="hero-status-pill">
+                  <span className="live-status-chip">
+                    <span className="live-status-dot" />
+                    {t('badge_hire')}
+                  </span>
+                </motion.div>
+
+                <motion.h1 variants={heroChild} className="hero-main-title">
+                  {t('hero_title_1')}
+                  <span className="hero-title-accent">{t('hero_title_2')}</span>
+                </motion.h1>
+
+                <motion.div variants={heroChild} className="hero-meta-subtitle">
+                  <span>{t('hero_subtitle_1')}</span>
+                </motion.div>
+
+                <motion.div variants={heroChild} className="hero-academic-tag">
+                  {t('hero_subtitle_2')}
+                </motion.div>
+
+                <motion.p variants={heroChild} className="hero-tagline-text">
+                  {t('hero_tagline')}
+                </motion.p>
+
+                <motion.div variants={heroChild} className="hero-actions-row">
+                  <a href="#projects" className="btn-primary">
+                    {t('btn_explore')} <ArrowRight size={17} />
+                  </a>
+                  <a
+                    href={`${import.meta.env.BASE_URL}cv.pdf`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-outline"
+                  >
+                    <Download size={17} /> {t('btn_view_cv')}
+                  </a>
+                  <a
+                    href="https://github.com/unitybtw"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hero-social-btn"
+                    title="GitHub"
+                    aria-label="GitHub"
+                  >
+                    <Github size={18} />
+                  </a>
+                  <a
+                    href={LINKEDIN_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hero-social-btn"
+                    title="LinkedIn"
+                    aria-label="LinkedIn"
+                  >
+                    <Linkedin size={18} />
+                  </a>
+                </motion.div>
+              </motion.div>
+
+              {/* Right Column: Featured Game Teaser Card + Micro Stats */}
+              <motion.div
+                className="hero-right-column"
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {/* Teaser Card: Legend of the Three Masks */}
+                <div className="hero-teaser-card">
+                  <div className="hero-teaser-header">
+                    <span className="hero-teaser-category">
+                      <Gamepad2 size={14} />
+                      {t('hero_featured_badge')}
+                    </span>
+                    <span className="project-badge project-badge-released">
+                      {t('games.badge_released')}
+                    </span>
+                  </div>
+
+                  <h3 className="hero-teaser-title">{t('games.m_title')}</h3>
+                  <p className="hero-teaser-desc">{t('games.m_desc')}</p>
+
+                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
+                    <span className="tech-tag">Unity 3D</span>
+                    <span className="tech-tag">C#</span>
+                    <span className="tech-tag">URP</span>
+                    <span className="tech-tag">Blender</span>
+                  </div>
+
+                  <div className="hero-teaser-footer">
+                    <a
+                      href="#projects"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.4rem',
+                        fontSize: '0.85rem',
+                        fontWeight: 600,
+                        color: 'var(--text-primary)',
+                        textDecoration: 'none'
+                      }}
+                    >
+                      {t('hero_view_project')} <ArrowRight size={14} />
+                    </a>
+                    <a
+                      href="https://unitybtw.itch.io/legend-of-the-three-masks"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-outline"
+                      style={{ padding: '0.35rem 0.85rem', fontSize: '0.8rem', gap: '0.35rem' }}
+                    >
+                      <Gamepad2 size={14} /> Itch.io
+                    </a>
+                  </div>
+                </div>
+
+                {/* Micro Stats Strip */}
+                <div className="hero-stats-strip">
+                  <div className="hero-stat-box">
+                    <div className="hero-stat-label">{t('about_stat_1')}</div>
+                    <div className="hero-stat-value">{t('hero_stat_1_val')}</div>
+                  </div>
+                  <div className="hero-stat-box">
+                    <div className="hero-stat-label">{t('about_stat_2')}</div>
+                    <div className="hero-stat-value">{t('hero_stat_2_val')}</div>
+                  </div>
+                  <div className="hero-stat-box">
+                    <div className="hero-stat-label">{t('about_stat_4')}</div>
+                    <div className="hero-stat-value" style={{ color: '#22c55e' }}>{t('hero_stat_3_val')}</div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
           </div>
         </section>
 
