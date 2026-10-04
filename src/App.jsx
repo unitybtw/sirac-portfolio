@@ -6,7 +6,7 @@ import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Do
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
 import { SlideNavbar } from './components/ui/slide-tabs';
-import TuiMarioRunner from './components/TuiMarioRunner';
+import PixelMarioRunner from './components/PixelMarioRunner';
 
 // Ekranın altında kalan ağır bileşenler: ilk paint'i bloklamasın,
 // main thread boş kalsın ki scroll 120Hz'de takılmasın.
@@ -403,6 +403,11 @@ function App() {
                     <Linkedin size={18} />
                   </a>
                 </motion.div>
+
+                {/* 1-Bit Pixel Mario Runner (Square Pixel Grid, Auto-playing) */}
+                <motion.div variants={heroChild} className="hero-pixel-mario-wrapper">
+                  <PixelMarioRunner />
+                </motion.div>
               </motion.div>
 
               {/* Right Column: Professional Portrait Showcase */}
@@ -435,9 +440,6 @@ function App() {
                     </div>
                   </div>
                 </div>
-
-                {/* Minimal Autonomous TUI Mario Runner */}
-                <TuiMarioRunner />
               </motion.div>
             </div>
           </div>
