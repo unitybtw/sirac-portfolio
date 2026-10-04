@@ -1530,44 +1530,23 @@ section {
   box-shadow: 0 16px 40px -4px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
-.slide-logo-badge {
+.slide-controls-wrapper {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  padding: 0;
-  border-radius: 9999px;
-  text-decoration: none;
+  margin-left: 0.25rem;
+}
+
+.slide-trigger-btn {
+  color: var(--text-secondary);
+}
+
+.slide-trigger-btn:hover {
   color: var(--text-primary);
-  cursor: pointer;
-  user-select: none;
-}
-
-.slide-logo-monogram {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: var(--accent-cta);
-  color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 800;
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
-  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
-}
-
-.slide-logo-badge:hover .slide-logo-monogram {
+  background: var(--border-subtle);
   transform: scale(1.08);
 }
 
-.slide-status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: #22c55e;
-  box-shadow: 0 0 8px #22c55e;
-}
 
 .slide-tabs-list {
   position: relative;
@@ -1683,9 +1662,6 @@ section {
 }
 
 @media (max-width: 720px) {
-  .slide-logo-name {
-    display: none;
-  }
   .slide-tab-link span {
     display: none;
   }

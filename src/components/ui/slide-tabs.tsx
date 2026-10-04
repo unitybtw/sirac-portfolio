@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { User, FolderGit2, Activity, Gamepad2, Mail, Sun, Moon, Download, Sparkles } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { User, FolderGit2, Activity, Gamepad2, Mail, Sun, Moon, Download, Sparkles, SlidersHorizontal } from "lucide-react";
 
 export interface TabItem {
   id: string;
@@ -191,7 +191,25 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
   lang = "tr",
   onToggleLang,
 }) => {
-  const [isLogoHovered, setIsLogoHovered] = useState(false);
+  const [isControlsOpen, setIsControlsOpen] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setIsControlsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsControlsOpen(false);
+    }, 280);
+  };
 
   const tabs: TabItem[] = [
     { id: "hero", href: "#hero", label: lang === "tr" ? "Giriş" : "Home", icon: <Sparkles size={14} /> },
@@ -211,74 +229,75 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
       aria-label="Primary Navigation"
     >
       <div className="slide-navbar-dock">
-        {/* Sol Logo: Varsayılan olarak sadece yuvarlak (S), mouse yaklaştığında pürüzsüzce kayarak açılır */}
-        <a
-          href="#hero"
-          className="slide-logo-badge"
-          title="Sıraç Göktuğ Şimşek"
-          aria-label="Back to top"
-          onMouseEnter={() => setIsLogoHovered(true)}
-          onMouseLeave={() => setIsLogoHovered(false)}
-        >
-          <span className="slide-logo-monogram">S</span>
-          <motion.span
-            initial={false}
-            animate={{
-              width: isLogoHovered ? "auto" : 0,
-              opacity: isLogoHovered ? 1 : 0,
-              marginLeft: isLogoHovered ? 8 : 0,
-            }}
-            transition={{ type: "spring", stiffness: 380, damping: 26 }}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "6px",
-              overflow: "hidden",
-              whiteSpace: "nowrap",
-            }}
-          >
-            <span className="slide-logo-name" style={{ letterSpacing: "0.02em" }}>SİRAÇ</span>
-            <span className="slide-status-dot" title="Open to opportunities" />
-          </motion.span>
-        </a>
-
-        {/* Orta Kayar Sekmeler (SlideTabs) */}
+        {/* Orta Kayar Sekmeler (SlideTabs) - Sol Siraç kısmı tamamen kaldırıldı */}
         <SlideTabs items={tabs} activeId={activeSection} />
 
-        {/* Sağ Hızlı Butonlar: Hepsi Yuvarlak (TR, Tema, CV) */}
-        <div className="slide-controls-cluster">
-          {onToggleLang && (
-            <button
-              onClick={onToggleLang}
-              className="slide-circle-btn"
-              title={lang === "tr" ? "Switch to English" : "Türkçe'ye Geç"}
-              aria-label="Toggle language"
-            >
-              <span>{lang === "tr" ? "EN" : "TR"}</span>
-            </button>
-          )}
+        {/* Sağ Hızlı Butonlar: Mouse yaklaştığında animasyonla açılan yuvarlak butonlar */}
+        <div
+          className="slide-controls-wrapper"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <AnimatePresence mode="wait" initial={false}>
+            {!isControlsOpen ? (
+              <motion.button
+                key="trigger"
+                onClick={() => setIsControlsOpen(true)}
+                initial={{ opacity: 0, scale: 0.75 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.75 }}
+                transition={{ duration: 0.15 }}
+                className="slide-circle-btn slide-trigger-btn"
+                title={lang === "tr" ? "Hızlı Ayarlar & CV (Yaklaşınca Açılır)" : "Quick Actions & CV (Hover to Open)"}
+                aria-label="Toggle Quick Controls"
+              >
+                <SlidersHorizontal size={14} />
+              </motion.button>
+            ) : (
+              <motion.div
+                key="controls"
+                initial={{ opacity: 0, x: 12, width: 0 }}
+                animate={{ opacity: 1, x: 0, width: "auto" }}
+                exit={{ opacity: 0, x: 12, width: 0 }}
+                transition={{ type: "spring", stiffness: 420, damping: 28 }}
+                className="slide-controls-cluster"
+                style={{ overflow: "hidden", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
+              >
+                {onToggleLang && (
+                  <button
+                    onClick={onToggleLang}
+                    className="slide-circle-btn"
+                    title={lang === "tr" ? "Switch to English" : "Türkçe'ye Geç"}
+                    aria-label="Toggle language"
+                  >
+                    <span>{lang === "tr" ? "EN" : "TR"}</span>
+                  </button>
+                )}
 
-          {onToggleTheme && (
-            <button
-              onClick={onToggleTheme}
-              className="slide-circle-btn"
-              title={theme === "light" ? "Karanlık Mod" : "Aydınlık Mod"}
-              aria-label="Toggle theme"
-            >
-              {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
-            </button>
-          )}
+                {onToggleTheme && (
+                  <button
+                    onClick={onToggleTheme}
+                    className="slide-circle-btn"
+                    title={theme === "light" ? "Karanlık Mod" : "Aydınlık Mod"}
+                    aria-label="Toggle theme"
+                  >
+                    {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
+                  </button>
+                )}
 
-          <a
-            href={`${import.meta.env.BASE_URL}cv.pdf`}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={lang === "tr" ? "CV İndir (PDF)" : "Download CV (PDF)"}
-            className="slide-circle-btn slide-cv-circle"
-            aria-label="Download CV"
-          >
-            <Download size={14} />
-          </a>
+                <a
+                  href={`${import.meta.env.BASE_URL}cv.pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={lang === "tr" ? "CV İndir (PDF)" : "Download CV (PDF)"}
+                  className="slide-circle-btn slide-cv-circle"
+                  aria-label="Download CV"
+                >
+                  <Download size={14} />
+                </a>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </motion.header>
