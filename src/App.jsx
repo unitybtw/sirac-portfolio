@@ -562,22 +562,6 @@ function App() {
                     </a>
                   </div>
                 </div>
-
-                {/* Micro Stats Strip */}
-                <div className="hero-stats-strip">
-                  <div className="hero-stat-box">
-                    <div className="hero-stat-label">{t('about_stat_1')}</div>
-                    <div className="hero-stat-value">{t('hero_stat_1_val')}</div>
-                  </div>
-                  <div className="hero-stat-box">
-                    <div className="hero-stat-label">{t('about_stat_2')}</div>
-                    <div className="hero-stat-value">{t('hero_stat_2_val')}</div>
-                  </div>
-                  <div className="hero-stat-box">
-                    <div className="hero-stat-label">{t('about_stat_4')}</div>
-                    <div className="hero-stat-value" style={{ color: '#22c55e' }}>{t('hero_stat_3_val')}</div>
-                  </div>
-                </div>
               </motion.div>
             </div>
           </div>
@@ -600,13 +584,7 @@ function App() {
             </div>
             
             <div className="bento-card bento-col-4">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                <h3 style={{ fontSize: '1.2rem' }}>{t('about_stats_heading')}</h3>
-                <span className="live-status-chip">
-                  <span className="live-status-dot" />
-                  {t('badge_hire')}
-                </span>
-              </div>
+              <h3 style={{ fontSize: '1.2rem', marginBottom: '1.5rem' }}>{t('about_stats_heading')}</h3>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
                 <div>
@@ -883,8 +861,8 @@ function App() {
               </a>
             </div>
             
-            <div className="availability-card" style={{ padding: '1.25rem', border: '1px solid var(--border-subtle)', borderRadius: '12px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              <span className="dot-pulse" style={{ display: 'inline-block', width: '8px', height: '8px', background: '#22c55e', borderRadius: '50%', marginRight: '8px' }}></span>
+            <div className="availability-card" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem', padding: '0.75rem 1.25rem', border: '1px solid var(--border-subtle)', borderRadius: '12px', fontSize: '0.9rem', color: 'var(--text-secondary)', background: 'var(--bg-card)' }}>
+              <span style={{ display: 'inline-block', width: '6px', height: '6px', background: '#10b981', borderRadius: '50%', flexShrink: 0 }}></span>
               {t('about_stat_4_val')}
             </div>
           </div>

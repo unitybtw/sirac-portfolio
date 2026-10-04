@@ -19,7 +19,7 @@ const resources = {
             "nav_contact": "contact",
 
             // ── Hero ──────────────────────────────────────────────────────
-            "badge_hire": "OPEN TO OPPORTUNITIES",
+            "badge_hire": "Available for opportunities",
             "hero_title_1": "GAME DEVELOPER",
             "hero_title_2": "& INTERACTIVE SYSTEMS",
             "hero_subtitle_1": "Unity · C# · Blender · 3D Pipelines",
@@ -185,7 +185,7 @@ const resources = {
             "nav_contact": "İletişim",
 
             // ── Hero ──────────────────────────────────────────────────────
-            "badge_hire": "İŞ TEKLİFLERİNE AÇIK",
+            "badge_hire": "İş ve staj fırsatlarına açık",
             "hero_title_1": "OYUN GELİŞTİRİCİ",
             "hero_title_2": "& ETKİLEŞİMLİ SİSTEMLER",
             "hero_subtitle_1": "Unity · C# · Blender · 3D Pipeline",
