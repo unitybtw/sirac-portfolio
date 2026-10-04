@@ -1,27 +1,56 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { X, Gamepad2, Rocket, Zap, Navigation, Shield, Ghost, Crosshair, Target, Activity, Box, Trophy, User, Save, List, Gem, Compass, Eye, Play, Search, Shuffle, Medal, Award, Maximize, Minimize } from 'lucide-react';
+import {
+    X,
+    Gamepad2,
+    Trophy,
+    Medal,
+    Award,
+    Search,
+    Shuffle,
+    Maximize,
+    Minimize,
+    User,
+    Save,
+    Play,
+    RotateCcw,
+    ChevronLeft,
+    Sparkles,
+    Cpu,
+    LayoutGrid,
+    Pencil,
+    Flame,
+    Compass,
+    Zap,
+    Crown
+} from 'lucide-react';
 import './arcade.css';
 import { playClick, playHover, playSuccess, playArcadeOpen } from './soundEffects';
 import { gamesList, categoryLabels, getGameCategory, RANDOM_PREFIXES, RANDOM_SUFFIXES } from './gamesData';
 
 const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
     const { t } = useTranslation();
-    const [nickname, setNickname] = useState(localStorage.getItem('arcade_nickname') || '');
+    const [nickname, setNickname] = useState(() => localStorage.getItem('arcade_nickname') || '');
     const [tempName, setTempName] = useState('');
     const [showScoreboard, setShowScoreboard] = useState(false);
     const [localScores, setLocalScores] = useState(() => {
-        const saved = localStorage.getItem('arcade_scores');
-        return saved ? JSON.parse(saved) : {};
+        try {
+            const saved = localStorage.getItem('arcade_scores');
+            return saved ? JSON.parse(saved) : {};
+        } catch {
+            return {};
+        }
     });
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState('all');
     const [scoreboardGameFilter, setScoreboardGameFilter] = useState('all');
     const [isMobile, setIsMobile] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [gameReloadKey, setGameReloadKey] = useState(0);
 
+    // Responsive genişlik kontrolü
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth <= 768);
         checkMobile();
@@ -34,7 +63,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
     const frameRef = useRef(null);
     const [frameWidth, setFrameWidth] = useState(0);
 
-    // Fullscreen change listener
+    // Tam ekran durumu dinleyicisi
     useEffect(() => {
         const handleFsChange = () => {
             setIsFullscreen(Boolean(document.fullscreenElement || document.webkitFullscreenElement));
@@ -47,26 +76,28 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
         };
     }, []);
 
+    // Evrensel Tam Ekran geçiş fonksiyonu
     const toggleFullScreen = useCallback(() => {
         const el = frameRef.current;
         if (!el) return;
         if (!document.fullscreenElement && !document.webkitFullscreenElement) {
             const req = el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen || el.msRequestFullscreen;
             if (req) {
-                req.call(el).catch(err => {
-                    console.error("Fullscreen error:", err);
+                req.call(el).catch((err) => {
+                    console.error("Fullscreen request failed:", err);
                 });
             }
         } else {
             const exit = document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen || document.msExitFullscreen;
             if (exit) {
-                exit.call(document).catch(err => {
-                    console.error("Exit fullscreen error:", err);
+                exit.call(document).catch((err) => {
+                    console.error("Exit fullscreen failed:", err);
                 });
             }
         }
     }, []);
 
+    // Aktif oyundan çıkış
     const handleExitActiveGame = useCallback(() => {
         playClick();
         if (document.fullscreenElement || document.webkitFullscreenElement) {
@@ -76,7 +107,28 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
         setActiveGameId(null);
     }, [setActiveGameId]);
 
-    // Oyun çerçevesinin gerçek genişliğini izle (mobil ölçekleme için)
+    // Aktif oyunu yeniden başlat
+    const handleRestartGame = useCallback(() => {
+        playClick();
+        setGameReloadKey((prev) => prev + 1);
+    }, []);
+
+    // Rastgele oyun seçip başlat
+    const handleQuickShuffle = useCallback(() => {
+        playSuccess();
+        const candidatePool = activeTab === 'all' 
+            ? gamesList 
+            : gamesList.filter(g => getGameCategory(g.id) === activeTab);
+        
+        const listToUse = candidatePool.length > 0 ? candidatePool : gamesList;
+        const randomPick = listToUse[Math.floor(Math.random() * listToUse.length)];
+        
+        setShowScoreboard(false);
+        setActiveGameId(randomPick.id);
+        setGameReloadKey(prev => prev + 1);
+    }, [activeTab, setActiveGameId]);
+
+    // Çerçeve genişliği ResizeObserver (mobil ölçekleme için)
     useEffect(() => {
         if (!isOpen || !activeGameId) return;
         const el = frameRef.current;
@@ -87,46 +139,9 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
         ro.observe(el);
         setFrameWidth(el.getBoundingClientRect().width);
         return () => ro.disconnect();
-    }, [isOpen, activeGameId, showScoreboard, nickname]);
-    const isScrollingRef = useRef(false);
-    const scrollTimerRef = useRef(null);
+    }, [isOpen, activeGameId]);
 
-    // Attach scroll listener once — never re-attaches on state changes
-    // Uses direct DOM classList manipulation (zero React overhead)
-    useEffect(() => {
-        const getScrollContainer = () => scrollRef.current;
-        const getGrid = () => gridRef.current;
-
-        const onScroll = () => {
-            const grid = getGrid();
-            if (!grid) return;
-
-            if (!isScrollingRef.current) {
-                isScrollingRef.current = true;
-                grid.classList.add('is-scrolling');
-            }
-            clearTimeout(scrollTimerRef.current);
-            scrollTimerRef.current = setTimeout(() => {
-                isScrollingRef.current = false;
-                if (grid) grid.classList.remove('is-scrolling');
-            }, 200);
-        };
-
-        // Re-attach whenever the modal opens (scrollRef re-mounts)
-        const attach = () => {
-            const el = getScrollContainer();
-            if (el) el.addEventListener('scroll', onScroll, { passive: true });
-        };
-
-        attach();
-        return () => {
-            const el = getScrollContainer();
-            if (el) el.removeEventListener('scroll', onScroll);
-            clearTimeout(scrollTimerRef.current);
-        };
-    // Only re-run when view that contains the grid changes
-    }, [isOpen, activeGameId, showScoreboard, nickname]);
-
+    // Hızlı rastgele nick üretimi
     const generateRandomNickname = () => {
         const p = RANDOM_PREFIXES[Math.floor(Math.random() * RANDOM_PREFIXES.length)];
         const s = RANDOM_SUFFIXES[Math.floor(Math.random() * RANDOM_SUFFIXES.length)];
@@ -134,7 +149,9 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
         setTempName(`${p}${s}${num}`);
     };
 
-    const activeGame = gamesList.find(g => g.id === activeGameId);
+    const activeGame = useMemo(() => {
+        return gamesList.find((g) => g.id === activeGameId);
+    }, [activeGameId]);
 
     const saveNickname = () => {
         const trimmed = tempName.trim();
@@ -144,33 +161,31 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
         }
     };
 
-    // Memoize filtered games list — avoids re-filtering 75+ items on every render
+    // Filtrelenmiş oyunlar listesi (memoize)
     const filteredGames = useMemo(() => {
-        const q = searchQuery.toLowerCase();
-        return gamesList.filter(game => {
+        const q = searchQuery.toLowerCase().trim();
+        return gamesList.filter((game) => {
             const matchesSearch = !q || game.title.toLowerCase().includes(q);
             const matchesTab = activeTab === 'all' || getGameCategory(game.id) === activeTab;
             return matchesSearch && matchesTab;
         });
     }, [searchQuery, activeTab]);
 
+    // Global Firebase Skorları
     const [globalScores, setGlobalScores] = useState([]);
     const FIREBASE_DB = 'https://sirac-portfolio-default-rtdb.europe-west1.firebasedatabase.app';
 
-    // Wrap in useCallback so it can be safely added to useEffect deps
     const fetchGlobalScores = useCallback(async () => {
         try {
-            // Try optimized query first (requires ".indexOn": "score" in Firebase rules)
             let res = await fetch(`${FIREBASE_DB}/scores.json?orderBy="score"&limitToLast=100`);
             let data = await res.json();
-            
-            // Fall back to unoptimized query if index is not defined yet on remote database
+
             if (data && data.error && data.error.includes("Index not defined")) {
                 res = await fetch(`${FIREBASE_DB}/scores.json`);
                 data = await res.json();
             }
 
-            if (data) {
+            if (data && typeof data === 'object') {
                 const scoresArray = Object.values(data);
                 scoresArray.sort((a, b) => b.score - a.score);
                 setGlobalScores(scoresArray.slice(0, 100));
@@ -178,7 +193,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                 setGlobalScores([]);
             }
         } catch (e) {
-            console.error("Score fetch failed", e);
+            console.error("Score fetch error:", e);
         }
     }, [FIREBASE_DB]);
 
@@ -191,27 +206,18 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
         }
     }, [isOpen, fetchGlobalScores]);
 
-    // Freeze everything behind the modal when open
+    // Modal açıkken arka plan kaydırmasını dondur
     useEffect(() => {
         if (isOpen) {
             document.body.style.overflow = 'hidden';
             document.documentElement.style.overflow = 'hidden';
-            // Fully pause Lenis RAF processing (not just stop scrolling)
             if (typeof window.lenisRafPause === 'function') window.lenisRafPause();
             else if (window.lenis && typeof window.lenis.stop === 'function') window.lenis.stop();
-            // Hide portal card completely — removes it from GPU render tree
-            // This eliminates its backdrop-filter, animations, and compositing cost
-            const portalCard = document.querySelector('.arcade-portal-card');
-            if (portalCard) portalCard.style.display = 'none';
         } else {
             document.body.style.overflow = '';
             document.documentElement.style.overflow = '';
-            // Resume Lenis RAF
             if (typeof window.lenisRafResume === 'function') window.lenisRafResume();
             else if (window.lenis && typeof window.lenis.start === 'function') window.lenis.start();
-            // Show portal card again
-            const portalCard = document.querySelector('.arcade-portal-card');
-            if (portalCard) portalCard.style.display = '';
         }
         return () => {
             document.body.style.overflow = '';
@@ -221,12 +227,13 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
         };
     }, [isOpen]);
 
+    // Skor kaydetme fonksiyonu
     const handleGameOver = useCallback(async (score, gameId) => {
         const id = gameId || activeGameId;
         if (!id) return;
 
-        // 1. Local Save
-        setLocalScores(prev => {
+        // 1. Yerel Kayıt
+        setLocalScores((prev) => {
             const currentBest = prev[id] || 0;
             if (score > currentBest) {
                 const newScores = { ...prev, [id]: score };
@@ -236,11 +243,10 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
             return prev;
         });
 
-        // 2. Global Firebase Sync
-        if (score > 0) {
+        // 2. Firebase Bulut Kaydı
+        if (score > 0 && nickname) {
             try {
-                // Key format: nick_gameId to update existing scores instead of duplicating
-                const scoreKey = `${nickname}_${id}`.replace(/[.#$[\]]/g, '_'); 
+                const scoreKey = `${nickname}_${id}`.replace(/[.#$[\]]/g, '_');
                 const scoreData = {
                     name: nickname,
                     gameId: id,
@@ -253,478 +259,643 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(scoreData)
                 });
-                
-                fetchGlobalScores(); // Refresh list
+
+                fetchGlobalScores();
             } catch (e) {
-                console.error("Cloud sync failed", e);
+                console.error("Cloud score sync error:", e);
             }
         }
-    }, [activeGameId, nickname]);
+    }, [activeGameId, nickname, FIREBASE_DB, fetchGlobalScores]);
+
+    // Öne çıkan oyunlar (Portal kartında rozet olarak gösterilir)
+    const featuredHighlights = [
+        { title: 'Minecraft 1.5.2', color: '#55aa55' },
+        { title: 'CS:GO Web', color: '#ffd700' },
+        { title: 'GTA Vice City', color: '#ff66b2' },
+        { title: 'Quake III', color: '#ffcc00' },
+        { title: 'Mario 64', color: '#ffaa00' },
+        { title: 'Subway Surfers', color: '#00ffcc' },
+        { title: 'DOOM', color: '#ff0033' },
+    ];
 
     return (
         <>
+            {/* ── 1. PORTAL KARTI (Ana sayfada yer alan zarif kart) ── */}
             <div
-            onClick={() => { setIsOpen(true); playArcadeOpen(); }}
-            onMouseEnter={playHover}
-            className="arcade-portal-card"
-        >
-                {/* Scanner Beam / Scanline Effect */}
-                <div className="arcade-portal-scanline" />
+                onClick={() => { setIsOpen(true); playArcadeOpen(); }}
+                onMouseEnter={playHover}
+                className="arcade-portal-card"
+            >
+                <div className="arcade-portal-glow" />
 
-                {/* Rotating bg glow — CSS instead of JS */}
-                <div className="arcade-portal-bg-rotate" />
-                
-                <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-                    <div className="arcade-portal-icon">
-                        <Gamepad2 size={46} color="#fff" style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))' }} />
+                <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                    {/* Canlı Durum Hapı */}
+                    <div className="arcade-portal-live-badge">
+                        <span className="arcade-status-dot" />
+                        <span>{t('arcade_portal_badge')}</span>
                     </div>
-                    
-                    <h3 className="text-gradient" style={{ fontSize: '2.8rem', fontWeight: 800, margin: 0, letterSpacing: '-0.03em', textShadow: '0 0 20px rgba(0,240,255,0.1)' }}>
-                        {t('arcade_btn') || 'Launch Arcade'}
+
+                    {/* İkon */}
+                    <div className="arcade-portal-icon-wrapper">
+                        <Gamepad2 size={38} color="#ffffff" />
+                    </div>
+
+                    {/* Başlık ve Açıklama */}
+                    <h3 className="arcade-portal-title">
+                        {t('arcade_title')}
                     </h3>
-                    
-                    <p style={{ color: 'var(--text-muted)', fontSize: '1.15rem', marginTop: '0.8rem', maxWidth: '500px', lineHeight: 1.6 }}>
-                        Explore 50+ fully playable web simulations, arcade games, and strategy challenges. Submit high scores to the global database.
+
+                    <p className="arcade-portal-subtitle">
+                        {t('arcade_portal_desc')}
                     </p>
 
-                    <div className="arcade-portal-stats">
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
-                            <span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold' }}>50+</span>
-                            <span style={{ color: 'var(--text-muted)' }}>Simulations</span>
-                        </div>
-                        <div className="arcade-portal-divider" />
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem' }}>
-                            <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', background: '#00ff66', boxShadow: '0 0 8px #00ff66', animation: 'bar-pulse 2s infinite' }} />
-                            <span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold' }}>ONLINE</span>
-                        </div>
+                    {/* Öne Çıkan Oyun Çipleri */}
+                    <div className="arcade-portal-chips">
+                        {featuredHighlights.map((feat, i) => (
+                            <span key={i} className="arcade-portal-chip">
+                                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: feat.color }} />
+                                {feat.title}
+                            </span>
+                        ))}
+                    </div>
+
+                    {/* Aksiyon Butonları */}
+                    <div className="arcade-portal-actions">
+                        <button
+                            type="button"
+                            className="arcade-cta-btn"
+                            onClick={(e) => { e.stopPropagation(); setIsOpen(true); playArcadeOpen(); }}
+                        >
+                            <Play size={16} fill="currentColor" /> {t('arcade_portal_explore')}
+                        </button>
+
+                        <button
+                            type="button"
+                            className="arcade-cta-btn secondary"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setIsOpen(true);
+                                playArcadeOpen();
+                                handleQuickShuffle();
+                            }}
+                        >
+                            <Shuffle size={15} /> {t('arcade_portal_shuffle')}
+                        </button>
                     </div>
                 </div>
             </div>
 
+            {/* ── 2. TAM EKRAN MODAL PENCERESİ ── */}
             {createPortal(
                 <AnimatePresence>
                     {isOpen && (
                         <motion.div
                             className="arcade-modal-overlay"
                             data-lenis-prevent
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                    >
-                        {/* Header */}
-                        <div className="arcade-modal-header">
-                            <div className="arcade-modal-header-inner">
-                                <div className="arcade-modal-header-left">
-                                    <div>
-                                        <h2 className="text-gradient" style={{ fontSize: '1.8rem', margin: 0, letterSpacing: '-0.02em', fontWeight: 800 }}>{t('arcade_inside_title')}</h2>
-                                        {nickname && (
-                                            <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0.2rem 0 0 0', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                Connected as <span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold' }}>{nickname}</span>
-                                                <button 
-                                                    onClick={() => { playClick(); setTempName(nickname); setNickname(''); }}
-                                                    style={{ background: 'none', border: 'none', color: 'var(--accent-violet)', fontSize: '0.75rem', cursor: 'pointer', padding: 0, textDecoration: 'underline', fontWeight: 600 }}
-                                                >
-                                                    [Edit]
-                                                </button>
-                                            </p>
-                                        )}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                        >
+                            {/* Üst Navigasyon Çubuğu */}
+                            <header className="arcade-modal-header">
+                                <div className="arcade-modal-header-inner">
+                                    {/* Sol: Logo + Oyuncu Adı */}
+                                    <div className="arcade-header-brand">
+                                        <div className="arcade-brand-badge">
+                                            <Gamepad2 size={20} />
+                                        </div>
+                                        <div className="arcade-brand-info">
+                                            <h2>{t('arcade_inside_title')}</h2>
+                                            {nickname && (
+                                                <div className="arcade-player-tag">
+                                                    <span>{t('arcade_connected_as')}</span>
+                                                    <span className="arcade-player-name">{nickname}</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => { playClick(); setTempName(nickname); setNickname(''); }}
+                                                        className="arcade-edit-name-btn"
+                                                        title={t('arcade_edit_name')}
+                                                    >
+                                                        <Pencil size={11} />
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
+
+                                    {/* Orta: Arama + Skor Tablosu + Rastgele */}
                                     {nickname && !activeGameId && (
-                                        <div className="arcade-header-controls" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                                            <button
-                                                onClick={() => { playClick(); setShowScoreboard(!showScoreboard); }}
-                                                onMouseEnter={playHover}
-                                                className={`btn ${showScoreboard ? 'btn-primary' : 'btn-outline'}`}
-                                                style={{ padding: '0.4rem 1rem', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '8px' }}
-                                            >
-                                                {showScoreboard ? <Gamepad2 size={16} /> : <Trophy size={16} />}
-                                                {showScoreboard ? t('arcade_games') : t('arcade_scoreboard')}
-                                            </button>
+                                        <div className="arcade-header-actions">
+                                            {/* Arama Alanı */}
                                             {!showScoreboard && (
-                                                <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Search game..."
-                                                        value={searchQuery}
-                                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                                        className="arcade-input"
-                                                        style={{
-                                                            padding: '0.4rem 1rem 0.4rem 2rem',
-                                                            borderRadius: '20px',
-                                                            fontSize: '0.8rem',
-                                                            width: '160px',
-                                                            fontFamily: 'monospace',
-                                                            minHeight: '44px',
-                                                            boxSizing: 'border-box',
-                                                        }}
-                                                        onFocus={(e) => { e.target.style.width = '210px'; }}
-                                                        onBlur={(e) => { e.target.style.width = '160px'; }}
-                                                    />
-                                                    <span style={{ position: 'absolute', left: '10px', color: 'var(--text-secondary)', pointerEvents: 'none', display: 'flex', alignItems: 'center' }}>
+                                                <div className="arcade-search-box">
+                                                    <span className="arcade-search-icon">
                                                         <Search size={14} />
                                                     </span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    )}
-                                </div>
-                                <button
-                                    onClick={() => { playClick(); setIsOpen(false); setActiveGameId(null); setShowScoreboard(false); }}
-                                    onMouseEnter={playHover}
-                                    className="arcade-close-btn"
-                                    aria-label="Close"
-                                >
-                                    <X size={24} />
-                                </button>
-                            </div>
-                        </div>
-
-                        <div ref={scrollRef} className="arcade-modal-body" data-lenis-prevent>
-                            <div className="arcade-modal-body-inner">
-                                <AnimatePresence mode="wait">
-                                {!nickname ? (
-                                    /* Nickname Entry View */
-                                    <motion.div
-                                        key="nickname"
-                                        initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -20 }}
-                                        style={{ maxWidth: '450px', margin: '8vh auto', textAlign: 'center' }}
-                                    >
-                                        <div className="arcade-panel" style={{ padding: '3.5rem 2.5rem' }}>
-                                            <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(135deg, var(--accent-cyan), var(--accent-violet))', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem auto', boxShadow: '0 10px 25px rgba(var(--accent-cyan-rgb), 0.3)' }}>
-                                                <User size={40} color="#fff" />
-                                            </div>
-                                            <h3 style={{ fontSize: '1.6rem', marginBottom: '0.5rem', letterSpacing: '-0.02em', fontWeight: 700, color: 'var(--text-headers)' }}>{t('arcade_set_nickname')}</h3>
-                                            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '2rem' }}>Choose your identity to save your scores globally.</p>
-                                            
-                                            <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Enter username..."
-                                                    value={tempName}
-                                                    onChange={(e) => setTempName(e.target.value)}
-                                                    className="arcade-input"
-                                                    style={{
-                                                        flex: 1, padding: '1.2rem',
-                                                        textAlign: 'center', fontSize: '1.1rem',
-                                                    }}
-                                                    maxLength={16}
-                                                    autoFocus
-                                                />
-                                                <motion.button
-                                                    onClick={() => { playClick(); generateRandomNickname(); }}
-                                                    onMouseEnter={playHover}
-                                                    className="btn btn-outline"
-                                                    style={{ padding: '0.8rem 1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-                                                    title="Generate Random Tag"
-                                                    whileHover={{ scale: 1.05, borderColor: 'var(--accent-cyan)' }}
-                                                    whileTap={{ scale: 0.95 }}
-                                                >
-                                                    <Shuffle size={16} />
-                                                </motion.button>
-                                            </div>
-
-                                            <button
-                                                onClick={() => { playSuccess(); saveNickname(); }}
-                                                className="btn btn-primary"
-                                                style={{ width: '100%', padding: '1.2rem', fontSize: '1.05rem' }}
-                                                disabled={tempName.trim().length < 3}
-                                            >
-                                                <Save size={20} style={{ marginRight: '8px' }} /> {t('arcade_save_continue')}
-                                            </button>
-                                        </div>
-                                    </motion.div>
-                                ) : showScoreboard ? (
-                                    /* Scoreboard View */
-                                    <motion.div
-                                        key="scoreboard"
-                                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
-                                        style={{ maxWidth: '950px', margin: '0 auto' }}
-                                    >
-                                        <div className="arcade-panel" style={{ padding: '2.5rem 3rem' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem', flexWrap: 'wrap', gap: '1rem' }}>
-                                                <h3 style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '1.8rem', letterSpacing: '-0.02em', margin: 0, color: 'var(--text-headers)' }}>
-                                                    <Trophy color="gold" size={28} /> Global Hall of Fame
-                                                </h3>
-                                                
-                                                <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
-                                                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Game Filter:</span>
-                                                    <select
-                                                        value={scoreboardGameFilter}
-                                                        onChange={(e) => setScoreboardGameFilter(e.target.value)}
-                                                        className="arcade-select"
-                                                    >
-                                                        <option value="all">All Simulations</option>
-                                                        {gamesList.map(g => (
-                                                            <option key={g.id} value={g.id}>{g.title}</option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div className="arcade-scoreboard-grid">
-                                                {/* Global Scores from Cloud */}
-                                                <div style={{ display: 'grid', gap: '0.8rem', alignContent: 'start' }}>
-                                                    <h4 style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem' }}>Top 10 Records</h4>
-                                                    {(() => {
-                                                        const filtered = globalScores.filter(s => scoreboardGameFilter === 'all' || s.gameId === scoreboardGameFilter);
-                                                        if (globalScores.length === 0) {
-                                                            return <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontStyle: 'italic' }}>Syncing with cloud database...</p>;
-                                                        }
-                                                        if (filtered.length === 0) {
-                                                            return <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', fontStyle: 'italic' }}>No scores submitted yet for this game.</p>;
-                                                        }
-                                                        return filtered.slice(0, 10).map((s, idx) => {
-                                                            const isMe = s.name === nickname;
-                                                            let rowBg = 'transparent';
-                                                            let rowBorder = '1px solid var(--border-subtle)';
-                                                            if (isMe) {
-                                                                rowBg = 'rgba(var(--accent-cyan-rgb), 0.08)';
-                                                                rowBorder = '1px solid rgba(var(--accent-cyan-rgb), 0.3)';
-                                                            } else if (idx === 0) {
-                                                                rowBg = 'rgba(255, 215, 0, 0.04)';
-                                                            }
-                                                            return (
-                                                                <div key={`global-${idx}`} style={{
-                                                                    display: 'flex', justifyContent: 'space-between', padding: '0.8rem 1.2rem',
-                                                                    background: rowBg,
-                                                                    border: rowBorder,
-                                                                    borderRadius: '12px',
-                                                                    alignItems: 'center',
-                                                                    boxShadow: isMe ? '0 0 15px rgba(var(--accent-cyan-rgb), 0.15)' : 'none',
-                                                                    transition: 'all 0.3s'
-                                                                }}>
-                                                                    <div style={{ display: 'flex', gap: '1.2rem', alignItems: 'center' }}>
-                                                                        <span style={{ 
-                                                                            color: idx === 0 ? '#ffd700' : idx === 1 ? '#c0c0c0' : idx === 2 ? '#cd7f32' : 'var(--text-muted)', 
-                                                                            width: '28px', 
-                                                                            fontWeight: 800, 
-                                                                            fontSize: idx < 3 ? '1.3rem' : '0.9rem',
-                                                                            display: 'inline-flex',
-                                                                            alignItems: 'center',
-                                                                            justifyContent: 'center'
-                                                                        }}>
-                                                                            {idx === 0 ? <Trophy size={16} color="#eab308" /> : idx === 1 ? <Medal size={16} color="#94a3b8" /> : idx === 2 ? <Award size={16} color="#d97706" /> : `${idx + 1}.`}
-                                                                        </span>
-                                                                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                                            <span style={{ color: 'var(--text-headers)', fontWeight: isMe ? 700 : 500, fontSize: '0.95rem' }}>{s.name}</span>
-                                                                            <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', marginTop: '1px' }}>
-                                                                                {gamesList.find(g => g.id === s.gameId)?.title || s.gameId}
-                                                                            </span>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div style={{ color: isMe ? 'var(--accent-cyan)' : 'var(--text-main)', fontWeight: 700, fontSize: '1.15rem', fontFamily: 'monospace' }}>
-                                                                        {s.score.toLocaleString()}
-                                                                    </div>
-                                                                </div>
-                                                            );
-                                                        });
-                                                    })()}
-                                                </div>
-
-                                                {/* Local High Scores */}
-                                                <div style={{ display: 'grid', gap: '0.8rem', alignContent: 'start' }}>
-                                                    <h4 style={{ color: 'var(--text-muted)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem' }}>Your Best Performances</h4>
-                                                    {Object.entries(localScores).length === 0 ? (
-                                                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No local records yet.</p>
-                                                    ) : (
-                                                        Object.entries(localScores)
-                                                            .sort((a, b) => b[1] - a[1])
-                                                            .map(([gameId, score]) => {
-                                                                const gameInfo = gamesList.find(g => g.id === gameId);
-                                                                return (
-                                                                    <div key={`local-${gameId}`} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.8rem 1.2rem', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: '12px', alignItems: 'center' }}>
-                                                                        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                                                                            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: gameInfo?.color || 'var(--accent-cyan)' }} />
-                                                                            <span style={{ color: 'var(--text-headers)', fontSize: '0.9rem', fontWeight: 500 }}>{gameInfo?.title || gameId}</span>
-                                                                        </div>
-                                                                        <div style={{ fontWeight: 700, color: gameInfo?.color || 'var(--accent-cyan)', fontFamily: 'monospace', fontSize: '1.05rem' }}>{score.toLocaleString()}</div>
-                                                                    </div>
-                                                                );
-                                                            })
+                                                    <input
+                                                        type="text"
+                                                        placeholder={t('arcade_search_placeholder')}
+                                                        value={searchQuery}
+                                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                                        className="arcade-search-input"
+                                                    />
+                                                    {searchQuery && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setSearchQuery('')}
+                                                            className="arcade-search-clear"
+                                                        >
+                                                            <X size={13} />
+                                                        </button>
                                                     )}
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                ) : !activeGameId ? (
-                                    /* Games Grid View */
-                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '1200px', margin: '0 auto' }}>
-                                        {/* Category Tabs */}
-                                        <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '2.5rem', width: '100%' }}>
-                                            {[
-                                                { id: 'all', label: 'All Simulations', count: gamesList.length, icon: <List size={16} /> },
-                                                { id: 'simulation', label: 'Retro & 3D Ports', count: gamesList.filter(g => getGameCategory(g.id) === 'simulation').length, icon: <Compass size={16} /> },
-                                                { id: 'arcade', label: 'Classic Arcade', count: gamesList.filter(g => getGameCategory(g.id) === 'arcade').length, icon: <Gamepad2 size={16} /> },
-                                                { id: 'puzzle', label: 'Puzzles & Strategy', count: gamesList.filter(g => getGameCategory(g.id) === 'puzzle').length, icon: <Zap size={16} /> }
-                                            ].map(cat => (
-                                                <button
-                                                    key={cat.id}
-                                                    className={`arcade-tab-btn ${activeTab === cat.id ? 'active' : ''}`}
-                                                    onClick={() => { playClick(); setActiveTab(cat.id); }}
-                                                    onMouseEnter={playHover}
-                                                >
-                                                    {cat.icon}
-                                                    <span>{cat.label}</span>
-                                                    <span style={{ fontSize: '0.75rem', opacity: 0.85, background: activeTab === cat.id ? 'rgba(255,255,255,0.2)' : 'var(--bg-primary)', color: 'var(--text-headers)', padding: '2px 6px', borderRadius: '10px' }}>{cat.count}</span>
-                                                </button>
-                                            ))}
-                                        </div>
-
-
-                                        <div ref={gridRef} className="arcade-games-grid">
-                                            {filteredGames.length === 0 && (
-                                                <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem', color: 'var(--text-muted)', fontFamily: 'monospace' }}>
-                                                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-                                                        <Gamepad2 size={44} style={{ opacity: 0.4 }} />
-                                                    </div>
-                                                    <p style={{ fontSize: '1.2rem', margin: 0 }}>No games match your filters</p>
-                                                    <button 
-                                                        className="btn btn-outline" 
-                                                        onClick={() => { setSearchQuery(''); setActiveTab('all'); }}
-                                                        style={{ marginTop: '1.5rem', padding: '0.4rem 1.2rem', fontSize: '0.85rem' }}
-                                                    >
-                                                        Reset Filters
-                                                    </button>
-                                                </div>
                                             )}
 
-                                            {filteredGames.map((game) => {
-                                                    const cat = getGameCategory(game.id);
-                                                    return (
-                                                        <div
-                                                            key={game.id}
-                                                            className="arcade-game-card"
-                                                            onMouseEnter={playHover}
-                                                            onClick={() => { playClick(); setActiveGameId(game.id); }}
-                                                            style={{ '--game-color': game.color }}
-                                                        >
-                                                            {/* Category tag badge */}
-                                                            <div className="arcade-card-badge">
-                                                                {categoryLabels[cat]}
-                                                            </div>
+                                            {/* Rastgele Oyun */}
+                                            {!showScoreboard && (
+                                                <button
+                                                    type="button"
+                                                    onClick={handleQuickShuffle}
+                                                    onMouseEnter={playHover}
+                                                    className="arcade-action-btn"
+                                                    title={t('arcade_random_pick')}
+                                                >
+                                                    <Shuffle size={14} />
+                                                    <span>{t('arcade_random_pick')}</span>
+                                                </button>
+                                            )}
 
-                                                            {/* Ambient glow */}
-                                                            <div className="arcade-card-glow" />
-                                                            
-                                                            {/* Icon */}
-                                                            <div className="arcade-card-icon">
-                                                                {game.icon}
-                                                            </div>
-                                                            
-                                                            {/* Title & Score */}
-                                                            <div className="arcade-card-info">
-                                                                <h3>{game.title}</h3>
-                                                                <div className="arcade-card-status">
-                                                                    <div className="arcade-card-score">
-                                                                        {localScores[game.id] ? (
-                                                                            <span className="arcade-score-value">BEST <span className="arcade-score-number">{localScores[game.id]}</span></span>
+                                            {/* Skor Tablosu Geçişi */}
+                                            <button
+                                                type="button"
+                                                onClick={() => { playClick(); setShowScoreboard(!showScoreboard); }}
+                                                onMouseEnter={playHover}
+                                                className={`arcade-action-btn ${showScoreboard ? 'active' : ''}`}
+                                            >
+                                                {showScoreboard ? <Gamepad2 size={14} /> : <Trophy size={14} />}
+                                                <span>{showScoreboard ? t('arcade_games') : t('arcade_scoreboard')}</span>
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {/* Sağ: Kapatma Butonu */}
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            playClick();
+                                            setIsOpen(false);
+                                            setActiveGameId(null);
+                                            setShowScoreboard(false);
+                                        }}
+                                        onMouseEnter={playHover}
+                                        className="arcade-close-btn"
+                                        aria-label={t('arcade_exit')}
+                                    >
+                                        <X size={18} />
+                                    </button>
+                                </div>
+                            </header>
+
+                            {/* Ana Gövde */}
+                            <main ref={scrollRef} className="arcade-modal-body" data-lenis-prevent>
+                                <div className="arcade-modal-body-inner">
+                                    <AnimatePresence mode="wait">
+                                        {/* ── A: KİMLİK / NICKNAME BELİRLEME EKRANI ── */}
+                                        {!nickname ? (
+                                            <motion.div
+                                                key="nickname-view"
+                                                initial={{ opacity: 0, scale: 0.96, y: 16 }}
+                                                animate={{ opacity: 1, scale: 1, y: 0 }}
+                                                exit={{ opacity: 0, scale: 0.96, y: -16 }}
+                                                transition={{ duration: 0.25 }}
+                                                className="arcade-identity-modal"
+                                            >
+                                                <div className="arcade-avatar-preview">
+                                                    {tempName.trim() ? tempName.trim().charAt(0).toUpperCase() : <User size={34} />}
+                                                </div>
+
+                                                <h3 style={{ fontSize: '1.6rem', fontWeight: 800, margin: '0 0 0.5rem', fontFamily: 'var(--arcade-font-heading)', color: 'var(--arcade-text-primary)' }}>
+                                                    {t('arcade_set_nickname')}
+                                                </h3>
+                                                <p style={{ color: 'var(--arcade-text-secondary)', fontSize: '0.9rem', marginBottom: '2rem', lineHeight: 1.5 }}>
+                                                    {t('arcade_nickname_sub')}
+                                                </p>
+
+                                                <div style={{ display: 'flex', gap: '8px', marginBottom: '1.25rem' }}>
+                                                    <input
+                                                        type="text"
+                                                        placeholder={t('arcade_enter_name')}
+                                                        value={tempName}
+                                                        onChange={(e) => setTempName(e.target.value)}
+                                                        className="arcade-search-input"
+                                                        style={{
+                                                            flex: 1,
+                                                            padding: '0.9rem 1.25rem',
+                                                            borderRadius: '14px',
+                                                            fontSize: '1.05rem',
+                                                            textAlign: 'center',
+                                                            fontWeight: 600,
+                                                            width: 'auto'
+                                                        }}
+                                                        maxLength={16}
+                                                        autoFocus
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => { playClick(); generateRandomNickname(); }}
+                                                        onMouseEnter={playHover}
+                                                        className="arcade-action-btn"
+                                                        style={{ padding: '0.9rem 1.15rem', borderRadius: '14px' }}
+                                                        title={t('arcade_gen_random')}
+                                                    >
+                                                        <Shuffle size={16} />
+                                                    </button>
+                                                </div>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => { playSuccess(); saveNickname(); }}
+                                                    className="arcade-cta-btn"
+                                                    style={{ width: '100%', justifyContent: 'center', padding: '0.95rem' }}
+                                                    disabled={tempName.trim().length < 3}
+                                                >
+                                                    <Save size={18} /> {t('arcade_save_continue')}
+                                                </button>
+                                            </motion.div>
+                                        ) : showScoreboard ? (
+                                            /* ── B: SKOR TABLOSU / HALL OF FAME ── */
+                                            <motion.div
+                                                key="scoreboard-view"
+                                                initial={{ opacity: 0, y: 16 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, y: -16 }}
+                                                transition={{ duration: 0.2 }}
+                                                className="arcade-scoreboard-container"
+                                            >
+                                                <div className="arcade-scoreboard-panel">
+                                                    <div className="arcade-scoreboard-header">
+                                                        <h3 className="arcade-scoreboard-title">
+                                                            <Trophy size={26} color="#f59e0b" />
+                                                            <span>{t('arcade_global_hall')}</span>
+                                                        </h3>
+
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                            <select
+                                                                value={scoreboardGameFilter}
+                                                                onChange={(e) => setScoreboardGameFilter(e.target.value)}
+                                                                className="arcade-filter-select"
+                                                            >
+                                                                <option value="all">{t('arcade_cat_all')} (75)</option>
+                                                                {gamesList.map((g) => (
+                                                                    <option key={g.id} value={g.id}>{g.title}</option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="arcade-leaderboard-layout">
+                                                        {/* Sol: Küresel Sıralama */}
+                                                        <div>
+                                                            <h4 style={{ color: 'var(--arcade-text-secondary)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '1rem', fontWeight: 700 }}>
+                                                                {t('arcade_top_records')}
+                                                            </h4>
+
+                                                            {(() => {
+                                                                const filtered = globalScores.filter((s) => scoreboardGameFilter === 'all' || s.gameId === scoreboardGameFilter);
+
+                                                                if (globalScores.length === 0) {
+                                                                    return <p style={{ color: 'var(--arcade-text-muted)', fontSize: '0.9rem', fontStyle: 'italic' }}>Skorlar yükleniyor...</p>;
+                                                                }
+
+                                                                if (filtered.length === 0) {
+                                                                    return <p style={{ color: 'var(--arcade-text-muted)', fontSize: '0.9rem', fontStyle: 'italic' }}>Bu oyun için henüz kayıtlı skor yok.</p>;
+                                                                }
+
+                                                                return (
+                                                                    <>
+                                                                        {/* Top 3 Podyumu */}
+                                                                        <div className="arcade-podium-grid">
+                                                                            {filtered.slice(0, 3).map((pod, idx) => (
+                                                                                <div key={`pod-${idx}`} className={`arcade-podium-card ${idx === 0 ? 'first' : ''}`}>
+                                                                                    <div className="arcade-podium-rank" style={{ color: idx === 0 ? '#f59e0b' : idx === 1 ? '#94a3b8' : '#d97706' }}>
+                                                                                        {idx === 0 ? <Crown size={20} /> : idx === 1 ? <Medal size={20} /> : <Award size={20} />}
+                                                                                    </div>
+                                                                                    <span style={{ fontSize: '0.85rem', fontWeight: 800, color: 'var(--arcade-text-primary)' }}>{pod.name}</span>
+                                                                                    <span style={{ fontSize: '0.7rem', color: 'var(--arcade-text-muted)', marginTop: '2px' }}>
+                                                                                        {gamesList.find(g => g.id === pod.gameId)?.title || pod.gameId}
+                                                                                    </span>
+                                                                                    <span style={{ fontSize: '1rem', fontWeight: 800, color: idx === 0 ? '#f59e0b' : 'var(--arcade-accent)', fontFamily: 'var(--arcade-font-mono)', marginTop: '6px' }}>
+                                                                                        {Number(pod.score).toLocaleString()}
+                                                                                    </span>
+                                                                                </div>
+                                                                            ))}
+                                                                        </div>
+
+                                                                        {/* 4-10 Sıralama Listesi */}
+                                                                        {filtered.slice(3, 10).map((row, i) => {
+                                                                            const isMe = row.name === nickname;
+                                                                            return (
+                                                                                <div key={`row-${i}`} className={`arcade-score-row ${isMe ? 'is-me' : ''}`}>
+                                                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                                                        <span style={{ width: '24px', fontWeight: 800, fontSize: '0.82rem', color: 'var(--arcade-text-muted)' }}>
+                                                                                            #{i + 4}
+                                                                                        </span>
+                                                                                        <div>
+                                                                                            <span style={{ fontWeight: isMe ? 800 : 600, fontSize: '0.9rem', color: 'var(--arcade-text-primary)' }}>{row.name}</span>
+                                                                                            <div style={{ fontSize: '0.72rem', color: 'var(--arcade-text-muted)' }}>
+                                                                                                {gamesList.find(g => g.id === row.gameId)?.title || row.gameId}
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <span style={{ fontWeight: 800, fontFamily: 'var(--arcade-font-mono)', fontSize: '0.95rem', color: isMe ? 'var(--arcade-accent)' : 'var(--arcade-text-primary)' }}>
+                                                                                        {Number(row.score).toLocaleString()}
+                                                                                    </span>
+                                                                                </div>
+                                                                            );
+                                                                        })}
+                                                                    </>
+                                                                );
+                                                            })()}
+                                                        </div>
+
+                                                        {/* Sağ: Yerel Kişisel Rekorlar */}
+                                                        <div>
+                                                            <h4 style={{ color: 'var(--arcade-text-secondary)', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '1rem', fontWeight: 700 }}>
+                                                                {t('arcade_my_records')}
+                                                            </h4>
+
+                                                            {Object.entries(localScores).length === 0 ? (
+                                                                <p style={{ color: 'var(--arcade-text-muted)', fontSize: '0.85rem' }}>Henüz kaydedilmiş yerel rekorun yok.</p>
+                                                            ) : (
+                                                                Object.entries(localScores)
+                                                                    .sort((a, b) => b[1] - a[1])
+                                                                    .map(([gid, sc]) => {
+                                                                        const gInfo = gamesList.find((g) => g.id === gid);
+                                                                        return (
+                                                                            <div key={`local-${gid}`} className="arcade-score-row">
+                                                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                                                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: gInfo?.color || 'var(--arcade-accent)' }} />
+                                                                                    <span style={{ fontSize: '0.88rem', fontWeight: 600, color: 'var(--arcade-text-primary)' }}>{gInfo?.title || gid}</span>
+                                                                                </div>
+                                                                                <span style={{ fontWeight: 800, fontFamily: 'var(--arcade-font-mono)', color: gInfo?.color || 'var(--arcade-accent)', fontSize: '0.92rem' }}>
+                                                                                    {Number(sc).toLocaleString()}
+                                                                                </span>
+                                                                            </div>
+                                                                        );
+                                                                    })
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        ) : !activeGameId ? (
+                                            /* ── C: OYUN LİSTESİ VE KATEGORİ IZGARASI ── */
+                                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                                                {/* Kategori Sekme Çubuğu */}
+                                                <div className="arcade-tab-bar">
+                                                    {[
+                                                        { id: 'all', label: t('arcade_cat_all'), count: gamesList.length, icon: <LayoutGrid size={15} /> },
+                                                        { id: 'simulation', label: t('arcade_cat_simulation'), count: gamesList.filter(g => getGameCategory(g.id) === 'simulation').length, icon: <Sparkles size={15} /> },
+                                                        { id: 'arcade', label: t('arcade_cat_arcade'), count: gamesList.filter(g => getGameCategory(g.id) === 'arcade').length, icon: <Gamepad2 size={15} /> },
+                                                        { id: 'puzzle', label: t('arcade_cat_puzzle'), count: gamesList.filter(g => getGameCategory(g.id) === 'puzzle').length, icon: <Cpu size={15} /> }
+                                                    ].map((cat) => (
+                                                        <button
+                                                            key={cat.id}
+                                                            type="button"
+                                                            className={`arcade-tab-item ${activeTab === cat.id ? 'active' : ''}`}
+                                                            onClick={() => { playClick(); setActiveTab(cat.id); }}
+                                                            onMouseEnter={playHover}
+                                                        >
+                                                            {cat.icon}
+                                                            <span>{cat.label}</span>
+                                                            <span className="arcade-tab-counter">{cat.count}</span>
+                                                        </button>
+                                                    ))}
+                                                </div>
+
+                                                {/* Oyun Kartları Izgarası */}
+                                                <div ref={gridRef} className="arcade-games-grid">
+                                                    {filteredGames.length === 0 && (
+                                                        <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem 1rem', color: 'var(--arcade-text-muted)' }}>
+                                                            <Gamepad2 size={44} style={{ opacity: 0.4, marginBottom: '1rem' }} />
+                                                            <p style={{ fontSize: '1.1rem', margin: 0, fontWeight: 600 }}>{t('arcade_no_games')}</p>
+                                                            <button
+                                                                type="button"
+                                                                className="arcade-action-btn"
+                                                                onClick={() => { setSearchQuery(''); setActiveTab('all'); }}
+                                                                style={{ marginTop: '1.25rem' }}
+                                                            >
+                                                                {t('arcade_reset_filters')}
+                                                            </button>
+                                                        </div>
+                                                    )}
+
+                                                    {filteredGames.map((game) => {
+                                                        const cat = getGameCategory(game.id);
+                                                        const userScore = localScores[game.id];
+
+                                                        return (
+                                                            <div
+                                                                key={game.id}
+                                                                className="arcade-game-card"
+                                                                onMouseEnter={playHover}
+                                                                onClick={() => {
+                                                                    playClick();
+                                                                    setActiveGameId(game.id);
+                                                                    setGameReloadKey((prev) => prev + 1);
+                                                                }}
+                                                                style={{ '--game-color': game.color }}
+                                                            >
+                                                                {/* Ambient Renk Işıltısı */}
+                                                                <div className="arcade-card-ambient" />
+
+                                                                {/* Kart Üst Bilgisi */}
+                                                                <div className="arcade-card-top">
+                                                                    <span className="arcade-card-badge">
+                                                                        {cat === 'simulation' ? <Compass size={11} /> : cat === 'puzzle' ? <Cpu size={11} /> : <Zap size={11} />}
+                                                                        {categoryLabels[cat]}
+                                                                    </span>
+
+                                                                    <div className={`arcade-card-status-pill ${userScore ? 'has-record' : ''}`}>
+                                                                        {userScore ? (
+                                                                            <>
+                                                                                <Trophy size={11} color="#f59e0b" />
+                                                                                <span>{Number(userScore).toLocaleString()}</span>
+                                                                            </>
                                                                         ) : (
-                                                                            <span className="arcade-score-empty">NOT PLAYED</span>
+                                                                            <span>{t('arcade_ready')}</span>
                                                                         )}
                                                                     </div>
-                                                                    <div className="arcade-card-launch" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                                                                        LAUNCH <Zap size={11} fill="currentColor" />
+                                                                </div>
+
+                                                                {/* Kart İkon & Başlık */}
+                                                                <div className="arcade-card-content">
+                                                                    <div className="arcade-card-icon">
+                                                                        {game.icon}
                                                                     </div>
+                                                                    <h3 className="arcade-card-title">{game.title}</h3>
+                                                                </div>
+
+                                                                {/* Kart Alt Çubuğu */}
+                                                                <div className="arcade-card-bottom">
+                                                                    <span className="arcade-card-score-info">
+                                                                        {userScore ? (
+                                                                            <span className="arcade-card-score-num">#{t('arcade_personal_best')}: {userScore}</span>
+                                                                        ) : (
+                                                                            <span>Web Port</span>
+                                                                        )}
+                                                                    </span>
+
+                                                                    <span className="arcade-card-play-tag">
+                                                                        {t('arcade_play')} <Play size={11} fill="currentColor" />
+                                                                    </span>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    );
-                                                })}
-                                        </div>
-                                    </div>
-                                ) : (
-                                    /* Active Game View */
-                                    <motion.div
-                                        key="game"
-                                        initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
-                                        style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
-                                    >
-                                        <div style={{ width: '100%', maxWidth: '850px', margin: '0 auto', display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', marginBottom: '1rem', alignItems: isMobile ? 'flex-start' : 'center', gap: isMobile ? '0.75rem' : '1rem' }}>
-                                            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', alignItems: isMobile ? 'flex-start' : 'center', gap: '0.5rem' }}>
-                                                <h3 style={{ color: 'var(--text-headers)', fontSize: isMobile ? '1.25rem' : '1.6rem', margin: 0, fontWeight: 800, fontFamily: 'var(--font-heading)', letterSpacing: '-0.02em' }}>{activeGame.title}</h3>
-                                                {localScores[activeGameId] && <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', padding: '2px 8px', borderRadius: '6px' }}>PERSONAL BEST: {localScores[activeGameId]}</span>}
-                                            </div>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', alignSelf: isMobile ? 'flex-end' : 'auto' }}>
-                                                <button
-                                                    onClick={() => { playClick(); toggleFullScreen(); }}
-                                                    onMouseEnter={playHover}
-                                                    className="btn btn-outline"
-                                                    style={{ padding: isMobile ? '0.4rem 0.8rem' : '0.5rem 1.2rem', fontSize: isMobile ? '0.8rem' : '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}
-                                                    title={isFullscreen ? t('arcade_minimize') : t('arcade_fullscreen')}
-                                                >
-                                                    {isFullscreen ? <Minimize size={16} /> : <Maximize size={16} />}
-                                                    <span>{isFullscreen ? t('arcade_minimize') : t('arcade_fullscreen')}</span>
-                                                </button>
-                                                <button
-                                                    onClick={handleExitActiveGame}
-                                                    onMouseEnter={playHover}
-                                                    className="btn btn-outline"
-                                                    style={{ padding: isMobile ? '0.4rem 0.8rem' : '0.5rem 1.2rem', fontSize: isMobile ? '0.8rem' : '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}
-                                                >
-                                                    <X size={16} /> {t('arcade_exit')}
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div className={`arcade-game-frame ${isFullscreen ? 'is-fullscreen' : ''}`} ref={frameRef}>
-                                            {/* Floating Quick Action Overlay inside Game Frame (Only during fullscreen) */}
-                                            {isFullscreen && (
-                                                <div className="arcade-frame-overlay-controls">
-                                                    <button
-                                                        onClick={() => { playClick(); toggleFullScreen(); }}
-                                                        className="arcade-floating-btn"
-                                                        title={t('arcade_minimize')}
-                                                        aria-label={t('arcade_minimize')}
-                                                    >
-                                                        <Minimize size={18} />
-                                                    </button>
-                                                    <button
-                                                        onClick={handleExitActiveGame}
-                                                        className="arcade-floating-btn"
-                                                        title={t('arcade_exit')}
-                                                        aria-label={t('arcade_exit')}
-                                                    >
-                                                        <X size={18} />
-                                                    </button>
+                                                        );
+                                                    })}
                                                 </div>
-                                            )}
-                                            <div
-                                                className="arcade-scaled-viewport"
-                                                style={isMobile ? {
-                                                    width: '900px',
-                                                    height: '675px',
-                                                    transform: `scale(${(frameWidth || 360) / 900})`,
-                                                    transformOrigin: 'top left',
-                                                } : undefined}
+                                            </div>
+                                        ) : (
+                                            /* ── D: AKTİF OYUN OYNAMA EKRANI (Player View) ── */
+                                            <motion.div
+                                                key={`active-${activeGame.id}`}
+                                                initial={{ opacity: 0, scale: 0.98 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                exit={{ opacity: 0, scale: 0.98 }}
+                                                transition={{ duration: 0.2 }}
+                                                className="arcade-player-container"
                                             >
-                                            <Suspense fallback={
-                                                <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: activeGame.color }}>
-                                                    <motion.div
-                                                        animate={{ rotate: 360 }}
-                                                        transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
-                                                        style={{ marginBottom: '1rem' }}
-                                                    >
-                                                        <Gamepad2 size={isMobile ? 30 : 40} />
-                                                    </motion.div>
-                                                    <p style={{ fontFamily: 'monospace', letterSpacing: '2px', fontSize: isMobile ? '0.8rem' : '1rem' }}>INITIALIZING VIRTUAL CONTAINER...</p>
+                                                {/* Üst Oyun Kontrol Dock'u */}
+                                                <div className="arcade-player-dock">
+                                                    <div className="arcade-player-left">
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleExitActiveGame}
+                                                            onMouseEnter={playHover}
+                                                            className="arcade-action-btn"
+                                                        >
+                                                            <ChevronLeft size={16} />
+                                                            <span>{t('arcade_back_to_library')}</span>
+                                                        </button>
+                                                    </div>
+
+                                                    <div className="arcade-player-center">
+                                                        <h3 className="arcade-player-title">{activeGame.title}</h3>
+                                                        {localScores[activeGameId] && (
+                                                            <span className="arcade-player-record-pill">
+                                                                <Trophy size={13} color="#f59e0b" />
+                                                                <span>{t('arcade_personal_best')}: {localScores[activeGameId]}</span>
+                                                            </span>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="arcade-player-controls">
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleRestartGame}
+                                                            onMouseEnter={playHover}
+                                                            className="arcade-action-btn"
+                                                            title={t('arcade_restart')}
+                                                        >
+                                                            <RotateCcw size={14} />
+                                                            {!isMobile && <span>{t('arcade_restart')}</span>}
+                                                        </button>
+
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => { playClick(); toggleFullScreen(); }}
+                                                            onMouseEnter={playHover}
+                                                            className="arcade-action-btn"
+                                                            title={isFullscreen ? t('arcade_minimize') : t('arcade_fullscreen')}
+                                                        >
+                                                            {isFullscreen ? <Minimize size={14} /> : <Maximize size={14} />}
+                                                            {!isMobile && <span>{isFullscreen ? t('arcade_minimize') : t('arcade_fullscreen')}</span>}
+                                                        </button>
+
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleExitActiveGame}
+                                                            onMouseEnter={playHover}
+                                                            className="arcade-action-btn"
+                                                            title={t('arcade_exit')}
+                                                        >
+                                                            <X size={14} />
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                            }>
-                                                {activeGame.comp && <activeGame.comp onGameOver={(score) => handleGameOver(score, activeGame.id)} />}
-                                            </Suspense>
-                                            </div>
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>,
-            document.body
-        )}
-    </>
-);
+
+                                                {/* Oyun Çerçevesi (Canvas / Iframe Sahnesi) */}
+                                                <div className={`arcade-game-frame ${isFullscreen ? 'is-fullscreen' : ''}`} ref={frameRef}>
+                                                    {/* Sadece tam ekrandayken görünen minimal sağ üst yüzen kontrol */}
+                                                    {isFullscreen && (
+                                                        <div className="arcade-frame-overlay-controls">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => { playClick(); toggleFullScreen(); }}
+                                                                className="arcade-floating-btn"
+                                                                title={t('arcade_minimize')}
+                                                                aria-label={t('arcade_minimize')}
+                                                            >
+                                                                <Minimize size={18} />
+                                                            </button>
+                                                            <button
+                                                                type="button"
+                                                                onClick={handleExitActiveGame}
+                                                                className="arcade-floating-btn"
+                                                                title={t('arcade_exit')}
+                                                                aria-label={t('arcade_exit')}
+                                                            >
+                                                                <X size={18} />
+                                                            </button>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Mobil/Masaüstü Ölçekleme Kapsayıcısı */}
+                                                    <div
+                                                        className="arcade-scaled-viewport"
+                                                        style={isMobile ? {
+                                                            width: '900px',
+                                                            height: '675px',
+                                                            transform: `scale(${(frameWidth || 360) / 900})`,
+                                                            transformOrigin: 'top left',
+                                                        } : undefined}
+                                                    >
+                                                        <Suspense fallback={
+                                                            <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', color: activeGame.color }}>
+                                                                <motion.div
+                                                                    animate={{ rotate: 360 }}
+                                                                    transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+                                                                    style={{ marginBottom: '1rem' }}
+                                                                >
+                                                                    <Gamepad2 size={isMobile ? 32 : 44} />
+                                                                </motion.div>
+                                                                <p style={{ fontFamily: 'var(--arcade-font-mono)', letterSpacing: '2px', fontSize: isMobile ? '0.8rem' : '0.95rem' }}>
+                                                                    INITIALIZING RUNTIME CONTAINER...
+                                                                </p>
+                                                            </div>
+                                                        }>
+                                                            {activeGame.comp && (
+                                                                <activeGame.comp
+                                                                    key={`${activeGame.id}-${gameReloadKey}`}
+                                                                    onGameOver={(score) => handleGameOver(score, activeGame.id)}
+                                                                />
+                                                            )}
+                                                        </Suspense>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            </main>
+                        </motion.div>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
+        </>
+    );
 };
 
 export default GameLibrary;
