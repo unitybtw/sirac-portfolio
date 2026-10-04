@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 import { ExternalLink, Github, ChevronDown, RotateCcw } from 'lucide-react';
 import CACHED_DATA from './data/githubContributions.json';
 
@@ -34,6 +34,19 @@ export default function GitHubCommitHistory() {
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { once: true, margin: "0px 0px -40px 0px" });
+  const [animActive, setAnimActive] = useState(false);
+  const [isAnimationSettled, setIsAnimationSettled] = useState(false);
+
+  useEffect(() => {
+    if (isInView) {
+      setAnimActive(true);
+      const timer = setTimeout(() => {
+        setIsAnimationSettled(true);
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [isInView, animKey]);
 
   // Detect theme from html element
   const [isDark, setIsDark] = useState(false);
@@ -171,10 +184,11 @@ export default function GitHubCommitHistory() {
       if (!day) return;
       const rect = t.getBoundingClientRect();
       const parentRect = containerRef.current?.getBoundingClientRect();
+      const scrollLeft = containerRef.current?.scrollLeft || 0;
       if (parentRect) {
         setTooltipPos({
-          x: rect.left - parentRect.left + 5,
-          y: rect.top - parentRect.top - 32
+          x: rect.left - parentRect.left + scrollLeft + (rect.width / 2),
+          y: rect.top - parentRect.top - 10
         });
       }
       setHoveredDay((prev) => (prev?.date === day.date ? prev : day));
@@ -200,12 +214,22 @@ export default function GitHubCommitHistory() {
   };
 
   const handleReplay = () => {
-    setAnimKey((prev) => prev + 1);
+    setIsAnimationSettled(false);
+    setAnimActive(false);
+    setTimeout(() => {
+      setAnimKey((prev) => prev + 1);
+      setAnimActive(true);
+    }, 40);
   };
 
   const handleYearChange = (year) => {
     setSelectedYear(year);
-    setAnimKey((prev) => prev + 1);
+    setIsAnimationSettled(false);
+    setAnimActive(false);
+    setTimeout(() => {
+      setAnimKey((prev) => prev + 1);
+      setAnimActive(true);
+    }, 40);
   };
 
   return (
@@ -227,7 +251,7 @@ export default function GitHubCommitHistory() {
           <button
             onClick={handleReplay}
             className="gh-replay-btn btn-outline"
-            title={isTr ? 'Kuş animasyonunu tekrar oynat' : 'Replay bird hop animation'}
+            title={isTr ? 'Uçuş animasyonunu tekrar oynat' : 'Replay smooth flight animation'}
             style={{ fontSize: '0.85rem', padding: '0.5rem 0.9rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer' }}
           >
             <RotateCcw size={14} />
@@ -410,16 +434,27 @@ export default function GitHubCommitHistory() {
                           );
                         }
 
-                        // Active green day: base slot underneath, green square hops in like a bird from screen edges
+                        // When animation is settled, render as a lightweight static square (0 GPU layer overhead)
+                        if (isAnimationSettled) {
+                          return (
+                            <div
+                              key={day.date}
+                              className="gh-day gh-day-slot"
+                              data-date={day.date}
+                              style={{ backgroundColor: levelColor }}
+                            />
+                          );
+                        }
+
+                        // Active green day: base slot underneath, green square glides in smoothly like a graceful flight from beyond screen edges
                         const fromLeft = (colIdx + rowIdx) % 2 === 0;
-                        const sideOffset = (colIdx * 19 + rowIdx * 31) % 160;
+                        const sideOffset = ((colIdx * 13 + rowIdx * 19) % 120);
                         const flightDistX = fromLeft
-                          ? `calc(-65vw - ${sideOffset}px)`
-                          : `calc(65vw + ${sideOffset}px)`;
-                        const flightDistY = `-${150 + ((colIdx * 23 + rowIdx * 17) % 180)}px`;
-                        const flightRot = `${(fromLeft ? -1 : 1) * (20 + (day.activeIdx % 5) * 5)}deg`;
-                        const flightRotCounter = `${(fromLeft ? 1 : -1) * (12 + (day.activeIdx % 4) * 4)}deg`;
-                        const delaySec = 0.4 + (colIdx * 0.036) + (rowIdx * 0.007);
+                          ? `calc(-60vw - ${sideOffset}px)`
+                          : `calc(60vw + ${sideOffset}px)`;
+                        const flightDistY = `-${90 + ((colIdx * 17 + rowIdx * 11) % 90)}px`;
+                        const flightRot = `${(fromLeft ? -1 : 1) * (8 + (day.activeIdx % 4) * 3)}deg`;
+                        const delaySec = 0.12 + (colIdx * 0.02) + (rowIdx * 0.004);
 
                         return (
                           <div
@@ -428,17 +463,18 @@ export default function GitHubCommitHistory() {
                             data-date={day.date}
                             style={{ backgroundColor: baseColor }}
                           >
-                            <div
-                              className="gh-day-bird-hopping"
-                              style={{
-                                backgroundColor: levelColor,
-                                animationDelay: `${delaySec.toFixed(3)}s`,
-                                '--bird-x': flightDistX,
-                                '--bird-y': flightDistY,
-                                '--bird-rot': flightRot,
-                                '--bird-rot-counter': flightRotCounter
-                              }}
-                            />
+                            {animActive && (
+                              <div
+                                className="gh-day-smooth-flight"
+                                style={{
+                                  backgroundColor: levelColor,
+                                  animationDelay: `${delaySec.toFixed(3)}s`,
+                                  '--fly-x': flightDistX,
+                                  '--fly-y': flightDistY,
+                                  '--fly-rot': flightRot
+                                }}
+                              />
+                            )}
                           </div>
                         );
                       })}

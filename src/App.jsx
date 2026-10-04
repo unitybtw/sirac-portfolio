@@ -417,6 +417,10 @@ function App() {
                     alt="Sıraç Göktuğ Şimşek"
                     className="hero-portrait-img"
                     loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                    width="390"
+                    height="520"
                   />
                   <div className="hero-portrait-scrim" />
 
