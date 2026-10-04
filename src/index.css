@@ -492,139 +492,55 @@ section {
   font-weight: 500;
 }
 
-/* ── 1-Bit Dot-Matrix Mario Runner (Seamless with Site) ── */
-.hero-pixel-mario-wrapper {
-  margin-top: 1.75rem;
-  width: 100%;
-  max-width: 380px;
+/* ── Large-Format 1-Bit Dot-Matrix Mario Corner Runner ── */
+.hero-corner-mario-anchor {
+  position: absolute;
+  bottom: 1.5rem;
+  left: max(2rem, calc((100vw - 1220px) / 2));
+  width: min(520px, calc(100vw - 4rem));
+  z-index: 5;
+  pointer-events: auto;
 }
 
-.seamless-pixel-mario-runner {
+.corner-pixel-mario-runner {
   position: relative;
   width: 100%;
+  height: 116px;
   background: transparent;
-  border: none;
-  box-shadow: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
   outline: none;
-}
-
-.seamless-pixel-mario-hud {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 0.25rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--text-secondary);
-  opacity: 0.8;
-  transition: opacity 0.2s ease;
+  justify-content: center;
 }
 
-.seamless-pixel-mario-runner:hover .seamless-pixel-mario-hud {
-  opacity: 1;
-}
-
-.seamless-hud-left {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.seamless-pixel-square {
-  font-size: 0.55rem;
-  color: var(--text-primary);
-}
-
-.seamless-hud-title {
-  font-weight: 700;
-  color: var(--text-primary);
-  font-size: 0.65rem;
-  letter-spacing: 0.06em;
-}
-
-.seamless-hud-center {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  font-size: 0.65rem;
-}
-
-.seamless-hud-stat {
-  color: var(--text-secondary);
-}
-
-.seamless-hud-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.1rem 0.4rem;
-  border-radius: 4px;
-  font-size: 0.6rem;
-  font-family: ui-monospace, monospace;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  border: 1px solid var(--border-subtle);
-  background: transparent;
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.seamless-badge-square {
-  font-size: 0.45rem;
-  color: var(--text-primary);
-  animation: seamlessSquarePulse 1.6s steps(2, start) infinite;
-}
-
-@keyframes seamlessSquarePulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.2; }
-}
-
-.seamless-hud-badge.manual {
-  opacity: 0.6;
-}
-
-.seamless-hud-badge.manual .seamless-badge-square {
-  animation: none;
-}
-
-.seamless-pixel-viewport {
-  position: relative;
+.corner-pixel-canvas {
   width: 100%;
-  height: 76px;
-  background: transparent;
-  overflow: hidden;
-  border-radius: 8px;
-}
-
-.seamless-pixel-canvas {
-  width: 100%;
-  height: 76px;
+  height: 116px;
   display: block;
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
 }
 
-.seamless-hover-hint {
+.corner-mario-hint {
   position: absolute;
-  bottom: 4px;
+  top: 4px;
   right: 6px;
-  font-family: ui-monospace, monospace;
-  font-size: 0.58rem;
-  letter-spacing: 0.06em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.07em;
   color: var(--text-secondary);
   opacity: 0.65;
   pointer-events: none;
+  animation: cornerHintFade 0.2s ease-out;
+}
+
+@keyframes cornerHintFade {
+  from { opacity: 0; transform: translateY(-2px); }
+  to { opacity: 0.65; transform: translateY(0); }
 }
 
 @media (max-width: 960px) {
@@ -639,8 +555,13 @@ section {
   .hero-portrait-card {
     max-width: 320px;
   }
-  .hero-pixel-mario-wrapper {
-    max-width: 100%;
+  .hero-corner-mario-anchor {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    margin: 2.5rem auto 0 auto;
+    width: 100%;
+    max-width: 440px;
   }
 }
 

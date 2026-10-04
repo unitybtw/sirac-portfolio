@@ -2,9 +2,8 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 /**
  * PixelMarioRunner
- * 1-bit monochrome Mario auto-runner seamlessly integrated with the site ("siteyle bir").
- * Background has a subtle dot-matrix grid ("nokta nokta").
- * All sprites & obstacles are rendered as chunky square pixels ("kare kare").
+ * Large-format 1-bit dot-matrix Mario runner seamlessly embedded in the Hero section corner.
+ * Completely frameless, no text header ("şunları kaldır"), enlarged chunky square pixels ("mario kısmını büyüt").
  * In Light Mode: Solid black square pixels on the site background.
  * In Dark Mode: Solid white square pixels on the site background.
  * Autonomous AI pilot with interactive click / space jump.
@@ -213,10 +212,6 @@ function drawPixelMatrix(ctx, matrix, startX, startY, pixelSize, color) {
 export default function PixelMarioRunner({ theme }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
-  const [isAutopilot, setIsAutopilot] = useState(true);
-  const [score, setScore] = useState(0);
-  const [coins, setCoins] = useState(0);
-  const [aiStatus, setAiStatus] = useState('AUTO');
   const [isHovered, setIsHovered] = useState(false);
 
   // Reliable Dark/Light detection based on props and DOM class
@@ -249,58 +244,42 @@ export default function PixelMarioRunner({ theme }) {
   }, [theme]);
 
   const stateRef = useRef({
-    width: 340,
-    height: 76,
-    pixelSize: 2,
-    groundY: 60,
+    width: 480,
+    height: 116,
+    pixelSize: 3, // Enlarged chunky 3px square pixels
+    groundY: 92,
     mario: {
-      x: 36,
-      y: 32, // groundY - 28
+      x: 48,
+      y: 50, // groundY - (14 * 3) = 92 - 42 = 50
       vy: 0,
       isGrounded: true,
       frame: 0,
       animTimer: 0,
       isBlinking: 0,
-      jumpOverrideTimer: 0,
     },
     obstacles: [],
     clouds: [
-      { x: 25, y: 8, speed: 0.18 },
-      { x: 160, y: 12, speed: 0.25 },
-      { x: 290, y: 6, speed: 0.15 },
+      { x: 30, y: 12, speed: 0.2 },
+      { x: 220, y: 18, speed: 0.28 },
+      { x: 390, y: 8, speed: 0.16 },
     ],
     floatingTexts: [],
-    spawnTimer: 40,
+    spawnTimer: 45,
     distanceTraveled: 0,
     isTabActive: true,
     isIntersecting: true,
-    score: 0,
-    coins: 0,
   });
 
-  const triggerJump = useCallback((isManual = false) => {
+  const triggerJump = useCallback(() => {
     const s = stateRef.current;
     if (!s) return;
     const m = s.mario;
 
     if (m.isGrounded) {
-      m.vy = -4.7;
+      m.vy = -5.8;
       m.isGrounded = false;
-      if (isManual) {
-        m.jumpOverrideTimer = 65;
-        setAiStatus('JUMP');
-      }
     }
   }, []);
-
-  const toggleAutopilot = (e) => {
-    e.stopPropagation();
-    setIsAutopilot((prev) => {
-      const next = !prev;
-      setAiStatus(next ? 'AUTO' : 'MANUAL');
-      return next;
-    });
-  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -312,15 +291,15 @@ export default function PixelMarioRunner({ theme }) {
 
     const handleResize = () => {
       const rect = container.getBoundingClientRect();
-      const w = Math.floor(rect.width || 340);
-      const h = 76;
+      const w = Math.floor(rect.width || 480);
+      const h = 116;
       const dpr = window.devicePixelRatio || 1;
 
       stateRef.current.width = w;
       stateRef.current.height = h;
-      stateRef.current.groundY = 58;
+      stateRef.current.groundY = 92;
       if (stateRef.current.mario.isGrounded) {
-        stateRef.current.mario.y = stateRef.current.groundY - 28;
+        stateRef.current.mario.y = stateRef.current.groundY - 42;
       }
 
       canvas.width = Math.floor(w * dpr);
@@ -351,14 +330,13 @@ export default function PixelMarioRunner({ theme }) {
 
     // Initial Obstacles
     stateRef.current.obstacles = [
-      { id: 1, type: 'block', x: 130, y: 18, hit: false, bumpY: 0 },
-      { id: 2, type: 'coin', x: 190, y: 22, collected: false },
-      { id: 3, type: 'goomba', x: 260, y: 58 - 16, squished: 0 },
-      { id: 4, type: 'pipe', x: 360, y: 58 - 16, height: 16 },
+      { id: 1, type: 'block', x: 180, y: 30, hit: false, bumpY: 0 },
+      { id: 2, type: 'coin', x: 260, y: 36, collected: false },
+      { id: 3, type: 'goomba', x: 360, y: 92 - 24, squished: 0 },
+      { id: 4, type: 'pipe', x: 490, y: 92 - 24, height: 24 },
     ];
 
     let lastTick = performance.now();
-    let syncTimer = 0;
 
     const gameLoop = (timestamp) => {
       animationFrameId = requestAnimationFrame(gameLoop);
@@ -373,19 +351,19 @@ export default function PixelMarioRunner({ theme }) {
       lastTick = timestamp;
 
       const m = s.mario;
-      const speed = 1.75 * dt;
+      const speed = 2.1 * dt;
       s.distanceTraveled += speed;
 
       // Clouds
       s.clouds.forEach((c) => {
         c.x -= c.speed * dt;
-        if (c.x < -36) c.x = s.width + 20;
+        if (c.x < -50) c.x = s.width + 30;
       });
 
       // Mario Physics
-      const groundStandingY = s.groundY - 28;
+      const groundStandingY = s.groundY - 42;
       if (!m.isGrounded) {
-        m.vy += 0.38 * dt;
+        m.vy += 0.42 * dt;
         m.y += m.vy * dt;
 
         if (m.y >= groundStandingY) {
@@ -402,13 +380,6 @@ export default function PixelMarioRunner({ theme }) {
         m.animTimer = 0;
       }
 
-      if (m.jumpOverrideTimer > 0) {
-        m.jumpOverrideTimer -= dt;
-        if (m.jumpOverrideTimer <= 0 && isAutopilot) {
-          setAiStatus('AUTO');
-        }
-      }
-
       if (m.isBlinking > 0) {
         m.isBlinking -= dt;
       }
@@ -418,8 +389,8 @@ export default function PixelMarioRunner({ theme }) {
       if (s.spawnTimer <= 0) {
         const lastObs = s.obstacles[s.obstacles.length - 1];
         const lastX = lastObs ? lastObs.x : 0;
-        if (lastX < s.width + 30) {
-          const spawnX = Math.max(lastX + 95 + Math.random() * 65, s.width + 10);
+        if (lastX < s.width + 40) {
+          const spawnX = Math.max(lastX + 130 + Math.random() * 80, s.width + 20);
           const rand = Math.random();
 
           if (rand < 0.35) {
@@ -428,8 +399,8 @@ export default function PixelMarioRunner({ theme }) {
               id: Date.now() + Math.random(),
               type: 'pipe',
               x: spawnX,
-              y: s.groundY - 16,
-              height: 16,
+              y: s.groundY - 24,
+              height: 24,
             });
           } else if (rand < 0.65) {
             // Goomba
@@ -437,7 +408,7 @@ export default function PixelMarioRunner({ theme }) {
               id: Date.now() + Math.random(),
               type: 'goomba',
               x: spawnX,
-              y: s.groundY - 16,
+              y: s.groundY - 24,
               squished: 0,
             });
           } else if (rand < 0.85) {
@@ -446,7 +417,7 @@ export default function PixelMarioRunner({ theme }) {
               id: Date.now() + Math.random(),
               type: 'block',
               x: spawnX,
-              y: 20,
+              y: 30,
               hit: false,
               bumpY: 0,
             });
@@ -456,30 +427,28 @@ export default function PixelMarioRunner({ theme }) {
               id: Date.now() + Math.random(),
               type: 'coin',
               x: spawnX,
-              y: 26,
+              y: 36,
               collected: false,
             });
           }
-          s.spawnTimer = 40 + Math.random() * 25;
+          s.spawnTimer = 45 + Math.random() * 30;
         }
       }
 
       // Autonomous AI Jump Logic
-      if (isAutopilot && m.jumpOverrideTimer <= 0) {
-        for (let i = 0; i < s.obstacles.length; i++) {
-          const obs = s.obstacles[i];
-          const dist = obs.x - m.x;
+      for (let i = 0; i < s.obstacles.length; i++) {
+        const obs = s.obstacles[i];
+        const dist = obs.x - m.x;
 
-          if (obs.type === 'pipe' || (obs.type === 'goomba' && obs.squished <= 0)) {
-            if (dist > 14 && dist < 42 && m.isGrounded) {
-              triggerJump(false);
-              break;
-            }
-          } else if (obs.type === 'block' && !obs.hit) {
-            if (dist > 10 && dist < 30 && m.isGrounded) {
-              triggerJump(false);
-              break;
-            }
+        if (obs.type === 'pipe' || (obs.type === 'goomba' && obs.squished <= 0)) {
+          if (dist > 20 && dist < 58 && m.isGrounded) {
+            triggerJump();
+            break;
+          }
+        } else if (obs.type === 'block' && !obs.hit) {
+          if (dist > 14 && dist < 42 && m.isGrounded) {
+            triggerJump();
+            break;
           }
         }
       }
@@ -490,112 +459,91 @@ export default function PixelMarioRunner({ theme }) {
         obs.x -= speed;
 
         if (obs.type === 'goomba' && obs.squished <= 0) {
-          obs.x -= 0.3 * dt;
+          obs.x -= 0.35 * dt;
         }
 
         if (obs.type === 'block' && obs.bumpY < 0) {
-          obs.bumpY += 0.4 * dt;
+          obs.bumpY += 0.5 * dt;
           if (obs.bumpY > 0) obs.bumpY = 0;
         }
 
-        const dx = Math.abs((obs.x + 8) - (m.x + 12));
+        const dx = Math.abs((obs.x + 12) - (m.x + 18));
 
         // Coin
-        if (obs.type === 'coin' && !obs.collected && dx < 14) {
-          const dy = Math.abs(obs.y - (m.y + 10));
-          if (dy < 16) {
+        if (obs.type === 'coin' && !obs.collected && dx < 20) {
+          const dy = Math.abs(obs.y - (m.y + 14));
+          if (dy < 24) {
             obs.collected = true;
-            s.coins += 1;
-            s.score += 100;
             s.floatingTexts.push({
               x: obs.x,
-              y: obs.y - 4,
+              y: obs.y - 6,
               text: '+100',
               life: 25,
             });
           }
         }
         // Question Block
-        else if (obs.type === 'block' && !obs.hit && dx < 14) {
-          if (m.vy < 0 && Math.abs(m.y - (obs.y + 20)) < 6) {
+        else if (obs.type === 'block' && !obs.hit && dx < 20) {
+          if (m.vy < 0 && Math.abs(m.y - (obs.y + 28)) < 10) {
             obs.hit = true;
-            obs.bumpY = -4;
-            s.coins += 1;
-            s.score += 200;
+            obs.bumpY = -5;
             s.floatingTexts.push({
               x: obs.x,
-              y: obs.y - 8,
-              text: '+200',
+              y: obs.y - 12,
+              text: '★ +200',
               life: 30,
             });
           }
         }
         // Goomba
-        else if (obs.type === 'goomba' && obs.squished <= 0 && dx < 14) {
-          if (m.vy > 0 && m.y < groundStandingY - 4) {
-            obs.squished = 20;
-            m.vy = -3.5;
-            s.score += 200;
+        else if (obs.type === 'goomba' && obs.squished <= 0 && dx < 20) {
+          if (m.vy > 0 && m.y < groundStandingY - 6) {
+            obs.squished = 24;
+            m.vy = -4.4;
             s.floatingTexts.push({
               x: obs.x,
-              y: obs.y - 6,
+              y: obs.y - 8,
               text: '+200',
               life: 25,
             });
           } else if (m.isBlinking <= 0) {
             m.isBlinking = 35;
-            m.vy = -2.5;
-            s.floatingTexts.push({
-              x: m.x,
-              y: m.y - 8,
-              text: '!HIT',
-              life: 20,
-            });
+            m.vy = -3;
           }
         }
         // Pipe
-        else if (obs.type === 'pipe' && dx < 12) {
-          if (m.y > s.groundY - (obs.height + 24) && m.isBlinking <= 0) {
+        else if (obs.type === 'pipe' && dx < 18) {
+          if (m.y > s.groundY - (obs.height + 36) && m.isBlinking <= 0) {
             m.isBlinking = 30;
-            m.vy = -2.5;
+            m.vy = -3;
           }
         }
 
-        if (obs.x < -40) {
+        if (obs.x < -60) {
           s.obstacles.splice(i, 1);
         }
       }
 
-      s.score += Math.floor(0.12 * dt * 10);
-
-      syncTimer += dt;
-      if (syncTimer > 15) {
-        setScore(s.score);
-        setCoins(s.coins);
-        syncTimer = 0;
-      }
-
       for (let i = s.floatingTexts.length - 1; i >= 0; i--) {
         const ft = s.floatingTexts[i];
-        ft.y -= 0.45 * dt;
+        ft.y -= 0.6 * dt;
         ft.life -= dt;
         if (ft.life <= 0) s.floatingTexts.splice(i, 1);
       }
 
-      // ── RENDER FRAME: SEAMLESS DOT-MATRIX / SQUARE-PIXEL ENGINE ──
+      // ── RENDER FRAME: SEAMLESS DOT-MATRIX / CHUNKY SQUARE PIXELS ──
       ctx.clearRect(0, 0, s.width, s.height);
 
-      const px = s.pixelSize; // 2px square blocks
-      // Determine contrast colors: Black in Light Mode, White in Dark Mode
+      const px = s.pixelSize; // 3px chunky square blocks
       const pixelColor = isDark ? '#ffffff' : '#090d16';
       const matrixDotColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.08)';
       const cloudColor = isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(15, 23, 42, 0.22)';
 
       // 1. Subtle Dot-Matrix Background ("nokta nokta")
       ctx.fillStyle = matrixDotColor;
-      for (let x = 0; x < s.width; x += 6) {
-        for (let y = 0; y < s.height; y += 6) {
-          ctx.fillRect(x, y, 1.5, 1.5);
+      for (let x = 0; x < s.width; x += 8) {
+        for (let y = 0; y < s.height; y += 8) {
+          ctx.fillRect(x, y, 2, 2);
         }
       }
 
@@ -633,7 +581,7 @@ export default function PixelMarioRunner({ theme }) {
         } else if (obs.type === 'goomba') {
           if (obs.squished > 0) {
             obs.squished -= dt;
-            drawPixelMatrix(ctx, GOOMBA_SQUISHED, obs.x, obs.y + 6, px, pixelColor);
+            drawPixelMatrix(ctx, GOOMBA_SQUISHED, obs.x, obs.y + 8, px, pixelColor);
           } else {
             const frame = Math.floor(s.distanceTraveled / 4) % 2 === 0 ? GOOMBA_WALK_1 : GOOMBA_WALK_2;
             drawPixelMatrix(ctx, frame, obs.x, obs.y, px, pixelColor);
@@ -657,7 +605,7 @@ export default function PixelMarioRunner({ theme }) {
       // 6. Floating pixel scores
       s.floatingTexts.forEach((ft) => {
         ctx.fillStyle = pixelColor;
-        ctx.font = 'bold 9px ui-monospace, monospace';
+        ctx.font = 'bold 11px ui-monospace, monospace';
         ctx.fillText(ft.text, ft.x, ft.y);
       });
     };
@@ -670,63 +618,36 @@ export default function PixelMarioRunner({ theme }) {
       intersectionObserver.disconnect();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [isAutopilot, isDark, triggerJump]);
+  }, [isDark, triggerJump]);
 
   const handleCanvasClick = () => {
-    triggerJump(true);
+    triggerJump();
   };
 
   const handleKeyDown = (e) => {
     if (e.code === 'Space') {
       e.preventDefault();
-      triggerJump(true);
+      triggerJump();
     }
   };
 
   return (
     <div
       ref={containerRef}
-      className="seamless-pixel-mario-runner"
+      className="corner-pixel-mario-runner"
       tabIndex={0}
       onKeyDown={handleKeyDown}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={handleCanvasClick}
       role="region"
-      aria-label="Seamless 1-Bit Dot-Matrix Mario Runner"
+      aria-label="Corner 1-Bit Dot-Matrix Mario Runner"
       title="1-bit Mario · Click or press Space to jump!"
     >
-      {/* ── Frameless Minimalist HUD ── */}
-      <div className="seamless-pixel-mario-hud">
-        <div className="seamless-hud-left">
-          <span className="seamless-pixel-square">■</span>
-          <span className="seamless-hud-title">MARIO.RUN</span>
-        </div>
-
-        <div className="seamless-hud-center">
-          <span className="seamless-hud-stat">★ {String(score).padStart(5, '0')}</span>
-          <span className="seamless-hud-stat">⛃ ×{String(coins).padStart(2, '0')}</span>
-        </div>
-
-        <div className="seamless-hud-right">
-          <button
-            type="button"
-            className={`seamless-hud-badge ${isAutopilot ? 'auto' : 'manual'}`}
-            onClick={toggleAutopilot}
-            title={isAutopilot ? 'Toggle to Manual Jump' : 'Resume Autopilot'}
-          >
-            <span className="seamless-badge-square">■</span>
-            <span>{aiStatus}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* ── Seamless Dot-Matrix Viewport & Canvas ── */}
-      <div className="seamless-pixel-viewport" onClick={handleCanvasClick}>
-        <canvas ref={canvasRef} className="seamless-pixel-canvas" />
-        {isHovered && (
-          <span className="seamless-hover-hint">[CLICK / SPACE TO JUMP]</span>
-        )}
-      </div>
+      <canvas ref={canvasRef} className="corner-pixel-canvas" />
+      {isHovered && (
+        <span className="corner-mario-hint">[SPACE / CLICK TO JUMP]</span>
+      )}
     </div>
   );
 }

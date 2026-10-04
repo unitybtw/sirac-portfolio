@@ -403,11 +403,6 @@ function App() {
                     <Linkedin size={18} />
                   </a>
                 </motion.div>
-
-                {/* 1-Bit Pixel Mario Runner (Square Pixel Grid, Auto-playing) */}
-                <motion.div variants={heroChild} className="hero-pixel-mario-wrapper">
-                  <PixelMarioRunner theme={theme} />
-                </motion.div>
               </motion.div>
 
               {/* Right Column: Professional Portrait Showcase */}
@@ -443,6 +438,16 @@ function App() {
               </motion.div>
             </div>
           </div>
+
+          {/* Large-Format 1-Bit Dot-Matrix Mario Corner Runner */}
+          <motion.div
+            className="hero-corner-mario-anchor"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <PixelMarioRunner theme={theme} />
+          </motion.div>
         </section>
 
         {/* ── About Section ── */}
