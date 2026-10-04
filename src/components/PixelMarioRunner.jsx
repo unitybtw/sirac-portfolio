@@ -2,11 +2,13 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 /**
  * PixelMarioRunner
- * 1-bit monochrome Mario auto-runner built strictly with square pixel blocks ("kare kare").
- * In Light Mode: Crisp solid black pixel squares on paper background.
- * In Dark Mode: Crisp solid white pixel squares on dark background.
- * Autonomous AI pilot with interactive manual click/space jump.
- * 0% CPU consumption when off-screen via IntersectionObserver.
+ * 1-bit monochrome Mario auto-runner seamlessly integrated with the site ("siteyle bir").
+ * Background has a subtle dot-matrix grid ("nokta nokta").
+ * All sprites & obstacles are rendered as chunky square pixels ("kare kare").
+ * In Light Mode: Solid black square pixels on the site background.
+ * In Dark Mode: Solid white square pixels on the site background.
+ * Autonomous AI pilot with interactive click / space jump.
+ * 0% CPU consumption off-screen via IntersectionObserver.
  */
 
 // ── 1-Bit Pixel Matrices (Every '#' is a square pixel block) ──
@@ -118,47 +120,43 @@ const GOOMBA_SQUISHED = [
 ];
 
 const BLOCK_QUESTION = [
-  '############',
-  '#..........#',
-  '#...####...#',
-  '#..##..##..#',
-  '#......##..#',
-  '#.....##...#',
-  '#....##....#',
-  '#....##....#',
-  '#..........#',
-  '#....##....#',
-  '#..........#',
-  '############',
+  '##########',
+  '#........#',
+  '#..####..#',
+  '#....##..#',
+  '#...##...#',
+  '#...##...#',
+  '#........#',
+  '#...##...#',
+  '#........#',
+  '##########',
 ];
 
 const BLOCK_HIT = [
-  '############',
-  '#..........#',
-  '#..##..##..#',
-  '#..........#',
-  '#..........#',
-  '#..........#',
-  '#..........#',
-  '#..##..##..#',
-  '#..........#',
-  '#..........#',
-  '#..........#',
-  '############',
+  '##########',
+  '#........#',
+  '#..#..#..#',
+  '#........#',
+  '#........#',
+  '#........#',
+  '#..#..#..#',
+  '#........#',
+  '#........#',
+  '##########',
 ];
 
 const PIPE_LIP = [
-  '##############',
-  '#............#',
-  '#..########..#',
-  '##############',
+  '############',
+  '#..........#',
+  '#..######..#',
+  '############',
 ];
 
 const PIPE_BODY = [
-  '.############.',
-  '.#..........#.',
-  '.#..######..#.',
-  '.############.',
+  '.##########.',
+  '.#........#.',
+  '.#..####..#.',
+  '.##########.',
 ];
 
 const COIN_1 = [
@@ -192,7 +190,7 @@ const CLOUD = [
   '.##########.',
 ];
 
-// Helper to draw square pixels ("kare kare") from sprite matrix
+// Helper to draw square pixels ("kare kare")
 function drawPixelMatrix(ctx, matrix, startX, startY, pixelSize, color) {
   ctx.fillStyle = color;
   const rows = matrix.length;
@@ -212,42 +210,52 @@ function drawPixelMatrix(ctx, matrix, startX, startY, pixelSize, color) {
   }
 }
 
-export default function PixelMarioRunner() {
+export default function PixelMarioRunner({ theme }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const [isAutopilot, setIsAutopilot] = useState(true);
   const [score, setScore] = useState(0);
   const [coins, setCoins] = useState(0);
   const [aiStatus, setAiStatus] = useState('AUTO');
+  const [isHovered, setIsHovered] = useState(false);
 
-  // Track system / app theme (Dark vs Light)
-  const [isDark, setIsDark] = useState(() => {
+  // Reliable Dark/Light detection based on props and DOM class
+  const getIsDark = () => {
+    if (theme) return theme === 'dark';
     if (typeof document !== 'undefined') {
-      return document.documentElement.getAttribute('data-theme') !== 'light';
+      return (
+        document.documentElement.classList.contains('dark') ||
+        document.documentElement.getAttribute('data-theme') === 'dark'
+      );
     }
-    return true;
-  });
+    return false;
+  };
+
+  const [isDark, setIsDark] = useState(getIsDark);
 
   useEffect(() => {
-    const updateTheme = () => {
-      setIsDark(document.documentElement.getAttribute('data-theme') !== 'light');
-    };
-    const observer = new MutationObserver(updateTheme);
+    setIsDark(getIsDark());
+  }, [theme]);
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(getIsDark());
+    });
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ['data-theme'],
+      attributeFilter: ['class', 'data-theme'],
     });
     return () => observer.disconnect();
-  }, []);
+  }, [theme]);
 
   const stateRef = useRef({
-    width: 320,
-    height: 74,
+    width: 340,
+    height: 76,
     pixelSize: 2,
-    groundY: 58,
+    groundY: 60,
     mario: {
       x: 36,
-      y: 30, // calculated from groundY - 28
+      y: 32, // groundY - 28
       vy: 0,
       isGrounded: true,
       frame: 0,
@@ -257,9 +265,9 @@ export default function PixelMarioRunner() {
     },
     obstacles: [],
     clouds: [
-      { x: 20, y: 8, speed: 0.18 },
-      { x: 150, y: 12, speed: 0.25 },
-      { x: 270, y: 6, speed: 0.15 },
+      { x: 25, y: 8, speed: 0.18 },
+      { x: 160, y: 12, speed: 0.25 },
+      { x: 290, y: 6, speed: 0.15 },
     ],
     floatingTexts: [],
     spawnTimer: 40,
@@ -276,10 +284,10 @@ export default function PixelMarioRunner() {
     const m = s.mario;
 
     if (m.isGrounded) {
-      m.vy = -4.6;
+      m.vy = -4.7;
       m.isGrounded = false;
       if (isManual) {
-        m.jumpOverrideTimer = 60;
+        m.jumpOverrideTimer = 65;
         setAiStatus('JUMP');
       }
     }
@@ -304,13 +312,13 @@ export default function PixelMarioRunner() {
 
     const handleResize = () => {
       const rect = container.getBoundingClientRect();
-      const w = Math.floor(rect.width || 320);
-      const h = 74;
+      const w = Math.floor(rect.width || 340);
+      const h = 76;
       const dpr = window.devicePixelRatio || 1;
 
       stateRef.current.width = w;
       stateRef.current.height = h;
-      stateRef.current.groundY = 56;
+      stateRef.current.groundY = 58;
       if (stateRef.current.mario.isGrounded) {
         stateRef.current.mario.y = stateRef.current.groundY - 28;
       }
@@ -341,12 +349,12 @@ export default function PixelMarioRunner() {
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // Initial obstacles
+    // Initial Obstacles
     stateRef.current.obstacles = [
       { id: 1, type: 'block', x: 130, y: 18, hit: false, bumpY: 0 },
       { id: 2, type: 'coin', x: 190, y: 22, collected: false },
-      { id: 3, type: 'goomba', x: 260, y: 56 - 20, squished: 0 },
-      { id: 4, type: 'pipe', x: 360, y: 56 - 16, height: 16 },
+      { id: 3, type: 'goomba', x: 260, y: 58 - 16, squished: 0 },
+      { id: 4, type: 'pipe', x: 360, y: 58 - 16, height: 16 },
     ];
 
     let lastTick = performance.now();
@@ -405,7 +413,7 @@ export default function PixelMarioRunner() {
         m.isBlinking -= dt;
       }
 
-      // Spawn Obstacles
+      // Procedural Spawning
       s.spawnTimer -= dt;
       if (s.spawnTimer <= 0) {
         const lastObs = s.obstacles[s.obstacles.length - 1];
@@ -429,7 +437,7 @@ export default function PixelMarioRunner() {
               id: Date.now() + Math.random(),
               type: 'goomba',
               x: spawnX,
-              y: s.groundY - 20,
+              y: s.groundY - 16,
               squished: 0,
             });
           } else if (rand < 0.85) {
@@ -438,7 +446,7 @@ export default function PixelMarioRunner() {
               id: Date.now() + Math.random(),
               type: 'block',
               x: spawnX,
-              y: 18,
+              y: 20,
               hit: false,
               bumpY: 0,
             });
@@ -448,7 +456,7 @@ export default function PixelMarioRunner() {
               id: Date.now() + Math.random(),
               type: 'coin',
               x: spawnX,
-              y: 24,
+              y: 26,
               collected: false,
             });
           }
@@ -468,7 +476,7 @@ export default function PixelMarioRunner() {
               break;
             }
           } else if (obs.type === 'block' && !obs.hit) {
-            if (dist > 12 && dist < 32 && m.isGrounded) {
+            if (dist > 10 && dist < 30 && m.isGrounded) {
               triggerJump(false);
               break;
             }
@@ -507,9 +515,9 @@ export default function PixelMarioRunner() {
             });
           }
         }
-        // Block
+        // Question Block
         else if (obs.type === 'block' && !obs.hit && dx < 14) {
-          if (m.vy < 0 && Math.abs(m.y - (obs.y + 24)) < 6) {
+          if (m.vy < 0 && Math.abs(m.y - (obs.y + 20)) < 6) {
             obs.hit = true;
             obs.bumpY = -4;
             s.coins += 1;
@@ -567,7 +575,6 @@ export default function PixelMarioRunner() {
         syncTimer = 0;
       }
 
-      // Floating texts
       for (let i = s.floatingTexts.length - 1; i >= 0; i--) {
         const ft = s.floatingTexts[i];
         ft.y -= 0.45 * dt;
@@ -575,23 +582,32 @@ export default function PixelMarioRunner() {
         if (ft.life <= 0) s.floatingTexts.splice(i, 1);
       }
 
-      // ── 1-BIT MONOCHROME RENDERER (SQUARE BY SQUARE) ──
+      // ── RENDER FRAME: SEAMLESS DOT-MATRIX / SQUARE-PIXEL ENGINE ──
       ctx.clearRect(0, 0, s.width, s.height);
 
-      const px = s.pixelSize; // 2px per square
+      const px = s.pixelSize; // 2px square blocks
+      // Determine contrast colors: Black in Light Mode, White in Dark Mode
       const pixelColor = isDark ? '#ffffff' : '#090d16';
-      const subColor = isDark ? 'rgba(255, 255, 255, 0.45)' : 'rgba(9, 13, 22, 0.45)';
+      const matrixDotColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.08)';
+      const cloudColor = isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(15, 23, 42, 0.22)';
 
-      // 1. Clouds (1-bit pixel blocks)
+      // 1. Subtle Dot-Matrix Background ("nokta nokta")
+      ctx.fillStyle = matrixDotColor;
+      for (let x = 0; x < s.width; x += 6) {
+        for (let y = 0; y < s.height; y += 6) {
+          ctx.fillRect(x, y, 1.5, 1.5);
+        }
+      }
+
+      // 2. Clouds (1-bit pixel blocks)
       s.clouds.forEach((c) => {
-        drawPixelMatrix(ctx, CLOUD, c.x, c.y, px, subColor);
+        drawPixelMatrix(ctx, CLOUD, c.x, c.y, px, cloudColor);
       });
 
-      // 2. Ground (Solid line of square blocks + 1-bit checkerboard dither)
+      // 3. Ground (Line of square blocks + 1-bit dithered squares underneath)
       ctx.fillStyle = pixelColor;
       ctx.fillRect(0, s.groundY, s.width, px);
 
-      // Underground dither squares ("kare kare")
       const ditherOffset = Math.floor(s.distanceTraveled) % (px * 4);
       for (let x = -px * 4; x < s.width + px * 4; x += px * 2) {
         for (let y = s.groundY + px * 2; y < s.height; y += px * 2) {
@@ -601,12 +617,10 @@ export default function PixelMarioRunner() {
         }
       }
 
-      // 3. Obstacles (1-bit pixel art)
+      // 4. Obstacles (Square pixel art)
       s.obstacles.forEach((obs) => {
         if (obs.type === 'pipe') {
-          // Lip
           drawPixelMatrix(ctx, PIPE_LIP, obs.x, obs.y, px, pixelColor);
-          // Stem down to ground
           for (let y = obs.y + 4 * px; y < s.groundY; y += 4 * px) {
             drawPixelMatrix(ctx, PIPE_BODY, obs.x, y, px, pixelColor);
           }
@@ -619,7 +633,7 @@ export default function PixelMarioRunner() {
         } else if (obs.type === 'goomba') {
           if (obs.squished > 0) {
             obs.squished -= dt;
-            drawPixelMatrix(ctx, GOOMBA_SQUISHED, obs.x, obs.y + 8, px, pixelColor);
+            drawPixelMatrix(ctx, GOOMBA_SQUISHED, obs.x, obs.y + 6, px, pixelColor);
           } else {
             const frame = Math.floor(s.distanceTraveled / 4) % 2 === 0 ? GOOMBA_WALK_1 : GOOMBA_WALK_2;
             drawPixelMatrix(ctx, frame, obs.x, obs.y, px, pixelColor);
@@ -627,7 +641,7 @@ export default function PixelMarioRunner() {
         }
       });
 
-      // 4. Mario (1-bit pixel art running animation)
+      // 5. Mario (Square pixel runner animation)
       if (m.isBlinking <= 0 || Math.floor(m.isBlinking / 4) % 2 === 0) {
         let marioMatrix = MARIO_STAND;
         if (!m.isGrounded) {
@@ -640,7 +654,7 @@ export default function PixelMarioRunner() {
         drawPixelMatrix(ctx, marioMatrix, m.x, m.y, px, pixelColor);
       }
 
-      // 5. Floating pixel scores
+      // 6. Floating pixel scores
       s.floatingTexts.forEach((ft) => {
         ctx.fillStyle = pixelColor;
         ctx.font = 'bold 9px ui-monospace, monospace';
@@ -672,41 +686,46 @@ export default function PixelMarioRunner() {
   return (
     <div
       ref={containerRef}
-      className="pixel-mario-card"
+      className="seamless-pixel-mario-runner"
       tabIndex={0}
       onKeyDown={handleKeyDown}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       role="region"
-      aria-label="1-Bit Pixel Mario Runner"
-      title="1-bit Pixel Mario · Click or press Space to jump!"
+      aria-label="Seamless 1-Bit Dot-Matrix Mario Runner"
+      title="1-bit Mario · Click or press Space to jump!"
     >
-      {/* ── 1-Bit Retro Status Bar ── */}
-      <div className="pixel-mario-hud">
-        <div className="pixel-hud-left">
-          <span className="pixel-square-glyph">■</span>
-          <span className="pixel-hud-title">MARIO.1BIT</span>
+      {/* ── Frameless Minimalist HUD ── */}
+      <div className="seamless-pixel-mario-hud">
+        <div className="seamless-hud-left">
+          <span className="seamless-pixel-square">■</span>
+          <span className="seamless-hud-title">MARIO.RUN</span>
         </div>
 
-        <div className="pixel-hud-center">
-          <span className="pixel-hud-stat">★ {String(score).padStart(5, '0')}</span>
-          <span className="pixel-hud-stat">⛃ ×{String(coins).padStart(2, '0')}</span>
+        <div className="seamless-hud-center">
+          <span className="seamless-hud-stat">★ {String(score).padStart(5, '0')}</span>
+          <span className="seamless-hud-stat">⛃ ×{String(coins).padStart(2, '0')}</span>
         </div>
 
-        <div className="pixel-hud-right">
+        <div className="seamless-hud-right">
           <button
             type="button"
-            className={`pixel-hud-badge ${isAutopilot ? 'auto' : 'manual'}`}
+            className={`seamless-hud-badge ${isAutopilot ? 'auto' : 'manual'}`}
             onClick={toggleAutopilot}
             title={isAutopilot ? 'Toggle to Manual Jump' : 'Resume Autopilot'}
           >
-            <span className="pixel-badge-square">■</span>
+            <span className="seamless-badge-square">■</span>
             <span>{aiStatus}</span>
           </button>
         </div>
       </div>
 
-      {/* ── 1-Bit Pixel Canvas ── */}
-      <div className="pixel-mario-viewport" onClick={handleCanvasClick}>
-        <canvas ref={canvasRef} className="pixel-mario-canvas" />
+      {/* ── Seamless Dot-Matrix Viewport & Canvas ── */}
+      <div className="seamless-pixel-viewport" onClick={handleCanvasClick}>
+        <canvas ref={canvasRef} className="seamless-pixel-canvas" />
+        {isHovered && (
+          <span className="seamless-hover-hint">[CLICK / SPACE TO JUMP]</span>
+        )}
       </div>
     </div>
   );

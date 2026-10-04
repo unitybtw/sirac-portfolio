@@ -406,7 +406,7 @@ function App() {
 
                 {/* 1-Bit Pixel Mario Runner (Square Pixel Grid, Auto-playing) */}
                 <motion.div variants={heroChild} className="hero-pixel-mario-wrapper">
-                  <PixelMarioRunner />
+                  <PixelMarioRunner theme={theme} />
                 </motion.div>
               </motion.div>
 
