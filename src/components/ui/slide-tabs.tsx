@@ -50,7 +50,6 @@ export const SlideTabs: React.FC<SlideTabsProps> = ({
 
   const tabRefs = useRef<{ [key: string]: HTMLLIElement | null }>({});
 
-  // Aktif sekmenin konumunu güncelle
   const updatePositionToActive = () => {
     if (activeId && tabRefs.current[activeId]) {
       const activeEl = tabRefs.current[activeId];
@@ -64,20 +63,18 @@ export const SlideTabs: React.FC<SlideTabsProps> = ({
         return;
       }
     }
-    // Aktif sekme yoksa imleci gizle
     setPosition((prev) => ({ ...prev, opacity: 0 }));
   };
 
   useEffect(() => {
     updatePositionToActive();
-  }, [activeId]);
+  }, [activeId, items]);
 
-  // Pencere boyutu değiştiğinde pozisyonu koru
   useEffect(() => {
     const handleResize = () => updatePositionToActive();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [activeId]);
+  }, [activeId, items]);
 
   const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, item: TabItem) => {
     if (item.href.startsWith("#")) {
@@ -127,32 +124,18 @@ export const SlideTabs: React.FC<SlideTabsProps> = ({
         ))}
         <motion.li
           animate={position}
-          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+          transition={{ type: "spring", stiffness: 420, damping: 32 }}
           className="absolute z-0 h-7 rounded-full bg-black md:h-10"
         />
       </ul>
     );
   }
 
-  // 2. Portfolio Stili (Temaya duyarlı, pürüzsüz cam dock)
+  // 2. Portfolio Stili (Temaya duyarlı cam dock)
   return (
     <ul
       onMouseLeave={updatePositionToActive}
-      className={`slide-tabs-nav ${className}`}
-      style={{
-        position: "relative",
-        display: "inline-flex",
-        alignItems: "center",
-        borderRadius: "9999px",
-        background: "var(--bg-card)",
-        border: "1px solid var(--border-subtle)",
-        padding: "4px",
-        boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
-        backdropFilter: "blur(16px)",
-        WebkitBackdropFilter: "blur(16px)",
-        listStyle: "none",
-        margin: 0,
-      }}
+      className={`slide-tabs-list ${className}`}
     >
       {items.map((tab) => {
         const isActive = activeId === tab.id;
@@ -173,18 +156,7 @@ export const SlideTabs: React.FC<SlideTabsProps> = ({
             <a
               href={tab.href}
               onClick={(e) => handleTabClick(e, tab)}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "6px",
-                padding: "8px 16px",
-                fontSize: "0.85rem",
-                fontWeight: 600,
-                color: isActive ? "var(--text-primary)" : "var(--text-secondary)",
-                textDecoration: "none",
-                borderRadius: "9999px",
-                transition: "color 0.2s ease",
-              }}
+              className={`slide-tab-link ${isActive ? 'is-active' : ''}`}
             >
               {showIcons && <span style={{ opacity: 0.85, display: "flex" }}>{tab.icon}</span>}
               <span>{tab.label}</span>
@@ -196,16 +168,8 @@ export const SlideTabs: React.FC<SlideTabsProps> = ({
       {/* Kayar İmleç (Pill Cursor) */}
       <motion.li
         animate={position}
-        transition={{ type: "spring", stiffness: 420, damping: 32 }}
-        style={{
-          position: "absolute",
-          zIndex: 1,
-          height: "calc(100% - 8px)",
-          borderRadius: "9999px",
-          background: "var(--border-subtle)",
-          top: "4px",
-          pointerEvents: "none",
-        }}
+        transition={{ type: "spring", stiffness: 440, damping: 33 }}
+        className="slide-tab-cursor-pill"
       />
     </ul>
   );
@@ -215,7 +179,7 @@ export const SlideTabs: React.FC<SlideTabsProps> = ({
 export interface SlideNavbarProps {
   activeSection?: string | null;
   theme?: "light" | "dark";
-  onToggleTheme?: () => void;
+  onToggleTheme?: (e: React.MouseEvent) => void;
   lang?: "tr" | "en";
   onToggleLang?: () => void;
 }
@@ -238,127 +202,47 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
 
   return (
     <motion.header
-      initial={{ y: -60, opacity: 0 }}
+      className="slide-navbar-root"
+      initial={{ y: -80, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 220, damping: 24, delay: 0.1 }}
-      style={{
-        position: "fixed",
-        top: "16px",
-        left: 0,
-        right: 0,
-        zIndex: 9999,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "1rem",
-        padding: "0 1.5rem",
-        pointerEvents: "none",
-      }}
+      transition={{ type: "spring", stiffness: 240, damping: 24, delay: 0.08 }}
+      aria-label="Primary Navigation"
     >
-      <div
-        style={{
-          pointerEvents: "auto",
-          display: "flex",
-          alignItems: "center",
-          gap: "0.75rem",
-          maxWidth: "100%",
-          flexWrap: "wrap",
-          justifyContent: "center",
-        }}
-      >
+      <div className="slide-navbar-dock">
         {/* Sol Logo & Canlı Durum */}
         <a
           href="#hero"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            padding: "0.45rem 0.9rem",
-            borderRadius: "9999px",
-            background: "var(--bg-card)",
-            border: "1px solid var(--border-subtle)",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
-            backdropFilter: "blur(12px)",
-            textDecoration: "none",
-            color: "var(--text-primary)",
-            fontWeight: 700,
-            fontSize: "0.85rem",
-          }}
+          className="slide-logo-badge"
+          title="Sıraç Göktuğ Şimşek"
+          aria-label="Back to top"
         >
-          <span
-            style={{
-              width: "20px",
-              height: "20px",
-              borderRadius: "50%",
-              background: "var(--accent-cta)",
-              color: "#fff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "10px",
-              fontWeight: 800,
-            }}
-          >
-            S
-          </span>
-          <span style={{ letterSpacing: "0.02em" }}>SİRAÇ</span>
-          <span
-            style={{
-              width: "6px",
-              height: "6px",
-              borderRadius: "50%",
-              backgroundColor: "#22c55e",
-              boxShadow: "0 0 8px #22c55e",
-              marginLeft: "4px",
-            }}
-          />
+          <span className="slide-logo-monogram">S</span>
+          <span className="slide-logo-name" style={{ letterSpacing: "0.02em" }}>SİRAÇ</span>
+          <span className="slide-status-dot" title="Open to opportunities" />
         </a>
 
         {/* Orta Kayar Sekmeler (SlideTabs) */}
         <SlideTabs items={tabs} activeId={activeSection} />
 
         {/* Sağ Hızlı Butonlar (Dil, Tema, CV) */}
-        <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "0.4rem",
-            padding: "4px",
-            borderRadius: "9999px",
-            background: "var(--bg-card)",
-            border: "1px solid var(--border-subtle)",
-            boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
-            backdropFilter: "blur(12px)",
-          }}
-        >
+        <div className="slide-controls-cluster">
           {onToggleLang && (
             <button
               onClick={onToggleLang}
+              className="slide-icon-btn"
               title={lang === "tr" ? "Switch to English" : "Türkçe'ye Geç"}
-              style={{
-                padding: "6px 10px",
-                borderRadius: "9999px",
-                fontSize: "0.75rem",
-                fontWeight: 700,
-                color: "var(--text-secondary)",
-                cursor: "pointer",
-              }}
+              aria-label="Toggle language"
             >
-              {lang === "tr" ? "EN" : "TR"}
+              <span>{lang === "tr" ? "EN" : "TR"}</span>
             </button>
           )}
 
           {onToggleTheme && (
             <button
               onClick={onToggleTheme}
+              className="slide-icon-btn"
               title={theme === "light" ? "Karanlık Mod" : "Aydınlık Mod"}
-              style={{
-                padding: "6px",
-                borderRadius: "50%",
-                display: "flex",
-                color: "var(--text-secondary)",
-                cursor: "pointer",
-              }}
+              aria-label="Toggle theme"
             >
               {theme === "light" ? <Moon size={14} /> : <Sun size={14} />}
             </button>
@@ -369,18 +253,7 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
             target="_blank"
             rel="noopener noreferrer"
             title="CV İndir"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "4px",
-              padding: "6px 12px",
-              borderRadius: "9999px",
-              backgroundColor: "var(--accent-cta)",
-              color: "#ffffff",
-              fontSize: "0.75rem",
-              fontWeight: 700,
-              textDecoration: "none",
-            }}
+            className="slide-cv-pill"
           >
             <Download size={12} />
             <span>CV</span>

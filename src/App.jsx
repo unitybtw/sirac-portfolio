@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database, X, GraduationCap, Award, BookOpen, ChevronDown, ChevronUp, FolderGit2, Activity, MapPin, User } from 'lucide-react';
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
+import { SlideNavbar } from './components/ui/slide-tabs';
 
 // Ekranın altında kalan ağır bileşenler: ilk paint'i bloklamasın,
 // main thread boş kalsın ki scroll 120Hz'de takılmasın.
@@ -273,30 +274,10 @@ function App() {
 
   // Parallax for Hero is now handled purely in CSS via .hero-parallax-content
 
-  // Dock durumu: DOM üzerinden doğrudan classList yönetimi (App re-render etmez)
-  const dockRef = useRef(null);
+  // Scroll spy: sayfanın neresinde olduğumuzu tespit edip SlideTabs'a bildirir
   const [activeSection, setActiveSection] = useState(null);
 
   useEffect(() => {
-    let ticking = false;
-    let isCompact = false;
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        ticking = false;
-        const compact = window.scrollY > 48;
-        if (compact !== isCompact) {
-          isCompact = compact;
-          if (dockRef.current) {
-            dockRef.current.classList.toggle('is-compact', compact);
-          }
-        }
-      });
-    };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-
     const spy = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -315,18 +296,9 @@ function App() {
     });
 
     return () => {
-      window.removeEventListener('scroll', onScroll);
       spy.disconnect();
     };
   }, []);
-
-  const notchLinks = [
-    { id: 'about', href: '#about', label: t('about_title'), icon: <User size={13} /> },
-    { id: 'projects', href: '#projects', label: t('archives_title'), icon: <FolderGit2 size={13} /> },
-    { id: 'github-activity', href: '#github-activity', label: i18n.language === 'tr' ? 'Katkı' : 'Activity', icon: <Activity size={13} /> },
-    { id: 'arcade', href: '#arcade', label: 'Arcade', icon: <Gamepad2 size={13} /> },
-    { id: 'contact', href: '#contact', label: t('nav_contact'), icon: <Mail size={13} /> },
-  ];
 
   // Arcade (oyun kütüphanesi) modal durumu
   const [isArcadeOpen, setIsArcadeOpen] = useState(false);
@@ -336,122 +308,14 @@ function App() {
     <>
       <PageProgress />
       
-      {/* ── Apple MacBook Notch / Dynamic Island Navbar ── */}
-      <motion.nav
-        ref={dockRef}
-        className="mac-notch"
-        aria-label="Primary Navigation"
-        initial={{ y: -80, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{
-          type: "spring",
-          stiffness: 180,
-          damping: 22,
-          mass: 0.9,
-          delay: 0.12
-        }}
-      >
-        {/* Apple MacBook Inverted Curved Notch Ears */}
-        <div className="notch-ear notch-ear-left" aria-hidden="true">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M0 0 H14 V14 A14 14 0 0 1 0 0 Z" fill="#000000" />
-          </svg>
-        </div>
-        <div className="notch-ear notch-ear-right" aria-hidden="true">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M14 0 H0 V14 A14 14 0 0 0 14 0 Z" fill="#000000" />
-          </svg>
-        </div>
-
-        {/* Notch Physical Body */}
-        <div className="notch-body">
-          {/* Left Wing: Brand / Monogram & Live Status */}
-          <div className="notch-left-wing">
-            <a href="#hero" className="notch-logo-link" title="Siraç Göktuğ Şimşek" aria-label="Back to top">
-              <span className="notch-logo-monogram">S</span>
-              <span className="notch-logo-text">SİRAÇ</span>
-            </a>
-            <div className="notch-status-badge" title="Open to opportunities">
-              <span className="notch-pulse-dot" />
-              <span className="notch-status-text">{i18n.language === 'tr' ? 'Müsait' : 'Available'}</span>
-            </div>
-          </div>
-
-          {/* Center Hardware Module: FaceTime HD Camera & Sensor Array */}
-          <div className="notch-hardware-cluster" aria-hidden="true" title="FaceTime HD Camera & Sensor Array">
-            <div className="notch-ambient-sensor" />
-            <div className="notch-camera-lens">
-              <div className="notch-camera-core" />
-              <div className="notch-camera-reflection" />
-            </div>
-            <div className="notch-camera-led" />
-          </div>
-
-          {/* Navigation Items Wing */}
-          <div className="notch-nav-wing">
-            {notchLinks.map((l) => {
-              const isActive = activeSection === l.id;
-              return (
-                <a
-                  key={l.id}
-                  href={l.href}
-                  className={`notch-nav-item ${isActive ? 'is-active' : ''}`}
-                  title={l.label}
-                  aria-label={l.label}
-                  aria-current={isActive ? 'true' : undefined}
-                >
-                  {isActive && (
-                    <motion.span
-                      layoutId="notch-active-pill"
-                      className="notch-active-pill"
-                      transition={{ type: 'spring', stiffness: 450, damping: 35 }}
-                    />
-                  )}
-                  <span className="notch-item-icon">{l.icon}</span>
-                  <span className="notch-item-label">{l.label}</span>
-                </a>
-              );
-            })}
-          </div>
-
-          <div className="notch-divider" aria-hidden="true" />
-
-          {/* Right Wing: Quick System Controls & CV Download */}
-          <div className="notch-right-wing">
-            {/* Language Switch */}
-            <button
-              onClick={toggleLanguage}
-              className="notch-btn notch-lang-btn"
-              title="Change Language"
-              aria-label="Change Language"
-            >
-              <span>{i18n.language === 'tr' ? 'EN' : 'TR'}</span>
-            </button>
-
-            {/* Theme Switch */}
-            <button
-              onClick={(e) => toggleTheme(e)}
-              className="notch-btn notch-theme-btn"
-              title="Toggle Theme"
-              aria-label="Toggle Theme"
-            >
-              {theme === 'light' ? <Moon size={13} /> : <Sun size={13} />}
-            </button>
-
-            {/* CV Download Pill */}
-            <a
-              href={`${import.meta.env.BASE_URL}cv.pdf`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="notch-cv-btn"
-              title={t('btn_view_cv')}
-            >
-              <Download size={12} />
-              <span className="notch-cv-text">CV</span>
-            </a>
-          </div>
-        </div>
-      </motion.nav>
+      {/* ── SlideTabs Floating Dock Navbar ── */}
+      <SlideNavbar
+        activeSection={activeSection}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+        lang={i18n.language}
+        onToggleLang={toggleLanguage}
+      />
 
       <motion.main
         className="app-container"
