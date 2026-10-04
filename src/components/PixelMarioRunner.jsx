@@ -310,6 +310,11 @@ export default function PixelMarioRunner({ theme }) {
     const ctx = canvas.getContext('2d');
     let animationFrameId = null;
 
+    const applyTransform = () => {
+      const dpr = window.devicePixelRatio || 1;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
     const handleResize = () => {
       const rect = container.getBoundingClientRect();
       const w = Math.floor(rect.width || 740);
@@ -321,6 +326,7 @@ export default function PixelMarioRunner({ theme }) {
 
       // Prevent canvas buffer recreation during scroll
       if (canvas.width === targetW && canvas.height === targetH) {
+        applyTransform();
         return;
       }
 
@@ -336,11 +342,11 @@ export default function PixelMarioRunner({ theme }) {
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
 
-      ctx.resetTransform?.();
-      ctx.scale(dpr, dpr);
+      applyTransform();
     };
 
     handleResize();
+    applyTransform();
     const resizeObserver = new ResizeObserver(handleResize);
     resizeObserver.observe(container);
 
@@ -618,6 +624,7 @@ export default function PixelMarioRunner({ theme }) {
               // Hurt: Mario ran into Goomba from the side
               m.isBlinking = 35;
               m.vy = -3.0;
+              m.isGrounded = false;
               s.floatingTexts.push({
                 x: m.x,
                 y: m.y - 8,
@@ -647,6 +654,7 @@ export default function PixelMarioRunner({ theme }) {
             if (marioFeet > pipeTop + 6 && m.isBlinking <= 0) {
               m.isBlinking = 35;
               m.vy = -3.0;
+              m.isGrounded = false;
               s.floatingTexts.push({
                 x: m.x,
                 y: m.y - 8,

@@ -281,7 +281,8 @@ section {
   padding-top: 6.5rem;
   padding-bottom: 2rem;
   position: relative;
-  overflow: clip;
+  width: 100%;
+  overflow-x: clip;
 }
 
 .hero-parallax-content {
@@ -296,6 +297,7 @@ section {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 2rem;
 }
 
 .hero-left-column {
@@ -501,7 +503,7 @@ section {
 .hero-corner-mario-anchor {
   position: absolute;
   bottom: 0;
-  left: calc(50% - 50vw);
+  left: 0;
   width: min(740px, 95vw);
   height: 120px;
   z-index: 5;

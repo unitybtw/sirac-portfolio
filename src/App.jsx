@@ -318,17 +318,15 @@ function App() {
         onToggleLang={toggleLanguage}
       />
 
-      <motion.main
-        className="app-container"
-        animate={{
-          opacity: isLangTransitioning ? 0 : 1,
-          y: isLangTransitioning ? -8 : 0,
-        }}
-        transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-      >
-        {/* ── Hero Section (Asymmetric & Typographic) ── */}
-        <section className="hero-section" id="hero">
-          <div className="hero-parallax-content">
+      {/* ── Hero Section (Full-Width with Corner Pinned Mario) ── */}
+      <section className="hero-section" id="hero">
+        <div
+          className="hero-parallax-content"
+          style={{
+            opacity: isLangTransitioning ? 0 : 1,
+            transition: 'opacity 0.25s ease',
+          }}
+        >
             <div className="hero-layout-grid">
               {/* Left Column: Asymmetric Typography & Actions */}
               <motion.div
@@ -445,8 +443,16 @@ function App() {
           </div>
         </section>
 
-        {/* ── About Section ── */}
-        <section id="about">
+        <motion.main
+          className="app-container"
+          animate={{
+            opacity: isLangTransitioning ? 0 : 1,
+            y: isLangTransitioning ? -8 : 0,
+          }}
+          transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+        >
+          {/* ── About Section ── */}
+          <section id="about">
           <h2 className="section-title">{t('about_title')}</h2>
           <p className="section-subtitle">{t('about_subtitle')}</p>
           
