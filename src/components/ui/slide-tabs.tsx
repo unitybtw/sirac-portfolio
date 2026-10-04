@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, FolderGit2, Activity, Gamepad2, Mail, Sun, Moon, Download, Sparkles, SlidersHorizontal } from "lucide-react";
+import { User, FolderGit2, Activity, Gamepad2, Mail, Sun, Moon, Download, Sparkles, SlidersHorizontal, X } from "lucide-react";
 
 export interface TabItem {
   id: string;
@@ -192,24 +192,38 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
   onToggleLang,
 }) => {
   const [isControlsOpen, setIsControlsOpen] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const dockRef = useRef<HTMLDivElement>(null);
+  const closeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    };
-  }, []);
-
-  const handleMouseEnter = () => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  const openControls = () => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
     setIsControlsOpen(true);
   };
 
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
+  const closeControlsWithDelay = (delay = 450) => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = setTimeout(() => {
       setIsControlsOpen(false);
-    }, 280);
+    }, delay);
   };
+
+  const cancelClose = () => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+  };
+
+  // Close when clicked outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dockRef.current && !dockRef.current.contains(e.target as Node)) {
+        setIsControlsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
+  }, []);
 
   const tabs: TabItem[] = [
     { id: "hero", href: "#hero", label: lang === "tr" ? "Giriş" : "Home", icon: <Sparkles size={14} /> },
@@ -228,41 +242,50 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
       transition={{ type: "spring", stiffness: 240, damping: 24, delay: 0.08 }}
       aria-label="Primary Navigation"
     >
-      <div className="slide-navbar-dock">
-        {/* Orta Kayar Sekmeler (SlideTabs) - Sol Siraç kısmı tamamen kaldırıldı */}
+      <motion.div
+        ref={dockRef}
+        layout
+        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+        className="slide-navbar-dock"
+        onMouseLeave={() => closeControlsWithDelay(450)}
+        onMouseEnter={cancelClose}
+      >
+        {/* Orta Kayar Sekmeler (SlideTabs) */}
         <SlideTabs items={tabs} activeId={activeSection} />
 
-        {/* Sağ Hızlı Butonlar: Mouse yaklaştığında animasyonla açılan yuvarlak butonlar */}
+        {/* Zarif Dikey Ayırıcı Çizgi */}
+        <div className="slide-dock-divider" />
+
+        {/* Sağ Hızlı Butonlar: Mouse yaklaştığında / tıklanınca pürüzsüzce açılan yuvarlak butonlar */}
         <div
           className="slide-controls-wrapper"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
+          onMouseEnter={openControls}
         >
-          <AnimatePresence mode="wait" initial={false}>
+          <AnimatePresence initial={false}>
             {!isControlsOpen ? (
               <motion.button
                 key="trigger"
                 onClick={() => setIsControlsOpen(true)}
-                initial={{ opacity: 0, scale: 0.75 }}
+                initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.75 }}
-                transition={{ duration: 0.15 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ duration: 0.16 }}
                 className="slide-circle-btn slide-trigger-btn"
-                title={lang === "tr" ? "Hızlı Ayarlar & CV (Yaklaşınca Açılır)" : "Quick Actions & CV (Hover to Open)"}
-                aria-label="Toggle Quick Controls"
+                title={lang === "tr" ? "Hızlı Menü & CV (Üzerine gelin veya tıklayın)" : "Quick Menu & CV (Hover or click)"}
+                aria-label="Toggle Controls"
               >
                 <SlidersHorizontal size={14} />
               </motion.button>
             ) : (
               <motion.div
-                key="controls"
-                initial={{ opacity: 0, x: 12, width: 0 }}
-                animate={{ opacity: 1, x: 0, width: "auto" }}
-                exit={{ opacity: 0, x: 12, width: 0 }}
+                key="cluster"
+                initial={{ opacity: 0, scale: 0.9, x: 4 }}
+                animate={{ opacity: 1, scale: 1, x: 0 }}
+                exit={{ opacity: 0, scale: 0.9, x: 4 }}
                 transition={{ type: "spring", stiffness: 420, damping: 28 }}
                 className="slide-controls-cluster"
-                style={{ overflow: "hidden", display: "inline-flex", alignItems: "center", gap: "0.4rem" }}
               >
+                {/* 1. Yuvarlak Dil Butonu (TR / EN) */}
                 {onToggleLang && (
                   <button
                     onClick={onToggleLang}
@@ -274,17 +297,19 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
                   </button>
                 )}
 
+                {/* 2. Yuvarlak Tema Butonu (Karanlık / Aydınlık Mod) */}
                 {onToggleTheme && (
                   <button
                     onClick={onToggleTheme}
                     className="slide-circle-btn"
-                    title={theme === "light" ? "Karanlık Mod" : "Aydınlık Mod"}
+                    title={theme === "light" ? (lang === "tr" ? "Karanlık Mod" : "Dark Mode") : (lang === "tr" ? "Aydınlık Mod" : "Light Mode")}
                     aria-label="Toggle theme"
                   >
                     {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
                   </button>
                 )}
 
+                {/* 3. Yuvarlak CV İndir Butonu */}
                 <a
                   href={`${import.meta.env.BASE_URL}cv.pdf`}
                   target="_blank"
@@ -295,11 +320,24 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
                 >
                   <Download size={14} />
                 </a>
+
+                {/* 4. Yuvarlak Kapat / Daralt Butonu */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsControlsOpen(false);
+                  }}
+                  className="slide-circle-btn slide-close-btn"
+                  title={lang === "tr" ? "Kapat" : "Close"}
+                  aria-label="Close Controls"
+                >
+                  <X size={13} />
+                </button>
               </motion.div>
             )}
           </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
     </motion.header>
   );
 };
