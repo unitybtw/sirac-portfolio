@@ -191,6 +191,8 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
   lang = "tr",
   onToggleLang,
 }) => {
+  const [isLogoHovered, setIsLogoHovered] = useState(false);
+
   const tabs: TabItem[] = [
     { id: "hero", href: "#hero", label: lang === "tr" ? "Giriş" : "Home", icon: <Sparkles size={14} /> },
     { id: "about", href: "#about", label: lang === "tr" ? "Hakkımda" : "About", icon: <User size={14} /> },
@@ -209,27 +211,46 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
       aria-label="Primary Navigation"
     >
       <div className="slide-navbar-dock">
-        {/* Sol Logo & Canlı Durum */}
+        {/* Sol Logo: Varsayılan olarak sadece yuvarlak (S), mouse yaklaştığında pürüzsüzce kayarak açılır */}
         <a
           href="#hero"
           className="slide-logo-badge"
           title="Sıraç Göktuğ Şimşek"
           aria-label="Back to top"
+          onMouseEnter={() => setIsLogoHovered(true)}
+          onMouseLeave={() => setIsLogoHovered(false)}
         >
           <span className="slide-logo-monogram">S</span>
-          <span className="slide-logo-name" style={{ letterSpacing: "0.02em" }}>SİRAÇ</span>
-          <span className="slide-status-dot" title="Open to opportunities" />
+          <motion.span
+            initial={false}
+            animate={{
+              width: isLogoHovered ? "auto" : 0,
+              opacity: isLogoHovered ? 1 : 0,
+              marginLeft: isLogoHovered ? 8 : 0,
+            }}
+            transition={{ type: "spring", stiffness: 380, damping: 26 }}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+            }}
+          >
+            <span className="slide-logo-name" style={{ letterSpacing: "0.02em" }}>SİRAÇ</span>
+            <span className="slide-status-dot" title="Open to opportunities" />
+          </motion.span>
         </a>
 
         {/* Orta Kayar Sekmeler (SlideTabs) */}
         <SlideTabs items={tabs} activeId={activeSection} />
 
-        {/* Sağ Hızlı Butonlar (Dil, Tema, CV) */}
+        {/* Sağ Hızlı Butonlar: Hepsi Yuvarlak (TR, Tema, CV) */}
         <div className="slide-controls-cluster">
           {onToggleLang && (
             <button
               onClick={onToggleLang}
-              className="slide-icon-btn"
+              className="slide-circle-btn"
               title={lang === "tr" ? "Switch to English" : "Türkçe'ye Geç"}
               aria-label="Toggle language"
             >
@@ -240,11 +261,11 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
           {onToggleTheme && (
             <button
               onClick={onToggleTheme}
-              className="slide-icon-btn"
+              className="slide-circle-btn"
               title={theme === "light" ? "Karanlık Mod" : "Aydınlık Mod"}
               aria-label="Toggle theme"
             >
-              {theme === "light" ? <Moon size={14} /> : <Sun size={14} />}
+              {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
             </button>
           )}
 
@@ -252,11 +273,11 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
             href={`${import.meta.env.BASE_URL}cv.pdf`}
             target="_blank"
             rel="noopener noreferrer"
-            title="CV İndir"
-            className="slide-cv-pill"
+            title={lang === "tr" ? "CV İndir (PDF)" : "Download CV (PDF)"}
+            className="slide-circle-btn slide-cv-circle"
+            aria-label="Download CV"
           >
-            <Download size={12} />
-            <span>CV</span>
+            <Download size={14} />
           </a>
         </div>
       </div>
