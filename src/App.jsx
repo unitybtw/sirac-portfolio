@@ -6,6 +6,7 @@ import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Do
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
 import { SlideNavbar } from './components/ui/slide-tabs';
+import TuiMarioRunner from './components/TuiMarioRunner';
 
 // Ekranın altında kalan ağır bileşenler: ilk paint'i bloklamasın,
 // main thread boş kalsın ki scroll 120Hz'de takılmasın.
@@ -434,6 +435,9 @@ function App() {
                     </div>
                   </div>
                 </div>
+
+                {/* Minimal Autonomous TUI Mario Runner */}
+                <TuiMarioRunner />
               </motion.div>
             </div>
           </div>

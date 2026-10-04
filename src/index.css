@@ -408,19 +408,20 @@ section {
   transform: scale(0.95);
 }
 
-/* Right Column: Studio Portrait Bento Card */
+/* Right Column: Studio Portrait Bento Card & TUI Mario Companion */
 .hero-right-column {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  gap: 1.15rem;
   width: 100%;
 }
 
 .hero-portrait-card {
   position: relative;
   width: 100%;
-  max-width: 390px;
-  aspect-ratio: 3 / 4;
+  max-width: 380px;
+  aspect-ratio: 3 / 3.8;
   border-radius: 28px;
   overflow: hidden;
   background: var(--bg-card);
@@ -431,9 +432,9 @@ section {
 }
 
 .hero-portrait-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-5px);
   border-color: var(--text-secondary);
-  box-shadow: 0 28px 64px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 26px 56px rgba(0, 0, 0, 0.14);
 }
 
 .hero-portrait-img {
@@ -492,6 +493,214 @@ section {
   font-weight: 500;
 }
 
+/* ── Minimal Autonomous TUI Mario Runner ── */
+.tui-mario-card {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  border-radius: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.35s ease;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  outline: none;
+}
+
+.tui-mario-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--text-secondary);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, 0.12);
+}
+
+.tui-mario-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Header Chrome */
+.tui-mario-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.45rem 0.9rem;
+  background: rgba(0, 0, 0, 0.03);
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+[data-theme='dark'] .tui-mario-header {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.tui-mario-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tui-window-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.tui-window-dot.red { background: #ef4444; }
+.tui-window-dot.yellow { background: #f59e0b; }
+.tui-window-dot.green { background: #10b981; }
+
+.tui-window-title {
+  margin-left: 0.35rem;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  opacity: 0.85;
+  letter-spacing: 0.03em;
+  font-weight: 500;
+}
+
+.tui-mario-header-right {
+  display: flex;
+  align-items: center;
+}
+
+.tui-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.18rem 0.55rem;
+  border-radius: 100px;
+  font-size: 0.65rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tui-status-badge.manual {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.tui-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+  animation: tuiStatusPulse 1.8s ease-in-out infinite;
+}
+
+.tui-status-badge.manual .tui-status-dot {
+  background: #f59e0b;
+  box-shadow: 0 0 5px #f59e0b;
+  animation: none;
+}
+
+@keyframes tuiStatusPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* Retro Canvas Screen */
+.tui-mario-viewport {
+  position: relative;
+  width: 100%;
+  height: 88px;
+  background: #0b0f19;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tui-mario-canvas {
+  width: 100%;
+  height: 88px;
+  display: block;
+}
+
+/* Subtle CRT retro scanline overlay */
+.tui-scanlines {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.28) 50%
+  );
+  background-size: 100% 3px;
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+.tui-hover-hint {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.75);
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  pointer-events: none;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  animation: tuiHintFade 0.25s ease-out;
+}
+
+@keyframes tuiHintFade {
+  from { opacity: 0; transform: translateY(-3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Telemetry Footer */
+.tui-mario-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0.9rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-top: 1px solid var(--border-subtle);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.68rem;
+}
+
+[data-theme='dark'] .tui-mario-footer {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.tui-telemetry-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.telemetry-label {
+  color: var(--text-secondary);
+  opacity: 0.65;
+  font-size: 0.64rem;
+  letter-spacing: 0.04em;
+}
+
+.telemetry-value {
+  color: var(--text-primary);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
 @media (max-width: 960px) {
   .hero-layout-grid {
     grid-template-columns: 1fr;
@@ -501,7 +710,8 @@ section {
     padding-top: 5.5rem;
     padding-bottom: 2.5rem;
   }
-  .hero-portrait-card {
+  .hero-portrait-card,
+  .tui-mario-card {
     max-width: 320px;
   }
 }
