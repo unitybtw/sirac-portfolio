@@ -361,7 +361,7 @@ export default function GitHubCommitHistory() {
         </div>
 
         {/* Heatmap Box + Right Year Selectors */}
-        <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start', position: 'relative' }}>
+        <div className="gh-layout-container" style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start', position: 'relative' }}>
           {/* Heatmap Border Box */}
           <div 
             ref={containerRef}
@@ -539,7 +539,7 @@ export default function GitHubCommitHistory() {
           </div>
 
           {/* Year Buttons on the Right with Animated Smooth Highlight */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', width: '92px', flexShrink: 0 }}>
+          <div className="gh-year-buttons-col" style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', width: '92px', flexShrink: 0 }}>
             {["2026", "2025", "2024"].map((y) => {
               const isSelected = selectedYear === y || (y === "2026" && selectedYear === "last");
               return (
@@ -548,6 +548,7 @@ export default function GitHubCommitHistory() {
                   onClick={() => handleYearChange(y)}
                   whileHover={{ x: -2 }}
                   whileTap={{ scale: 0.96 }}
+                  className="gh-year-btn"
                   style={{
                     position: 'relative',
                     padding: '0.5rem 1rem',

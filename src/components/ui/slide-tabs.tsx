@@ -158,8 +158,8 @@ export const SlideTabs: React.FC<SlideTabsProps> = ({
               onClick={(e) => handleTabClick(e, tab)}
               className={`slide-tab-link ${isActive ? 'is-active' : ''}`}
             >
-              {showIcons && <span style={{ opacity: 0.85, display: "flex" }}>{tab.icon}</span>}
-              <span>{tab.label}</span>
+              {showIcons && <span className="slide-tab-icon" style={{ opacity: 0.85, display: "flex" }}>{tab.icon}</span>}
+              <span className="slide-tab-label">{tab.label}</span>
             </a>
           </li>
         );

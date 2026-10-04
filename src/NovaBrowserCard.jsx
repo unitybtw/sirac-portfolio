@@ -108,10 +108,10 @@ export default function NovaBrowserCard() {
   }, [activeIdx]);
 
   return (
-    <div ref={cardRef} className="bento-card bento-col-12" style={{ padding: '2rem 2.2rem', overflow: 'hidden' }}>
+    <div ref={cardRef} className="bento-card bento-col-12 nova-browser-card" style={{ overflow: 'hidden' }}>
       {/* Top Header Row */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.25rem', marginBottom: '1rem' }}>
-        <div style={{ flex: 1, minWidth: '280px' }}>
+        <div style={{ flex: 1, minWidth: 'min(280px, 100%)' }}>
           {/* Logo & Title */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.6rem' }}>
             <img

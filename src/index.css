@@ -109,6 +109,14 @@ html {
   color: var(--text-primary);
 }
 
+body {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 html.lenis, html.lenis body {
   height: auto;
 }
@@ -302,8 +310,53 @@ section {
 
 @media (max-width: 768px) {
   .bento-col-8, .bento-col-6, .bento-col-4 { grid-column: span 12; }
-  .app-container { padding: 0 1.5rem; padding-bottom: 4rem; }
-  section { padding-top: 6rem; }
+  .bento-card {
+    padding: 1.5rem 1.25rem;
+    border-radius: 20px;
+  }
+  .app-container {
+    padding: 0 1.25rem;
+    padding-bottom: 3.5rem;
+  }
+  section {
+    padding-top: 4.5rem;
+  }
+  .section-title {
+    font-size: clamp(1.75rem, 5vw, 2.25rem);
+  }
+  .section-subtitle {
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+  }
+  .gh-layout-container {
+    flex-direction: column !important;
+    gap: 1rem !important;
+  }
+  .gh-year-buttons-col {
+    flex-direction: row !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    gap: 0.5rem !important;
+  }
+  .gh-year-btn {
+    flex: 1 !important;
+    text-align: center !important;
+    padding: 0.45rem 0.75rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .bento-card {
+    padding: 1.25rem 1rem;
+    border-radius: 16px;
+  }
+  .app-container {
+    padding: 0 0.85rem;
+    padding-bottom: 3rem;
+  }
+  .bento-grid {
+    gap: 1rem;
+  }
 }
 
 /* Hero Section Redesign: Swiss Typographic & Bento Portrait */
@@ -605,22 +658,27 @@ section {
 }
 
 @media (max-width: 960px) {
+  .hero-section {
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    padding-top: 5rem !important;
+    padding-bottom: 1.5rem !important;
+    min-height: auto !important;
+  }
   .hero-layout-grid {
     grid-template-columns: 1fr;
-    gap: 2.5rem;
-  }
-  .hero-section {
-    padding-top: 5.5rem;
-    padding-bottom: 2.5rem;
+    gap: 2.25rem;
+    padding: 0 1.25rem;
   }
   .hero-portrait-card {
-    max-width: 320px;
+    max-width: 290px;
+    margin: 0 auto;
   }
   .hero-corner-mario-anchor {
     position: relative;
     bottom: auto;
     left: 0;
-    margin: 2rem auto 0 auto;
+    margin: 1.5rem 0 0 0;
     width: 100%;
     max-width: 100%;
     pointer-events: auto;
@@ -633,8 +691,16 @@ section {
 }
 
 @media (max-width: 600px) {
+  .hero-layout-grid {
+    padding: 0 0.5rem;
+    gap: 1.75rem;
+  }
   .hero-main-title {
-    font-size: 2.2rem;
+    font-size: clamp(1.85rem, 6.5vw, 2.35rem);
+    line-height: 1.15;
+  }
+  .hero-tagline-text {
+    font-size: 0.95rem;
   }
   .hero-actions-row {
     width: 100%;
@@ -646,6 +712,14 @@ section {
   }
   .hero-social-divider {
     display: none;
+  }
+  .hero-status-pill .live-status-chip {
+    font-size: 0.72rem;
+    padding: 0.28rem 0.65rem;
+  }
+  .hero-portrait-card {
+    max-width: 260px;
+    border-radius: 20px;
   }
 }
 
@@ -1436,14 +1510,62 @@ section {
 }
 
 @media (max-width: 720px) {
-  .slide-tab-link span {
-    display: none;
+  .slide-navbar-dock {
+    gap: 0.35rem;
+    padding: 4px 6px;
+    max-width: 96vw;
+  }
+  .slide-tab-label {
+    display: none !important;
+  }
+  .slide-tab-icon {
+    display: flex !important;
   }
   .slide-tab-link {
-    padding: 7px;
+    padding: 7px 8px;
+    gap: 0;
   }
-  .slide-tab-cursor-pill {
-    width: 28px !important;
+  .slide-circle-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .slide-navbar-root {
+    top: 10px;
+    padding: 0 0.25rem;
+  }
+  .slide-navbar-dock {
+    gap: 0.2rem;
+    padding: 3px 4px;
+    max-width: 98vw;
+    flex-wrap: nowrap;
+  }
+  .slide-tabs-list {
+    padding: 2px;
+    gap: 1px;
+  }
+  .slide-tab-link {
+    padding: 5px 6px;
+  }
+  .slide-tab-icon svg {
+    width: 13px;
+    height: 13px;
+  }
+  .slide-controls-cluster {
+    gap: 0.2rem;
+    padding: 0;
+    margin-left: 0.1rem;
+  }
+  .slide-circle-btn {
+    width: 29px;
+    height: 29px;
+    font-size: 0.68rem;
+  }
+  .slide-circle-btn svg {
+    width: 13px;
+    height: 13px;
   }
 }
 
