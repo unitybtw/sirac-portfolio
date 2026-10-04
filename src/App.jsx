@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, lazy, Suspense } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database, X, GraduationCap, Award, BookOpen, ChevronDown, ChevronUp, FolderGit2, Activity, MapPin } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database, X, GraduationCap, Award, BookOpen, ChevronDown, ChevronUp, FolderGit2, Activity, MapPin, User } from 'lucide-react';
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
 
@@ -308,7 +308,7 @@ function App() {
       { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
     );
 
-    const spyIds = ['hero', 'projects', 'arcade', 'github-activity', 'contact'];
+    const spyIds = ['hero', 'about', 'projects', 'github-activity', 'arcade', 'contact'];
     spyIds.forEach((id) => {
       const el = document.getElementById(id);
       if (el) spy.observe(el);
@@ -320,11 +320,12 @@ function App() {
     };
   }, []);
 
-  const dockLinks = [
-    { id: 'projects', anim: 'projects', href: '#projects', label: t('archives_title'), icon: <FolderGit2 size={17} /> },
-    { id: 'github-activity', anim: 'github-activity', href: '#github-activity', label: i18n.language === 'tr' ? 'Aktivite' : 'Activity', icon: <Activity size={17} /> },
-    { id: 'arcade', anim: 'arcade', href: '#arcade', label: t('arcade_section_title'), icon: <Gamepad2 size={17} /> },
-    { id: 'contact', anim: 'contact', href: '#contact', label: t('nav_contact'), icon: <Mail size={17} /> },
+  const notchLinks = [
+    { id: 'about', href: '#about', label: t('about_title'), icon: <User size={13} /> },
+    { id: 'projects', href: '#projects', label: t('archives_title'), icon: <FolderGit2 size={13} /> },
+    { id: 'github-activity', href: '#github-activity', label: i18n.language === 'tr' ? 'Katkı' : 'Activity', icon: <Activity size={13} /> },
+    { id: 'arcade', href: '#arcade', label: 'Arcade', icon: <Gamepad2 size={13} /> },
+    { id: 'contact', href: '#contact', label: t('nav_contact'), icon: <Mail size={13} /> },
   ];
 
   // Arcade (oyun kütüphanesi) modal durumu
@@ -335,99 +336,122 @@ function App() {
     <>
       <PageProgress />
       
-      {/* ── Floating Dock ── */}
-      <nav
+      {/* ── Apple MacBook Notch / Dynamic Island Navbar ── */}
+      <motion.nav
         ref={dockRef}
-        className="dock"
-        aria-label="Primary"
+        className="mac-notch"
+        aria-label="Primary Navigation"
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{
+          type: "spring",
+          stiffness: 180,
+          damping: 22,
+          mass: 0.9,
+          delay: 0.12
+        }}
       >
-        <a href="#hero" className="dock-mono" title="Siraç G. Şimşek" aria-label="Back to top">
-          S
-        </a>
+        {/* Apple MacBook Inverted Curved Notch Ears */}
+        <div className="notch-ear notch-ear-left" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M0 0 H14 V14 A14 14 0 0 1 0 0 Z" fill="#000000" />
+          </svg>
+        </div>
+        <div className="notch-ear notch-ear-right" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M14 0 H0 V14 A14 14 0 0 0 14 0 Z" fill="#000000" />
+          </svg>
+        </div>
 
-        <span className="dock-sep" aria-hidden="true" />
+        {/* Notch Physical Body */}
+        <div className="notch-body">
+          {/* Left Wing: Brand / Monogram & Live Status */}
+          <div className="notch-left-wing">
+            <a href="#hero" className="notch-logo-link" title="Siraç Göktuğ Şimşek" aria-label="Back to top">
+              <span className="notch-logo-monogram">S</span>
+              <span className="notch-logo-text">SİRAÇ</span>
+            </a>
+            <div className="notch-status-badge" title="Open to opportunities">
+              <span className="notch-pulse-dot" />
+              <span className="notch-status-text">{i18n.language === 'tr' ? 'Müsait' : 'Available'}</span>
+            </div>
+          </div>
 
-        {dockLinks.map((l) => (
-          <a
-            key={l.id}
-            href={l.href}
-            data-anim={l.anim}
-            title={l.label}
-            aria-label={l.label}
-            aria-current={activeSection === l.id ? 'true' : undefined}
-            className={`dock-item${activeSection === l.id ? ' is-active' : ''}`}
-          >
-            {activeSection === l.id && (
-              <motion.span
-                layoutId="dock-pill"
-                className="dock-pill"
-                transition={{ type: 'spring', stiffness: 500, damping: 38 }}
-              />
-            )}
-            <span className="dock-icon">{l.icon}</span>
-            <span key={l.label} className="dock-label dock-label-swap">{l.label}</span>
-          </a>
-        ))}
+          {/* Center Hardware Module: FaceTime HD Camera & Sensor Array */}
+          <div className="notch-hardware-cluster" aria-hidden="true" title="FaceTime HD Camera & Sensor Array">
+            <div className="notch-ambient-sensor" />
+            <div className="notch-camera-lens">
+              <div className="notch-camera-core" />
+              <div className="notch-camera-reflection" />
+            </div>
+            <div className="notch-camera-led" />
+          </div>
 
-        <span className="dock-sep" aria-hidden="true" />
+          {/* Navigation Items Wing */}
+          <div className="notch-nav-wing">
+            {notchLinks.map((l) => {
+              const isActive = activeSection === l.id;
+              return (
+                <a
+                  key={l.id}
+                  href={l.href}
+                  className={`notch-nav-item ${isActive ? 'is-active' : ''}`}
+                  title={l.label}
+                  aria-label={l.label}
+                  aria-current={isActive ? 'true' : undefined}
+                >
+                  {isActive && (
+                    <motion.span
+                      layoutId="notch-active-pill"
+                      className="notch-active-pill"
+                      transition={{ type: 'spring', stiffness: 450, damping: 35 }}
+                    />
+                  )}
+                  <span className="notch-item-icon">{l.icon}</span>
+                  <span className="notch-item-label">{l.label}</span>
+                </a>
+              );
+            })}
+          </div>
 
-        {/* Language */}
-        <button
-          onClick={toggleLanguage}
-          className="dock-icon-btn dock-control"
-          title="Change Language"
-          aria-label="Change Language"
-        >
-          <span key={i18n.language} className="dock-swap dock-lang">{i18n.language === 'tr' ? 'EN' : 'TR'}</span>
-        </button>
+          <div className="notch-divider" aria-hidden="true" />
 
-        {/* Theme */}
-        <button
-          onClick={toggleTheme}
-          className="dock-icon-btn dock-control"
-          title="Toggle Theme"
-          aria-label="Toggle Theme"
-        >
-          <span key={theme} className="dock-swap">
-            {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
-          </span>
-        </button>
+          {/* Right Wing: Quick System Controls & CV Download */}
+          <div className="notch-right-wing">
+            {/* Language Switch */}
+            <button
+              onClick={toggleLanguage}
+              className="notch-btn notch-lang-btn"
+              title="Change Language"
+              aria-label="Change Language"
+            >
+              <span>{i18n.language === 'tr' ? 'EN' : 'TR'}</span>
+            </button>
 
-        {/* CV — öne çıkan buton */}
-        <a
-          href={`${import.meta.env.BASE_URL}cv.pdf`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="dock-cv"
-          title={t('btn_view_cv')}
-        >
-          <Download size={15} />
-          <span key={t('btn_view_cv')} className="dock-label dock-label-swap">{t('btn_view_cv')}</span>
-        </a>
-      </nav>
+            {/* Theme Switch */}
+            <button
+              onClick={(e) => toggleTheme(e)}
+              className="notch-btn notch-theme-btn"
+              title="Toggle Theme"
+              aria-label="Toggle Theme"
+            >
+              {theme === 'light' ? <Moon size={13} /> : <Sun size={13} />}
+            </button>
 
-      {/* Floating Action Controls for Mobile */}
-      <div className="mobile-settings-pill">
-        <button 
-          onClick={toggleLanguage} 
-          className="btn-outline" 
-          style={{ padding: '0.4rem', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}
-          title="Change Language"
-        >
-          <span style={{ fontSize: '0.8rem', fontWeight: 'bold', textTransform: 'uppercase' }}>
-            {i18n.language === 'tr' ? 'EN' : 'TR'}
-          </span>
-        </button>
-
-        <button 
-          onClick={(e) => toggleTheme(e)} 
-          className="btn-outline" 
-          style={{ padding: '0.4rem', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%' }}
-          title="Toggle Theme"
-        >
-          {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-        </button>
-      </div>
+            {/* CV Download Pill */}
+            <a
+              href={`${import.meta.env.BASE_URL}cv.pdf`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="notch-cv-btn"
+              title={t('btn_view_cv')}
+            >
+              <Download size={12} />
+              <span className="notch-cv-text">CV</span>
+            </a>
+          </div>
+        </div>
+      </motion.nav>
 
       <motion.main
         className="app-container"
