@@ -824,7 +824,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                                 onChange={(e) => setScoreboardGameFilter(e.target.value)}
                                                                 className="arcade-filter-select"
                                                             >
-                                                                <option value="all">{t('arcade_cat_all')} (75)</option>
+                                                                <option value="all">{t('arcade_cat_all')} ({gamesList.length})</option>
                                                                 {gamesList.map((g) => (
                                                                     <option key={g.id} value={g.id}>{g.title}</option>
                                                                 ))}
