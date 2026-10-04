@@ -410,14 +410,16 @@ export default function GitHubCommitHistory() {
                           );
                         }
 
-                        // Active green day: base slot underneath, green square hops in like a bird from outside
+                        // Active green day: base slot underneath, green square hops in like a bird from screen edges
                         const fromLeft = (colIdx + rowIdx) % 2 === 0;
-                        const baseOffscreen = 1100;
-                        const flightDistX = (fromLeft ? -1 : 1) * (baseOffscreen + ((colIdx * 23 + rowIdx * 37) % 320));
-                        const flightDistY = - (190 + ((colIdx * 19 + rowIdx * 29) % 150));
-                        const flightRot = (fromLeft ? -1 : 1) * (18 + (day.activeIdx % 5) * 4);
-                        const flightRotCounter = (fromLeft ? 1 : -1) * (10 + (day.activeIdx % 4) * 3);
-                        const delaySec = 0.45 + (colIdx * 0.038) + (rowIdx * 0.008);
+                        const sideOffset = (colIdx * 19 + rowIdx * 31) % 160;
+                        const flightDistX = fromLeft
+                          ? `calc(-65vw - ${sideOffset}px)`
+                          : `calc(65vw + ${sideOffset}px)`;
+                        const flightDistY = `-${150 + ((colIdx * 23 + rowIdx * 17) % 180)}px`;
+                        const flightRot = `${(fromLeft ? -1 : 1) * (20 + (day.activeIdx % 5) * 5)}deg`;
+                        const flightRotCounter = `${(fromLeft ? 1 : -1) * (12 + (day.activeIdx % 4) * 4)}deg`;
+                        const delaySec = 0.4 + (colIdx * 0.036) + (rowIdx * 0.007);
 
                         return (
                           <div
@@ -431,10 +433,10 @@ export default function GitHubCommitHistory() {
                               style={{
                                 backgroundColor: levelColor,
                                 animationDelay: `${delaySec.toFixed(3)}s`,
-                                '--bird-x': `${flightDistX}px`,
-                                '--bird-y': `${flightDistY}px`,
-                                '--bird-rot': `${flightRot}deg`,
-                                '--bird-rot-counter': `${flightRotCounter}deg`
+                                '--bird-x': flightDistX,
+                                '--bird-y': flightDistY,
+                                '--bird-rot': flightRot,
+                                '--bird-rot-counter': flightRotCounter
                               }}
                             />
                           </div>
