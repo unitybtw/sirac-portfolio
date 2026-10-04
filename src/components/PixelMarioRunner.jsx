@@ -243,6 +243,8 @@ export default function PixelMarioRunner({ theme }) {
     return () => observer.disconnect();
   }, [theme]);
 
+  const jumpBufferRef = useRef(0);
+
   const stateRef = useRef({
     width: 740,
     height: 120,
@@ -264,6 +266,8 @@ export default function PixelMarioRunner({ theme }) {
       { x: 480, y: 8, speed: 0.15 },
       { x: 670, y: 16, speed: 0.22 },
     ],
+    particles: [],
+    poppedCoins: [],
     floatingTexts: [],
     spawnTimer: 45,
     distanceTraveled: 0,
@@ -279,8 +283,24 @@ export default function PixelMarioRunner({ theme }) {
     if (m.isGrounded) {
       m.vy = -6.0;
       m.isGrounded = false;
+      jumpBufferRef.current = 0;
+    } else {
+      // Buffer jump for responsive controls when near ground
+      jumpBufferRef.current = 8;
     }
   }, []);
+
+  // Global Space / ArrowUp listener when mouse hovers over runner
+  useEffect(() => {
+    const handleGlobalKey = (e) => {
+      if (isHovered && (e.code === 'Space' || e.code === 'ArrowUp' || e.key === ' ')) {
+        e.preventDefault();
+        triggerJump();
+      }
+    };
+    window.addEventListener('keydown', handleGlobalKey);
+    return () => window.removeEventListener('keydown', handleGlobalKey);
+  }, [isHovered, triggerJump]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -337,13 +357,13 @@ export default function PixelMarioRunner({ theme }) {
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
-    // Initial Obstacles spread across the long track
+    // Initial Obstacles spread across the long track (aligned flush to ground)
     stateRef.current.obstacles = [
-      { id: 1, type: 'pipe', x: 200, y: 96 - 26, height: 26 },
-      { id: 2, type: 'block', x: 330, y: 32, hit: false, bumpY: 0 },
-      { id: 3, type: 'coin', x: 410, y: 38, collected: false },
-      { id: 4, type: 'goomba', x: 530, y: 96 - 24, squished: 0 },
-      { id: 5, type: 'pipe', x: 690, y: 96 - 26, height: 26 },
+      { id: 1, type: 'pipe', x: 220, y: 96 - 24, height: 24 },
+      { id: 2, type: 'block', x: 350, y: 14, hit: false, bumpY: 0 },
+      { id: 3, type: 'coin', x: 440, y: 34, collected: false },
+      { id: 4, type: 'goomba', x: 560, y: 96 - 30, squished: 0, dead: false },
+      { id: 5, type: 'pipe', x: 700, y: 96 - 24, height: 24 },
     ];
 
     let lastTick = performance.now();
@@ -380,7 +400,18 @@ export default function PixelMarioRunner({ theme }) {
           m.y = groundStandingY;
           m.vy = 0;
           m.isGrounded = true;
+
+          // Consume buffered jump immediately on landing
+          if (jumpBufferRef.current > 0) {
+            jumpBufferRef.current = 0;
+            m.vy = -6.0;
+            m.isGrounded = false;
+          }
         }
+      }
+
+      if (jumpBufferRef.current > 0) {
+        jumpBufferRef.current -= dt;
       }
 
       // Animation cycle
@@ -403,41 +434,45 @@ export default function PixelMarioRunner({ theme }) {
           const spawnX = Math.max(lastX + 130 + Math.random() * 80, s.width + 20);
           const rand = Math.random();
 
-          if (rand < 0.35) {
-            // Pipe
+          if (rand < 0.28) {
+            // Pipe (24px or 36px flush with 96 ground)
+            const isTall = Math.random() < 0.25;
+            const pHeight = isTall ? 36 : 24;
             s.obstacles.push({
               id: Date.now() + Math.random(),
               type: 'pipe',
               x: spawnX,
-              y: s.groundY - 26,
-              height: 26,
+              y: s.groundY - pHeight,
+              height: pHeight,
             });
-          } else if (rand < 0.65) {
-            // Goomba
+          } else if (rand < 0.58) {
+            // Goomba (30px tall flush with ground)
             s.obstacles.push({
               id: Date.now() + Math.random(),
               type: 'goomba',
               x: spawnX,
-              y: s.groundY - 24,
+              y: s.groundY - 30,
               squished: 0,
+              dead: false,
             });
-          } else if (rand < 0.85) {
-            // Question block
+          } else if (rand < 0.78) {
+            // Question block (floating at y = 14, 10px head clearance, hit by jumping)
             s.obstacles.push({
               id: Date.now() + Math.random(),
               type: 'block',
               x: spawnX,
-              y: 32,
+              y: 14,
               hit: false,
               bumpY: 0,
             });
           } else {
-            // Floating coin
+            // Coin (high float or low run-through)
+            const isGround = Math.random() < 0.45;
             s.obstacles.push({
               id: Date.now() + Math.random(),
               type: 'coin',
               x: spawnX,
-              y: 38,
+              y: isGround ? 62 : 32,
               collected: false,
             });
           }
@@ -445,34 +480,41 @@ export default function PixelMarioRunner({ theme }) {
         }
       }
 
-      // Autonomous AI Jump Logic: Find the nearest oncoming threat
-      let nextThreat = null;
+      // Autonomous AI Jump Logic: Assess upcoming items
+      let nearestThreat = null;
       let minThreatDist = Infinity;
+      let nearestBonus = null;
+      let minBonusDist = Infinity;
 
       for (let i = 0; i < s.obstacles.length; i++) {
         const obs = s.obstacles[i];
         const dist = obs.x - m.x;
 
-        if (dist > 10 && dist < minThreatDist) {
-          if (obs.type === 'pipe' || (obs.type === 'goomba' && obs.squished <= 0)) {
+        if (dist > 8) {
+          if (
+            (obs.type === 'pipe' || (obs.type === 'goomba' && !obs.dead && obs.squished <= 0)) &&
+            dist < minThreatDist
+          ) {
             minThreatDist = dist;
-            nextThreat = obs;
-          } else if (obs.type === 'block' && !obs.hit) {
-            if (dist < 40) {
-              minThreatDist = dist;
-              nextThreat = obs;
-            }
+            nearestThreat = obs;
+          } else if (
+            ((obs.type === 'block' && !obs.hit) || (obs.type === 'coin' && !obs.collected && obs.y < 50)) &&
+            dist < minBonusDist
+          ) {
+            minBonusDist = dist;
+            nearestBonus = obs;
           }
         }
       }
 
-      if (nextThreat && m.isGrounded) {
-        if (nextThreat.type === 'pipe' || nextThreat.type === 'goomba') {
-          if (minThreatDist > 18 && minThreatDist < 62) {
-            triggerJump();
-          }
-        } else if (nextThreat.type === 'block' && !nextThreat.hit) {
-          if (minThreatDist > 14 && minThreatDist < 42) {
+      if (m.isGrounded) {
+        // High priority: Dodge pipe or stomp goomba
+        if (nearestThreat && minThreatDist > 16 && minThreatDist < 58) {
+          triggerJump();
+        }
+        // Lower priority: Jump for Question block or high coin IF no threat is immediately behind it
+        else if (nearestBonus && minBonusDist > 14 && minBonusDist < 36) {
+          if (!nearestThreat || minThreatDist > 75) {
             triggerJump();
           }
         }
@@ -483,8 +525,8 @@ export default function PixelMarioRunner({ theme }) {
         const obs = s.obstacles[i];
         obs.x -= speed;
 
-        if (obs.type === 'goomba' && obs.squished <= 0) {
-          obs.x -= 0.35 * dt;
+        if (obs.type === 'goomba' && !obs.dead && obs.squished <= 0) {
+          obs.x -= 0.35 * dt; // Goomba walks left
         }
 
         if (obs.type === 'block' && obs.bumpY < 0) {
@@ -492,13 +534,24 @@ export default function PixelMarioRunner({ theme }) {
           if (obs.bumpY > 0) obs.bumpY = 0;
         }
 
-        const dx = Math.abs((obs.x + 12) - (m.x + 18));
+        // Coin Collision
+        if (obs.type === 'coin' && !obs.collected) {
+          const coinCenterX = obs.x + 12;
+          const coinCenterY = obs.y + 12;
+          const marioCenterX = m.x + 18;
+          const marioCenterY = m.y + 21;
 
-        // Coin
-        if (obs.type === 'coin' && !obs.collected && dx < 20) {
-          const dy = Math.abs(obs.y - (m.y + 14));
-          if (dy < 24) {
+          if (
+            Math.abs(coinCenterX - marioCenterX) < 18 &&
+            Math.abs(coinCenterY - marioCenterY) < 22
+          ) {
             obs.collected = true;
+            s.particles.push(
+              { x: coinCenterX - 4, y: coinCenterY - 4, vx: -1.2, vy: -1.2, life: 10 },
+              { x: coinCenterX + 4, y: coinCenterY - 4, vx: 1.2, vy: -1.2, life: 10 },
+              { x: coinCenterX - 4, y: coinCenterY + 4, vx: -1.2, vy: 1.2, life: 10 },
+              { x: coinCenterX + 4, y: coinCenterY + 4, vx: 1.2, vy: 1.2, life: 10 }
+            );
             s.floatingTexts.push({
               x: obs.x,
               y: obs.y - 6,
@@ -507,40 +560,100 @@ export default function PixelMarioRunner({ theme }) {
             });
           }
         }
-        // Question Block
-        else if (obs.type === 'block' && !obs.hit && dx < 20) {
-          if (m.vy < 0 && Math.abs(m.y - (obs.y + 28)) < 10) {
+        // Question Block Collision
+        else if (obs.type === 'block' && !obs.hit) {
+          const blockCenterX = obs.x + 15;
+          const marioCenterX = m.x + 18;
+          const blockBottom = obs.y + 30 + obs.bumpY;
+
+          // Mario jumping upwards and head bumps bottom of block
+          if (
+            Math.abs(marioCenterX - blockCenterX) < 18 &&
+            m.y <= blockBottom + 4 &&
+            m.y >= obs.y + 8 &&
+            m.vy < 0
+          ) {
             obs.hit = true;
-            obs.bumpY = -5;
+            obs.bumpY = -7;
+            m.vy = 2.0; // Mario bounces down from head-bump
+            // Pop out spinning coin from top of block
+            s.poppedCoins.push({
+              x: obs.x + 3,
+              y: obs.y - 10,
+              vy: -4.5,
+              life: 22,
+            });
             s.floatingTexts.push({
               x: obs.x,
-              y: obs.y - 12,
+              y: obs.y - 14,
               text: '★ +200',
               life: 30,
             });
           }
         }
-        // Goomba Stomp
-        else if (obs.type === 'goomba' && obs.squished <= 0 && dx < 20) {
-          if (m.vy > 0 && m.y < groundStandingY - 6) {
-            obs.squished = 24;
-            m.vy = -4.5;
-            s.floatingTexts.push({
-              x: obs.x,
-              y: obs.y - 8,
-              text: '+200',
-              life: 25,
-            });
-          } else if (m.isBlinking <= 0) {
-            m.isBlinking = 35;
-            m.vy = -3;
+        // Goomba Stomp / Hurt Collision
+        else if (obs.type === 'goomba' && !obs.dead && obs.squished <= 0) {
+          const goombaCenterX = obs.x + 18;
+          const marioCenterX = m.x + 18;
+          const marioFeet = m.y + 42;
+          const goombaTop = obs.y;
+
+          if (Math.abs(marioCenterX - goombaCenterX) < 20) {
+            // Stomp: Mario lands on top of Goomba while falling
+            if (m.vy > 0 && marioFeet >= goombaTop && marioFeet <= goombaTop + 22) {
+              obs.squished = 20; // Flattened pancake
+              obs.dead = true;   // NEVER resurrects!
+              m.vy = -4.8;       // Springy bounce
+              s.particles.push(
+                { x: goombaCenterX - 4, y: goombaTop + 10, vx: -1.5, vy: -1.0, life: 8 },
+                { x: goombaCenterX + 4, y: goombaTop + 10, vx: 1.5, vy: -1.0, life: 8 }
+              );
+              s.floatingTexts.push({
+                x: obs.x,
+                y: obs.y - 8,
+                text: '+200',
+                life: 25,
+              });
+            } else if (m.isBlinking <= 0 && marioFeet > goombaTop + 10) {
+              // Hurt: Mario ran into Goomba from the side
+              m.isBlinking = 35;
+              m.vy = -3.0;
+              s.floatingTexts.push({
+                x: m.x,
+                y: m.y - 8,
+                text: 'OOF!',
+                life: 20,
+              });
+            }
           }
         }
-        // Pipe
-        else if (obs.type === 'pipe' && dx < 18) {
-          if (m.y > s.groundY - (obs.height + 36) && m.isBlinking <= 0) {
-            m.isBlinking = 30;
-            m.vy = -3;
+        // Squished Goomba timer & removal (Permanent death)
+        else if (obs.type === 'goomba' && obs.squished > 0) {
+          obs.squished -= dt;
+          if (obs.squished <= 0) {
+            // Completely remove dead squished goomba!
+            s.obstacles.splice(i, 1);
+            continue;
+          }
+        }
+        // Pipe Collision
+        else if (obs.type === 'pipe') {
+          const pipeCenterX = obs.x + 18;
+          const marioCenterX = m.x + 18;
+          const marioFeet = m.y + 42;
+          const pipeTop = obs.y;
+
+          if (Math.abs(marioCenterX - pipeCenterX) < 20) {
+            if (marioFeet > pipeTop + 6 && m.isBlinking <= 0) {
+              m.isBlinking = 35;
+              m.vy = -3.0;
+              s.floatingTexts.push({
+                x: m.x,
+                y: m.y - 8,
+                text: 'OUCH!',
+                life: 20,
+              });
+            }
           }
         }
 
@@ -549,11 +662,33 @@ export default function PixelMarioRunner({ theme }) {
         }
       }
 
+      // Update particles
+      for (let i = s.particles.length - 1; i >= 0; i--) {
+        const p = s.particles[i];
+        p.x -= speed;
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.life -= dt;
+        if (p.life <= 0) s.particles.splice(i, 1);
+      }
+
+      // Update popped coins from ? blocks
+      for (let i = s.poppedCoins.length - 1; i >= 0; i--) {
+        const pc = s.poppedCoins[i];
+        pc.x -= speed;
+        pc.y += pc.vy * dt;
+        pc.vy += 0.35 * dt;
+        pc.life -= dt;
+        if (pc.life <= 0) s.poppedCoins.splice(i, 1);
+      }
+
+      // Update floating texts (aligned with scrolling ground)
       for (let i = s.floatingTexts.length - 1; i >= 0; i--) {
         const ft = s.floatingTexts[i];
+        ft.x -= speed; // Keep aligned with the world!
         ft.y -= 0.6 * dt;
         ft.life -= dt;
-        if (ft.life <= 0) s.floatingTexts.splice(i, 1);
+        if (ft.life <= 0 || ft.x < -60) s.floatingTexts.splice(i, 1);
       }
 
       // ── RENDER FRAME: SEAMLESS DOT-MATRIX / CHUNKY SQUARE PIXELS ──
@@ -605,16 +740,27 @@ export default function PixelMarioRunner({ theme }) {
           drawPixelMatrix(ctx, frame, obs.x, obs.y, px, pixelColor);
         } else if (obs.type === 'goomba') {
           if (obs.squished > 0) {
-            obs.squished -= dt;
-            drawPixelMatrix(ctx, GOOMBA_SQUISHED, obs.x, obs.y + 8, px, pixelColor);
-          } else {
+            drawPixelMatrix(ctx, GOOMBA_SQUISHED, obs.x, obs.y, px, pixelColor);
+          } else if (!obs.dead) {
             const frame = Math.floor(s.distanceTraveled / 4) % 2 === 0 ? GOOMBA_WALK_1 : GOOMBA_WALK_2;
             drawPixelMatrix(ctx, frame, obs.x, obs.y, px, pixelColor);
           }
         }
       });
 
-      // 5. Mario (Square pixel runner animation)
+      // 5. Popped Coins from ? blocks
+      s.poppedCoins.forEach((pc) => {
+        const frame = Math.floor(s.distanceTraveled / 4) % 2 === 0 ? COIN_1 : COIN_2;
+        drawPixelMatrix(ctx, frame, pc.x, pc.y, px, pixelColor);
+      });
+
+      // 6. Sparkle Particles
+      ctx.fillStyle = pixelColor;
+      s.particles.forEach((p) => {
+        ctx.fillRect(Math.floor(p.x), Math.floor(p.y), 3, 3);
+      });
+
+      // 7. Mario (Square pixel runner animation)
       if (m.isBlinking <= 0 || Math.floor(m.isBlinking / 4) % 2 === 0) {
         let marioMatrix = MARIO_STAND;
         if (!m.isGrounded) {
@@ -627,7 +773,7 @@ export default function PixelMarioRunner({ theme }) {
         drawPixelMatrix(ctx, marioMatrix, m.x, m.y, px, pixelColor);
       }
 
-      // 6. Floating pixel scores
+      // 8. Floating pixel scores
       s.floatingTexts.forEach((ft) => {
         ctx.fillStyle = pixelColor;
         ctx.font = 'bold 11px ui-monospace, monospace';
@@ -650,7 +796,7 @@ export default function PixelMarioRunner({ theme }) {
   };
 
   const handleKeyDown = (e) => {
-    if (e.code === 'Space') {
+    if (e.code === 'Space' || e.code === 'ArrowUp' || e.key === ' ') {
       e.preventDefault();
       triggerJump();
     }
