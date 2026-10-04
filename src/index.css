@@ -1166,17 +1166,70 @@ section {
   position: relative;
   display: inline-flex;
   align-items: center;
-  padding: 0 2px;
+  padding: 2px;
+  border-radius: 9999px;
+  transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s ease;
 }
 
-.slide-trigger-btn {
-  color: var(--text-secondary);
+/* Hafif Farkındalık Aurası: Kullanıcı yaklaşınca / butonlar açıkken yumuşak vurgulu ışıma */
+.slide-controls-wrapper.is-open {
+  background: rgba(37, 99, 235, 0.08);
+  box-shadow: 0 0 16px rgba(37, 99, 235, 0.22);
 }
 
-.slide-trigger-btn:hover {
-  color: var(--text-primary);
-  background: var(--border-subtle);
-  transform: scale(1.08);
+.dark .slide-controls-wrapper.is-open {
+  background: rgba(59, 130, 246, 0.12);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.26);
+}
+
+/* 3 Noktalı Minimal Farkındalık Kapsülü (Ayarlar ikonu yok, 3 işlemin habercisi) */
+.slide-affordance-pill {
+  width: 38px;
+  height: 34px;
+  border-radius: 9999px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3.5px;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.2s ease,
+              box-shadow 0.2s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.dark .slide-affordance-pill {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.slide-hint-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: var(--text-secondary);
+  opacity: 0.7;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), 
+              background-color 0.2s ease, 
+              opacity 0.2s ease;
+}
+
+/* Yaklaşınca hafif farkındalık tepkisi */
+.slide-affordance-pill:hover,
+.slide-controls-wrapper:hover .slide-affordance-pill {
+  border-color: var(--accent-cta);
+  box-shadow: 0 0 12px rgba(37, 99, 235, 0.3);
+  transform: scale(1.06);
+}
+
+.slide-affordance-pill:hover .slide-hint-dot,
+.slide-controls-wrapper:hover .slide-hint-dot {
+  background-color: var(--accent-cta);
+  opacity: 1;
+  transform: scale(1.25);
 }
 
 
@@ -1283,16 +1336,7 @@ section {
   transform: scale(0.93);
 }
 
-.slide-close-btn {
-  opacity: 0.65;
-}
 
-.slide-close-btn:hover {
-  opacity: 1;
-  color: #ef4444 !important;
-  border-color: rgba(239, 68, 68, 0.45) !important;
-  background: rgba(239, 68, 68, 0.08) !important;
-}
 
 .slide-cv-circle {
   background: var(--accent-cta) !important;

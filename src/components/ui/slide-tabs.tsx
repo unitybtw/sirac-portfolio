@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, FolderGit2, Activity, Gamepad2, Mail, Sun, Moon, Download, Sparkles, SlidersHorizontal, X } from "lucide-react";
+import { User, FolderGit2, Activity, Gamepad2, Mail, Sun, Moon, Download, Sparkles } from "lucide-react";
 
 export interface TabItem {
   id: string;
@@ -256,61 +256,115 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
         {/* Zarif Dikey Ayırıcı Çizgi */}
         <div className="slide-dock-divider" />
 
-        {/* Sağ Hızlı Butonlar: Mouse yaklaştığında / tıklanınca pürüzsüzce açılan yuvarlak butonlar */}
+        {/* Sağ Hızlı Butonlar: Mouse yaklaştığında / tıklanınca soldan sağa animasyonla açılan 3 yuvarlak buton */}
         <div
-          className="slide-controls-wrapper"
+          className={`slide-controls-wrapper ${isControlsOpen ? "is-open" : ""}`}
           onMouseEnter={openControls}
         >
           <AnimatePresence initial={false}>
             {!isControlsOpen ? (
               <motion.button
-                key="trigger"
+                key="hint"
                 onClick={() => setIsControlsOpen(true)}
-                initial={{ opacity: 0, scale: 0.8 }}
+                initial={{ opacity: 0, scale: 0.85 }}
                 animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
+                exit={{ opacity: 0, scale: 0.85 }}
                 transition={{ duration: 0.16 }}
-                className="slide-circle-btn slide-trigger-btn"
-                title={lang === "tr" ? "Hızlı Menü & CV (Üzerine gelin veya tıklayın)" : "Quick Menu & CV (Hover or click)"}
-                aria-label="Toggle Controls"
+                className="slide-affordance-pill"
+                title={lang === "tr" ? "Hızlı Butonlar (TR · Tema · CV)" : "Quick Actions (TR · Theme · CV)"}
+                aria-label="Quick Actions"
               >
-                <SlidersHorizontal size={14} />
+                <span className="slide-hint-dot" />
+                <span className="slide-hint-dot" />
+                <span className="slide-hint-dot" />
               </motion.button>
             ) : (
               <motion.div
                 key="cluster"
-                initial={{ opacity: 0, scale: 0.9, x: 4 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                exit={{ opacity: 0, scale: 0.9, x: 4 }}
-                transition={{ type: "spring", stiffness: 420, damping: 28 }}
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.05,
+                      delayChildren: 0.02,
+                    },
+                  },
+                  exit: {
+                    opacity: 0,
+                    transition: {
+                      staggerChildren: 0.04,
+                      staggerDirection: -1,
+                    },
+                  },
+                }}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
                 className="slide-controls-cluster"
               >
-                {/* 1. Yuvarlak Dil Butonu (TR / EN) */}
+                {/* 1. Yuvarlak Dil Butonu (TR / EN) — Soldan sağa animasyonla gelir */}
                 {onToggleLang && (
-                  <button
+                  <motion.button
+                    variants={{
+                      hidden: { opacity: 0, x: -16, scale: 0.8 },
+                      visible: {
+                        opacity: 1,
+                        x: 0,
+                        scale: 1,
+                        transition: { type: "spring", stiffness: 420, damping: 26 },
+                      },
+                      exit: { opacity: 0, x: -12, scale: 0.85, transition: { duration: 0.15 } },
+                    }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.92 }}
                     onClick={onToggleLang}
                     className="slide-circle-btn"
                     title={lang === "tr" ? "Switch to English" : "Türkçe'ye Geç"}
                     aria-label="Toggle language"
                   >
                     <span>{lang === "tr" ? "EN" : "TR"}</span>
-                  </button>
+                  </motion.button>
                 )}
 
-                {/* 2. Yuvarlak Tema Butonu (Karanlık / Aydınlık Mod) */}
+                {/* 2. Yuvarlak Tema Butonu (Karanlık / Aydınlık Mod) — Soldan sağa animasyonla gelir */}
                 {onToggleTheme && (
-                  <button
+                  <motion.button
+                    variants={{
+                      hidden: { opacity: 0, x: -16, scale: 0.8 },
+                      visible: {
+                        opacity: 1,
+                        x: 0,
+                        scale: 1,
+                        transition: { type: "spring", stiffness: 420, damping: 26 },
+                      },
+                      exit: { opacity: 0, x: -12, scale: 0.85, transition: { duration: 0.15 } },
+                    }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.92 }}
                     onClick={onToggleTheme}
                     className="slide-circle-btn"
                     title={theme === "light" ? (lang === "tr" ? "Karanlık Mod" : "Dark Mode") : (lang === "tr" ? "Aydınlık Mod" : "Light Mode")}
                     aria-label="Toggle theme"
                   >
                     {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
-                  </button>
+                  </motion.button>
                 )}
 
-                {/* 3. Yuvarlak CV İndir Butonu */}
-                <a
+                {/* 3. Yuvarlak CV İndir Butonu — Soldan sağa animasyonla gelir */}
+                <motion.a
+                  variants={{
+                    hidden: { opacity: 0, x: -16, scale: 0.8 },
+                    visible: {
+                      opacity: 1,
+                      x: 0,
+                      scale: 1,
+                      transition: { type: "spring", stiffness: 420, damping: 26 },
+                    },
+                    exit: { opacity: 0, x: -12, scale: 0.85, transition: { duration: 0.15 } },
+                  }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.92 }}
                   href={`${import.meta.env.BASE_URL}cv.pdf`}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -319,20 +373,7 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
                   aria-label="Download CV"
                 >
                   <Download size={14} />
-                </a>
-
-                {/* 4. Yuvarlak Kapat / Daralt Butonu */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsControlsOpen(false);
-                  }}
-                  className="slide-circle-btn slide-close-btn"
-                  title={lang === "tr" ? "Kapat" : "Close"}
-                  aria-label="Close Controls"
-                >
-                  <X size={13} />
-                </button>
+                </motion.a>
               </motion.div>
             )}
           </AnimatePresence>
