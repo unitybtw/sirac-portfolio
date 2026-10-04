@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, lazy, Suspense } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database, X, GraduationCap, Award, BookOpen, ChevronDown, ChevronUp, FolderGit2, Activity } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database, X, GraduationCap, Award, BookOpen, ChevronDown, ChevronUp, FolderGit2, Activity, MapPin } from 'lucide-react';
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
 
@@ -507,59 +507,38 @@ function App() {
                 </motion.div>
               </motion.div>
 
-              {/* Right Column: Featured Game Teaser Card + Micro Stats */}
+              {/* Right Column: Professional Portrait Showcase */}
               <motion.div
                 className="hero-right-column"
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
               >
-                {/* Teaser Card: Legend of the Three Masks */}
-                <div className="hero-teaser-card">
-                  <div className="hero-teaser-header">
-                    <span className="hero-teaser-category">
-                      <Gamepad2 size={14} />
-                      {t('hero_featured_badge')}
-                    </span>
-                    <span className="project-badge project-badge-released">
-                      {t('games.badge_released')}
-                    </span>
+                <div className="hero-portrait-card">
+                  <img
+                    src={`${import.meta.env.BASE_URL}sirac_portrait.jpg`}
+                    alt="Sıraç Göktuğ Şimşek"
+                    className="hero-portrait-img"
+                    loading="eager"
+                  />
+
+                  {/* Top Location Badge */}
+                  <div className="hero-portrait-top-badge">
+                    <MapPin size={12} />
+                    <span>İstanbul, TR</span>
                   </div>
 
-                  <h3 className="hero-teaser-title">{t('games.m_title')}</h3>
-                  <p className="hero-teaser-desc">{t('games.m_desc')}</p>
-
-                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1.25rem' }}>
-                    <span className="tech-tag">Unity 3D</span>
-                    <span className="tech-tag">C#</span>
-                    <span className="tech-tag">URP</span>
-                    <span className="tech-tag">Blender</span>
-                  </div>
-
-                  <div className="hero-teaser-footer">
-                    <a
-                      href="#projects"
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.4rem',
-                        fontSize: '0.85rem',
-                        fontWeight: 600,
-                        color: 'var(--text-primary)',
-                        textDecoration: 'none'
-                      }}
-                    >
-                      {t('hero_view_project')} <ArrowRight size={14} />
-                    </a>
-                    <a
-                      href="https://unitybtw.itch.io/legend-of-the-three-masks"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-outline"
-                      style={{ padding: '0.35rem 0.85rem', fontSize: '0.8rem', gap: '0.35rem' }}
-                    >
-                      <Gamepad2 size={14} /> Itch.io
-                    </a>
+                  {/* Floating Glass Meta Overlay */}
+                  <div className="hero-portrait-overlay">
+                    <div className="hero-portrait-name">
+                      Sıraç Göktuğ Şimşek
+                    </div>
+                    <div className="hero-portrait-role">
+                      {t('hero_subtitle_1')}
+                    </div>
+                    <div className="hero-portrait-meta">
+                      <span>{t('hero_subtitle_2')}</span>
+                    </div>
                   </div>
                 </div>
               </motion.div>
