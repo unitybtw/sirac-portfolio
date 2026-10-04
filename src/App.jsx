@@ -95,7 +95,7 @@ function App() {
       titleKey: 'timeline_event_2_title',
       descKey: 'timeline_event_2_desc',
       detailsKey: 'timeline_event_2_details',
-      icon: <Award size={18} />
+      icon: <Code size={18} />
     },
     {
       id: 'event_1',
@@ -473,9 +473,10 @@ function App() {
                 <motion.div variants={heroChild} className="hero-stack-pills">
                   <span className="tech-tag">Unity 3D</span>
                   <span className="tech-tag">C#</span>
+                  <span className="tech-tag">TypeScript</span>
+                  <span className="tech-tag">Electron</span>
+                  <span className="tech-tag">React</span>
                   <span className="tech-tag">Blender</span>
-                  <span className="tech-tag">URP</span>
-                  <span className="tech-tag">SwiftUI</span>
                 </motion.div>
 
                 {/* Action Buttons & Social Links */}
@@ -553,12 +554,15 @@ function App() {
           
           <div className="bento-grid">
             <div className="bento-card bento-col-8">
-              <h3 style={{ marginBottom: '1rem', fontSize: '1.5rem' }}>{t('about_bio_heading')}</h3>
-              <p style={{ marginBottom: '1rem', fontSize: '1.1rem', color: 'var(--text-secondary)' }}>
+              <h3 style={{ marginBottom: '1.25rem', fontSize: '1.45rem', fontWeight: 700 }}>{t('about_bio_heading')}</h3>
+              <p style={{ marginBottom: '1rem', fontSize: '1.05rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
                 {t('about_text_1')}
               </p>
-              <p style={{ color: 'var(--text-secondary)' }}>
+              <p style={{ marginBottom: '1rem', fontSize: '1.02rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
                 {t('about_text_2')}
+              </p>
+              <p style={{ fontSize: '0.98rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+                {t('about_text_3')}
               </p>
             </div>
             
@@ -596,7 +600,7 @@ function App() {
               </div>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                 <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong>Unity</strong>
+                  <strong>Unity 3D</strong>
                   <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
                 </li>
                 <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -618,12 +622,12 @@ function App() {
                   <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
                 </li>
                 <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong>Swift (SwiftUI)</strong>
-                  <span className="skill-pill-badge">{t('skill_level_intermediate')}</span>
+                  <strong>TypeScript / JavaScript</strong>
+                  <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
                 </li>
                 <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong>JavaScript / React</strong>
-                  <span className="skill-pill-badge">{t('skill_level_intermediate')}</span>
+                  <strong>Electron & React</strong>
+                  <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
                 </li>
               </ul>
               <p style={{ marginTop: '1.25rem', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{t('skill_languages_desc')}</p>
@@ -636,7 +640,7 @@ function App() {
               </div>
               <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
                 <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong>Blender</strong>
+                  <strong>Blender 3D</strong>
                   <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
                 </li>
                 <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -644,8 +648,8 @@ function App() {
                   <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
                 </li>
                 <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong>Figma</strong>
-                  <span className="skill-pill-badge">{t('skill_level_intermediate')}</span>
+                  <strong>Vite & Node.js</strong>
+                  <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
                 </li>
               </ul>
               <p style={{ marginTop: '1.25rem', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{t('skill_blender_desc')}</p>

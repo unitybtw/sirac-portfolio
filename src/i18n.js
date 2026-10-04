@@ -21,8 +21,8 @@ const resources = {
             // ── Hero ──────────────────────────────────────────────────────
             "badge_hire": "Available for opportunities",
             "hero_name": "SIRAÇ GÖKTUĞ ŞİMŞEK",
-            "hero_title": "Game Developer & Systems Engineer",
-            "hero_tagline": "Digital Game Design student at Istanbul Kultur University focused on interactive systems and gameplay architecture. Engineering responsive physics mechanics, optimized 3D pipelines, and native software with Unity, C#, and Blender.",
+            "hero_title": "Game Developer & Software Engineer",
+            "hero_tagline": "Digital Game Design student at Istanbul Kultur University. Crafting responsive game mechanics with Unity & C#, alongside performant desktop software and web tools with TypeScript and Electron.",
             "hero_location": "İstanbul, TR",
             "btn_explore": "View Projects",
             "btn_repos": "GitHub",
@@ -36,16 +36,16 @@ const resources = {
 
             // ── About / Summary ───────────────────────────────────────────
             "about_title": "About",
-            "about_subtitle": "GAME DEVELOPER & INTERACTIVE SYSTEMS",
+            "about_subtitle": "GAME DEVELOPER & SOFTWARE ENGINEER",
             "about_bio_heading": "Biography",
             "about_stats_heading": "Overview",
-            "about_text_1": "I'm Siraç Göktuğ Şimşek — a game developer based in İstanbul. I build interactive software and games across Unity and C#, with a focus on gameplay programming, mechanics design, and optimized 3D pipelines.",
-            "about_text_2": "I study Digital Game Design at Istanbul Kultur University (completed 1st year). My work focuses on creating responsive game mechanics and clean, maintainable systems.",
-            "about_text_3": "I thrive at the intersection of game systems engineering and creative art — from writing clean gameplay scripts to real-time engine optimization.",
+            "about_text_1": "I'm Siraç Göktuğ Şimşek — a Game Developer & Software Engineer based in İstanbul. I build interactive software, 3D games, and desktop applications, focusing on gameplay programming with Unity & C# alongside software engineering with TypeScript, React, and Electron.",
+            "about_text_2": "I study Digital Game Design at Istanbul Kultur University. My work unites gameplay mechanics with clean software engineering — crafting responsive player controllers, desktop applications like Nova Browser, and performant web tools.",
+            "about_text_3": "I thrive at the intersection of game systems and software architecture — writing maintainable, scalable code from real-time game loops to cross-platform desktop software.",
             "about_stat_1": "Education",
-            "about_stat_1_val": "IKU — Game Design (1st Year Completed)",
-            "about_stat_2": "Primary Stack",
-            "about_stat_2_val": "Unity · C# · Blender",
+            "about_stat_1_val": "IKU — Digital Game Design",
+            "about_stat_2": "Core Technologies",
+            "about_stat_2_val": "Unity · C# · TypeScript · Electron",
             "about_stat_3": "Shipped Projects",
             "about_stat_3_val": "3+ Shipped Projects",
             "about_stat_4": "Availability",
@@ -57,8 +57,8 @@ const resources = {
             "skill_level_advanced": "Advanced",
             "skill_level_intermediate": "Intermediate",
             "skill_unity_desc": "Advanced C# scripting, URP/HDRP render pipelines, physics-based character controllers, and shader graphs.",
-            "skill_languages_desc": "Object-oriented gameplay architecture in C#, native macOS applications in SwiftUI, and responsive frontends in React.",
-            "skill_blender_desc": "Hard-surface 3D modeling, UV unwrapping, and low-poly asset optimization for real-time engines.",
+            "skill_languages_desc": "Object-oriented gameplay architecture in C#, combined with TypeScript, React, and Electron for performant desktop and web software.",
+            "skill_blender_desc": "3D asset modeling in Blender, low-poly engine optimization, and modern developer workflows with Git, GitHub, Node.js, and Vite.",
             "skill_cat_engines": "Game Engines & Pipelines",
             "skill_cat_languages": "Languages & Frameworks",
             "skill_cat_tools": "3D Design & Developer Tools",
@@ -69,15 +69,27 @@ const resources = {
             "timeline_event_3_year": "2025 – PRESENT",
             "timeline_event_3_title": "B.Sc. Digital Game Design — Istanbul Kultur University",
             "timeline_event_3_desc": "Studying interactive software architecture, real-time rendering pipelines, gameplay systems, and editor tooling.",
-            "timeline_event_3_details": ["Completed 1st year with honors", "Coursework in Unity C# scripting, low-poly Blender modeling, URP lighting bakes", "Designed gameplay architecture prototypes for multiple platformer and physics sandbox projects"],
-            "timeline_event_2_year": "2023 – 2025",
-            "timeline_event_2_title": "Game Development & Apple Developer Certifications",
-            "timeline_event_2_desc": "Completed self-taught game engineering curricula and native iOS/macOS utility development courses.",
-            "timeline_event_2_details": ["Acquired advanced Unity Game Development credentials (C#, physics, shaders)", "Completed native SwiftUI/AppKit desktop app development certifications", "Engineered and published experimental open-source macOS menu-bar tools"],
+            "timeline_event_3_details": [
+                "Undergraduate coursework in game mechanics, 3D pipelines, and interactive systems",
+                "Hands-on projects in Unity C# scripting, low-poly Blender modeling, and real-time physics",
+                "Designed and prototyped responsive gameplay mechanics for 3D adventure and sandbox games"
+            ],
+            "timeline_event_2_year": "2024 – PRESENT",
+            "timeline_event_2_title": "Desktop Engineering & Open-Source Projects",
+            "timeline_event_2_desc": "Architecting desktop applications, browser technology, and open-source utilities.",
+            "timeline_event_2_details": [
+                "Engineered Nova Browser — an open-source desktop browser built with Electron, React, and TypeScript with local AI and MCP integration",
+                "Developed native desktop utilities and audio feedback software with responsive interfaces",
+                "Maintained public open-source repositories, developer tools, and web applications"
+            ],
             "timeline_event_1_year": "2020 – 2024",
-            "timeline_event_1_title": "High School Graduation — Science & Math Focus",
-            "timeline_event_1_desc": "Graduated with a focus on advanced mathematics, physics, and computer science foundations.",
-            "timeline_event_1_details": ["Formed foundational logic, algorithms, and 3D coordinate system principles", "Built first desktop utility tools and learned basic C# coding paradigms", "Participated in regional math olympiad tournaments"],
+            "timeline_event_1_title": "High School Education — Science & Mathematics",
+            "timeline_event_1_desc": "Built foundational knowledge in mathematics, physics, and computer science.",
+            "timeline_event_1_details": [
+                "Established strong foundations in algorithmic thinking, logic, and coordinate mathematics",
+                "Started programming in C# and created initial desktop utilities and game prototypes",
+                "Developed passion for interactive software and self-directed software development"
+            ],
 
             // ── Projects ──────────────────────────────────────────────────
             "archives_title": "Projects",
@@ -137,7 +149,7 @@ const resources = {
 
             // ── Contact / Footer ──────────────────────────────────────────
             "footer_title": "Contact",
-            "footer_subtitle": "Available for game development roles and internship opportunities.",
+            "footer_subtitle": "Open to game development, software engineering, and internship opportunities.",
             "footer_copyright": "SIRAÇ GÖKTUĞ ŞİMŞEK · OPEN TO WORK",
             "btn_transmit": "Send Message",
             "form_name": "Name",
@@ -181,8 +193,8 @@ const resources = {
             // ── Hero ──────────────────────────────────────────────────────
             "badge_hire": "İş ve staj fırsatlarına açık",
             "hero_name": "SİRAÇ GÖKTUĞ ŞİMŞEK",
-            "hero_title": "Oyun Geliştirici & Sistem Mühendisi",
-            "hero_tagline": "İstanbul Kültür Üniversitesi Dijital Oyun Tasarımı öğrencisi. Unity, C# ve Blender odaklı; akıcı oynanış mekanikleri, optimize edilmiş 3D render pipeline'ları ve etkileşimli yazılımlar geliştiriyorum.",
+            "hero_title": "Oyun Geliştirici & Yazılım Mühendisi",
+            "hero_tagline": "İstanbul Kültür Üniversitesi Dijital Oyun Tasarımı öğrencisi. Unity ve C# ile akıcı oyun mekanikleri geliştirirken, TypeScript ve Electron ile modern masaüstü yazılımları ve web sistemleri üretiyorum.",
             "hero_location": "İstanbul, TR",
             "btn_explore": "Projeleri Gör",
             "btn_repos": "GitHub",
@@ -196,16 +208,16 @@ const resources = {
 
             // ── About / Summary ───────────────────────────────────────────
             "about_title": "Hakkımda",
-            "about_subtitle": "OYUN GELİŞTİRİCİ & ETKİLEŞİMLİ SİSTEMLER",
+            "about_subtitle": "OYUN GELİŞTİRİCİ & YAZILIM MÜHENDİSİ",
             "about_bio_heading": "Biyografi",
             "about_stats_heading": "Genel Bakış",
-            "about_text_1": "Ben Siraç Göktuğ Şimşek — İstanbul'da yaşayan bir oyun geliştiricisiyim. Unity ve C# odaklı; oynanış programlama, mekanik mimarisi ve optimize edilmiş 3D pipeline'lar üzerine çalışıyorum.",
-            "about_text_2": "İstanbul Kültür Üniversitesi Dijital Oyun Tasarımı bölümü öğrencisiyim (1. sınıfı tamamladım). Çalışmalarım akıcı oyun hissi ve temiz, sürdürülebilir kod mimarisi inşa etmeye odaklanır.",
-            "about_text_3": "Oyun mekaniği mühendisliği ile görsel sanatın kesişiminde üretiyorum — temiz C# kodlarından oyun motoru optimizasyonuna kadar.",
+            "about_text_1": "Ben Siraç Göktuğ Şimşek — İstanbul'da yaşayan bir Oyun Geliştirici ve Yazılım Mühendisiyim. Unity ve C# ile oynanış mekanikleri ve 3D oyunlar geliştirirken; TypeScript, React ve Electron ile modern masaüstü yazılımları üretiyorum.",
+            "about_text_2": "İstanbul Kültür Üniversitesi Dijital Oyun Tasarımı bölümünde eğitimime devam ediyorum. Çalışmalarım akıcı oynanış mimarisi ile temiz yazılım mühendisliğini bir araya getirmeye — Nova Browser gibi masaüstü uygulamaları ve performanslı araçlar üretmeye odaklanıyor.",
+            "about_text_3": "Oyun sistemleri ile yazılım mimarisinin kesiştiği noktada üretiyorum — gerçek zamanlı oyun döngülerinden çapraz platform masaüstü yazılımlarına kadar sürdürülebilir ve temiz kod yazıyorum.",
             "about_stat_1": "Eğitim",
-            "about_stat_1_val": "İKÜ — Dijital Oyun Tasarımı (1. Sınıf Tamamlandı)",
-            "about_stat_2": "Temel Araçlar",
-            "about_stat_2_val": "Unity · C# · Blender",
+            "about_stat_1_val": "İKÜ — Dijital Oyun Tasarımı",
+            "about_stat_2": "Temel Teknolojiler",
+            "about_stat_2_val": "Unity · C# · TypeScript · Electron",
             "about_stat_3": "Tamamlanan Projeler",
             "about_stat_3_val": "3+ Yayınlanmış Proje",
             "about_stat_4": "Çalışma Durumu",
@@ -213,12 +225,12 @@ const resources = {
 
             // ── Skills ────────────────────────────────────────────────────
             "skills_title": "Beceriler",
-            "skills_subtitle": "Oyun motorları, programlama dilleri ve 3D araçlardaki yetkinlikler.",
+            "skills_subtitle": "Oyun motorları, programlama dilleri ve geliştirici araçlarındaki yetkinlikler.",
             "skill_level_advanced": "İleri Seviye",
             "skill_level_intermediate": "Orta Seviye",
             "skill_unity_desc": "İleri düzey C# kodlama, URP/HDRP render pipeline yapıları, fizik tabanlı karakter kontrolcüleri ve shader graph sistemleri.",
-            "skill_languages_desc": "C# ile nesne yönelimli oyun mekanikleri mimarisi, SwiftUI ile native macOS masaüstü araçları ve React ile arayüz geliştirme.",
-            "skill_blender_desc": "Hard-surface 3D modelleme, UV haritalama ve oyun motorları için low-poly optimizasyonu.",
+            "skill_languages_desc": "C# ile nesne yönelimli oyun mekaniği mimarisi; TypeScript, React ve Electron ile performanslı masaüstü ve web yazılımları.",
+            "skill_blender_desc": "Blender ile 3D modelleme, oyun motoru optimizasyonu ve Git, GitHub, Node.js, Vite ile modern geliştirici iş akışları.",
             "skill_cat_engines": "Oyun Motorları & Pipeline",
             "skill_cat_languages": "Diller & Teknolojiler",
             "skill_cat_tools": "3D Tasarım & Geliştirici Araçları",
@@ -229,15 +241,27 @@ const resources = {
             "timeline_event_3_year": "2025 – GÜNÜMÜZ",
             "timeline_event_3_title": "Lisans: Dijital Oyun Tasarımı — İstanbul Kültür Üniversitesi",
             "timeline_event_3_desc": "Etkileşimli yazılım mimarisi, render pipeline yapısı, oyun mekanikleri ve editör araçları üzerine lisans eğitimi.",
-            "timeline_event_3_details": ["1. sınıfı yüksek başarı ortalamasıyla tamamladı", "Unity C# scripting, Blender ile low-poly modelleme ve URP ışık fırınlama dersleri", "Farklı platform ve fizik tabanlı sandbox oyun projeleri için oynanış mekaniği prototipleri tasarladı"],
-            "timeline_event_2_year": "2023 – 2025",
-            "timeline_event_2_title": "Oyun Geliştirme & Apple Geliştirici Sertifikaları",
-            "timeline_event_2_desc": "Bireysel çalışmalar ile oyun mühendisliği müfredatları ve native iOS/macOS araç geliştirme eğitimlerinin tamamlanması.",
-            "timeline_event_2_details": ["İleri düzey Unity Oyun Geliştirme sertifikaları (C#, fizik motoru, shader)", "Native SwiftUI/AppKit macOS masaüstü uygulama geliştirme eğitimleri", "Deneysel, açık kaynaklı macOS menü çubuğu araçları geliştirdi ve paylaştı"],
+            "timeline_event_3_details": [
+                "Oyun mekanikleri, 3D render pipeline ve etkileşimli yazılım mimarisi üzerine lisans eğitimi",
+                "Unity C# kodlama, Blender ile 3D modelleme ve gerçek zamanlı fizik motorları üzerine uygulamalı çalışmalar",
+                "3D macera ve sandbox türlerinde oynanış mekaniği prototipleri tasarımı ve uygulaması"
+            ],
+            "timeline_event_2_year": "2024 – GÜNÜMÜZ",
+            "timeline_event_2_title": "Masaüstü Yazılım & Açık Kaynak Geliştirme",
+            "timeline_event_2_desc": "Açık kaynaklı yazılımlar, masaüstü araçları ve modern tarayıcı teknolojileri geliştirme süreci.",
+            "timeline_event_2_details": [
+                "Electron, React ve TypeScript kullanarak yerel yapay zeka ve MCP entegrasyonuna sahip Nova Browser'ı geliştirdi ve yayınladı",
+                "Modern masaüstü sistem araçları ve ses geri bildirimli yazılımlar üretti",
+                "Açık kaynaklı repolar ve geliştirici araçları üzerinde sürdürülebilir mimariler kurdu"
+            ],
             "timeline_event_1_year": "2020 – 2024",
-            "timeline_event_1_title": "Lise Mezuniyeti — Sayısal Ağırlıklı",
-            "timeline_event_1_desc": "Temel algoritma, fizik, ileri matematik ve bilgisayar bilimleri temelleriyle lise mezuniyeti.",
-            "timeline_event_1_details": ["Algoritma mantığı ve 3B kartezyen koordinat sistemleri temel prensiplerini kavradı", "İlk masaüstü araçlarını geliştirdi ve C# yazılım dili temellerini öğrendi", "Bölgesel matematik olimpiyatı turnuvalarına katıldı"],
+            "timeline_event_1_title": "Lise Eğitimi — Sayısal Alan",
+            "timeline_event_1_desc": "Matematik, fizik ve bilgisayar bilimleri temelleriyle lise eğitimi.",
+            "timeline_event_1_details": [
+                "Algoritmik düşünce, mantık ve koordinat matematiği üzerine sağlam temeller kurdu",
+                "C# ile kodlamaya başlayarak ilk masaüstü araçlarını ve oyun prototiplerini geliştirdi",
+                "Etkileşimli yazılımlara ve bağımsız yazılım geliştirmeye olan ilgisini derinleştirdi"
+            ],
 
             // ── Projects ──────────────────────────────────────────────────
             "archives_title": "Projeler",
@@ -297,7 +321,7 @@ const resources = {
 
             // ── Contact / Footer ──────────────────────────────────────────
             "footer_title": "İletişim",
-            "footer_subtitle": "Oyun geliştirme rolleri ve staj fırsatlarına açığım.",
+            "footer_subtitle": "Oyun geliştirme, yazılım mühendisliği rolleri ve staj fırsatlarına açığım.",
             "footer_copyright": "SİRAÇ GÖKTUĞ ŞİMŞEK · İŞE AÇIK",
             "btn_transmit": "Mesaj Gönder",
             "form_name": "İsim",
