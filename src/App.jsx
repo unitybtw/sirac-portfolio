@@ -328,7 +328,7 @@ function App() {
       >
         {/* ── Hero Section (Asymmetric & Typographic) ── */}
         <section className="hero-section" id="hero">
-          <div className="hero-parallax-content" style={{ width: '100%' }}>
+          <div className="hero-parallax-content">
             <div className="hero-layout-grid">
               {/* Left Column: Asymmetric Typography & Actions */}
               <motion.div
@@ -440,14 +440,9 @@ function App() {
           </div>
 
           {/* Large-Format 1-Bit Dot-Matrix Mario Corner Runner */}
-          <motion.div
-            className="hero-corner-mario-anchor"
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          >
+          <div className="hero-corner-mario-anchor">
             <PixelMarioRunner theme={theme} />
-          </motion.div>
+          </div>
         </section>
 
         {/* ── About Section ── */}

@@ -296,6 +296,14 @@ export default function PixelMarioRunner({ theme }) {
       const h = 120;
       const dpr = window.devicePixelRatio || 1;
 
+      const targetW = Math.floor(w * dpr);
+      const targetH = Math.floor(h * dpr);
+
+      // Prevent canvas buffer recreation during scroll
+      if (canvas.width === targetW && canvas.height === targetH) {
+        return;
+      }
+
       stateRef.current.width = w;
       stateRef.current.height = h;
       stateRef.current.groundY = 96;
@@ -303,8 +311,8 @@ export default function PixelMarioRunner({ theme }) {
         stateRef.current.mario.y = stateRef.current.groundY - 42;
       }
 
-      canvas.width = Math.floor(w * dpr);
-      canvas.height = Math.floor(h * dpr);
+      canvas.width = targetW;
+      canvas.height = targetH;
       canvas.style.width = `${w}px`;
       canvas.style.height = `${h}px`;
 

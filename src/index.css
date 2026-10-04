@@ -279,8 +279,13 @@ section {
   align-items: center;
   justify-content: center;
   padding-top: 6.5rem;
-  padding-bottom: 4rem;
+  padding-bottom: 2rem;
   position: relative;
+  overflow: clip;
+}
+
+.hero-parallax-content {
+  width: 100%;
 }
 
 .hero-layout-grid {
@@ -497,12 +502,13 @@ section {
   position: absolute;
   bottom: 0;
   left: calc(50% - 50vw);
-  width: min(760px, 95vw);
+  width: min(740px, 95vw);
   height: 120px;
   z-index: 5;
-  pointer-events: auto;
+  pointer-events: none;
   -webkit-mask-image: linear-gradient(to right, black 72%, transparent 100%);
   mask-image: linear-gradient(to right, black 72%, transparent 100%);
+  touch-action: pan-y;
 }
 
 .corner-pixel-mario-runner {
@@ -517,6 +523,20 @@ section {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  pointer-events: auto;
+  touch-action: pan-y;
+  animation: hero-corner-enter 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.35s both;
+}
+
+@keyframes hero-corner-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .corner-pixel-canvas {
@@ -526,6 +546,7 @@ section {
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
+  touch-action: pan-y;
 }
 
 .corner-mario-hint {
@@ -561,11 +582,16 @@ section {
   .hero-corner-mario-anchor {
     position: relative;
     bottom: auto;
-    left: calc(50% - 50vw);
-    margin: 2.5rem 0 0 0;
-    width: 100vw;
-    -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
-    mask-image: linear-gradient(to right, black 80%, transparent 100%);
+    left: 0;
+    margin: 2rem auto 0 auto;
+    width: 100%;
+    max-width: 100%;
+    pointer-events: auto;
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  }
+  .corner-pixel-mario-runner {
+    animation: none;
   }
 }
 
@@ -593,12 +619,25 @@ section {
   }
 }
 
+@keyframes hero-corner-scroll-fade {
+  to {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+}
+
 @supports (animation-timeline: scroll()) {
   @media (min-width: 961px) {
     .hero-parallax-content {
       animation: hero-fade-down auto linear both;
       animation-timeline: scroll(root);
       animation-range: 0 450px;
+    }
+
+    .hero-corner-mario-anchor {
+      animation: hero-corner-scroll-fade auto linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 350px;
     }
   }
 }
