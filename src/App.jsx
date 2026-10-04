@@ -448,30 +448,37 @@ function App() {
                 initial="hidden"
                 animate="show"
               >
+                {/* Status Chip with Location */}
                 <motion.div variants={heroChild} className="hero-status-pill">
                   <span className="live-status-chip">
                     <span className="live-status-dot" />
-                    {t('badge_hire')}
+                    <span>{t('badge_hire')}</span>
+                    <span className="status-separator">·</span>
+                    <span className="status-location"><MapPin size={12} /> {t('hero_location')}</span>
                   </span>
                 </motion.div>
 
-                <motion.h1 variants={heroChild} className="hero-main-title">
-                  {t('hero_title_1')}
-                  <span className="hero-title-accent">{t('hero_title_2')}</span>
-                </motion.h1>
-
-                <motion.div variants={heroChild} className="hero-meta-subtitle">
-                  <span>{t('hero_subtitle_1')}</span>
+                {/* Eyebrow Name + Authority Main Title */}
+                <motion.div variants={heroChild} className="hero-heading-group">
+                  <span className="hero-eyebrow-name">{t('hero_name')}</span>
+                  <h1 className="hero-main-title">{t('hero_title')}</h1>
                 </motion.div>
 
-                <motion.div variants={heroChild} className="hero-academic-tag">
-                  {t('hero_subtitle_2')}
-                </motion.div>
-
+                {/* Narrative Intro */}
                 <motion.p variants={heroChild} className="hero-tagline-text">
                   {t('hero_tagline')}
                 </motion.p>
 
+                {/* Tech Stack Pills */}
+                <motion.div variants={heroChild} className="hero-stack-pills">
+                  <span className="tech-tag">Unity 3D</span>
+                  <span className="tech-tag">C#</span>
+                  <span className="tech-tag">Blender</span>
+                  <span className="tech-tag">URP</span>
+                  <span className="tech-tag">SwiftUI</span>
+                </motion.div>
+
+                {/* Action Buttons & Social Links */}
                 <motion.div variants={heroChild} className="hero-actions-row">
                   <a href="#projects" className="btn-primary">
                     {t('btn_explore')} <ArrowRight size={17} />
@@ -484,6 +491,7 @@ function App() {
                   >
                     <Download size={17} /> {t('btn_view_cv')}
                   </a>
+                  <div className="hero-social-divider" />
                   <a
                     href="https://github.com/unitybtw"
                     target="_blank"
@@ -521,12 +529,7 @@ function App() {
                     className="hero-portrait-img"
                     loading="eager"
                   />
-
-                  {/* Top Location Badge */}
-                  <div className="hero-portrait-top-badge">
-                    <MapPin size={12} />
-                    <span>İstanbul, TR</span>
-                  </div>
+                  <div className="hero-portrait-scrim" />
 
                   {/* Floating Glass Meta Overlay */}
                   <div className="hero-portrait-overlay">
@@ -534,10 +537,7 @@ function App() {
                       Sıraç Göktuğ Şimşek
                     </div>
                     <div className="hero-portrait-role">
-                      {t('hero_subtitle_1')}
-                    </div>
-                    <div className="hero-portrait-meta">
-                      <span>{t('hero_subtitle_2')}</span>
+                      {t('hero_title')}
                     </div>
                   </div>
                 </div>
