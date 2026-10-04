@@ -1340,155 +1340,88 @@ section {
   color: var(--text-secondary);
 }
 
-/* ── GitHub Commits Animated Stream ──────────────────────────────── */
-.gh-commits-container {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border-subtle);
-  overflow: hidden;
+/* ── GitHub Heatmap Slots & Bird Hop Landing Animation ──────────── */
+.gh-day-slot {
+  position: relative;
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  box-sizing: border-box;
+  flex-shrink: 0;
 }
 
-.gh-commits-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-}
-
-.gh-commits-title-group {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-}
-
-.gh-commits-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0.65rem;
-  width: 100%;
-}
-
-.gh-commit-card {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1.25rem;
-  padding: 0.85rem 1.2rem;
-  border-radius: 12px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  text-decoration: none;
-  color: var(--text-primary);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+.gh-day {
+  width: 11px;
+  height: 11px;
+  border-radius: 2px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: transform 0.15s ease, filter 0.15s ease;
   will-change: transform, opacity;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-.gh-commit-card:hover {
-  border-color: var(--text-secondary);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-}
-
-.gh-commit-main {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  min-width: 0;
-  flex: 1;
-}
-
-.gh-commit-icon-badge {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  background: var(--border-subtle);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
-  flex-shrink: 0;
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-
-.gh-commit-card:hover .gh-commit-icon-badge {
-  transform: rotate(-10deg) scale(1.05);
-  color: var(--text-primary);
-}
-
-.gh-commit-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-  min-width: 0;
-}
-
-.gh-commit-message {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.gh-commit-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.78rem;
-  color: var(--text-secondary);
-  flex-wrap: wrap;
-}
-
-.gh-repo-tag {
-  font-family: var(--font-mono, monospace);
-  font-weight: 600;
-  color: var(--accent-cta, #0969da);
-}
-
-.gh-commit-right {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
+.gh-day-empty {
+  position: relative;
   flex-shrink: 0;
 }
 
-.gh-commit-sha {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.78rem;
-  padding: 0.22rem 0.6rem;
-  border-radius: 6px;
-  background: var(--border-subtle);
-  color: var(--text-secondary);
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  transition: color 0.2s ease, background 0.2s ease;
+/* Active green square hopping in like a bird from sides */
+.gh-day-bird-hopping {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  animation: birdHopLanding 0.72s cubic-bezier(0.25, 1.25, 0.4, 1) forwards;
 }
 
-.gh-commit-card:hover .gh-commit-sha {
-  color: var(--text-primary);
-  background: var(--border-subtle);
+@keyframes birdHopLanding {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--bird-x, -220px), var(--bird-y, -45px), 0) scale(1.65) rotate(var(--bird-rot, -16deg));
+  }
+  28% {
+    opacity: 1;
+    /* Swooping down in an arc */
+    transform: translate3d(calc(var(--bird-x, -220px) * 0.52), -26px, 0) scale(1.32) rotate(calc(var(--bird-rot, -16deg) * 0.5));
+  }
+  56% {
+    /* Mid-air hop */
+    transform: translate3d(calc(var(--bird-x, -220px) * 0.2), -16px, 0) scale(1.18) rotate(var(--bird-rot-counter, 8deg));
+  }
+  78% {
+    /* Final hop right over its square */
+    transform: translate3d(calc(var(--bird-x, -220px) * 0.05), -6px, 0) scale(1.08) rotate(calc(var(--bird-rot, -16deg) * -0.2));
+  }
+  89% {
+    /* Touchdown squash: bird lands and squashes gently */
+    opacity: 1;
+    transform: translate3d(0, 1.2px, 0) scale(1.22, 0.82) rotate(0deg);
+  }
+  95% {
+    /* Tiny rebound settle */
+    transform: translate3d(0, -0.6px, 0) scale(0.96, 1.04) rotate(0deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1, 1) rotate(0deg);
+  }
 }
 
-@media (max-width: 768px) {
-  .gh-commit-card {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.65rem;
+@media (hover: hover) {
+  .gh-day:hover {
+    transform: scale(1.45) !important;
+    filter: brightness(1.25) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+    z-index: 10;
   }
-  .gh-commit-right {
-    width: 100%;
-    justify-content: space-between;
-  }
+}
+
+.gh-replay-btn:hover {
+  background: var(--border-subtle) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--text-secondary) !important;
+}
+
+.gh-replay-btn:active {
+  transform: scale(0.96);
 }
 
 

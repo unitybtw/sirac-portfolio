@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GitCommit, GitBranch, ExternalLink, Github, ChevronDown, Clock, ArrowUpRight } from 'lucide-react';
+import { ExternalLink, Github, ChevronDown, RotateCcw } from 'lucide-react';
 import CACHED_DATA from './data/githubContributions.json';
 
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -9,14 +9,14 @@ const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Se
 // Colors for Light & Dark mode (level 0 is translucent to blend seamlessly)
 const COLOR_LEVELS = {
   light: [
-    "rgba(0, 0, 0, 0.06)", // level 0 (translucent slot on card)
+    "rgba(0, 0, 0, 0.06)", // level 0 (translucent base slot on card)
     "#9be9a8", // level 1
     "#40c463", // level 2
     "#30a14e", // level 3
     "#216e39"  // level 4
   ],
   dark: [
-    "rgba(255, 255, 255, 0.08)", // level 0
+    "rgba(255, 255, 255, 0.08)", // level 0 (translucent base slot on card)
     "#0e4429", // level 1
     "#006d32", // level 2
     "#26a641", // level 3
@@ -24,121 +24,12 @@ const COLOR_LEVELS = {
   ]
 };
 
-// Rich initial commits collection for live stream animation
-const STATIC_COMMITS = [
-  {
-    repo: "sirac-portfolio",
-    sha: "5aa47ad",
-    message: "feat(arcade): redesign portal card with minimalist layout, SVG vector controller animation, and remove all sounds",
-    year: "2026",
-    date: "2026-10-04T18:27:36Z",
-    url: "https://github.com/unitybtw/sirac-portfolio/commit/5aa47ad763781054a2b205c8218840d1c7a8929b"
-  },
-  {
-    repo: "nova-browser",
-    sha: "f099c0f",
-    message: "fix(core): harden tab restoration, MCP server, bridge navigation, and adblock timer",
-    year: "2026",
-    date: "2026-10-04T07:20:55Z",
-    url: "https://github.com/unitybtw/nova-browser/commit/f099c0fd6089a64c537720274fb5ce10f2fefba4"
-  },
-  {
-    repo: "sirac-portfolio",
-    sha: "507a659",
-    message: "feat(nova): update Nova Browser logo, vector assets, latest v1.5.0 screenshots and interactive slide controls",
-    year: "2026",
-    date: "2026-10-04T18:23:23Z",
-    url: "https://github.com/unitybtw/sirac-portfolio/commit/507a65986f5133378ebccc9e82af89162e9c5ad6"
-  },
-  {
-    repo: "nova-browser",
-    sha: "046155f",
-    message: "fix(webview): sanitize user-agent and resolve navigation loops for Google CAPTCHA and YouTube",
-    year: "2026",
-    date: "2026-10-01T14:23:39Z",
-    url: "https://github.com/unitybtw/nova-browser/commit/046155fd6f855e17d64104fd9b173ed8ddd89f9f"
-  },
-  {
-    repo: "sirac-portfolio",
-    sha: "1da9f29",
-    message: "fix(hero): refine typography, text hierarchy and alignments in entrance section",
-    year: "2026",
-    date: "2026-10-04T18:20:20Z",
-    url: "https://github.com/unitybtw/sirac-portfolio/commit/1da9f29feda25ffd2bb5f8975f36c11a65c13aea"
-  },
-  {
-    repo: "nova-browser",
-    sha: "350f5c3",
-    message: "fix(main): Windows file origin normalization and orphan tmp cleanup",
-    year: "2026",
-    date: "2026-10-01T12:06:47Z",
-    url: "https://github.com/unitybtw/nova-browser/commit/350f5c3e847c8dc1626ba468b349abc337f57cc5"
-  },
-  {
-    repo: "nova-browser",
-    sha: "a75d77e",
-    message: "fix(fuses): GrantFileProtocolExtraPrivileges fuse for blank window fix on Electron 43+",
-    year: "2025",
-    date: "2025-09-30T19:41:58Z",
-    url: "https://github.com/unitybtw/nova-browser/commit/a75d77ed3e1671b080051cb46dc1784585dfb5f9"
-  },
-  {
-    repo: "sirac-portfolio",
-    sha: "87d36f3",
-    message: "feat: add GitHub commit history, Nova Browser showcase, universal game fullscreen, and Bento UI polish",
-    year: "2025",
-    date: "2025-09-12T14:20:00Z",
-    url: "https://github.com/unitybtw/sirac-portfolio"
-  },
-  {
-    repo: "Signal-macOS",
-    sha: "c18a992",
-    message: "feat(audio): low-latency Core Audio mechanical feedback profiles & WPM tracker",
-    year: "2024",
-    date: "2024-11-20T10:15:00Z",
-    url: "https://github.com/unitybtw"
-  },
-  {
-    repo: "aether-command",
-    sha: "e90bf12",
-    message: "feat(vision): gesture recognition engine and multi-touch translation daemon",
-    year: "2024",
-    date: "2024-08-14T09:40:00Z",
-    url: "https://github.com/unitybtw"
-  }
-];
-
-function formatRelativeTime(dateStr, isTr) {
-  try {
-    const diff = (Date.now() - new Date(dateStr).getTime()) / 1000;
-    if (diff < 3600) {
-      const mins = Math.max(1, Math.floor(diff / 60));
-      return isTr ? `${mins} dk önce` : `${mins}m ago`;
-    }
-    if (diff < 86400) {
-      const hrs = Math.floor(diff / 3600);
-      return isTr ? `${hrs} saat önce` : `${hrs}h ago`;
-    }
-    if (diff < 86400 * 2) {
-      return isTr ? 'Dün' : 'Yesterday';
-    }
-    if (diff < 86400 * 30) {
-      const days = Math.floor(diff / 86400);
-      return isTr ? `${days} gün önce` : `${days}d ago`;
-    }
-    const d = new Date(dateStr);
-    return d.toLocaleDateString(isTr ? 'tr-TR' : 'en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  } catch {
-    return dateStr;
-  }
-}
-
 export default function GitHubCommitHistory() {
   const { i18n } = useTranslation();
   const isTr = i18n.language === 'tr';
   const [selectedYear, setSelectedYear] = useState("last"); // "last", "2026", "2025", "2024"
+  const [animKey, setAnimKey] = useState(0);
   const [allData, setAllData] = useState(CACHED_DATA);
-  const [commits, setCommits] = useState(STATIC_COMMITS);
   const [hoveredDay, setHoveredDay] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
@@ -168,56 +59,13 @@ export default function GitHubCommitHistory() {
             try {
               const res = await fetch(`https://github-contributions-api.jogruber.de/v4/unitybtw?y=${y}`, { signal: ctrl.signal });
               if (res.ok) return [y, await res.json()];
-            } catch { /* sessiz geç */ }
+            } catch { /* silent fallback */ }
             return null;
           })
         );
         const fetched = Object.fromEntries(results.filter(Boolean));
         if (isMounted && Object.keys(fetched).length > 0) {
           setAllData((prev) => ({ ...prev, ...fetched }));
-        }
-
-        // Live commits fetch from active repositories
-        const [portfolioRes, novaRes] = await Promise.all([
-          fetch('https://api.github.com/repos/unitybtw/sirac-portfolio/commits?per_page=4', { signal: ctrl.signal }).catch(() => null),
-          fetch('https://api.github.com/repos/unitybtw/nova-browser/commits?per_page=4', { signal: ctrl.signal }).catch(() => null)
-        ]);
-
-        const freshCommits = [];
-        if (portfolioRes && portfolioRes.ok) {
-          const list = await portfolioRes.json();
-          list.forEach((c) => {
-            freshCommits.push({
-              repo: "sirac-portfolio",
-              sha: c.sha.substring(0, 7),
-              message: c.commit.message.split("\n")[0],
-              year: new Date(c.commit.author.date).getFullYear().toString(),
-              date: c.commit.author.date,
-              url: c.html_url
-            });
-          });
-        }
-        if (novaRes && novaRes.ok) {
-          const list = await novaRes.json();
-          list.forEach((c) => {
-            freshCommits.push({
-              repo: "nova-browser",
-              sha: c.sha.substring(0, 7),
-              message: c.commit.message.split("\n")[0],
-              year: new Date(c.commit.author.date).getFullYear().toString(),
-              date: c.commit.author.date,
-              url: c.html_url
-            });
-          });
-        }
-
-        if (isMounted && freshCommits.length > 0) {
-          freshCommits.sort((a, b) => new Date(b.date) - new Date(a.date));
-          setCommits((prev) => {
-            const map = new Map();
-            [...freshCommits, ...prev].forEach((item) => map.set(item.sha, item));
-            return Array.from(map.values());
-          });
         }
       } catch {
         // use cached data
@@ -241,21 +89,6 @@ export default function GitHubCommitHistory() {
     return currentYearData.total?.[selectedYear] || contributions.reduce((a, b) => a + b.count, 0);
   }, [currentYearData, selectedYear, contributions]);
 
-  // Filter commits based on year
-  const filteredCommits = useMemo(() => {
-    if (selectedYear === "2024") {
-      const list = commits.filter((c) => c.year === "2024");
-      return list.length > 0 ? list : commits.slice(4, 8);
-    }
-    if (selectedYear === "2025") {
-      const list = commits.filter((c) => c.year === "2025");
-      return list.length > 0 ? list : commits.slice(3, 7);
-    }
-    // "2026" or "last"
-    const list = commits.filter((c) => c.year === "2026");
-    return list.length > 0 ? list.slice(0, 6) : commits.slice(0, 6);
-  }, [commits, selectedYear]);
-
   // Build weeks array (columns of 7 days: Sun=0 to Sat=6)
   const { weeks, monthLabels } = useMemo(() => {
     if (!contributions || contributions.length === 0) return { weeks: [], monthLabels: [] };
@@ -273,6 +106,7 @@ export default function GitHubCommitHistory() {
       currentWeek.push(null);
     }
 
+    let activeCount = 0;
     sorted.forEach((day) => {
       const d = new Date(day.date + "T00:00:00Z");
       const dayOfWeek = d.getUTCDay();
@@ -281,10 +115,13 @@ export default function GitHubCommitHistory() {
         wList.push(currentWeek);
         currentWeek = [];
       }
+
+      const isActive = (day.count || 0) > 0;
       currentWeek.push({
         ...day,
         dayOfWeek,
-        month: d.getUTCMonth()
+        month: d.getUTCMonth(),
+        activeIdx: isActive ? activeCount++ : -1
       });
     });
 
@@ -362,6 +199,15 @@ export default function GitHubCommitHistory() {
     }
   };
 
+  const handleReplay = () => {
+    setAnimKey((prev) => prev + 1);
+  };
+
+  const handleYearChange = (year) => {
+    setSelectedYear(year);
+    setAnimKey((prev) => prev + 1);
+  };
+
   return (
     <div className="gh-activity-wrapper">
       {/* Section Header */}
@@ -377,17 +223,29 @@ export default function GitHubCommitHistory() {
           </p>
         </div>
 
-        <a
-          href="https://github.com/unitybtw"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-outline"
-          style={{ fontSize: '0.85rem', padding: '0.5rem 1.1rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
-        >
-          <Github size={16} />
-          <span>{isTr ? 'Profili Aç' : 'View Profile'}</span>
-          <ExternalLink size={13} style={{ opacity: 0.6 }} />
-        </a>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <button
+            onClick={handleReplay}
+            className="gh-replay-btn btn-outline"
+            title={isTr ? 'Kuş animasyonunu tekrar oynat' : 'Replay bird hop animation'}
+            style={{ fontSize: '0.85rem', padding: '0.5rem 0.9rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer' }}
+          >
+            <RotateCcw size={14} />
+            <span>{isTr ? 'Tekrar Oynat' : 'Replay'}</span>
+          </button>
+
+          <a
+            href="https://github.com/unitybtw"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-outline"
+            style={{ fontSize: '0.85rem', padding: '0.5rem 1.1rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+          >
+            <Github size={16} />
+            <span>{isTr ? 'Profili Aç' : 'View Profile'}</span>
+            <ExternalLink size={13} style={{ opacity: 0.6 }} />
+          </a>
+        </div>
       </div>
 
       {/* Main Container */}
@@ -447,7 +305,7 @@ export default function GitHubCommitHistory() {
                 }}
               >
                 <button
-                  onClick={() => { setSelectedYear("last"); setShowSettingsMenu(false); }}
+                  onClick={() => { handleYearChange("last"); setShowSettingsMenu(false); }}
                   style={{
                     width: '100%',
                     textAlign: 'left',
@@ -480,7 +338,7 @@ export default function GitHubCommitHistory() {
 
         {/* Heatmap Box + Right Year Selectors */}
         <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start', position: 'relative' }}>
-          {/* Heatmap Border Box with Year Glide Transitions */}
+          {/* Heatmap Border Box */}
           <div 
             ref={containerRef}
             style={{
@@ -495,11 +353,11 @@ export default function GitHubCommitHistory() {
           >
             <AnimatePresence mode="wait">
               <motion.div
-                key={selectedYear}
-                initial={{ opacity: 0, x: 24, filter: 'blur(5px)' }}
+                key={`${selectedYear}-${animKey}`}
+                initial={{ opacity: 0, x: 20, filter: 'blur(4px)' }}
                 animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, x: -24, filter: 'blur(5px)' }}
-                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                exit={{ opacity: 0, x: -20, filter: 'blur(4px)' }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                 style={{ minWidth: '720px', position: 'relative' }}
               >
                 {/* Month Labels Row */}
@@ -541,15 +399,50 @@ export default function GitHubCommitHistory() {
                             );
                           }
 
+                          const isActive = day.activeIdx >= 0;
                           const levelColor = palette[day.level || 0];
+                          const baseColor = palette[0];
+
+                          if (!isActive) {
+                            // Empty day: renders immediately as the base slot ("ilk beyaz/taban kısım")
+                            return (
+                              <div
+                                key={day.date}
+                                className="gh-day gh-day-empty"
+                                data-date={day.date}
+                                style={{ backgroundColor: baseColor }}
+                              />
+                            );
+                          }
+
+                          // Active green day: base slot underneath, green square hops in like a bird from sides
+                          const fromLeft = day.activeIdx % 2 === 0;
+                          const sideSign = fromLeft ? -1 : 1;
+                          const flightDistX = sideSign * (180 + (day.activeIdx % 7) * 32);
+                          const flightDistY = - (38 + (day.activeIdx % 8) * 12);
+                          const flightRot = (fromLeft ? -1 : 1) * (14 + (day.activeIdx % 5) * 4);
+                          const flightRotCounter = (fromLeft ? 1 : -1) * (8 + (day.activeIdx % 4) * 3);
+                          const delaySec = 0.35 + (day.activeIdx * 0.0075);
 
                           return (
                             <div
                               key={day.date}
-                              className="gh-day"
-                              data-date={day.date}
-                              style={{ backgroundColor: levelColor }}
-                            />
+                              className="gh-day-slot"
+                              style={{ backgroundColor: baseColor }}
+                            >
+                              <div
+                                className="gh-day gh-day-bird-hopping"
+                                data-date={day.date}
+                                style={{
+                                  backgroundColor: levelColor,
+                                  animationDelay: `${delaySec}s`,
+                                  '--bird-x': `${flightDistX}px`,
+                                  '--bird-y': `${flightDistY}px`,
+                                  '--bird-rot': `${flightRot}deg`,
+                                  '--bird-rot-counter': `${flightRotCounter}deg`
+                                }}
+                              />
+                            </div>
                           );
                         })}
                       </div>
@@ -620,7 +513,7 @@ export default function GitHubCommitHistory() {
               return (
                 <motion.button
                   key={y}
-                  onClick={() => setSelectedYear(y)}
+                  onClick={() => handleYearChange(y)}
                   whileHover={{ x: -2 }}
                   whileTap={{ scale: 0.96 }}
                   style={{
@@ -655,98 +548,6 @@ export default function GitHubCommitHistory() {
                 </motion.button>
               );
             })}
-          </div>
-        </div>
-
-        {/* ── Live Commit Stream with Staggered Flying Glide Animation ── */}
-        <div className="gh-commits-container">
-          <div className="gh-commits-header">
-            <div className="gh-commits-title-group">
-              <GitCommit size={16} />
-              <span>{isTr ? 'Son Canlı Commit Akışı' : 'Recent Commit Stream'}</span>
-              <span className="live-status-dot" style={{ marginLeft: '4px' }} />
-            </div>
-
-            <a
-              href="https://github.com/unitybtw?tab=repositories"
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
-            >
-              <span>{isTr ? 'Tüm Repolar' : 'All Repositories'}</span>
-              <ArrowUpRight size={13} />
-            </a>
-          </div>
-
-          <div className="gh-commits-grid">
-            <AnimatePresence mode="popLayout">
-              {filteredCommits.map((c, idx) => {
-                const isEven = idx % 2 === 0;
-                return (
-                  <motion.a
-                    key={selectedYear + '-' + c.sha}
-                    href={c.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="gh-commit-card"
-                    initial={{
-                      opacity: 0,
-                      x: isEven ? -160 : 160,
-                      rotate: isEven ? -2.5 : 2.5,
-                      filter: 'blur(8px)'
-                    }}
-                    animate={{
-                      opacity: 1,
-                      x: 0,
-                      rotate: 0,
-                      filter: 'blur(0px)'
-                    }}
-                    exit={{
-                      opacity: 0,
-                      x: isEven ? 100 : -100,
-                      filter: 'blur(6px)',
-                      transition: { duration: 0.25 }
-                    }}
-                    transition={{
-                      duration: 0.65,
-                      delay: 0.08 + idx * 0.075,
-                      ease: [0.16, 1, 0.3, 1]
-                    }}
-                    whileHover={{
-                      y: -3,
-                      boxShadow: '0 8px 24px rgba(0, 0, 0, 0.08)'
-                    }}
-                  >
-                    <div className="gh-commit-main">
-                      <div className="gh-commit-icon-badge">
-                        <GitCommit size={18} />
-                      </div>
-                      <div className="gh-commit-info">
-                        <div className="gh-commit-message" title={c.message}>
-                          {c.message}
-                        </div>
-                        <div className="gh-commit-meta">
-                          <span className="gh-repo-tag">{c.repo}</span>
-                          <span>·</span>
-                          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}>
-                            <Clock size={11} style={{ opacity: 0.7 }} />
-                            {formatRelativeTime(c.date, isTr)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="gh-commit-right">
-                      <span className="gh-commit-sha">
-                        <GitBranch size={11} style={{ opacity: 0.6 }} />
-                        {c.sha}
-                      </span>
-                      <ArrowUpRight size={15} style={{ opacity: 0.45 }} />
-                    </div>
-                  </motion.a>
-                );
-              })}
-            </AnimatePresence>
           </div>
         </div>
       </div>
