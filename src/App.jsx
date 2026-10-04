@@ -478,7 +478,7 @@ function App() {
           
           <div className="bento-grid">
             <div className="bento-card bento-col-8">
-              <h3 style={{ marginBottom: '1rem', fontSize: '1.5rem' }}>Biography</h3>
+              <h3 style={{ marginBottom: '1rem', fontSize: '1.5rem' }}>{t('about_bio_heading')}</h3>
               <p style={{ marginBottom: '1rem', fontSize: '1.1rem', color: 'var(--text-secondary)' }}>
                 {t('about_text_1')}
               </p>
@@ -487,26 +487,30 @@ function App() {
               </p>
             </div>
             
-            <div className="bento-card bento-col-4" style={{ background: 'var(--text-primary)', color: 'var(--bg-primary)' }}>
-              <h3 style={{ marginBottom: '1.5rem', fontSize: '1.2rem', opacity: 0.9 }}>Quick Stats</h3>
+            <div className="bento-card bento-col-4">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.2rem' }}>{t('about_stats_heading')}</h3>
+                <span className="live-status-chip">
+                  <span className="live-status-dot" />
+                  {t('badge_hire')}
+                </span>
+              </div>
               
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
                 <div>
-                  <div style={{ fontSize: '0.85rem', opacity: 0.7, textTransform: 'uppercase' }}>{t('about_stat_1')}</div>
-                  <div style={{ fontWeight: 500 }}>{t('about_stat_1_val')}</div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>{t('about_stat_1')}</div>
+                  <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{t('about_stat_1_val')}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '0.85rem', opacity: 0.7, textTransform: 'uppercase' }}>{t('about_stat_2')}</div>
-                  <div style={{ fontWeight: 500 }}>{t('about_stat_2_val')}</div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>{t('about_stat_2')}</div>
+                  <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{t('about_stat_2_val')}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: '0.85rem', opacity: 0.7, textTransform: 'uppercase' }}>{t('about_stat_4')}</div>
-                  <div style={{ fontWeight: 500 }}>{t('about_stat_4_val')}</div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>{t('about_stat_4')}</div>
+                  <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{t('about_stat_4_val')}</div>
                 </div>
               </div>
             </div>
-
-
           </div>
         </section>
 
@@ -521,11 +525,17 @@ function App() {
                 <Gamepad2 size={24} />
                 <h3 style={{ fontSize: '1.2rem' }}>{t('skill_cat_engines')}</h3>
               </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <li style={{ display: 'flex', justifyContent: 'space-between' }}><strong>Unity</strong> <span>Advanced</span></li>
-                <li style={{ display: 'flex', justifyContent: 'space-between' }}><strong>URP / HDRP</strong> <span>Advanced</span></li>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <strong>Unity</strong>
+                  <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
+                </li>
+                <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <strong>URP / HDRP</strong>
+                  <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
+                </li>
               </ul>
-              <p style={{ marginTop: '1rem', fontSize: '0.9rem', opacity: 0.8 }}>{t('skill_unity_desc')}</p>
+              <p style={{ marginTop: '1.25rem', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{t('skill_unity_desc')}</p>
             </div>
 
             <div className="bento-card bento-col-4">
@@ -533,12 +543,21 @@ function App() {
                 <Code size={24} />
                 <h3 style={{ fontSize: '1.2rem' }}>{t('skill_cat_languages')}</h3>
               </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <li style={{ display: 'flex', justifyContent: 'space-between' }}><strong>C#</strong> <span>Advanced</span></li>
-                <li style={{ display: 'flex', justifyContent: 'space-between' }}><strong>Swift (SwiftUI)</strong> <span>Intermediate</span></li>
-                <li style={{ display: 'flex', justifyContent: 'space-between' }}><strong>JavaScript / React</strong> <span>Intermediate</span></li>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <strong>C#</strong>
+                  <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
+                </li>
+                <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <strong>Swift (SwiftUI)</strong>
+                  <span className="skill-pill-badge">{t('skill_level_intermediate')}</span>
+                </li>
+                <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <strong>JavaScript / React</strong>
+                  <span className="skill-pill-badge">{t('skill_level_intermediate')}</span>
+                </li>
               </ul>
-              <p style={{ marginTop: '1rem', fontSize: '0.9rem', opacity: 0.8 }}>{t('skill_swift_desc')}</p>
+              <p style={{ marginTop: '1.25rem', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{t('skill_languages_desc')}</p>
             </div>
 
             <div className="bento-card bento-col-4">
@@ -546,12 +565,21 @@ function App() {
                 <Box size={24} />
                 <h3 style={{ fontSize: '1.2rem' }}>{t('skill_cat_tools')}</h3>
               </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <li style={{ display: 'flex', justifyContent: 'space-between' }}><strong>Blender</strong> <span>Advanced</span></li>
-                <li style={{ display: 'flex', justifyContent: 'space-between' }}><strong>Git & GitHub</strong> <span>Advanced</span></li>
-                <li style={{ display: 'flex', justifyContent: 'space-between' }}><strong>Figma</strong> <span>Intermediate</span></li>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+                <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <strong>Blender</strong>
+                  <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
+                </li>
+                <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <strong>Git & GitHub</strong>
+                  <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
+                </li>
+                <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <strong>Figma</strong>
+                  <span className="skill-pill-badge">{t('skill_level_intermediate')}</span>
+                </li>
               </ul>
-              <p style={{ marginTop: '1rem', fontSize: '0.9rem', opacity: 0.8 }}>{t('skill_blender_desc')}</p>
+              <p style={{ marginTop: '1.25rem', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{t('skill_blender_desc')}</p>
             </div>
           </div>
         </section>
@@ -621,48 +649,52 @@ function App() {
               <NovaBrowserCard />
             </Suspense>
 
-            {/* Featured Project 1: Legend of the Three Masks */}
+            {/* Featured Project: Legend of the Three Masks */}
             <div className="bento-card bento-col-12">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div>
-                  <h3 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>{t('games.m_title')}</h3>
-                  <p style={{ color: 'var(--text-secondary)', maxWidth: '800px' }}>{t('games.m_desc')}</p>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+                <div style={{ flex: 1, minWidth: '280px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+                    <h3 style={{ fontSize: '1.8rem', margin: 0, fontWeight: 700 }}>{t('games.m_title')}</h3>
+                    <span className="project-badge project-badge-released">
+                      {t('games.badge_released')}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.9rem' }}>
+                    <span className="tech-tag">Unity 3D</span>
+                    <span className="tech-tag">C#</span>
+                    <span className="tech-tag">URP</span>
+                    <span className="tech-tag">Blender</span>
+                  </div>
+                  <p style={{ color: 'var(--text-secondary)', maxWidth: '800px', lineHeight: 1.6, fontSize: '0.95rem' }}>{t('games.m_desc')}</p>
                   
-                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
-                    <a href="https://unitybtw.itch.io/legend-of-the-three-masks" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.4rem 1rem', fontSize: '0.85rem', gap: '0.4rem' }}>
+                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem' }}>
+                    <a href="https://unitybtw.itch.io/legend-of-the-three-masks" target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ padding: '0.45rem 1.1rem', fontSize: '0.85rem' }}>
                       <Gamepad2 size={16} /> Itch.io
                     </a>
                   </div>
                 </div>
-                <Gamepad2 size={32} color="var(--text-secondary)" style={{ opacity: 0.3 }} />
-              </div>
-            </div>
-
-            {/* Featured Project 2: Zero-Ads Arcade Engine */}
-            <div className="bento-card bento-col-12">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                <div>
-                  <h3 style={{ fontSize: '1.8rem', marginBottom: '0.5rem' }}>{t('games.arcade_engine_title')}</h3>
-                  <p style={{ color: 'var(--text-secondary)', maxWidth: '800px' }}>{t('games.arcade_engine_desc')}</p>
-                  
-                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
-                    <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.4rem 1rem', fontSize: '0.85rem', gap: '0.4rem' }}>
-                      <Github size={16} /> GitHub
-                    </a>
-                  </div>
-                </div>
-                <Cpu size={32} color="var(--text-secondary)" style={{ opacity: 0.3 }} />
+                <Gamepad2 size={36} color="var(--text-secondary)" style={{ opacity: 0.25 }} />
               </div>
             </div>
 
             {/* Signal */}
             <div className="bento-card bento-col-6" style={{ justifyContent: 'space-between' }}>
               <div>
-                <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>{t('games.signal_title')}</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>{t('games.signal_desc')}</p>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+                  <h3 style={{ fontSize: '1.3rem', margin: 0, fontWeight: 700 }}>{t('games.signal_title')}</h3>
+                  <span className="project-badge project-badge-open">
+                    {t('games.badge_open_source')}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                  <span className="tech-tag">Swift</span>
+                  <span className="tech-tag">SwiftUI</span>
+                  <span className="tech-tag">Core Audio</span>
+                </div>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.6 }}>{t('games.signal_desc')}</p>
               </div>
-              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
-                <a href="https://github.com/unitybtw/Signal-macOS" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.4rem 1rem', fontSize: '0.85rem', gap: '0.4rem', width: 'fit-content' }}>
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem' }}>
+                <a href="https://github.com/unitybtw/Signal-macOS" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem', width: 'fit-content' }}>
                   <Github size={16} /> GitHub
                 </a>
               </div>
@@ -671,11 +703,21 @@ function App() {
             {/* Aether Command */}
             <div className="bento-card bento-col-6" style={{ justifyContent: 'space-between' }}>
               <div>
-                <h3 style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>{t('games.aether_title')}</h3>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem' }}>{t('games.aether_desc')}</p>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+                  <h3 style={{ fontSize: '1.3rem', margin: 0, fontWeight: 700 }}>{t('games.aether_title')}</h3>
+                  <span className="project-badge project-badge-open">
+                    {t('games.badge_open_source')}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
+                  <span className="tech-tag">Swift</span>
+                  <span className="tech-tag">Vision API</span>
+                  <span className="tech-tag">AppKit</span>
+                </div>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.6 }}>{t('games.aether_desc')}</p>
               </div>
-              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
-                <a href="https://github.com/unitybtw/aether-command" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.4rem 1rem', fontSize: '0.85rem', gap: '0.4rem', width: 'fit-content' }}>
+              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem' }}>
+                <a href="https://github.com/unitybtw/aether-command" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem', width: 'fit-content' }}>
                   <Github size={16} /> GitHub
                 </a>
               </div>

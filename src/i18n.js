@@ -36,38 +36,40 @@ const resources = {
 
             // ── About / Summary ───────────────────────────────────────────
             "about_title": "About",
-            "about_subtitle": "PROFESSIONAL SUMMARY",
+            "about_subtitle": "GAME DEVELOPER & INTERACTIVE SYSTEMS",
+            "about_bio_heading": "Biography",
+            "about_stats_heading": "Overview",
             "about_text_1": "I'm Siraç Göktuğ Şimşek — a game developer based in İstanbul. I build interactive software and games across Unity and C#, with a focus on gameplay programming, mechanics design, and optimized 3D pipelines.",
-            "about_text_2": "I entered Istanbul Kultur University in 2025 to study Digital Game Design, where I have successfully completed my 1st year. My work focuses on creating responsive game mechanics and clean, maintainable systems.",
-            "about_text_3": "I thrive at the intersection of game systems engineering and creative art — from writing clean gameplay scripts to optimization for real-time engines. Always shipping, always iterating.",
+            "about_text_2": "I study Digital Game Design at Istanbul Kultur University (completed 1st year). My work focuses on creating responsive game mechanics and clean, maintainable systems.",
+            "about_text_3": "I thrive at the intersection of game systems engineering and creative art — from writing clean gameplay scripts to real-time engine optimization.",
             "about_stat_1": "Education",
             "about_stat_1_val": "IKU — Game Design (1st Year Completed)",
             "about_stat_2": "Primary Stack",
             "about_stat_2_val": "Unity · C# · Blender",
-            "about_stat_3": "Published Projects",
+            "about_stat_3": "Shipped Projects",
             "about_stat_3_val": "3+ Shipped Projects",
-            "about_stat_4": "Status",
-            "about_stat_4_val": "Open to Work",
+            "about_stat_4": "Availability",
+            "about_stat_4_val": "Open to Internship & Junior Roles",
 
             // ── Skills ────────────────────────────────────────────────────
             "skills_title": "Skills",
             "skills_subtitle": "Technical proficiency across engines, languages and tools.",
-            "skill_sys": "System Architecture",
-            "skill_unity_desc": "Advanced C# scripting, URP/HDRP render pipelines, physics-based systems, shader graphs. Unity game projects.",
-            "skill_swift_desc": "Native iOS/macOS layout patterns.",
-            "skill_blender_desc": "Hard-surface modeling, procedural texturing, and low-poly optimization for real-time game engines.",
-            "skill_sys_desc": "WebGL integration, custom interactive rendering layers.",
-            "skill_cat_engines": "Engines & Renderers",
+            "skill_level_advanced": "Advanced",
+            "skill_level_intermediate": "Intermediate",
+            "skill_unity_desc": "Advanced C# scripting, URP/HDRP render pipelines, physics-based character controllers, and shader graphs.",
+            "skill_languages_desc": "Object-oriented gameplay architecture in C#, native macOS applications in SwiftUI, and responsive frontends in React.",
+            "skill_blender_desc": "Hard-surface 3D modeling, UV unwrapping, and low-poly asset optimization for real-time engines.",
+            "skill_cat_engines": "Game Engines & Pipelines",
             "skill_cat_languages": "Languages & Frameworks",
-            "skill_cat_tools": "3D Design & DevOps",
+            "skill_cat_tools": "3D Design & Developer Tools",
 
             // ── Timeline / Experience ─────────────────────────────────────
-            "timeline_title": "Education",
-            "timeline_subtitle": "Academic and development history.",
+            "timeline_title": "Education & Journey",
+            "timeline_subtitle": "Academic background and engineering milestones.",
             "timeline_event_3_year": "2025 – PRESENT",
             "timeline_event_3_title": "B.Sc. Digital Game Design — Istanbul Kultur University",
-            "timeline_event_3_desc": "Studying the structure of interactive software, focusing on rendering pipelines, game mechanics, and editor tooling.",
-            "timeline_event_3_details": ["Completed 1st year with honors", "Coursework in Unity C# scripting, low-poly Blender modeling, URP bakes", "Designed gameplay architecture prototypes for multiple platformer and physics sandbox projects"],
+            "timeline_event_3_desc": "Studying interactive software architecture, real-time rendering pipelines, gameplay systems, and editor tooling.",
+            "timeline_event_3_details": ["Completed 1st year with honors", "Coursework in Unity C# scripting, low-poly Blender modeling, URP lighting bakes", "Designed gameplay architecture prototypes for multiple platformer and physics sandbox projects"],
             "timeline_event_2_year": "2023 – 2025",
             "timeline_event_2_title": "Game Development & Apple Developer Certifications",
             "timeline_event_2_desc": "Completed self-taught game engineering curricula and native iOS/macOS utility development courses.",
@@ -79,39 +81,24 @@ const resources = {
 
             // ── Projects ──────────────────────────────────────────────────
             "archives_title": "Projects",
-            "archives_subtitle": "Selected projects.",
+            "archives_subtitle": "Featured games, applications, and tools.",
 
             // ── GitHub Activity ───────────────────────────────────────────
             "github_section_title": "Commit Activity",
-            "github_section_subtitle": "Real-time commit logs and open-source updates from @unitybtw.",
+            "github_section_subtitle": "Real-time contribution calendar and commit history from @unitybtw.",
             "github_badge_live": "LIVE FROM GITHUB",
             "github_filter_all": "All Repositories",
             "github_view_profile": "View @unitybtw on GitHub",
             "github_commit_hash": "Commit",
             "github_synced_desc": "Auto-synced with GitHub REST API across active public repositories.",
 
-            // ── Featured modules ──────────────────────────────────────────
-            "featured_title": "Builds",
-            "featured_subtitle": "Interactive browser prototypes.",
-
-            // ── Stats / Telemetry ─────────────────────────────────────────
-            "stats_title": "SYSTEM TELEMETRY",
-            "stats_games": "Projects Built",
-            "stats_lines": "Lines Written",
-            "stats_uptime": "100% Uptime",
-            "stats_users": "Live Visitors",
-
-            // ── Status Bar ────────────────────────────────────────────────
-            "status_level": "STATUS: OPEN TO WORK · IKU 1ST YEAR COMPLETED",
-            "status_quest": "Current Focus: Advanced Game Systems · 3D Design",
-
             // ── Arcade ────────────────────────────────────────────────────
             "arcade_button": "Playground",
-            "arcade_title": "Arcade & Web Ports",
+            "arcade_title": "Arcade & Retro Ports",
             "arcade_subtitle": "Play 75+ browser games and retro ports with zero ads.",
             "arcade_btn": "EXPLORE ARCADE",
-            "arcade_portal_badge": "LIVE · 75+ SIMULATIONS · CLOUD LEADERBOARD",
-            "arcade_portal_desc": "Zero install, zero ads. Jump into 3D retro classics (GTA, Half-Life, Quake III, Minecraft) and responsive custom arcade games right in your browser.",
+            "arcade_portal_badge": "75+ GAMES · GLOBAL LEADERBOARD",
+            "arcade_portal_desc": "Zero install, zero ads. Jump into 3D retro classics (GTA Vice City, Half-Life, Quake III, Minecraft) and responsive custom arcade games right in your browser.",
             "arcade_portal_explore": "Open Arcade Library",
             "arcade_portal_shuffle": "Quick Play",
             "arcade_inside_title": "Arcade Library",
@@ -129,8 +116,8 @@ const resources = {
             "arcade_gen_random": "Random Tag",
             "arcade_scoreboard": "HALL OF FAME",
             "arcade_games": "GAMES",
-            "arcade_section_title": "Arcade & Simulations",
-            "arcade_section_subtitle": "75+ zero-ads, instantly playable web ports, 3D classics, and custom interactive modules.",
+            "arcade_section_title": "Arcade & Game Library",
+            "arcade_section_subtitle": "75+ ad-free, instantly playable retro 3D ports and indie games right in your browser.",
             "arcade_cat_all": "All Games",
             "arcade_cat_simulation": "3D & Retro Ports",
             "arcade_cat_arcade": "Action Arcade",
@@ -146,6 +133,7 @@ const resources = {
             "arcade_connected_as": "Player:",
             "arcade_edit_name": "Edit",
             "arcade_filter_game": "Filter by Game",
+            "arcade_loading_game": "Loading game...",
 
             // ── Contact / Footer ──────────────────────────────────────────
             "footer_title": "Contact",
@@ -163,55 +151,18 @@ const resources = {
             "form_placeholder_email": "your.email@example.com",
             "form_placeholder_message": "Write your message here...",
 
-            // ── 3D Viewer ─────────────────────────────────────────────────
-            "viewer_title": "3D Workspace",
-            "viewer_subtitle": "Real-time Blender artifacts.",
-            "viewer_hint": "Drag to rotate",
-
-            // ── Drone companion messages ───────────────────────────────────
-            "drone_m_morning": "Good morning! Ready to build?",
-            "drone_m_afternoon": "Good afternoon!",
-            "drone_m_evening": "Good evening!",
-            "drone_m_night": "Late night session?",
-            "drone_c_github": "Open source is the way.",
-            "drone_c_linkedin": "Professional network engaged.",
-            "drone_c_mail": "Communication protocols ready.",
-            "drone_c_game": "Nice gameplay!",
-            "drone_c_project": "Solid framework.",
-            "drone_c_click": "Let's see!",
-            "drone_s_bottom": "Bottom reached.",
-            "drone_s_top": "Top reached.",
-            "drone_scan_start": "Scanning...",
-            "drone_scan_complete": "Scan complete.",
-            "drone_battery_low": "Battery low.",
-            "drone_reboot": "Rebooting...",
-            "drone_click_1": "Diagnostics: 100% efficient.",
-            "drone_click_2": "Mechanical interference.",
-            "drone_click_3": "Scanning...",
-            "drone_click_4": "Warning.",
-            "drone_click_5": "Security engaged.",
-            "drone_tooltip": "Click to interact",
-            "drone_idle": [
-                "Awaiting input."
-            ],
-
-            // ── Game titles & descriptions ────────────────────────────────
+            // ── Projects descriptions ─────────────────────────────────────
             "games": {
                 "nova_title": "Nova Browser",
-                "nova_desc": "An open-source desktop browser for developers & coding agents built with Electron, React, TypeScript, and Vite. Features a native Model Context Protocol (MCP) server (Port 3020), on-device WebGPU neural execution, zero-knowledge E2EE multi-device sync, Chrome Web Store extension support, and a dual-view split screen.",
+                "nova_desc": "An open-source desktop browser for developers built with Electron, React, TypeScript, and Vite. Features a native Model Context Protocol (MCP) server, on-device WebGPU execution, zero-knowledge E2EE multi-device sync, Chrome extension support, and dual-view split screen.",
                 "m_title": "Legend of the Three Masks",
-                "m_desc": "3D adventure game published on Itch.io — explore levels, find ancient masks, and uncover mysteries. Built with Unity and C#.",
-                "fb_desc": "Classic arcade-style reflex game with high-score tracking and tight gameplay loops.",
-                "macos_title": "macOS Modern System Utilities",
-                "macos_desc": "Native macOS utility projects built with SwiftUI. Focus on clean layout patterns.",
-                "arcade_title": "Arcade Core",
-                "arcade_desc": "Custom browser-based prototypes.",
+                "m_desc": "3D adventure game published on Itch.io — explore levels, find ancient masks, and solve environmental puzzles. Developed in Unity and C#.",
                 "signal_title": "Signal: Audio Feedback Utility",
-                "signal_desc": "A premium macOS menu bar application providing real-time mechanical keyboard sound feedback (15+ audio profiles) with a refined native UI, dynamic audio pulse visualizer, and WPM analytics. Built with native Swift and low-latency Core Audio.",
+                "signal_desc": "A premium macOS menu bar application providing real-time mechanical keyboard audio feedback (15+ sound profiles) with a refined native UI, dynamic audio visualizer, and WPM analytics. Built with Swift and Core Audio.",
                 "aether_title": "Aether Command: Gesture Controller",
-                "aether_desc": "Touchless gesture-based desktop control app using your Mac's camera. Map movements (Pinch, Fist, Swipes) to system actions. Built with power-efficient tracking and a polished native UI.",
-                "arcade_engine_title": "Zero-Ads Arcade Engine",
-                "arcade_engine_desc": "A lightweight, open-source (MIT) TypeScript engine for embedding ad-free games into any web app. Features built-in gamepad support, multi-touch virtual controls (joysticks/buttons), persistent session analytics, global sound management, and strict origin validation—all under a 50KB footprint."
+                "aether_desc": "Touchless gesture-based desktop control app using your Mac's camera. Map movements (Pinch, Fist, Swipes) to system actions. Built with power-efficient tracking and a native AppKit interface.",
+                "badge_released": "RELEASED",
+                "badge_open_source": "OPEN SOURCE"
             }
         }
     },
@@ -245,33 +196,35 @@ const resources = {
 
             // ── About / Summary ───────────────────────────────────────────
             "about_title": "Hakkımda",
-            "about_subtitle": "PROFESYONEL ÖZET",
-            "about_text_1": "Ben Siraç Göktuğ Şimşek — İstanbul merkezli bir oyun geliştiricisiyim. Unity ve C# kullanarak; oynanış programlama, mekanik tasarımı ve optimize edilmiş 3D pipeline'lar üzerine odaklanarak yazılım geliştiriyorum.",
-            "about_text_2": "İstanbul Kültür Üniversitesi'nde Dijital Oyun Tasarımı bölümüne 2025 yılında girdim ve 1. sınıfı başarıyla tamamladım. Çalışmalarım, duyarlı oyun mekanikleri ve temiz, bakımı kolay sistemler oluşturmaya odaklanıyor.",
-            "about_text_3": "Oyun sistemleri mühendisliği ile yaratıcı sanatın kesişiminde çalışıyorum — temiz oynanış kodları yazmaktan gerçek zamanlı motorlar için optimizasyona kadar. Her zaman üretiyorum, her zaman geliştiriyorum.",
+            "about_subtitle": "OYUN GELİŞTİRİCİ & ETKİLEŞİMLİ SİSTEMLER",
+            "about_bio_heading": "Biyografi",
+            "about_stats_heading": "Genel Bakış",
+            "about_text_1": "Ben Siraç Göktuğ Şimşek — İstanbul'da yaşayan bir oyun geliştiricisiyim. Unity ve C# odaklı; oynanış programlama, mekanik mimarisi ve optimize edilmiş 3D pipeline'lar üzerine çalışıyorum.",
+            "about_text_2": "İstanbul Kültür Üniversitesi Dijital Oyun Tasarımı bölümü öğrencisiyim (1. sınıfı tamamladım). Çalışmalarım akıcı oyun hissi ve temiz, sürdürülebilir kod mimarisi inşa etmeye odaklanır.",
+            "about_text_3": "Oyun mekaniği mühendisliği ile görsel sanatın kesişiminde üretiyorum — temiz C# kodlarından oyun motoru optimizasyonuna kadar.",
             "about_stat_1": "Eğitim",
-            "about_stat_1_val": "İKÜ — Oyun Tasarımı (1. Sınıf Tamamlandı)",
-            "about_stat_2": "Ana Stack",
+            "about_stat_1_val": "İKÜ — Dijital Oyun Tasarımı (1. Sınıf Tamamlandı)",
+            "about_stat_2": "Temel Araçlar",
             "about_stat_2_val": "Unity · C# · Blender",
-            "about_stat_3": "Yayınlanan Projeler",
-            "about_stat_3_val": "3+ Tamamlanmış Proje",
-            "about_stat_4": "Durum",
-            "about_stat_4_val": "İş Tekliflerine Açık",
+            "about_stat_3": "Tamamlanan Projeler",
+            "about_stat_3_val": "3+ Yayınlanmış Proje",
+            "about_stat_4": "Çalışma Durumu",
+            "about_stat_4_val": "Staj ve Junior Rollerine Açık",
 
             // ── Skills ────────────────────────────────────────────────────
             "skills_title": "Beceriler",
-            "skills_subtitle": "Teknik yetkinlik seviyeleri.",
-            "skill_sys": "Sistem Mimarisi",
-            "skill_unity_desc": "İleri düzey C# script, URP/HDRP render pipeline, fizik tabanlı sistemler ve shader graph.",
-            "skill_swift_desc": "SwiftUI ile arayüz düzenleri.",
-            "skill_blender_desc": "Hard-surface modelleme, prosedürel doku ve oyun motorları için low-poly optimizasyonu.",
-            "skill_sys_desc": "WebGL ve canvas render entegrasyonu.",
-            "skill_cat_engines": "Oyun & Render Motorları",
+            "skills_subtitle": "Oyun motorları, programlama dilleri ve 3D araçlardaki yetkinlikler.",
+            "skill_level_advanced": "İleri Seviye",
+            "skill_level_intermediate": "Orta Seviye",
+            "skill_unity_desc": "İleri düzey C# kodlama, URP/HDRP render pipeline yapıları, fizik tabanlı karakter kontrolcüleri ve shader graph sistemleri.",
+            "skill_languages_desc": "C# ile nesne yönelimli oyun mekanikleri mimarisi, SwiftUI ile native macOS masaüstü araçları ve React ile arayüz geliştirme.",
+            "skill_blender_desc": "Hard-surface 3D modelleme, UV haritalama ve oyun motorları için low-poly optimizasyonu.",
+            "skill_cat_engines": "Oyun Motorları & Pipeline",
             "skill_cat_languages": "Diller & Teknolojiler",
-            "skill_cat_tools": "3D Tasarım & Araçlar",
+            "skill_cat_tools": "3D Tasarım & Geliştirici Araçları",
 
             // ── Timeline / Experience ─────────────────────────────────────
-            "timeline_title": "Eğitim",
+            "timeline_title": "Eğitim & Yolculuk",
             "timeline_subtitle": "Akademik geçmiş ve gelişim süreci.",
             "timeline_event_3_year": "2025 – GÜNÜMÜZ",
             "timeline_event_3_title": "Lisans: Dijital Oyun Tasarımı — İstanbul Kültür Üniversitesi",
@@ -288,10 +241,10 @@ const resources = {
 
             // ── Projects ──────────────────────────────────────────────────
             "archives_title": "Projeler",
-            "archives_subtitle": "Seçilmiş çalışmalar.",
+            "archives_subtitle": "Öne çıkan oyunlar, uygulamalar ve araçlar.",
 
             // ── GitHub Activity ───────────────────────────────────────────
-            "github_section_title": "GitHub Commit Geçmişi",
+            "github_section_title": "GitHub Katkı Haritası",
             "github_section_subtitle": "@unitybtw hesabı altındaki güncel kod commit'leri ve geliştirme akışı.",
             "github_badge_live": "GITHUB CANLI AKIŞ",
             "github_filter_all": "Tüm Repolar",
@@ -299,28 +252,13 @@ const resources = {
             "github_commit_hash": "Commit",
             "github_synced_desc": "Açık kaynaklı repolardan GitHub REST API ile anlık senkronize edilir.",
 
-            // ── Featured modules ──────────────────────────────────────────
-            "featured_title": "Yapılar",
-            "featured_subtitle": "Tarayıcı prototipleri.",
-
-            // ── Stats / Telemetry ─────────────────────────────────────────
-            "stats_title": "SİSTEM TELEMETRİSİ",
-            "stats_games": "Üretilen Projeler",
-            "stats_lines": "Yazılan Kod",
-            "stats_uptime": "%100 Çalışma Süresi",
-            "stats_users": "Ziyaretçi",
-
-            // ── Status Bar ────────────────────────────────────────────────
-            "status_level": "DURUM: İŞE AÇIK · İKÜ 1. SINIF TAMAMLANDI",
-            "status_quest": "Odak: İleri Oyun Sistemleri · 3D Tasarım",
-
             // ── Arcade ────────────────────────────────────────────────────
             "arcade_button": "Oyun Alanı",
-            "arcade_title": "Arcade & Web Portları",
+            "arcade_title": "Arcade & Retro Portlar",
             "arcade_subtitle": "Sıfır reklamla 75+ tarayıcı oyunu ve retro port.",
             "arcade_btn": "KÜTÜPHANEYİ AÇ",
-            "arcade_portal_badge": "AKTİF · 75+ SİMÜLASYON · BULUT SKOR TABLOSU",
-            "arcade_portal_desc": "Sıfır kurulum, sıfır reklam. Retro 3D klasikler (GTA, Half-Life, Quake III, Minecraft) ve özel arcade oyunları tarayıcında anında hazır.",
+            "arcade_portal_badge": "75+ OYUN · DÜNYA SKOR TABLOSU",
+            "arcade_portal_desc": "Sıfır kurulum, sıfır reklam. Retro 3D klasikler (GTA Vice City, Half-Life, Quake III, Minecraft) ve hafif arcade oyunları tarayıcında anında oyna.",
             "arcade_portal_explore": "Kütüphaneyi Keşfet",
             "arcade_portal_shuffle": "Rastgele Başlat",
             "arcade_inside_title": "Oyun Kütüphanesi",
@@ -338,8 +276,8 @@ const resources = {
             "arcade_gen_random": "Rastgele",
             "arcade_scoreboard": "SKOR TABLOSU",
             "arcade_games": "OYUNLAR",
-            "arcade_section_title": "Arcade & Simülasyonlar",
-            "arcade_section_subtitle": "75+ sıfır reklamlı web portu, retro 3D klasikler ve tarayıcıda anında oynanabilir özel oyunlar.",
+            "arcade_section_title": "Oyun Kütüphanesi & Retro Portlar",
+            "arcade_section_subtitle": "Tarayıcıda anında oynanabilir reklamsız 75+ retro 3D port ve bağımsız oyun.",
             "arcade_cat_all": "Tümü",
             "arcade_cat_simulation": "3D & Retro Portlar",
             "arcade_cat_arcade": "Klasik Arcade",
@@ -355,6 +293,7 @@ const resources = {
             "arcade_connected_as": "Oyuncu:",
             "arcade_edit_name": "Düzenle",
             "arcade_filter_game": "Oyuna Göre Filtrele",
+            "arcade_loading_game": "Oyun yükleniyor...",
 
             // ── Contact / Footer ──────────────────────────────────────────
             "footer_title": "İletişim",
@@ -372,55 +311,18 @@ const resources = {
             "form_placeholder_email": "e-posta.adresiniz@ornek.com",
             "form_placeholder_message": "Mesajınızı buraya yazın...",
 
-            // ── 3D Viewer ─────────────────────────────────────────────────
-            "viewer_title": "3D Çalışma Alanı",
-            "viewer_subtitle": "Gerçek zamanlı Blender modelleri.",
-            "viewer_hint": "Döndürmek için sürükle",
-
-            // ── Drone companion messages ───────────────────────────────────
-            "drone_m_morning": "Günaydın!",
-            "drone_m_afternoon": "Tünaydın!",
-            "drone_m_evening": "İyi akşamlar!",
-            "drone_m_night": "İyi geceler!",
-            "drone_c_github": "Açık kaynak en iyisi.",
-            "drone_c_linkedin": "LinkedIn aktif.",
-            "drone_c_mail": "E-posta hazır.",
-            "drone_c_game": "Güzel oyun!",
-            "drone_c_project": "Harika mimari.",
-            "drone_c_click": "Bakalım!",
-            "drone_s_bottom": "Sonuna ulaşıldı.",
-            "drone_s_top": "Başa dönüldü.",
-            "drone_scan_start": "Taranıyor...",
-            "drone_scan_complete": "Tarama bitti.",
-            "drone_battery_low": "Düşük pil.",
-            "drone_reboot": "Yeniden başlatılıyor...",
-            "drone_click_1": "Sorunsuz çalışıyor.",
-            "drone_click_2": "Hata tespiti.",
-            "drone_click_3": "Taranıyor...",
-            "drone_click_4": "Uyarı.",
-            "drone_click_5": "Güvenlik devrede.",
-            "drone_tooltip": "Etkileşim için tıkla",
-            "drone_idle": [
-                "Giriş bekleniyor."
-            ],
-
-            // ── Game titles & descriptions ────────────────────────────────
+            // ── Projects descriptions ─────────────────────────────────────
             "games": {
                 "nova_title": "Nova Browser",
-                "nova_desc": "Yazılımcılar ve yapay zeka ajanları için Electron, React, TypeScript ve Vite ile geliştirilmiş açık kaynaklı masaüstü web tarayıcısı. Dahili Model Context Protocol (MCP) sunucusu (Port 3020), cihaz üzerinde WebGPU yerel yapay zeka çalıştırma, sıfır-bilgi (E2EE) cihazlar arası bulut senkronizasyonu, Chrome Web Store eklenti desteği ve çift ekran bölünmüş görünüm sunar.",
-                "m_title": "Üç Maskenin Efsanesi",
-                "m_desc": "Itch.io'da yayınlanmış 3D macera oyunu — bölümleri keşfet, eski maskeleri bul, gizemleri çöz. Unity / C#.",
-                "fb_desc": "Klasik arcade tarzı refleks oyunu, yüksek skor takibi ile.",
-                "macos_title": "macOS Native Araçlar",
-                "macos_desc": "SwiftUI ile geliştirilen native macOS araç projeleri. Temiz arayüz düzenleri odağı.",
-                "arcade_title": "Arcade Portalı",
-                "arcade_desc": "Özel tarayıcı prototipleri.",
+                "nova_desc": "Geliştiriciler için Electron, React, TypeScript ve Vite ile geliştirilmiş açık kaynaklı masaüstü web tarayıcısı. Dahili Model Context Protocol (MCP) sunucusu, cihaz üzerinde WebGPU yapay zeka çalıştırma, sıfır-bilgi (E2EE) cihazlar arası bulut senkronizasyonu, Chrome eklenti desteği ve çift ekran bölünmüş görünüm sunar.",
+                "m_title": "Legend of the Three Masks",
+                "m_desc": "Itch.io üzerinde yayınlanmış 3D macera oyunu — bölümleri keşfet, antik maskeleri bul ve bulmacaları çöz. Unity ve C# ile geliştirildi.",
                 "signal_title": "Signal: Tuş Sesi Geri Bildirimi",
-                "signal_desc": "Yazdığın her tuşa gerçek zamanlı mekanik klavye ses geri bildirimi veren (15+ ses profili), modern ve akıcı arayüzlü, WPM takipli premium macOS menü çubuğu uygulaması. Native Swift ve düşük gecikmeli Core Audio ile geliştirildi.",
+                "signal_desc": "Yazdığın her tuşa gerçek zamanlı mekanik klavye ses geri bildirimi veren (15+ ses profili), akıcı modern arayüzlü ve WPM takipli macOS menü çubuğu uygulaması. Native Swift ve Core Audio ile geliştirildi.",
                 "aether_title": "Aether Command: Hareket Denetleyici",
-                "aether_desc": "Mac kamerasını kullanarak sistemi el hareketleriyle (Pinch, Fist, Swipes) yönetmeni sağlayan native macOS uygulaması. Güç tasarruflu izleme motoru ve modern görsel arayüze sahiptir.",
-                "arcade_engine_title": "Zero-Ads Arcade Engine",
-                "arcade_engine_desc": "Herhangi bir web uygulamasına reklamsız oyunlar gömmek için geliştirilmiş hafif, açık kaynaklı (MIT) TypeScript motoru. Entegre gamepad desteği, dokunmatik sanal denetleyiciler (joystick/butonlar), kalıcı oturum analitikleri, ses yönetimi ve iframe güvenlik katmanına sahiptir (50KB altı boyut)."
+                "aether_desc": "Mac kamerasını kullanarak sistemi el hareketleriyle (Pinch, Fist, Swipes) yönetmeni sağlayan native macOS uygulaması. Düşük güç tüketimli görüntü işleme motoru ve modern masaüstü arayüzüne sahiptir.",
+                "badge_released": "YAYINDA",
+                "badge_open_source": "AÇIK KAYNAK"
             }
         }
     }

@@ -140,9 +140,14 @@ export default function NovaBrowserCard() {
                   v1.4.4
                 </span>
               </div>
-              <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                Electron · React 18 · TypeScript · Vite · WebGPU · MCP Server (Port 3020)
-              </span>
+              <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.4rem' }}>
+                <span className="tech-tag">Electron</span>
+                <span className="tech-tag">React 18</span>
+                <span className="tech-tag">TypeScript</span>
+                <span className="tech-tag">Vite</span>
+                <span className="tech-tag">WebGPU</span>
+                <span className="tech-tag">MCP Server</span>
+              </div>
             </div>
           </div>
 

@@ -392,7 +392,7 @@ export default function GitHubCommitHistory() {
                     fontWeight: 500
                   }}
                 >
-                  <strong>{hoveredDay.count > 0 ? `${hoveredDay.count} contributions` : 'No contributions'}</strong> on {formatTooltipDate(hoveredDay.date)}
+                  <strong>{hoveredDay.count > 0 ? (i18n.language === 'tr' ? `${hoveredDay.count} katkı` : `${hoveredDay.count} contributions`) : (i18n.language === 'tr' ? 'Katkı yok' : 'No contributions')}</strong> {i18n.language === 'tr' ? '— ' : 'on '}{formatTooltipDate(hoveredDay.date)}
                 </div>
               )}
 
@@ -408,7 +408,7 @@ export default function GitHubCommitHistory() {
                 </a>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <span>Less</span>
+                  <span>{i18n.language === 'tr' ? 'Daha az' : 'Less'}</span>
                   {palette.map((color, cIdx) => (
                     <span
                       key={cIdx}
@@ -421,7 +421,7 @@ export default function GitHubCommitHistory() {
                       }}
                     />
                   ))}
-                  <span>More</span>
+                  <span>{i18n.language === 'tr' ? 'Daha çok' : 'More'}</span>
                 </div>
               </div>
             </div>

@@ -897,8 +897,8 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                                 >
                                                                     <Gamepad2 size={isMobile ? 32 : 44} />
                                                                 </motion.div>
-                                                                <p style={{ fontFamily: 'var(--arcade-font-mono)', letterSpacing: '2px', fontSize: isMobile ? '0.8rem' : '0.95rem' }}>
-                                                                    INITIALIZING RUNTIME CONTAINER...
+                                                                <p style={{ letterSpacing: '0.04em', fontSize: isMobile ? '0.85rem' : '0.95rem', fontWeight: 600 }}>
+                                                                    {t('arcade_loading_game')}
                                                                 </p>
                                                             </div>
                                                         }>
