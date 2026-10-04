@@ -723,6 +723,10 @@
   font-family: var(--arcade-font-heading);
   color: var(--arcade-text-primary);
   letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 320px;
 }
 
 .arcade-player-record-pill {
@@ -1026,5 +1030,17 @@
   }
   .arcade-podium-grid {
     grid-template-columns: 1fr;
+  }
+  .arcade-player-dock {
+    padding: 0.5rem 0.65rem;
+    gap: 0.5rem;
+    border-radius: 12px;
+  }
+  .arcade-player-title {
+    font-size: 0.95rem;
+    max-width: 140px;
+  }
+  .arcade-player-record-pill {
+    display: none;
   }
 }

@@ -724,7 +724,7 @@ function App() {
               <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="btn-outline">
                 <Linkedin size={18} /> LinkedIn
               </a>
-              <a href="mailto:contact@example.com" className="btn-outline">
+              <a href="mailto:sgoktug34@gmail.com" className="btn-outline">
                 <Mail size={18} /> Email
               </a>
             </div>

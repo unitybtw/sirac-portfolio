@@ -107,6 +107,29 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
         setActiveGameId(null);
     }, [setActiveGameId]);
 
+    // ESC tuşu ile oyundan kütüphaneye veya modal dışına çıkış
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                if (document.fullscreenElement || document.webkitFullscreenElement) {
+                    return; // Tam ekran çıkışını tarayıcı yönetsin
+                }
+                if (activeGameId) {
+                    handleExitActiveGame();
+                } else if (showScoreboard) {
+                    setShowScoreboard(false);
+                } else {
+                    setIsOpen(false);
+                }
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [isOpen, activeGameId, showScoreboard, handleExitActiveGame, setIsOpen]);
+
     // Aktif oyunu yeniden başlat
     const handleRestartGame = useCallback(() => {
         playClick();
@@ -269,13 +292,13 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
 
     // Öne çıkan oyunlar (Portal kartında rozet olarak gösterilir)
     const featuredHighlights = [
-        { title: 'Minecraft 1.5.2', color: '#55aa55' },
-        { title: 'CS:GO Web', color: '#ffd700' },
-        { title: 'GTA Vice City', color: '#ff66b2' },
-        { title: 'Quake III', color: '#ffcc00' },
-        { title: 'Mario 64', color: '#ffaa00' },
-        { title: 'Subway Surfers', color: '#00ffcc' },
-        { title: 'DOOM', color: '#ff0033' },
+        { id: 'minecraft_classic', title: 'Minecraft 1.5.2', color: '#55aa55' },
+        { id: 'cs16', title: 'CS:GO Web', color: '#ffd700' },
+        { id: 'gtavicecity', title: 'GTA Vice City', color: '#ff66b2' },
+        { id: 'quake3', title: 'Quake III', color: '#ffcc00' },
+        { id: 'mario64', title: 'Mario 64', color: '#ffaa00' },
+        { id: 'subway', title: 'Subway Surfers', color: '#00ffcc' },
+        { id: 'doom', title: 'DOOM', color: '#ff0033' },
     ];
 
     return (
@@ -312,7 +335,21 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                     {/* Öne Çıkan Oyun Çipleri */}
                     <div className="arcade-portal-chips">
                         {featuredHighlights.map((feat, i) => (
-                            <span key={i} className="arcade-portal-chip">
+                            <span
+                                key={i}
+                                className="arcade-portal-chip"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setIsOpen(true);
+                                    playArcadeOpen();
+                                    if (feat.id) {
+                                        setActiveGameId(feat.id);
+                                        setGameReloadKey((prev) => prev + 1);
+                                    }
+                                }}
+                                style={{ cursor: 'pointer' }}
+                                title={`${feat.title} - ${t('arcade_play')}`}
+                            >
                                 <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: feat.color }} />
                                 {feat.title}
                             </span>
@@ -756,7 +793,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                     })}
                                                 </div>
                                             </div>
-                                        ) : (
+                                        ) : activeGame ? (
                                             /* ── D: AKTİF OYUN OYNAMA EKRANI (Player View) ── */
                                             <motion.div
                                                 key={`active-${activeGame.id}`}
@@ -811,16 +848,6 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                         >
                                                             {isFullscreen ? <Minimize size={14} /> : <Maximize size={14} />}
                                                             {!isMobile && <span>{isFullscreen ? t('arcade_minimize') : t('arcade_fullscreen')}</span>}
-                                                        </button>
-
-                                                        <button
-                                                            type="button"
-                                                            onClick={handleExitActiveGame}
-                                                            onMouseEnter={playHover}
-                                                            className="arcade-action-btn"
-                                                            title={t('arcade_exit')}
-                                                        >
-                                                            <X size={14} />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -885,6 +912,18 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                     </div>
                                                 </div>
                                             </motion.div>
+                                        ) : (
+                                            <div style={{ textAlign: 'center', padding: '4rem 1rem', color: 'var(--arcade-text-muted)' }}>
+                                                <p style={{ fontSize: '1rem', fontWeight: 600 }}>{t('arcade_no_games')}</p>
+                                                <button
+                                                    type="button"
+                                                    className="arcade-action-btn"
+                                                    onClick={handleExitActiveGame}
+                                                    style={{ marginTop: '1rem' }}
+                                                >
+                                                    <ChevronLeft size={16} /> {t('arcade_back_to_library')}
+                                                </button>
+                                            </div>
                                         )}
                                     </AnimatePresence>
                                 </div>
