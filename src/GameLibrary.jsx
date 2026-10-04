@@ -30,6 +30,245 @@ import './arcade.css';
 import { playClick, playHover, playSuccess, playArcadeOpen } from './soundEffects';
 import { gamesList, categoryLabels, getGameCategory, RANDOM_PREFIXES, RANDOM_SUFFIXES } from './gamesData';
 
+// ── Minimalist Vector Arcade & Retro Controller Visualizer ─────────────────
+function RetroArcadeVisualizer() {
+    return (
+        <div className="retro-arcade-scene">
+            <svg
+                viewBox="0 0 420 300"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="retro-arcade-svg"
+                aria-hidden="true"
+            >
+                <defs>
+                    {/* Subtle Ambient Backlight Glow */}
+                    <radialGradient id="arcCoreGlow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stopColor="var(--arcade-accent, #38bdf8)" stopOpacity="0.18" />
+                        <stop offset="60%" stopColor="var(--arcade-accent, #38bdf8)" stopOpacity="0.04" />
+                        <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+                    </radialGradient>
+
+                    {/* CRT Screen Gradient */}
+                    <linearGradient id="crtScreenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="rgba(15, 23, 42, 0.95)" />
+                        <stop offset="100%" stopColor="rgba(2, 6, 23, 0.98)" />
+                    </linearGradient>
+
+                    {/* Spectrum Bar Gradients */}
+                    <linearGradient id="barGrad1" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop offset="0%" stopColor="#38bdf8" />
+                        <stop offset="100%" stopColor="#818cf8" />
+                    </linearGradient>
+                    <linearGradient id="barGrad2" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop offset="0%" stopColor="#818cf8" />
+                        <stop offset="100%" stopColor="#c084fc" />
+                    </linearGradient>
+
+                    {/* Signal Circuit Gradient */}
+                    <linearGradient id="traceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="var(--arcade-accent, #38bdf8)" stopOpacity="0.8" />
+                        <stop offset="50%" stopColor="#818cf8" stopOpacity="0.6" />
+                        <stop offset="100%" stopColor="var(--arcade-accent, #38bdf8)" stopOpacity="0.2" />
+                    </linearGradient>
+
+                    {/* CRT Scanline Pattern */}
+                    <pattern id="scanlines" width="100" height="4" patternUnits="userSpaceOnUse">
+                        <line x1="0" y1="0" x2="100" y2="0" stroke="rgba(255, 255, 255, 0.04)" strokeWidth="1" />
+                    </pattern>
+                </defs>
+
+                {/* Ambient Core Glow */}
+                <circle cx="210" cy="150" r="140" fill="url(#arcCoreGlow)" />
+
+                {/* Floating Geometric Particles (Retro Dust / Stars) */}
+                <g className="arcade-floating-stars">
+                    <path d="M 60 70 L 63 76 L 69 79 L 63 82 L 60 88 L 57 82 L 51 79 L 57 76 Z" fill="currentColor" opacity="0.2" />
+                    <path d="M 360 65 L 362 70 L 367 72 L 362 74 L 360 79 L 358 74 L 353 72 L 358 70 Z" fill="var(--arcade-accent, #38bdf8)" opacity="0.35" />
+                    <path d="M 375 235 L 377 239 L 381 241 L 377 243 L 375 247 L 373 243 L 369 241 L 373 239 Z" fill="currentColor" opacity="0.2" />
+                    <path d="M 50 220 L 52 224 L 56 226 L 52 228 L 50 232 L 48 228 L 44 226 L 48 224 Z" fill="var(--arcade-accent, #38bdf8)" opacity="0.3" />
+                    <path d="M 85 140 H 91 M 88 137 V 143" stroke="currentColor" strokeOpacity="0.2" strokeWidth="1.2" />
+                    <path d="M 330 180 H 336 M 333 177 V 183" stroke="currentColor" strokeOpacity="0.2" strokeWidth="1.2" />
+                </g>
+
+                {/* ── Controller Body Chassis ── */}
+                <g className="arcade-controller-chassis">
+                    {/* Shadow Grounding */}
+                    <ellipse cx="210" cy="245" rx="145" ry="14" fill="rgba(0, 0, 0, 0.12)" />
+
+                    {/* Controller Outer Bevel Contour */}
+                    <path
+                        d="M 125,72 C 160,66 260,66 295,72 C 335,80 365,115 365,160 C 365,215 342,248 305,248 C 278,248 260,222 248,198 C 238,180 222,176 210,176 C 198,176 182,180 172,198 C 160,222 142,248 115,248 C 78,248 55,215 55,160 C 55,115 85,80 125,72 Z"
+                        fill="var(--bg-card, #ffffff)"
+                        stroke="var(--border-subtle, rgba(0, 0, 0, 0.12))"
+                        strokeWidth="1.75"
+                        className="controller-outer-shell"
+                    />
+
+                    {/* Grip Inset Contours */}
+                    <path
+                        d="M 82,125 C 76,145 76,180 95,212 C 105,228 116,232 125,225"
+                        stroke="currentColor"
+                        strokeOpacity="0.12"
+                        strokeWidth="1.5"
+                        fill="none"
+                        strokeLinecap="round"
+                    />
+                    <path
+                        d="M 338,125 C 344,145 344,180 325,212 C 315,228 304,232 295,225"
+                        stroke="currentColor"
+                        strokeOpacity="0.12"
+                        strokeWidth="1.5"
+                        fill="none"
+                        strokeLinecap="round"
+                    />
+
+                    {/* Top Bumpers L / R */}
+                    <path d="M 105,62 C 122,54 150,54 165,56" stroke="currentColor" strokeOpacity="0.25" strokeWidth="2" strokeLinecap="round" fill="none" />
+                    <path d="M 315,62 C 298,54 270,54 255,56" stroke="currentColor" strokeOpacity="0.25" strokeWidth="2" strokeLinecap="round" fill="none" />
+
+                    {/* ── Flowing Animated PCB Circuit Signal Traces ── */}
+                    <g className="arcade-traces">
+                        {/* Left trace: screen to D-pad */}
+                        <path
+                            d="M 160,116 L 138,116 L 126,128 L 112,128"
+                            stroke="url(#traceGrad)"
+                            strokeWidth="1.75"
+                            strokeLinecap="round"
+                            strokeDasharray="4 6"
+                            className="arcade-circuit-line"
+                            fill="none"
+                        />
+                        {/* Right trace: screen to ABXY */}
+                        <path
+                            d="M 260,116 L 282,116 L 294,128 L 308,128"
+                            stroke="url(#traceGrad)"
+                            strokeWidth="1.75"
+                            strokeLinecap="round"
+                            strokeDasharray="4 6"
+                            className="arcade-circuit-line reverse"
+                            fill="none"
+                        />
+                        {/* Top trace to controller heart */}
+                        <path
+                            d="M 210,68 V 82"
+                            stroke="url(#traceGrad)"
+                            strokeWidth="1.5"
+                            strokeDasharray="3 5"
+                            className="arcade-circuit-line"
+                            fill="none"
+                        />
+                    </g>
+
+                    {/* ── Central CRT / OLED Cyber Screen ── */}
+                    <g className="arcade-screen-group">
+                        <rect
+                            x="154"
+                            y="84"
+                            width="112"
+                            height="72"
+                            rx="10"
+                            fill="url(#crtScreenGrad)"
+                            stroke="rgba(255, 255, 255, 0.14)"
+                            strokeWidth="1.5"
+                        />
+                        <rect
+                            x="154"
+                            y="84"
+                            width="112"
+                            height="72"
+                            rx="10"
+                            fill="url(#scanlines)"
+                            pointerEvents="none"
+                        />
+
+                        {/* Retro 8-bit Vector Equalizer */}
+                        <g className="arcade-equalizer">
+                            <rect className="eq-bar eq-bar-1" x="166" y="122" width="6" height="18" rx="2" fill="url(#barGrad1)" />
+                            <rect className="eq-bar eq-bar-2" x="176" y="112" width="6" height="28" rx="2" fill="url(#barGrad1)" />
+                            <rect className="eq-bar eq-bar-3" x="186" y="106" width="6" height="34" rx="2" fill="url(#barGrad1)" />
+                            <rect className="eq-bar eq-bar-4" x="196" y="116" width="6" height="24" rx="2" fill="url(#barGrad2)" />
+                            <rect className="eq-bar eq-bar-5" x="206" y="100" width="6" height="40" rx="2" fill="url(#barGrad2)" />
+                            <rect className="eq-bar eq-bar-6" x="216" y="114" width="6" height="26" rx="2" fill="url(#barGrad2)" />
+                            <rect className="eq-bar eq-bar-7" x="226" y="108" width="6" height="32" rx="2" fill="url(#barGrad1)" />
+                            <rect className="eq-bar eq-bar-8" x="236" y="118" width="6" height="22" rx="2" fill="url(#barGrad1)" />
+                            <rect className="eq-bar eq-bar-9" x="246" y="124" width="6" height="16" rx="2" fill="url(#barGrad1)" />
+                        </g>
+
+                        {/* Flying Mini Vector Ship */}
+                        <g className="arcade-vector-ship">
+                            <polygon points="210,95 214,103 206,103" fill="#38bdf8" />
+                            <line x1="210" y1="103" x2="210" y2="107" stroke="#38bdf8" strokeWidth="1.2" strokeLinecap="round" opacity="0.6" />
+                        </g>
+
+                        {/* Subtle Screen Live Dot */}
+                        <circle cx="164" cy="94" r="2.5" fill="#10b981" />
+                        <text x="172" y="96" fill="rgba(255,255,255,0.6)" fontSize="6" fontFamily="var(--font-mono, monospace)" fontWeight="700" letterSpacing="0.08em">WASM 60FPS</text>
+                    </g>
+
+                    {/* ── Left D-Pad (Precision Cross) ── */}
+                    <g className="arcade-dpad" transform="translate(102, 126)">
+                        <rect x="-18" y="-6" width="36" height="12" rx="3" fill="currentColor" fillOpacity="0.08" />
+                        <rect x="-6" y="-18" width="12" height="36" rx="3" fill="currentColor" fillOpacity="0.08" />
+
+                        <rect x="-16" y="-5" width="32" height="10" rx="2.5" fill="var(--bg-subtle, #18181b)" stroke="var(--border-subtle)" strokeWidth="1" />
+                        <rect x="-5" y="-16" width="10" height="32" rx="2.5" fill="var(--bg-subtle, #18181b)" stroke="var(--border-subtle)" strokeWidth="1" />
+                        
+                        <circle cx="0" cy="0" r="3" fill="currentColor" fillOpacity="0.25" />
+
+                        <path d="M 0 -11 L -2.5 -8 L 2.5 -8 Z" fill="currentColor" fillOpacity="0.4" />
+                        <path d="M 0 11 L -2.5 8 L 2.5 8 Z" fill="currentColor" fillOpacity="0.4" />
+                        <path d="M -11 0 L -8 -2.5 L -8 2.5 Z" fill="currentColor" fillOpacity="0.4" />
+                        <path d="M 11 0 L 8 -2.5 L 8 2.5 Z" fill="currentColor" fillOpacity="0.4" />
+                    </g>
+
+                    {/* ── Right Action Buttons (ABXY Diamond) ── */}
+                    <g className="arcade-abxy" transform="translate(318, 126)">
+                        <g className="arcade-btn-node arcade-btn-y" transform="translate(0, -14)">
+                            <circle cx="0" cy="0" r="7" fill="var(--bg-subtle, #18181b)" stroke="#38bdf8" strokeWidth="1.2" />
+                            <circle cx="0" cy="0" r="3" fill="#38bdf8" opacity="0.85" className="btn-glow" />
+                        </g>
+
+                        <g className="arcade-btn-node arcade-btn-x" transform="translate(-14, 0)">
+                            <circle cx="0" cy="0" r="7" fill="var(--bg-subtle, #18181b)" stroke="#a855f7" strokeWidth="1.2" />
+                            <circle cx="0" cy="0" r="3" fill="#a855f7" opacity="0.85" className="btn-glow" />
+                        </g>
+
+                        <g className="arcade-btn-node arcade-btn-b" transform="translate(14, 0)">
+                            <circle cx="0" cy="0" r="7" fill="var(--bg-subtle, #18181b)" stroke="#f59e0b" strokeWidth="1.2" />
+                            <circle cx="0" cy="0" r="3" fill="#f59e0b" opacity="0.85" className="btn-glow" />
+                        </g>
+
+                        <g className="arcade-btn-node arcade-btn-a" transform="translate(0, 14)">
+                            <circle cx="0" cy="0" r="7" fill="var(--bg-subtle, #18181b)" stroke="#10b981" strokeWidth="1.2" />
+                            <circle cx="0" cy="0" r="3" fill="#10b981" opacity="0.85" className="btn-glow" />
+                        </g>
+                    </g>
+
+                    {/* ── Analog Sticks ── */}
+                    <g className="arcade-thumbstick" transform="translate(148, 186)">
+                        <circle cx="0" cy="0" r="16" fill="currentColor" fillOpacity="0.05" stroke="var(--border-subtle)" strokeWidth="1" />
+                        <circle cx="0" cy="0" r="11" fill="var(--bg-card, #27272a)" stroke="currentColor" strokeOpacity="0.25" strokeWidth="1.2" />
+                        <circle cx="-1" cy="-1" r="5" fill="none" stroke="var(--arcade-accent, #38bdf8)" strokeOpacity="0.7" strokeWidth="1.2" />
+                    </g>
+
+                    <g className="arcade-thumbstick" transform="translate(272, 186)">
+                        <circle cx="0" cy="0" r="16" fill="currentColor" fillOpacity="0.05" stroke="var(--border-subtle)" strokeWidth="1" />
+                        <circle cx="0" cy="0" r="11" fill="var(--bg-card, #27272a)" stroke="currentColor" strokeOpacity="0.25" strokeWidth="1.2" />
+                        <circle cx="1" cy="-1" r="5" fill="none" stroke="#a855f7" strokeOpacity="0.7" strokeWidth="1.2" />
+                    </g>
+
+                    {/* Center Menu Pills */}
+                    <g className="arcade-menu-pills" transform="translate(210, 180)">
+                        <rect x="-14" y="-3" width="10" height="4" rx="2" fill="currentColor" fillOpacity="0.3" />
+                        <rect x="4" y="-3" width="10" height="4" rx="2" fill="currentColor" fillOpacity="0.3" />
+                    </g>
+                </g>
+            </svg>
+        </div>
+    );
+}
+
 const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
     const { t } = useTranslation();
     const [nickname, setNickname] = useState(() => localStorage.getItem('arcade_nickname') || '');
@@ -303,81 +542,83 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
 
     return (
         <>
-            {/* ── 1. PORTAL KARTI (Ana sayfada yer alan zarif kart) ── */}
+            {/* ── 1. PORTAL KARTI (Asimetrik Bento & Animasyonlu Vektör SVG) ── */}
             <div
-                onClick={() => { setIsOpen(true); playArcadeOpen(); }}
-                onMouseEnter={playHover}
+                onClick={() => { setIsOpen(true); }}
                 className="arcade-portal-card"
             >
                 <div className="arcade-portal-glow" />
 
-                <div style={{ position: 'relative', zIndex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-                    {/* Canlı Durum Hapı */}
-                    <div className="arcade-portal-live-badge">
-                        <span className="arcade-status-dot" />
-                        <span>{t('arcade_portal_badge')}</span>
-                    </div>
+                <div className="arcade-portal-grid">
+                    {/* Sol Kolon: Tipografi, Açıklama ve Hızlı Başlatma */}
+                    <div className="arcade-portal-content">
+                        {/* Canlı Durum Hapı */}
+                        <div className="arcade-portal-live-badge">
+                            <span className="arcade-status-dot" />
+                            <span>{t('arcade_portal_badge')}</span>
+                            <span className="arcade-badge-separator">·</span>
+                            <span className="arcade-badge-meta">WASM & WEBGL</span>
+                        </div>
 
-                    {/* İkon */}
-                    <div className="arcade-portal-icon-wrapper">
-                        <Gamepad2 size={38} color="#ffffff" />
-                    </div>
+                        {/* Başlık ve Açıklama */}
+                        <h3 className="arcade-portal-title">
+                            {t('arcade_title')}
+                        </h3>
 
-                    {/* Başlık ve Açıklama */}
-                    <h3 className="arcade-portal-title">
-                        {t('arcade_title')}
-                    </h3>
+                        <p className="arcade-portal-subtitle">
+                            {t('arcade_portal_desc')}
+                        </p>
 
-                    <p className="arcade-portal-subtitle">
-                        {t('arcade_portal_desc')}
-                    </p>
+                        {/* Öne Çıkan Oyun Çipleri (Minimalist Haplar) */}
+                        <div className="arcade-portal-chips">
+                            {featuredHighlights.map((feat, i) => (
+                                <button
+                                    key={i}
+                                    type="button"
+                                    className="arcade-portal-chip"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setIsOpen(true);
+                                        if (feat.id) {
+                                            setActiveGameId(feat.id);
+                                            setGameReloadKey((prev) => prev + 1);
+                                        }
+                                    }}
+                                    title={`${feat.title} - ${t('arcade_play')}`}
+                                >
+                                    <span className="arcade-chip-dot" />
+                                    <span>{feat.title}</span>
+                                </button>
+                            ))}
+                        </div>
 
-                    {/* Öne Çıkan Oyun Çipleri */}
-                    <div className="arcade-portal-chips">
-                        {featuredHighlights.map((feat, i) => (
-                            <span
-                                key={i}
-                                className="arcade-portal-chip"
+                        {/* Aksiyon Butonları */}
+                        <div className="arcade-portal-actions">
+                            <button
+                                type="button"
+                                className="btn-primary"
+                                onClick={(e) => { e.stopPropagation(); setIsOpen(true); }}
+                            >
+                                <Play size={16} fill="currentColor" /> {t('arcade_portal_explore')}
+                            </button>
+
+                            <button
+                                type="button"
+                                className="btn-outline"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     setIsOpen(true);
-                                    playArcadeOpen();
-                                    if (feat.id) {
-                                        setActiveGameId(feat.id);
-                                        setGameReloadKey((prev) => prev + 1);
-                                    }
+                                    handleQuickShuffle();
                                 }}
-                                style={{ cursor: 'pointer' }}
-                                title={`${feat.title} - ${t('arcade_play')}`}
                             >
-                                <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: feat.color }} />
-                                {feat.title}
-                            </span>
-                        ))}
+                                <Shuffle size={15} /> {t('arcade_portal_shuffle')}
+                            </button>
+                        </div>
                     </div>
 
-                    {/* Aksiyon Butonları */}
-                    <div className="arcade-portal-actions">
-                        <button
-                            type="button"
-                            className="arcade-cta-btn"
-                            onClick={(e) => { e.stopPropagation(); setIsOpen(true); playArcadeOpen(); }}
-                        >
-                            <Play size={16} fill="currentColor" /> {t('arcade_portal_explore')}
-                        </button>
-
-                        <button
-                            type="button"
-                            className="arcade-cta-btn secondary"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setIsOpen(true);
-                                playArcadeOpen();
-                                handleQuickShuffle();
-                            }}
-                        >
-                            <Shuffle size={15} /> {t('arcade_portal_shuffle')}
-                        </button>
+                    {/* Sağ Kolon: Animasyonlu Minimalist Vektör SVG Sahnesi */}
+                    <div className="arcade-portal-visual">
+                        <RetroArcadeVisualizer />
                     </div>
                 </div>
             </div>
