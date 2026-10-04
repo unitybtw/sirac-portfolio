@@ -6,7 +6,7 @@ import { Github, Download } from 'lucide-react';
 const SCREENSHOTS = [
   {
     id: "preview",
-    src: "assets/nova/preview.webp",
+    src: `${import.meta.env.BASE_URL}assets/nova/preview.webp`,
     titleEn: "Active Browsing & AI Sidepanel",
     titleTr: "Aktif Gezinme & Yerel Yapay Zeka Paneli",
     descEn: "Multi-tab workspaces, sandboxed Chromium webview, and integrated on-device AI sidepanel.",
@@ -14,23 +14,31 @@ const SCREENSHOTS = [
   },
   {
     id: "newtab",
-    src: "assets/nova/newtab.webp",
+    src: `${import.meta.env.BASE_URL}assets/nova/newtab.webp`,
     titleEn: "Vertical Tabs & Start Dashboard",
     titleTr: "Dikey Sekmeler & Başlangıç Panosu",
     descEn: "Vertical sidebar tab strip, omnibox quick search, customizable speed dials & task checklist.",
     descTr: "Dikey kenar çubuğu sekmeleri, çok işlevli omnibox arama, özelleştirilebilir hızlı kadranlar ve görev listesi."
   },
   {
-    id: "horizontal",
-    src: "assets/nova/horizontal-preview.webp",
+    id: "horizontal-preview",
+    src: `${import.meta.env.BASE_URL}assets/nova/horizontal-preview.webp`,
     titleEn: "Horizontal Tabs Layout",
     titleTr: "Yatay Sekmeler Düzeni",
     descEn: "Full-width viewport, Chrome-style horizontal tab strip, and floating AI assistant.",
     descTr: "Tam genişlikte tarama alanı, Chrome tarzı yatay sekme şeridi ve kayan yapay zeka asistanı."
   },
   {
+    id: "horizontal-newtab",
+    src: `${import.meta.env.BASE_URL}assets/nova/horizontal-newtab.webp`,
+    titleEn: "Horizontal Start Hub & Widgets",
+    titleTr: "Yatay Başlangıç Panosu & Widget'lar",
+    descEn: "Clean horizontal start hub with dynamic search, instant shortcuts, and clock widget.",
+    descTr: "Dinamik arama, hızlı kısayollar ve saat widget'ı içeren temiz yatay başlangıç panosu."
+  },
+  {
     id: "sync",
-    src: "assets/nova/sync.webp",
+    src: `${import.meta.env.BASE_URL}assets/nova/sync.webp`,
     titleEn: "Zero-Knowledge Cloud Sync",
     titleTr: "Sıfır-Bilgi Bulut Senkronizasyonu",
     descEn: "1-Click multi-device pairing code (AES-256-GCM + PBKDF2) with realtime WebSocket sync.",
@@ -44,14 +52,14 @@ export default function NovaBrowserCard() {
   const cardRef = useRef(null);
   const frameRef = useRef(null);
   const visibleRef = useRef(true);
+  const isHoveredRef = useRef(false);
   // Foto kutusu kapalı şerit halinde başlar, ekrana gelince açılır
   const [opened, setOpened] = useState(false);
 
   const activePhoto = SCREENSHOTS[activeIdx];
   const isTr = i18n.language === 'tr';
 
-  // Slayt: sadece kart ekrandayken + sekme odaktayken dön.
-  // Ekran dışındayken setInterval çalışmaya devam edip 120Hz scroll'u bölmesin.
+  // Slayt: sadece kart ekrandayken + sekme odaktayken ve hover yokken dön.
   useEffect(() => {
     const el = cardRef.current;
     if (el) {
@@ -63,20 +71,17 @@ export default function NovaBrowserCard() {
       visibleRef.current = true;
       var cleanupIO = () => io.disconnect();
     }
-    const onVis = () => { /* document.hidden timer içinde kontrol ediliyor */ };
-    document.addEventListener('visibilitychange', onVis);
     const timer = setInterval(() => {
-      if (!visibleRef.current || document.hidden) return;
+      if (!visibleRef.current || document.hidden || isHoveredRef.current) return;
       setActiveIdx((prev) => (prev + 1) % SCREENSHOTS.length);
-    }, 3800);
-    return () => { clearInterval(timer); document.removeEventListener('visibilitychange', onVis); if (cleanupIO) cleanupIO(); };
+    }, 4000);
+    return () => { clearInterval(timer); if (cleanupIO) cleanupIO(); };
   }, []);
 
   // Kutu açılma tetikleyici: şerit ekrana girince bir kez aç
   useEffect(() => {
     const el = frameRef.current;
     if (!el) return;
-    // Hareket hassasiyeti varsa animasyonsuz direkt aç
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
       setOpened(true);
       return;
@@ -93,6 +98,7 @@ export default function NovaBrowserCard() {
     io.observe(el);
     return () => io.disconnect();
   }, []);
+
   // Komşu görseli önceden indir: geçiş anında decode takılması olmasın
   useEffect(() => {
     const next = SCREENSHOTS[(activeIdx + 1) % SCREENSHOTS.length];
@@ -109,25 +115,26 @@ export default function NovaBrowserCard() {
           {/* Logo & Title */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.6rem' }}>
             <img
-              src="assets/nova/logo.webp"
+              src={`${import.meta.env.BASE_URL}assets/nova/logo.svg`}
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = `${import.meta.env.BASE_URL}assets/nova/logo.webp`;
+              }}
               alt="Nova Browser Logo"
               loading="lazy"
               decoding="async"
-              width={52}
-              height={52}
+              width={54}
+              height={54}
               style={{
-                width: '52px',
-                height: '52px',
-                minWidth: '52px',
+                width: '54px',
+                height: '54px',
+                minWidth: '54px',
                 objectFit: 'contain',
                 display: 'block',
                 background: 'transparent',
-                // PNG'nin kendi squircle formu var; ekstra CSS border/radius
-                // üstüne binince dışarı taşan sahte bir katman gibi görünüyordu.
-                // Bu yüzden çerçeveyi kaldırıp sadece yumuşak gölge bıraktık.
                 border: 'none',
-                borderRadius: 0,
-                boxShadow: '0 2px 10px rgba(0,0,0,0.10)'
+                filter: 'drop-shadow(0 4px 14px rgba(0, 0, 0, 0.22))',
+                userSelect: 'none'
               }} 
             />
             <div>
@@ -137,7 +144,7 @@ export default function NovaBrowserCard() {
                 </h3>
                 <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', padding: '0.15rem 0.6rem', borderRadius: '100px', background: 'var(--border-subtle)', fontSize: '0.75rem', fontWeight: 600 }}>
                   <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
-                  v1.4.4
+                  v1.5.0
                 </span>
               </div>
               <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.4rem' }}>
@@ -189,6 +196,8 @@ export default function NovaBrowserCard() {
           open: { opacity: 1, scale: 1, y: 0 },
         }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        onMouseEnter={() => { isHoveredRef.current = true; }}
+        onMouseLeave={() => { isHoveredRef.current = false; }}
         style={{
           position: 'relative',
           borderRadius: '16px',
@@ -270,17 +279,35 @@ export default function NovaBrowserCard() {
             </AnimatePresence>
           </div>
 
-          {/* Discreet status indicators (automated, non-clickable) */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', flexShrink: 0 }}>
-            {SCREENSHOTS.map((_, i) => (
-              <span
-                key={i}
+          {/* Interactive slide indicators */}
+          <div 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.45rem', 
+              flexShrink: 0,
+              pointerEvents: 'auto' 
+            }}
+          >
+            {SCREENSHOTS.map((s, i) => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveIdx(i);
+                }}
+                title={isTr ? s.titleTr : s.titleEn}
+                aria-label={`Go to slide ${i + 1}`}
                 style={{
-                  width: i === activeIdx ? '18px' : '6px',
-                  height: '6px',
-                  borderRadius: '3px',
-                  background: i === activeIdx ? '#ffffff' : 'rgba(255,255,255,0.3)',
-                  transition: 'all 0.35s ease'
+                  width: i === activeIdx ? '22px' : '7px',
+                  height: '7px',
+                  padding: 0,
+                  border: 'none',
+                  borderRadius: '4px',
+                  background: i === activeIdx ? '#38bdf8' : 'rgba(255,255,255,0.35)',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
                 }}
               />
             ))}
