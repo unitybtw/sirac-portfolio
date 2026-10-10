@@ -503,7 +503,7 @@ section {
   transform: scale(0.95);
 }
 
-/* Right Column: Studio Portrait Bento Card */
+/* Right Column: Developer Engine & Code Inspector Bento Card */
 .hero-right-column {
   display: flex;
   justify-content: center;
@@ -511,80 +511,189 @@ section {
   width: 100%;
 }
 
-.hero-portrait-card {
+.hero-socials-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hero-engine-card {
   position: relative;
   width: 100%;
-  max-width: 390px;
-  aspect-ratio: 3 / 4;
-  border-radius: 28px;
-  overflow: hidden;
+  max-width: 440px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.09);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.08);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
   will-change: transform;
-}
-
-.hero-portrait-card:hover {
-  transform: translateY(-6px);
-  border-color: var(--text-secondary);
-  box-shadow: 0 28px 64px rgba(0, 0, 0, 0.15);
-}
-
-.hero-portrait-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 15%;
-  display: block;
-  user-select: none;
-  -webkit-user-drag: none;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.hero-portrait-card:hover .hero-portrait-img {
-  transform: scale(1.03);
-}
-
-.hero-portrait-scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 65%, rgba(0, 0, 0, 0.65) 100%);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.hero-portrait-overlay {
-  position: absolute;
-  bottom: 1.25rem;
-  left: 1.25rem;
-  right: 1.25rem;
-  z-index: 2;
-  padding: 0.85rem 1.15rem;
-  border-radius: 16px;
-  background: rgba(15, 23, 42, 0.72);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #ffffff;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
-  text-align: left;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
 
-.hero-portrait-name {
-  font-size: 1.05rem;
-  font-weight: 700;
+.hero-engine-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--text-secondary);
+  box-shadow: 0 28px 64px rgba(0, 0, 0, 0.14);
+}
+
+.engine-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: rgba(125, 125, 125, 0.04);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.engine-window-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.window-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-close { background: #ef4444; }
+.dot-min   { background: #f59e0b; }
+.dot-max   { background: #10b981; }
+
+.engine-tab-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
   letter-spacing: -0.01em;
-  color: #ffffff;
 }
 
-.hero-portrait-role {
-  font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.8);
+.engine-tab-icon {
+  color: var(--accent-cta);
+}
+
+.engine-live-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  padding: 2px 7px;
+  border-radius: 100px;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.engine-viewport-scene {
+  position: relative;
+  width: 100%;
+  background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.06) 0%, transparent 75%);
+  padding: 1.25rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.engine-vector-svg {
+  width: 100%;
+  height: auto;
+  max-height: 240px;
+  color: var(--text-primary);
+  display: block;
+}
+
+.engine-polytope-mesh {
+  transform-origin: 170px 110px;
+  animation: engine-polytope-float 6s ease-in-out infinite alternate;
+}
+
+@keyframes engine-polytope-float {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(2deg);
+  }
+  100% {
+    transform: translateY(3px) rotate(-2deg);
+  }
+}
+
+.engine-floating-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.85rem;
+  width: 100%;
+}
+
+.engine-badge-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0.3rem 0.65rem;
+  border-radius: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.engine-badge-tag:hover {
+  transform: translateY(-2px);
+  border-color: var(--text-secondary);
+}
+
+.engine-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.15rem;
+  border-top: 1px solid var(--border-subtle);
+  background: rgba(125, 125, 125, 0.03);
+}
+
+.engine-footer-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.engine-footer-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.engine-footer-role {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
   font-weight: 500;
+}
+
+.engine-footer-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
 }
 
 /* ── Large-Format 1-Bit Dot-Matrix Mario Corner Runner ── */
@@ -670,8 +779,8 @@ section {
     gap: 2.25rem;
     padding: 0 1.25rem;
   }
-  .hero-portrait-card {
-    max-width: 290px;
+  .hero-engine-card {
+    max-width: 380px;
     margin: 0 auto;
   }
   .hero-corner-mario-anchor {
@@ -693,33 +802,66 @@ section {
 @media (max-width: 600px) {
   .hero-layout-grid {
     padding: 0 0.5rem;
-    gap: 1.75rem;
+    gap: 1.5rem;
   }
   .hero-main-title {
-    font-size: clamp(1.85rem, 6.5vw, 2.35rem);
-    line-height: 1.15;
+    font-size: clamp(1.6rem, 6.2vw, 2.15rem);
+    line-height: 1.18;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
   .hero-tagline-text {
     font-size: 0.95rem;
+    line-height: 1.55;
   }
   .hero-actions-row {
     width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
   }
   .hero-actions-row .btn-primary,
   .hero-actions-row .btn-outline {
-    flex: 1;
+    flex: 1 1 calc(50% - 0.4rem);
+    min-width: 130px;
     justify-content: center;
+    padding: 0.75rem 1rem;
+    font-size: 0.88rem;
   }
   .hero-social-divider {
     display: none;
+  }
+  .hero-socials-group {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 0.25rem;
   }
   .hero-status-pill .live-status-chip {
     font-size: 0.72rem;
     padding: 0.28rem 0.65rem;
   }
-  .hero-portrait-card {
-    max-width: 260px;
-    border-radius: 20px;
+  .hero-engine-card {
+    max-width: 100%;
+    border-radius: 18px;
+  }
+  .engine-viewport-scene {
+    padding: 1rem 0.75rem 0.85rem;
+  }
+  .engine-floating-tags {
+    gap: 0.35rem;
+  }
+  .engine-badge-tag {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .hero-actions-row .btn-primary,
+  .hero-actions-row .btn-outline {
+    flex: 1 1 100%;
   }
 }
 

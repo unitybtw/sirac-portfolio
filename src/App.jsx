@@ -7,6 +7,7 @@ import './index.css';
 import { LINKEDIN_URL } from './i18n';
 import { SlideNavbar } from './components/ui/slide-tabs';
 import PixelMarioRunner from './components/PixelMarioRunner';
+import DeveloperEngineCard from './components/DeveloperEngineCard';
 
 // Ekranın altında kalan ağır bileşenler: ilk paint'i bloklamasın,
 // main thread boş kalsın ki scroll 120Hz'de takılmasın.
@@ -385,59 +386,39 @@ function App() {
                     <Download size={17} /> {t('btn_view_cv')}
                   </a>
                   <div className="hero-social-divider" />
-                  <a
-                    href="https://github.com/unitybtw"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hero-social-btn"
-                    title="GitHub"
-                    aria-label="GitHub"
-                  >
-                    <Github size={18} />
-                  </a>
-                  <a
-                    href={LINKEDIN_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hero-social-btn"
-                    title="LinkedIn"
-                    aria-label="LinkedIn"
-                  >
-                    <Linkedin size={18} />
-                  </a>
+                  <div className="hero-socials-group">
+                    <a
+                      href="https://github.com/unitybtw"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hero-social-btn"
+                      title="GitHub"
+                      aria-label="GitHub"
+                    >
+                      <Github size={18} />
+                    </a>
+                    <a
+                      href={LINKEDIN_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hero-social-btn"
+                      title="LinkedIn"
+                      aria-label="LinkedIn"
+                    >
+                      <Linkedin size={18} />
+                    </a>
+                  </div>
                 </motion.div>
               </motion.div>
 
-              {/* Right Column: Professional Portrait Showcase */}
+              {/* Right Column: Game Developer Engine & Code Inspector Bento */}
               <motion.div
                 className="hero-right-column"
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
               >
-                <div className="hero-portrait-card">
-                  <img
-                    src={`${import.meta.env.BASE_URL}sirac_portrait.jpg`}
-                    alt="Sıraç Göktuğ Şimşek"
-                    className="hero-portrait-img"
-                    loading="eager"
-                    fetchPriority="high"
-                    decoding="async"
-                    width="390"
-                    height="520"
-                  />
-                  <div className="hero-portrait-scrim" />
-
-                  {/* Floating Glass Meta Overlay */}
-                  <div className="hero-portrait-overlay">
-                    <div className="hero-portrait-name">
-                      Sıraç Göktuğ Şimşek
-                    </div>
-                    <div className="hero-portrait-role">
-                      {t('hero_title')}
-                    </div>
-                  </div>
-                </div>
+                <DeveloperEngineCard />
               </motion.div>
             </div>
           </div>
