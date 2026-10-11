@@ -223,6 +223,8 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
     { id: "contact", href: "#contact", label: lang === "tr" ? "İletişim" : "Contact", icon: <Mail size={14} /> },
   ];
 
+  const mobileTabs = tabs.filter(t => t.id !== "arcade");
+
   return (
     <>
       {/* ── Desktop Floating Dock (>= 769px) ── */}
@@ -428,7 +430,7 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
 
               <nav className="mobile-drawer-nav">
                 <ul className="mobile-drawer-list">
-                  {tabs.map((tab, idx) => {
+                  {mobileTabs.map((tab, idx) => {
                     const isActive = activeSection === tab.id;
                     return (
                       <motion.li

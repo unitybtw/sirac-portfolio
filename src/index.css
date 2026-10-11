@@ -2246,13 +2246,163 @@ section:not(#hero) {
   transform: scale(0.985);
 }
 
-/* ── Responsive Breakpoints ── */
+/* ── Mobile Responsive Optimizations (< 768px) ── */
 @media (max-width: 768px) {
+  /* Navbar */
   .slide-navbar-root {
     display: none !important;
   }
   .mobile-nav-header {
     display: flex;
+  }
+
+  /* 1. Hide Desktop-Only & Touch-Incompatible Elements on Mobile */
+  section#arcade {
+    display: none !important;
+  }
+  .hero-corner-mario-anchor {
+    display: none !important;
+  }
+  .hero-right-column {
+    display: none !important;
+  }
+
+  /* 2. Hero Section Mobile Layout & Rhythm */
+  .hero-section {
+    min-height: auto !important;
+    padding-top: calc(56px + 2rem) !important;
+    padding-bottom: 2.5rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .hero-parallax-content {
+    width: 100% !important;
+  }
+
+  .hero-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+    padding: 0 1rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .hero-left-column {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+  }
+
+  .hero-status-pill {
+    margin-bottom: 0.85rem !important;
+  }
+
+  .hero-main-title {
+    font-size: clamp(2rem, 7.8vw, 2.5rem) !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.03em !important;
+    margin-bottom: 0.85rem !important;
+    word-break: break-word !important;
+  }
+
+  .hero-tagline-text {
+    font-size: 0.98rem !important;
+    line-height: 1.6 !important;
+    color: var(--text-secondary) !important;
+    margin-bottom: 1.25rem !important;
+  }
+
+  .hero-tech-tags {
+    margin-bottom: 1.35rem !important;
+  }
+
+  /* Symmetric, tactile 44px+ mobile touch buttons */
+  .hero-actions-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.65rem !important;
+    width: 100% !important;
+    margin-top: 0.35rem !important;
+  }
+
+  .hero-actions-row .btn-primary {
+    grid-column: span 1 !important;
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 0.85rem 0.75rem !important;
+    font-size: 0.88rem !important;
+    white-space: nowrap !important;
+  }
+
+  .hero-actions-row .btn-outline {
+    grid-column: span 1 !important;
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 0.85rem 0.75rem !important;
+    font-size: 0.88rem !important;
+    white-space: nowrap !important;
+  }
+
+  .hero-social-divider {
+    display: none !important;
+  }
+
+  .hero-socials-group {
+    grid-column: span 2 !important;
+    display: flex !important;
+    justify-content: center !important;
+    gap: 0.75rem !important;
+    width: 100% !important;
+    margin-top: 0.25rem !important;
+  }
+
+  .hero-social-btn {
+    flex: 1 !important;
+    max-width: 140px !important;
+    height: 44px !important;
+  }
+
+  /* 3. Global Section Spacing & Gutters */
+  section {
+    padding-top: 3.25rem !important;
+  }
+
+  .section-subtitle {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .app-container {
+    padding: 0 1rem !important;
+    padding-bottom: 3rem !important;
+  }
+
+  .bento-card {
+    padding: 1.25rem 1rem !important;
+  }
+
+  .bento-grid {
+    gap: 1rem !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero-actions-row {
+    grid-template-columns: 1fr !important;
+  }
+  .hero-actions-row .btn-primary,
+  .hero-actions-row .btn-outline {
+    grid-column: span 1 !important;
+  }
+  .hero-socials-group {
+    grid-column: span 1 !important;
+  }
+  .hero-social-btn {
+    max-width: 100% !important;
   }
 }
 

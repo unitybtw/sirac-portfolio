@@ -75,7 +75,7 @@ export default function CaseStudiesSection() {
             'Leveraged Universal Render Pipeline (URP) with material property blocks and GPU instancing across modular 3D environment meshes.',
             'Architected a zero-overhead web sandbox for 23 genuine retro ports and WebGL titles running at native browser speeds without ad telemetry.'
           ],
-      link: '#arcade'
+      link: 'https://github.com/unitybtw'
     },
     {
       id: 'native-tooling',
