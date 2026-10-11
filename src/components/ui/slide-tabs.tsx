@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Home, User, FolderGit2, Activity, Gamepad2, Mail, Sun, Moon, Download } from "lucide-react";
+import { Home, User, FolderGit2, Activity, Gamepad2, Mail, Sun, Moon, Download, Menu, X } from "lucide-react";
 
 export interface TabItem {
   id: string;
@@ -191,6 +191,29 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
   lang = "tr",
   onToggleLang,
 }) => {
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Close mobile drawer on escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
   const tabs: TabItem[] = [
     { id: "hero", href: "#hero", label: lang === "tr" ? "Giriş" : "Home", icon: <Home size={14} /> },
     { id: "about", href: "#about", label: lang === "tr" ? "Hakkımda" : "About", icon: <User size={14} /> },
@@ -201,116 +224,251 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
   ];
 
   return (
-    <motion.header
-      className="slide-navbar-root"
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 240, damping: 24, delay: 0.08 }}
-      aria-label="Primary Navigation"
-    >
-      <div className="slide-navbar-dock">
-        {/* Orta Kayar Sekmeler (SlideTabs) */}
-        <SlideTabs items={tabs} activeId={activeSection} />
+    <>
+      {/* ── Desktop Floating Dock (>= 769px) ── */}
+      <motion.header
+        className="slide-navbar-root"
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 240, damping: 24, delay: 0.08 }}
+        aria-label="Primary Navigation"
+      >
+        <div className="slide-navbar-dock">
+          {/* Orta Kayar Sekmeler (SlideTabs) */}
+          <SlideTabs items={tabs} activeId={activeSection} />
 
-        {/* Sağ Hızlı Butonlar: 3 Hızlı Buton (TR/EN, Tema, CV): Soldan Sağa Akıcı Geliş */}
-        <motion.div
-          className="slide-controls-cluster"
-          initial="hidden"
-          animate="visible"
-          variants={{
-            hidden: { opacity: 0 },
-            visible: {
-              opacity: 1,
-              transition: {
-                staggerChildren: 0.08,
-                delayChildren: 0.15,
-              },
-            },
-          }}
-        >
-          {/* 1. Yuvarlak Dil Butonu (TR / EN) */}
-          {onToggleLang && (
-            <motion.button
-              variants={{
-                hidden: { opacity: 0, x: -16, scale: 0.8 },
-                visible: {
-                  opacity: 1,
-                  x: 0,
-                  scale: 1,
-                  transition: { type: "spring", stiffness: 400, damping: 25 },
-                },
-              }}
-              whileHover={{ scale: 1.12 }}
-              whileTap={{ scale: 0.92 }}
-              onClick={onToggleLang}
-              className="slide-circle-btn"
-              title={lang === "tr" ? "Switch to English" : "Türkçe'ye Geç"}
-              aria-label="Toggle language"
-              style={{ overflow: "hidden", position: "relative" }}
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.span
-                  key={lang}
-                  initial={{ y: 10, opacity: 0, rotateX: -60 }}
-                  animate={{ y: 0, opacity: 1, rotateX: 0 }}
-                  exit={{ y: -10, opacity: 0, rotateX: 60 }}
-                  transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-                  style={{ display: "inline-block", transformOrigin: "center" }}
-                >
-                  {lang === "tr" ? "EN" : "TR"}
-                </motion.span>
-              </AnimatePresence>
-            </motion.button>
-          )}
-
-          {/* 2. Yuvarlak Tema Butonu (Karanlık / Aydınlık Mod) */}
-          {onToggleTheme && (
-            <motion.button
-              variants={{
-                hidden: { opacity: 0, x: -16, scale: 0.8 },
-                visible: {
-                  opacity: 1,
-                  x: 0,
-                  scale: 1,
-                  transition: { type: "spring", stiffness: 400, damping: 25 },
-                },
-              }}
-              whileHover={{ scale: 1.12 }}
-              whileTap={{ scale: 0.92 }}
-              onClick={onToggleTheme}
-              className="slide-circle-btn"
-              title={theme === "light" ? (lang === "tr" ? "Karanlık Mod" : "Dark Mode") : (lang === "tr" ? "Aydınlık Mod" : "Light Mode")}
-              aria-label="Toggle theme"
-            >
-              {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
-            </motion.button>
-          )}
-
-          {/* 3. Yuvarlak CV İndir Butonu */}
-          <motion.a
+          {/* Sağ Hızlı Butonlar: 3 Hızlı Buton (TR/EN, Tema, CV) */}
+          <motion.div
+            className="slide-controls-cluster"
+            initial="hidden"
+            animate="visible"
             variants={{
-              hidden: { opacity: 0, x: -16, scale: 0.8 },
+              hidden: { opacity: 0 },
               visible: {
                 opacity: 1,
-                x: 0,
-                scale: 1,
-                transition: { type: "spring", stiffness: 400, damping: 25 },
+                transition: {
+                  staggerChildren: 0.08,
+                  delayChildren: 0.15,
+                },
               },
             }}
-            whileHover={{ scale: 1.12 }}
-            whileTap={{ scale: 0.92 }}
-            href={`${import.meta.env.BASE_URL}cv.pdf`}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={lang === "tr" ? "CV İndir (PDF)" : "Download CV (PDF)"}
-            className="slide-circle-btn slide-cv-circle"
-            aria-label="Download CV"
           >
-            <Download size={14} />
-          </motion.a>
-        </motion.div>
-      </div>
-    </motion.header>
+            {/* 1. Dil Butonu (TR / EN) */}
+            {onToggleLang && (
+              <motion.button
+                variants={{
+                  hidden: { opacity: 0, x: -16, scale: 0.8 },
+                  visible: {
+                    opacity: 1,
+                    x: 0,
+                    scale: 1,
+                    transition: { type: "spring", stiffness: 400, damping: 25 },
+                  },
+                }}
+                whileHover={{ scale: 1.12 }}
+                whileTap={{ scale: 0.92 }}
+                onClick={onToggleLang}
+                className="slide-circle-btn"
+                title={lang === "tr" ? "Switch to English" : "Türkçe'ye Geç"}
+                aria-label="Toggle language"
+                style={{ overflow: "hidden", position: "relative" }}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={lang}
+                    initial={{ y: 10, opacity: 0, rotateX: -60 }}
+                    animate={{ y: 0, opacity: 1, rotateX: 0 }}
+                    exit={{ y: -10, opacity: 0, rotateX: 60 }}
+                    transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                    style={{ display: "inline-block", transformOrigin: "center" }}
+                  >
+                    {lang === "tr" ? "EN" : "TR"}
+                  </motion.span>
+                </AnimatePresence>
+              </motion.button>
+            )}
+
+            {/* 2. Tema Butonu (Karanlık / Aydınlık Mod) */}
+            {onToggleTheme && (
+              <motion.button
+                variants={{
+                  hidden: { opacity: 0, x: -16, scale: 0.8 },
+                  visible: {
+                    opacity: 1,
+                    x: 0,
+                    scale: 1,
+                    transition: { type: "spring", stiffness: 400, damping: 25 },
+                  },
+                }}
+                whileHover={{ scale: 1.12 }}
+                whileTap={{ scale: 0.92 }}
+                onClick={onToggleTheme}
+                className="slide-circle-btn"
+                title={theme === "light" ? (lang === "tr" ? "Karanlık Mod" : "Dark Mode") : (lang === "tr" ? "Aydınlık Mod" : "Light Mode")}
+                aria-label="Toggle theme"
+              >
+                {theme === "light" ? <Moon size={15} /> : <Sun size={15} />}
+              </motion.button>
+            )}
+
+            {/* 3. CV İndir Butonu */}
+            <motion.a
+              variants={{
+                hidden: { opacity: 0, x: -16, scale: 0.8 },
+                visible: {
+                  opacity: 1,
+                  x: 0,
+                  scale: 1,
+                  transition: { type: "spring", stiffness: 400, damping: 25 },
+                },
+              }}
+              whileHover={{ scale: 1.12 }}
+              whileTap={{ scale: 0.92 }}
+              href={`${import.meta.env.BASE_URL}cv.pdf`}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={lang === "tr" ? "CV İndir (PDF)" : "Download CV (PDF)"}
+              className="slide-circle-btn slide-cv-circle"
+              aria-label="Download CV"
+            >
+              <Download size={14} />
+            </motion.a>
+          </motion.div>
+        </div>
+      </motion.header>
+
+      {/* ── Mobile Top Header & Hamburger Navigation (< 769px) ── */}
+      <header className="mobile-nav-header">
+        <a
+          href="#hero"
+          className="mobile-brand"
+          onClick={() => setMobileOpen(false)}
+        >
+          <span className="mobile-brand-title">SİRAÇ G. ŞİMŞEK</span>
+          <span className="mobile-brand-tag">DEV</span>
+        </a>
+
+        <div className="mobile-nav-controls">
+          {onToggleLang && (
+            <button
+              type="button"
+              onClick={onToggleLang}
+              className="mobile-action-pill"
+              title={lang === "tr" ? "Switch to English" : "Türkçe'ye Geç"}
+              aria-label="Toggle language"
+            >
+              {lang === "tr" ? "EN" : "TR"}
+            </button>
+          )}
+
+          {onToggleTheme && (
+            <button
+              type="button"
+              onClick={onToggleTheme}
+              className="mobile-action-icon-btn"
+              title={theme === "light" ? "Dark Mode" : "Light Mode"}
+              aria-label="Toggle theme"
+            >
+              {theme === "light" ? <Moon size={16} /> : <Sun size={16} />}
+            </button>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className={`mobile-hamburger-btn ${mobileOpen ? "is-open" : ""}`}
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+          >
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={mobileOpen ? "close" : "menu"}
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }}
+                transition={{ duration: 0.18 }}
+                style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+              >
+                {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+              </motion.div>
+            </AnimatePresence>
+          </button>
+        </div>
+      </header>
+
+      {/* ── Mobile Drawer Sheet & Backdrop ── */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              className="mobile-menu-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.22 }}
+              onClick={() => setMobileOpen(false)}
+            />
+
+            <motion.div
+              className="mobile-menu-drawer"
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -20, opacity: 0 }}
+              transition={{ type: "spring", damping: 28, stiffness: 320 }}
+            >
+              <div className="mobile-drawer-top">
+                <span className="mobile-drawer-section-label">
+                  {lang === "tr" ? "GEZİNME" : "NAVIGATION"}
+                </span>
+                <span className="mobile-drawer-status-chip">
+                  <span className="live-status-dot" />
+                  <span>İstanbul, TR</span>
+                </span>
+              </div>
+
+              <nav className="mobile-drawer-nav">
+                <ul className="mobile-drawer-list">
+                  {tabs.map((tab, idx) => {
+                    const isActive = activeSection === tab.id;
+                    return (
+                      <motion.li
+                        key={tab.id}
+                        initial={{ opacity: 0, x: -14 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.2, delay: idx * 0.035 }}
+                      >
+                        <a
+                          href={tab.href}
+                          className={`mobile-drawer-item ${isActive ? "is-active" : ""}`}
+                          onClick={() => setMobileOpen(false)}
+                        >
+                          <span className="mobile-drawer-item-icon">{tab.icon}</span>
+                          <span className="mobile-drawer-item-label">{tab.label}</span>
+                          {isActive && <span className="mobile-drawer-active-dot" />}
+                        </a>
+                      </motion.li>
+                    );
+                  })}
+                </ul>
+              </nav>
+
+              <div className="mobile-drawer-actions">
+                <a
+                  href={`${import.meta.env.BASE_URL}cv.pdf`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mobile-drawer-cv-cta"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <Download size={15} />
+                  <span>{lang === "tr" ? "Özgeçmişi İndir (PDF)" : "Download CV (PDF)"}</span>
+                </a>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
