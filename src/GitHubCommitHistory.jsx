@@ -503,7 +503,7 @@ export default function GitHubCommitHistory() {
                     fontWeight: 500
                   }}
                 >
-                  <strong>{hoveredDay.count > 0 ? (isTr ? `${hoveredDay.count} katkı` : `${hoveredDay.count} contributions`) : (isTr ? 'Katkı yok' : 'No contributions')}</strong> {isTr ? '— ' : 'on '}{formatTooltipDate(hoveredDay.date)}
+                  <strong>{hoveredDay.count > 0 ? (isTr ? `${hoveredDay.count} katkı` : `${hoveredDay.count} contributions`) : (isTr ? 'Katkı yok' : 'No contributions')}</strong> {isTr ? '· ' : 'on '}{formatTooltipDate(hoveredDay.date)}
                 </div>
               )}
 

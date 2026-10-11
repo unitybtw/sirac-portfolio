@@ -159,7 +159,7 @@ function App() {
     localStorage.setItem('theme', theme);
   }, [theme]);
 
-  // Toggle Theme — smooth vertical wipe via View Transitions API
+  // Toggle Theme: smooth vertical wipe via View Transitions API
   const toggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';
 
@@ -342,20 +342,18 @@ function App() {
                 initial="hidden"
                 animate="show"
               >
-                {/* Status Chip with Location */}
-                <motion.div variants={heroChild} className="hero-status-pill">
-                  <span className="live-status-chip">
-                    <span className="live-status-dot" />
-                    <span>{t('badge_hire')}</span>
-                    <span className="status-separator">·</span>
-                    <span className="status-location"><MapPin size={12} /> {t('hero_location')}</span>
-                  </span>
+                {/* Clean Metadata Line (No SaaS pill container, no pulsing neon dot) */}
+                <motion.div variants={heroChild} className="hero-meta-row">
+                  <span className="hero-meta-location"><MapPin size={13} /> {t('hero_location')}</span>
+                  <span className="hero-meta-divider">/</span>
+                  <span className="hero-meta-status">{t('badge_hire')}</span>
                 </motion.div>
 
-                {/* Eyebrow Name + Authority Main Title */}
+                {/* Direct, Authentic Main Title */}
                 <motion.div variants={heroChild} className="hero-heading-group">
-                  <span className="hero-eyebrow-name">{t('hero_name')}</span>
-                  <h1 className="hero-main-title">{t('hero_title')}</h1>
+                  <h1 className="hero-main-title">
+                    <span className="hero-name-lead">{t('hero_name')}:</span> {t('hero_title')}
+                  </h1>
                 </motion.div>
 
                 {/* Narrative Intro */}

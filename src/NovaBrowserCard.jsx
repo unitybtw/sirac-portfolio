@@ -142,7 +142,7 @@ export default function NovaBrowserCard() {
                 <h3 style={{ fontSize: '1.85rem', margin: 0, letterSpacing: '-0.02em', fontWeight: 700 }}>
                   {t('games.nova_title')}
                 </h3>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', padding: '0.15rem 0.6rem', borderRadius: '100px', background: 'var(--border-subtle)', fontSize: '0.75rem', fontWeight: 600 }}>
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', padding: '0.15rem 0.6rem', borderRadius: '4px', background: 'var(--border-subtle)', fontSize: '0.75rem', fontWeight: 600 }}>
                   <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />
                   v1.5.0
                 </span>
@@ -239,7 +239,7 @@ export default function NovaBrowserCard() {
           </AnimatePresence>
         </div>
 
-        {/* Bottom Caption Overlay — kutu açıldıktan sonra belirir */}
+        {/* Bottom Caption Overlay: kutu açıldıktan sonra belirir */}
         <motion.div
           initial={false}
           animate={opened ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}

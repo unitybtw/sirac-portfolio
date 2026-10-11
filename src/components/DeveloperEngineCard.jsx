@@ -34,13 +34,6 @@ export default function DeveloperEngineCard() {
           aria-hidden="true"
         >
           <defs>
-            {/* Grid Radial Glow */}
-            <radialGradient id="meshCenterGlow" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="var(--accent-cta, #2563eb)" stopOpacity="0.22" />
-              <stop offset="70%" stopColor="var(--accent-cta, #2563eb)" stopOpacity="0.04" />
-              <stop offset="100%" stopColor="transparent" stopOpacity="0" />
-            </radialGradient>
-
             <linearGradient id="polyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="var(--accent-cta, #2563eb)" stopOpacity="0.8" />
               <stop offset="100%" stopColor="#10b981" stopOpacity="0.4" />
@@ -51,9 +44,8 @@ export default function DeveloperEngineCard() {
             </pattern>
           </defs>
 
-          {/* Background Ambient Glow & Grid */}
+          {/* Background Grid */}
           <rect width="100%" height="100%" fill="url(#isoGrid)" />
-          <circle cx="170" cy="110" r="95" fill="url(#meshCenterGlow)" />
 
           {/* Perspective Ground Grid (Isometric Plane) */}
           <g className="engine-isometric-plane" stroke="currentColor" strokeOpacity="0.12" strokeWidth="1">

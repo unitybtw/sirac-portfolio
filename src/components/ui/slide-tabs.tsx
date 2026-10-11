@@ -96,7 +96,7 @@ export const SlideTabs: React.FC<SlideTabsProps> = ({
     return (
       <ul
         onMouseLeave={updatePositionToActive}
-        className={`relative mx-auto flex w-fit rounded-full border-2 border-black bg-white p-1 ${className}`}
+        className={`relative mx-auto flex w-fit rounded-md border-2 border-black bg-white p-1 ${className}`}
       >
         {items.map((tab) => (
           <li
@@ -125,7 +125,7 @@ export const SlideTabs: React.FC<SlideTabsProps> = ({
         <motion.li
           animate={position}
           transition={{ type: "spring", stiffness: 420, damping: 32 }}
-          className="absolute z-0 h-7 rounded-full bg-black md:h-10"
+          className="absolute z-0 h-7 rounded-md bg-black md:h-10"
         />
       </ul>
     );
@@ -212,7 +212,7 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
         {/* Orta Kayar Sekmeler (SlideTabs) */}
         <SlideTabs items={tabs} activeId={activeSection} />
 
-        {/* Sağ Hızlı Butonlar: 3 Yuvarlak Buton (TR/EN, Tema, CV) — Soldan Sağa Akıcı Geliş */}
+        {/* Sağ Hızlı Butonlar: 3 Hızlı Buton (TR/EN, Tema, CV): Soldan Sağa Akıcı Geliş */}
         <motion.div
           className="slide-controls-cluster"
           initial="hidden"

@@ -19,10 +19,10 @@ const resources = {
             "nav_contact": "contact",
 
             // ── Hero ──────────────────────────────────────────────────────
-            "badge_hire": "Available for opportunities",
-            "hero_name": "SIRAÇ GÖKTUĞ ŞİMŞEK",
-            "hero_title": "Game Developer & Software Engineer",
-            "hero_tagline": "Digital Game Design student at Istanbul Kultur University. Crafting responsive game mechanics with Unity & C#, alongside performant desktop software and web tools with TypeScript and Electron.",
+            "badge_hire": "Available for indie projects & internships",
+            "hero_name": "SİRAÇ GÖKTUĞ ŞİMŞEK",
+            "hero_title": "Game Developer & Systems Engineer",
+            "hero_tagline": "I study Digital Game Design at Istanbul Kultur University. I build 3D games in Unity with custom C# physics, desktop software like Nova Browser with Electron and TypeScript, and performant web systems.",
             "hero_location": "İstanbul, TR",
             "btn_explore": "View Projects",
             "btn_repos": "GitHub",
@@ -36,14 +36,14 @@ const resources = {
 
             // ── About / Summary ───────────────────────────────────────────
             "about_title": "About",
-            "about_subtitle": "GAME DEVELOPER & SOFTWARE ENGINEER",
+            "about_subtitle": "GAME DEVELOPER & SYSTEMS ENGINEER",
             "about_bio_heading": "Biography",
             "about_stats_heading": "Overview",
-            "about_text_1": "I build games and software from first principles. Rather than relying on superficial templates, I focus on the actual mechanics under the hood — whether that's tuning a physics-based character controller in Unity C# to feel weightless and responsive, writing zero-allocation game loops for WebGL, or architecting a complete desktop web browser in Electron and TypeScript.",
+            "about_text_1": "I build games and software from first principles. Rather than relying on superficial templates, I focus on the actual mechanics under the hood: tuning physics-based character controllers in Unity C# to feel weightless and responsive, writing zero-allocation game loops for WebGL, and architecting desktop software with Electron and TypeScript.",
             "about_text_2": "Currently studying Digital Game Design at Istanbul Kultur University, I spend my days bridging real-time rendering, gameplay systems, and product engineering. My flagship projects range from Nova Browser (an open-source desktop browser with on-device AI and MCP tools) to native macOS utilities in Swift and playable 3D games published on Itch.io.",
             "about_text_3": "I believe great software unites technical rigor with thoughtful craftsmanship. I maintain open-source projects under @unitybtw, prioritize clean and maintainable architecture, and I'm actively seeking game development and software engineering opportunities where I can solve complex technical problems.",
             "about_stat_1": "Education",
-            "about_stat_1_val": "IKU — Digital Game Design",
+            "about_stat_1_val": "IKU: Digital Game Design",
             "about_stat_2": "Core Technologies",
             "about_stat_2_val": "Unity · C# · TypeScript · Electron",
             "about_stat_3": "Shipped Projects",
@@ -67,7 +67,7 @@ const resources = {
             "timeline_title": "Education & Journey",
             "timeline_subtitle": "Academic background and engineering milestones.",
             "timeline_event_3_year": "2025 – PRESENT",
-            "timeline_event_3_title": "B.Sc. Digital Game Design — Istanbul Kultur University",
+            "timeline_event_3_title": "B.Sc. Digital Game Design: Istanbul Kultur University",
             "timeline_event_3_desc": "Studying interactive software architecture, real-time rendering pipelines, gameplay systems, and editor tooling.",
             "timeline_event_3_details": [
                 "Undergraduate coursework in game mechanics, 3D pipelines, and interactive systems",
@@ -78,12 +78,12 @@ const resources = {
             "timeline_event_2_title": "Desktop Engineering & Open-Source Projects",
             "timeline_event_2_desc": "Architecting desktop applications, browser technology, and open-source utilities.",
             "timeline_event_2_details": [
-                "Engineered Nova Browser — an open-source desktop browser built with Electron, React, and TypeScript with local AI and MCP integration",
+                "Engineered Nova Browser: an open-source desktop browser built with Electron, React, and TypeScript with local AI and MCP integration",
                 "Developed native desktop utilities and audio feedback software with responsive interfaces",
                 "Maintained public open-source repositories, developer tools, and web applications"
             ],
             "timeline_event_1_year": "2020 – 2024",
-            "timeline_event_1_title": "High School Education — Science & Mathematics",
+            "timeline_event_1_title": "High School Education: Science & Mathematics",
             "timeline_event_1_desc": "Built foundational knowledge in mathematics, physics, and computer science.",
             "timeline_event_1_details": [
                 "Established strong foundations in algorithmic thinking, logic, and coordinate mathematics",
@@ -168,7 +168,7 @@ const resources = {
                 "nova_title": "Nova Browser",
                 "nova_desc": "An open-source desktop browser for developers built with Electron, React, TypeScript, and Vite. Features a native Model Context Protocol (MCP) server, on-device WebGPU execution, zero-knowledge E2EE multi-device sync, Chrome extension support, and dual-view split screen.",
                 "m_title": "Legend of the Three Masks",
-                "m_desc": "3D adventure game published on Itch.io — explore levels, find ancient masks, and solve environmental puzzles. Developed in Unity and C#.",
+                "m_desc": "3D adventure game published on Itch.io. Explore levels, find ancient masks, and solve environmental puzzles. Developed in Unity and C#.",
                 "signal_title": "Signal: Audio Feedback Utility",
                 "signal_desc": "A premium macOS menu bar application providing real-time mechanical keyboard audio feedback (15+ sound profiles) with a refined native UI, dynamic audio visualizer, and WPM analytics. Built with Swift and Core Audio.",
                 "aether_title": "Aether Command: Gesture Controller",
@@ -191,10 +191,10 @@ const resources = {
             "nav_contact": "İletişim",
 
             // ── Hero ──────────────────────────────────────────────────────
-            "badge_hire": "İş ve staj fırsatlarına açık",
+            "badge_hire": "Bağımsız projelere ve stajlara açık",
             "hero_name": "SİRAÇ GÖKTUĞ ŞİMŞEK",
-            "hero_title": "Oyun Geliştirici & Yazılım Mühendisi",
-            "hero_tagline": "İstanbul Kültür Üniversitesi Dijital Oyun Tasarımı öğrencisi. Unity ve C# ile akıcı oyun mekanikleri geliştirirken, TypeScript ve Electron ile modern masaüstü yazılımları ve web sistemleri üretiyorum.",
+            "hero_title": "Oyun Geliştirici & Sistem Mühendisi",
+            "hero_tagline": "İstanbul Kültür Üniversitesi Dijital Oyun Tasarımı öğrencisiyim. Unity ve C# ile 3D aksiyon oyunları geliştiriyor, Electron ve TypeScript ile Nova Browser gibi masaüstü yazılımları mimarilendiriyorum.",
             "hero_location": "İstanbul, TR",
             "btn_explore": "Projeleri Gör",
             "btn_repos": "GitHub",
@@ -208,14 +208,14 @@ const resources = {
 
             // ── About / Summary ───────────────────────────────────────────
             "about_title": "Hakkımda",
-            "about_subtitle": "OYUN GELİŞTİRİCİ & YAZILIM MÜHENDİSİ",
+            "about_subtitle": "OYUN GELİŞTİRİCİ & SİSTEM MÜHENDİSİ",
             "about_bio_heading": "Biyografi",
             "about_stats_heading": "Genel Bakış",
-            "about_text_1": "Oyunları ve yazılımları temel mühendislik prensiplerinden yola çıkarak geliştiriyorum. Hazır şablonlar veya yüzeysel çözümler yerine işin çekirdeğindeki mekaniğe odaklanıyorum — Unity C# ile fizik tabanlı karakter kontrollerini kusursuz hissettirmekten, WebGL için sıfır-tahsisli oyun döngüleri yazmaya ve Electron/TypeScript ile masaüstü tarayıcı mimarileri kurmaya kadar.",
+            "about_text_1": "Oyunları ve yazılımları temel mühendislik prensiplerinden yola çıkarak geliştiriyorum. Hazır şablonlar yerine işin çekirdeğindeki mekaniğe odaklanıyorum: Unity C# ile fizik tabanlı karakter kontrollerini kusursuz hissettirmek, WebGL için sıfır-tahsisli oyun döngüleri yazmak ve Electron/TypeScript ile masaüstü mimarileri kurmak.",
             "about_text_2": "İstanbul Kültür Üniversitesi Dijital Oyun Tasarımı bölümünde lisans eğitimime devam ederken; gerçek zamanlı grafik hatları, sistem mühendisliği ve ürün tasarımını bir araya getiriyorum. Projelerim; yerel yapay zeka ve MCP entegrasyonlu Nova Browser'dan, Swift ile yazılmış native macOS araçlarına ve Itch.io'da yayınlanan 3D oyunlara kadar uzanıyor.",
             "about_text_3": "İyi yazılımın teknik disiplin ve özenli zanaatkarlıkla ortaya çıktığına inanıyorum. @unitybtw altında açık kaynaklı projeler üretiyor, okunabilir ve sürdürülebilir mimarilere öncelik veriyorum. Karmaşık mühendislik problemlerini çözebileceğim oyun geliştirme ve yazılım mühendisliği fırsatlarına açığım.",
             "about_stat_1": "Eğitim",
-            "about_stat_1_val": "İKÜ — Dijital Oyun Tasarımı",
+            "about_stat_1_val": "İKÜ: Dijital Oyun Tasarımı",
             "about_stat_2": "Temel Teknolojiler",
             "about_stat_2_val": "Unity · C# · TypeScript · Electron",
             "about_stat_3": "Tamamlanan Projeler",
@@ -239,7 +239,7 @@ const resources = {
             "timeline_title": "Eğitim & Yolculuk",
             "timeline_subtitle": "Akademik geçmiş ve gelişim süreci.",
             "timeline_event_3_year": "2025 – GÜNÜMÜZ",
-            "timeline_event_3_title": "Lisans: Dijital Oyun Tasarımı — İstanbul Kültür Üniversitesi",
+            "timeline_event_3_title": "Lisans: Dijital Oyun Tasarımı, İstanbul Kültür Üniversitesi",
             "timeline_event_3_desc": "Etkileşimli yazılım mimarisi, render pipeline yapısı, oyun mekanikleri ve editör araçları üzerine lisans eğitimi.",
             "timeline_event_3_details": [
                 "Oyun mekanikleri, 3D render pipeline ve etkileşimli yazılım mimarisi üzerine lisans eğitimi",
@@ -255,7 +255,7 @@ const resources = {
                 "Açık kaynaklı repolar ve geliştirici araçları üzerinde sürdürülebilir mimariler kurdu"
             ],
             "timeline_event_1_year": "2020 – 2024",
-            "timeline_event_1_title": "Lise Eğitimi — Sayısal Alan",
+            "timeline_event_1_title": "Lise Eğitimi: Sayısal Alan",
             "timeline_event_1_desc": "Matematik, fizik ve bilgisayar bilimleri temelleriyle lise eğitimi.",
             "timeline_event_1_details": [
                 "Algoritmik düşünce, mantık ve koordinat matematiği üzerine sağlam temeller kurdu",
@@ -340,7 +340,7 @@ const resources = {
                 "nova_title": "Nova Browser",
                 "nova_desc": "Geliştiriciler için Electron, React, TypeScript ve Vite ile geliştirilmiş açık kaynaklı masaüstü web tarayıcısı. Dahili Model Context Protocol (MCP) sunucusu, cihaz üzerinde WebGPU yapay zeka çalıştırma, sıfır-bilgi (E2EE) cihazlar arası bulut senkronizasyonu, Chrome eklenti desteği ve çift ekran bölünmüş görünüm sunar.",
                 "m_title": "Legend of the Three Masks",
-                "m_desc": "Itch.io üzerinde yayınlanmış 3D macera oyunu — bölümleri keşfet, antik maskeleri bul ve bulmacaları çöz. Unity ve C# ile geliştirildi.",
+                "m_desc": "Itch.io üzerinde yayınlanmış 3D macera oyunu. Bölümleri keşfet, antik maskeleri bul ve bulmacaları çöz. Unity ve C# ile geliştirildi.",
                 "signal_title": "Signal: Tuş Sesi Geri Bildirimi",
                 "signal_desc": "Yazdığın her tuşa gerçek zamanlı mekanik klavye ses geri bildirimi veren (15+ ses profili), akıcı modern arayüzlü ve WPM takipli macOS menü çubuğu uygulaması. Native Swift ve Core Audio ile geliştirildi.",
                 "aether_title": "Aether Command: Hareket Denetleyici",

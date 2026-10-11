@@ -50,35 +50,25 @@
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  border-radius: var(--bento-radius, 24px);
+  border-radius: var(--bento-radius, 8px);
   padding: 2.75rem 2.8rem;
   background: var(--arcade-bg-surface);
   border: 1px solid var(--arcade-border);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.3s ease;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
 }
 
 .arcade-portal-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   border-color: var(--arcade-border-hover);
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
-/* Subtle ambient background flare */
+/* Subtle clean background */
 .arcade-portal-glow {
-  position: absolute;
-  top: -30%;
-  right: -10%;
-  width: 55%;
-  height: 90%;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(var(--arcade-accent-rgb), 0.08) 0%, transparent 70%);
-  pointer-events: none;
-  transition: opacity 0.4s ease;
+  display: none;
 }
 
 .arcade-portal-card:hover .arcade-portal-glow {
@@ -108,8 +98,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.35rem 0.85rem;
-  border-radius: 100px;
+  padding: 0.3rem 0.65rem;
+  border-radius: 4px;
   background: var(--bg-card);
   border: 1px solid var(--arcade-border);
   font-size: 0.78rem;
@@ -174,8 +164,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.3rem 0.75rem;
-  border-radius: 100px;
+  padding: 0.3rem 0.65rem;
+  border-radius: 4px;
   background: var(--bg-card);
   border: 1px solid var(--arcade-border);
   font-size: 0.8rem;
@@ -374,8 +364,6 @@
   width: 100%;
   background: var(--arcade-bg-surface);
   border-bottom: 1px solid var(--arcade-border);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   padding: 0.85rem 1.75rem;
   box-sizing: border-box;
 }
@@ -462,7 +450,7 @@
 .arcade-search-input {
   background: var(--arcade-bg-subtle);
   border: 1px solid var(--arcade-border);
-  border-radius: 100px;
+  border-radius: 6px;
   color: var(--arcade-text-primary);
   font-size: 0.85rem;
   padding: 0.5rem 1rem 0.5rem 2.25rem;
@@ -510,7 +498,7 @@
   align-items: center;
   gap: 7px;
   padding: 0.5rem 1rem;
-  border-radius: 100px;
+  border-radius: 6px;
   font-size: 0.82rem;
   font-weight: 600;
   background: var(--arcade-bg-subtle);
@@ -589,8 +577,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 0.55rem 1.15rem;
-  border-radius: 100px;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
   font-size: 0.85rem;
   font-weight: 600;
   color: var(--arcade-text-secondary);
@@ -610,14 +598,14 @@
   color: var(--arcade-bg-subtle);
   background: var(--arcade-text-primary);
   border-color: var(--arcade-text-primary);
-  box-shadow: 0 6px 18px -4px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 4px 14px -4px rgba(0, 0, 0, 0.16);
 }
 
 .arcade-tab-counter {
   font-size: 0.72rem;
   font-weight: 700;
-  padding: 2px 7px;
-  border-radius: 100px;
+  padding: 2px 6px;
+  border-radius: 4px;
   background: var(--arcade-bg-subtle);
   color: var(--arcade-text-primary);
   transition: all 0.2s ease;
@@ -706,7 +694,7 @@
   background: var(--arcade-bg-subtle);
   border: 1px solid var(--arcade-border);
   padding: 3px 8px;
-  border-radius: 100px;
+  border-radius: 4px;
 }
 
 .arcade-card-status-pill {
@@ -857,7 +845,7 @@
   background: rgba(245, 158, 11, 0.08);
   border: 1px solid rgba(245, 158, 11, 0.2);
   padding: 2px 8px;
-  border-radius: 100px;
+  border-radius: 4px;
 }
 
 .arcade-player-controls {
@@ -923,12 +911,11 @@
   justify-content: center;
   width: 38px;
   height: 38px;
-  border-radius: 10px;
-  background: rgba(18, 18, 24, 0.85);
+  border-radius: 6px;
+  background: #121218;
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.18);
   cursor: pointer;
-  backdrop-filter: blur(12px);
   transition: all 0.2s ease;
 }
 
@@ -979,9 +966,9 @@
 .arcade-filter-select {
   background: var(--arcade-bg-subtle);
   border: 1px solid var(--arcade-border);
-  border-radius: 100px;
+  border-radius: 6px;
   color: var(--arcade-text-primary);
-  padding: 0.5rem 1.25rem;
+  padding: 0.5rem 1rem;
   font-size: 0.85rem;
   font-weight: 600;
   outline: none;

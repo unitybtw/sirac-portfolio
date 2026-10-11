@@ -1,5 +1,5 @@
 /* Fonts are preloaded non-blocking in index.html (Inter + Outfit).
-   No @import here — @import blocks first paint and would double-download fonts. */
+   No @import here: @import blocks first paint and would double-download fonts. */
 
 /* ── View Transitions: Theme Toggle Fade ────────────────────────────
    A clean crossfade that works perfectly on mobile and desktop.
@@ -84,7 +84,7 @@ html.transition-lang::view-transition-new(root) {
   --font-heading: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
   --font-body: 'Inter', system-ui, -apple-system, sans-serif;
   
-  --bento-radius: 24px;
+  --bento-radius: 8px;
 }
 
 /* Minimal Dark Theme */
@@ -154,7 +154,7 @@ html.lenis, html.lenis body {
 
   ::-webkit-scrollbar-thumb {
     background: var(--border-subtle);
-    border-radius: 100px;
+    border-radius: 4px;
     border: 3px solid var(--bg-primary);
   }
 
@@ -206,7 +206,7 @@ button {
   background: var(--text-primary);
   color: var(--bg-primary);
   padding: 0.6rem 1.25rem;
-  border-radius: 100px;
+  border-radius: 6px;
   font-weight: 600;
   font-size: 0.9rem;
   /* Only transition GPU-composited properties to avoid layout reflow */
@@ -223,7 +223,7 @@ button {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Basıldı hissi — GPU-only, anlık */
+/* Basıldı hissi: GPU-only, anlık */
 .btn-primary:active, .btn-outline:active {
   transform: scale(0.96);
 }
@@ -232,7 +232,7 @@ button {
   border: 1px solid var(--border-subtle);
   color: var(--text-primary);
   padding: 0.6rem 1.25rem;
-  border-radius: 100px;
+  border-radius: 6px;
   font-weight: 600;
   font-size: 0.9rem;
   /* border-color is cheap; avoid transition:all which recalculates layout */
@@ -404,54 +404,49 @@ section:not(#hero) {
   text-align: left;
 }
 
-.hero-status-pill {
-  margin-bottom: 1.25rem;
-}
-
-.hero-status-pill .live-status-chip {
+.hero-meta-row {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.35rem 0.85rem;
-  border-radius: 100px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  font-size: 0.8rem;
-  font-weight: 500;
+  margin-bottom: 1.1rem;
+  font-size: 0.84rem;
   color: var(--text-secondary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  font-weight: 500;
 }
 
-.status-separator {
-  opacity: 0.35;
-  margin: 0 0.15rem;
-}
-
-.status-location {
+.hero-meta-location {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  opacity: 0.85;
+  gap: 0.35rem;
+  color: var(--text-secondary);
+}
+
+.hero-meta-divider {
+  color: var(--border-subtle);
+  font-weight: 400;
+}
+
+.hero-meta-status {
+  color: var(--text-secondary);
 }
 
 .hero-heading-group {
   margin-bottom: 1.25rem;
 }
 
-.hero-eyebrow-name {
+.hero-name-lead {
   display: block;
-  font-size: 0.88rem;
+  font-size: 0.5em;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: -0.01em;
   color: var(--text-secondary);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.25rem;
 }
 
 .hero-main-title {
-  font-size: clamp(2.5rem, 5vw, 3.8rem);
+  font-size: clamp(2.3rem, 4.8vw, 3.5rem);
   font-weight: 800;
-  line-height: 1.12;
+  line-height: 1.15;
   letter-spacing: -0.035em;
   color: var(--text-primary);
   margin: 0;
@@ -487,9 +482,9 @@ section:not(#hero) {
 }
 
 .hero-social-btn {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
   border: 1px solid var(--border-subtle);
   background: var(--bg-card);
   color: var(--text-secondary);
@@ -532,9 +527,9 @@ section:not(#hero) {
   max-width: 440px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 24px;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
   will-change: transform;
   display: flex;
@@ -598,14 +593,14 @@ section:not(#hero) {
   color: #10b981;
   background: rgba(16, 185, 129, 0.1);
   padding: 2px 7px;
-  border-radius: 100px;
+  border-radius: 4px;
   border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .engine-viewport-scene {
   position: relative;
   width: 100%;
-  background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.06) 0%, transparent 75%);
+  background: var(--bg-card);
   padding: 1.25rem 1rem 1rem;
   display: flex;
   flex-direction: column;
@@ -1250,7 +1245,7 @@ section:not(#hero) {
 }
 
 /* ── 120Hz Performans Katmanı ────────────────────────────────────── */
-/* Heatmap günü: React state yerine saf CSS hover — 370 hücrenin
+/* Heatmap günü: React state yerine saf CSS hover: 370 hücrenin
    her hover'ında tüm ızgarayı re-render etmek yerine GPU işler. */
 .gh-day {
   width: 11px;
@@ -1267,7 +1262,7 @@ section:not(#hero) {
   }
 }
 
-/* Nova slideshow: kap 16:10 + foto absolute-fill cover — letterbox yok,
+/* Nova slideshow: kap 16:10 + foto absolute-fill cover: letterbox yok,
    siyah köşe/kenar kalmaz. GPU composited opacity & transform. */
 .nova-shot {
   position: absolute;
@@ -1286,7 +1281,7 @@ section:not(#hero) {
   display: inline-flex;
   align-items: center;
   padding: 0.2rem 0.65rem;
-  border-radius: 100px;
+  border-radius: 4px;
   background: var(--border-subtle);
   font-size: 0.75rem;
   font-weight: 600;
@@ -1296,8 +1291,8 @@ section:not(#hero) {
 .tech-tag {
   display: inline-flex;
   align-items: center;
-  padding: 0.25rem 0.65rem;
-  border-radius: 8px;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
   background: var(--border-subtle);
   font-size: 0.78rem;
   font-weight: 500;
@@ -1315,8 +1310,8 @@ section:not(#hero) {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.35rem 0.85rem;
-  border-radius: 100px;
+  padding: 0.3rem 0.65rem;
+  border-radius: 4px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   font-size: 0.8rem;
@@ -1339,7 +1334,7 @@ section:not(#hero) {
   align-items: center;
   gap: 0.35rem;
   padding: 0.22rem 0.65rem;
-  border-radius: 100px;
+  border-radius: 4px;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -1735,32 +1730,27 @@ section:not(#hero) {
   align-items: center;
   gap: 0.65rem;
   max-width: 96vw;
-  padding: 5px 6px;
-  border-radius: 9999px;
+  padding: 4px 6px;
+  border-radius: 8px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  box-shadow: 0 12px 36px -4px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .dark .slide-navbar-dock {
-  background: rgba(18, 18, 20, 0.88);
-  box-shadow: 0 16px 40px -4px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  background: #11141a;
+  border: 1px solid #27272a;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
-
-
-
-
 
 .slide-tabs-list {
   position: relative;
   display: inline-flex;
   align-items: center;
-  border-radius: 9999px;
+  border-radius: 6px;
   background: var(--border-subtle);
-  padding: 3px;
+  padding: 2px;
   list-style: none;
   margin: 0;
 }
@@ -1773,12 +1763,12 @@ section:not(#hero) {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  padding: 6px 13px;
+  padding: 5px 11px;
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--text-secondary);
   text-decoration: none;
-  border-radius: 9999px;
+  border-radius: 4px;
   transition: color 0.2s ease;
   white-space: nowrap;
 }
@@ -1791,17 +1781,17 @@ section:not(#hero) {
 .slide-tab-cursor-pill {
   position: absolute;
   z-index: 1;
-  height: calc(100% - 6px);
-  border-radius: 9999px;
+  height: calc(100% - 4px);
+  border-radius: 4px;
   background: var(--bg-card);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-  top: 3px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  top: 2px;
   pointer-events: none;
 }
 
 .dark .slide-tab-cursor-pill {
   background: var(--border-subtle);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
 }
 
 .slide-controls-cluster {
@@ -1809,27 +1799,24 @@ section:not(#hero) {
   align-items: center;
   gap: 0.35rem;
   padding: 2px 4px;
-  border-radius: 9999px;
+  border-radius: 6px;
   margin-left: 0.2rem;
   background: transparent;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background 0.2s ease;
 }
 
-/* Hafif Farkındalık Aurası: İmleç o kısma yaklaşınca / üzerine gelince yumuşak ışıma */
 .slide-controls-cluster:hover {
-  background: rgba(37, 99, 235, 0.08);
-  box-shadow: 0 0 16px rgba(37, 99, 235, 0.2), inset 0 0 0 1px rgba(37, 99, 235, 0.15);
+  background: var(--border-subtle);
 }
 
 .dark .slide-controls-cluster:hover {
-  background: rgba(59, 130, 246, 0.1);
-  box-shadow: 0 0 20px rgba(59, 130, 246, 0.24), inset 0 0 0 1px rgba(59, 130, 246, 0.2);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .slide-circle-btn {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
   border: 1px solid var(--border-subtle);
   background: var(--bg-card);
   color: var(--text-secondary);
