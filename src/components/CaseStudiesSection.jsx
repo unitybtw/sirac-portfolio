@@ -15,11 +15,11 @@ export default function CaseStudiesSection() {
   const caseStudies = [
     {
       id: 'nova-browser',
-      category: isTr ? 'MASAÜSTÜ YAZILIM & DAĞITIK SİSTEMLER' : 'DESKTOP ARCHITECTURE & IPC SYSTEMS',
+      category: isTr ? 'Masaüstü Mimarisi & IPC Sistemleri' : 'Desktop Architecture & IPC Systems',
       title: isTr
         ? 'Nova Browser: Çoklu Süreç İzolasyonu ve Yerel MCP Entegrasyonu'
         : 'Architecting Nova Browser: Multi-Process Isolation & Local MCP Server',
-      icon: <Terminal size={20} className="text-blue-500" />,
+      icon: <Terminal size={18} className="text-current opacity-80" />,
       badges: ['Electron', 'TypeScript', 'MCP Protocol', 'React', 'AES-256-GCM'],
       problem: isTr
         ? 'Geleneksel tarayıcılar yüksek bellek tüketir; yerel yapay zeka modelleri bağlandığında arayüz iş parçacığı (UI thread) kilitlenir ve güvenlik izolasyonu riske girer.'
@@ -47,11 +47,11 @@ export default function CaseStudiesSection() {
     },
     {
       id: 'webgl-optimization',
-      category: isTr ? 'OYUN MOTORU & GRAFİK PİPELİNE' : '3D GRAPHICS & GAME SYSTEMS',
+      category: isTr ? 'Oyun Motoru & Grafik Pipeline' : 'Game Engine & Graphics Pipeline',
       title: isTr
         ? 'Web Portları ve Unity URP için Sıfır-Tahsisli Oyun Döngüleri'
         : 'Zero-Allocation Game Loops & Draw Call Batching for WebGL',
-      icon: <Cpu size={20} className="text-emerald-500" />,
+      icon: <Cpu size={18} className="text-current opacity-80" />,
       badges: ['Unity 3D', 'C#', 'URP', 'WebAssembly', 'WebGL'],
       problem: isTr
         ? 'Tarayıcıda çalışan WebGL ve WebAssembly oyunları, C# Garbage Collector çalıştığında ani kare düşüşleri (frame spike) ve yüksek Draw Call sebebiyle takılmalar yaşar.'
@@ -79,11 +79,11 @@ export default function CaseStudiesSection() {
     },
     {
       id: 'native-tooling',
-      category: isTr ? 'NATIVE MACOS & DÜŞÜK GECİKMELİ SES' : 'NATIVE MACOS & LOW-LATENCY SYSTEMS',
+      category: isTr ? 'Native macOS & Düşük Gecikmeli Ses' : 'Native macOS & Low-Latency Systems',
       title: isTr
         ? 'Signal & Aether: Sub-4ms Ses Hatları ve Bilgisayarlı Görü'
         : 'Sub-4ms Audio Pipelines & Native Vision Gestures (Signal & Aether)',
-      icon: <Layers size={20} className="text-amber-500" />,
+      icon: <Layers size={18} className="text-current opacity-80" />,
       badges: ['Swift', 'Core Audio', 'AVAudioEngine', 'Apple Vision', 'AppKit'],
       problem: isTr
         ? 'Tuş sesi geri bildirimi 10ms gecikmeyi aştığında kullanıcıda doğal olmayan bir yapaylık hissi yaratır. Sürekli kamera takibi ise yüksek CPU/pil tüketimine yol açar.'
@@ -114,10 +114,6 @@ export default function CaseStudiesSection() {
   return (
     <section id="case-studies" className="case-studies-section" aria-labelledby="case-studies-heading">
       <div className="section-header-block">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-800/40 mb-3">
-          <Sparkles size={13} />
-          <span>{isTr ? 'MİMARİ & DERİNLEMESİNE İNCELEME' : 'SYSTEM ARCHITECTURE & DEEP DIVES'}</span>
-        </div>
         <h2 id="case-studies-heading" className="section-title">
           {isTr ? 'Mühendislik Vaka Analizleri' : 'Engineering Case Studies'}
         </h2>

@@ -21,7 +21,7 @@ const resources = {
             // ── Hero ──────────────────────────────────────────────────────
             "badge_hire": "Available for indie projects & internships",
             "hero_name": "SİRAÇ GÖKTUĞ ŞİMŞEK",
-            "hero_title": "Game Developer & Systems Engineer",
+            "hero_title": "Game Developer & Software Engineer",
             "hero_tagline": "I study Digital Game Design at Istanbul Kultur University. I build 3D games in Unity with custom C# physics, desktop software like Nova Browser with Electron and TypeScript, and performant web systems.",
             "hero_location": "İstanbul, TR",
             "btn_explore": "View Projects",
@@ -36,7 +36,7 @@ const resources = {
 
             // ── About / Summary ───────────────────────────────────────────
             "about_title": "About",
-            "about_subtitle": "GAME DEVELOPER & SYSTEMS ENGINEER",
+            "about_subtitle": "Game development, desktop architectures, and interactive software systems",
             "about_bio_heading": "Biography",
             "about_stats_heading": "Overview",
             "about_text_1": "I build games and software from first principles. Rather than relying on superficial templates, I focus on the actual mechanics under the hood: tuning physics-based character controllers in Unity C# to feel weightless and responsive, writing zero-allocation game loops for WebGL, and architecting desktop software with Electron and TypeScript.",
@@ -193,7 +193,7 @@ const resources = {
             // ── Hero ──────────────────────────────────────────────────────
             "badge_hire": "Bağımsız projelere ve stajlara açık",
             "hero_name": "SİRAÇ GÖKTUĞ ŞİMŞEK",
-            "hero_title": "Oyun Geliştirici & Sistem Mühendisi",
+            "hero_title": "Oyun Geliştirici & Yazılım Mühendisi",
             "hero_tagline": "İstanbul Kültür Üniversitesi Dijital Oyun Tasarımı öğrencisiyim. Unity ve C# ile 3D aksiyon oyunları geliştiriyor, Electron ve TypeScript ile Nova Browser gibi masaüstü yazılımları mimarilendiriyorum.",
             "hero_location": "İstanbul, TR",
             "btn_explore": "Projeleri Gör",
@@ -208,11 +208,11 @@ const resources = {
 
             // ── About / Summary ───────────────────────────────────────────
             "about_title": "Hakkımda",
-            "about_subtitle": "OYUN GELİŞTİRİCİ & SİSTEM MÜHENDİSİ",
+            "about_subtitle": "Oyun geliştirme, masaüstü mimarileri ve interaktif yazılım sistemleri",
             "about_bio_heading": "Biyografi",
             "about_stats_heading": "Genel Bakış",
             "about_text_1": "Oyunları ve yazılımları temel mühendislik prensiplerinden yola çıkarak geliştiriyorum. Hazır şablonlar yerine işin çekirdeğindeki mekaniğe odaklanıyorum: Unity C# ile fizik tabanlı karakter kontrollerini kusursuz hissettirmek, WebGL için sıfır-tahsisli oyun döngüleri yazmak ve Electron/TypeScript ile masaüstü mimarileri kurmak.",
-            "about_text_2": "İstanbul Kültür Üniversitesi Dijital Oyun Tasarımı bölümünde lisans eğitimime devam ederken; gerçek zamanlı grafik hatları, sistem mühendisliği ve ürün tasarımını bir araya getiriyorum. Projelerim; yerel yapay zeka ve MCP entegrasyonlu Nova Browser'dan, Swift ile yazılmış native macOS araçlarına ve Itch.io'da yayınlanan 3D oyunlara kadar uzanıyor.",
+            "about_text_2": "İstanbul Kültür Üniversitesi Dijital Oyun Tasarımı bölümünde lisans eğitimime devam ederken; gerçek zamanlı grafik hatları, yazılım mühendisliği ve ürün tasarımını bir araya getiriyorum. Projelerim; yerel yapay zeka ve MCP entegrasyonlu Nova Browser'dan, Swift ile yazılmış native macOS araçlarına ve Itch.io'da yayınlanan 3D oyunlara kadar uzanıyor.",
             "about_text_3": "İyi yazılımın teknik disiplin ve özenli zanaatkarlıkla ortaya çıktığına inanıyorum. @unitybtw altında açık kaynaklı projeler üretiyor, okunabilir ve sürdürülebilir mimarilere öncelik veriyorum. Karmaşık mühendislik problemlerini çözebileceğim oyun geliştirme ve yazılım mühendisliği fırsatlarına açığım.",
             "about_stat_1": "Eğitim",
             "about_stat_1_val": "İKÜ: Dijital Oyun Tasarımı",

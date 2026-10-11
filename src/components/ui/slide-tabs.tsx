@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, FolderGit2, Activity, Gamepad2, Mail, Sun, Moon, Download, Sparkles } from "lucide-react";
+import { Home, User, FolderGit2, Activity, Gamepad2, Mail, Sun, Moon, Download } from "lucide-react";
 
 export interface TabItem {
   id: string;
@@ -26,7 +26,7 @@ export interface SlideTabsProps {
 
 // Siraç'ın Portföyü için Varsayılan Bölüm Sekmeleri
 export const DEFAULT_PORTFOLIO_TABS: TabItem[] = [
-  { id: "hero", href: "#hero", label: "Giriş", icon: <Sparkles size={14} /> },
+  { id: "hero", href: "#hero", label: "Giriş", icon: <Home size={14} /> },
   { id: "about", href: "#about", label: "Hakkımda", icon: <User size={14} /> },
   { id: "projects", href: "#projects", label: "Projeler", icon: <FolderGit2 size={14} /> },
   { id: "github-activity", href: "#github-activity", label: "Katkılar", icon: <Activity size={14} /> },
@@ -192,7 +192,7 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
   onToggleLang,
 }) => {
   const tabs: TabItem[] = [
-    { id: "hero", href: "#hero", label: lang === "tr" ? "Giriş" : "Home", icon: <Sparkles size={14} /> },
+    { id: "hero", href: "#hero", label: lang === "tr" ? "Giriş" : "Home", icon: <Home size={14} /> },
     { id: "about", href: "#about", label: lang === "tr" ? "Hakkımda" : "About", icon: <User size={14} /> },
     { id: "projects", href: "#projects", label: lang === "tr" ? "Projeler" : "Projects", icon: <FolderGit2 size={14} /> },
     { id: "github-activity", href: "#github-activity", label: lang === "tr" ? "Katkılar" : "Activity", icon: <Activity size={14} /> },

@@ -317,7 +317,7 @@ section:not(#hero) {
   .bento-col-8, .bento-col-6, .bento-col-4 { grid-column: span 12; }
   .bento-card {
     padding: 1.5rem 1.25rem;
-    border-radius: 20px;
+    border-radius: 8px;
   }
   .app-container {
     padding: 0 1.25rem;
@@ -357,7 +357,7 @@ section:not(#hero) {
 @media (max-width: 480px) {
   .bento-card {
     padding: 1.25rem 1rem;
-    border-radius: 16px;
+    border-radius: 8px;
   }
   .app-container {
     padding: 0 0.85rem;
@@ -849,7 +849,7 @@ section:not(#hero) {
   }
   .hero-engine-card {
     max-width: 100%;
-    border-radius: 18px;
+    border-radius: 8px;
   }
   .engine-viewport-scene {
     padding: 1rem 0.75rem 0.85rem;
@@ -1027,7 +1027,7 @@ section:not(#hero) {
   font-family: inherit;
   font-size: 0.95rem;
   padding: 0.75rem 1rem;
-  border-radius: 12px;
+  border-radius: 6px;
   background: var(--bg-primary);
   border: 1px solid var(--border-subtle);
   color: var(--text-primary);
@@ -1446,7 +1446,7 @@ section:not(#hero) {
   gap: 0.3rem;
   background: rgba(125, 125, 125, 0.04);
   padding: 0.75rem 0.85rem;
-  border-radius: 12px;
+  border-radius: 6px;
   border: 1px solid var(--border-subtle);
 }
 
@@ -1501,7 +1501,7 @@ section:not(#hero) {
   gap: 0.15rem;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 0.45rem 0.5rem;
   text-align: center;
 }
@@ -1528,7 +1528,7 @@ section:not(#hero) {
   gap: 0.4rem;
   width: 100%;
   padding: 0.55rem;
-  border-radius: 10px;
+  border-radius: 6px;
   background: var(--border-subtle);
   border: none;
   font-size: 0.8rem;
@@ -1551,7 +1551,7 @@ section:not(#hero) {
 .case-study-details-box {
   margin-top: 0.5rem;
   padding: 0.85rem;
-  border-radius: 12px;
+  border-radius: 6px;
   background: rgba(125, 125, 125, 0.05);
   border: 1px dashed var(--border-subtle);
 }
