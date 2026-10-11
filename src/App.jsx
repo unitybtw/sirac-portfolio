@@ -8,6 +8,7 @@ import { LINKEDIN_URL } from './i18n';
 import { SlideNavbar } from './components/ui/slide-tabs';
 import PixelMarioRunner from './components/PixelMarioRunner';
 import DeveloperEngineCard from './components/DeveloperEngineCard';
+import CaseStudiesSection from './components/CaseStudiesSection';
 
 // Ekranın altında kalan ağır bileşenler: ilk paint'i bloklamasın,
 // main thread boş kalsın ki scroll 120Hz'de takılmasın.
@@ -302,7 +303,7 @@ function App() {
       { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
     );
 
-    const spyIds = ['hero', 'about', 'projects', 'github-activity', 'arcade', 'contact'];
+    const spyIds = ['hero', 'about', 'projects', 'case-studies', 'github-activity', 'arcade', 'contact'];
     spyIds.forEach((id) => {
       const el = document.getElementById(id);
       if (el) spy.observe(el);
@@ -681,6 +682,9 @@ function App() {
           </div>
         </section>
 
+        {/* ── Engineering Case Studies Section ── */}
+        <CaseStudiesSection />
+
         {/* ── GitHub Commit History Section ── */}
         <section id="github-activity">
           <Suspense fallback={<div className="bento-card bento-col-12" style={{ minHeight: '300px' }} />}>
@@ -710,21 +714,37 @@ function App() {
       >
         <div className="contact-grid">
           <div className="contact-info">
-            <h2 className="section-title" style={{ textAlign: 'left', marginBottom: '1rem' }}>{t('footer_title')}</h2>
-            <p className="contact-subtitle" style={{ marginBottom: '2rem' }}>{t('footer_subtitle')}</p>
+            <h2 className="section-title" style={{ textAlign: 'left', marginBottom: '0.75rem' }}>{t('footer_title')}</h2>
+            <p className="contact-subtitle" style={{ marginBottom: '1.5rem', lineHeight: 1.6 }}>{t('footer_subtitle')}</p>
             
-            <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '2rem' }}>
-              <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="btn-outline">
-                <Linkedin size={18} /> LinkedIn
+            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.75rem' }}>
+              <a href="mailto:sgoktug34@gmail.com" className="btn-primary" style={{ padding: '0.6rem 1.1rem', fontSize: '0.88rem' }}>
+                <Mail size={16} /> sgoktug34@gmail.com
               </a>
-              <a href="mailto:sgoktug34@gmail.com" className="btn-outline">
-                <Mail size={18} /> Email
+              <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.6rem 1rem', fontSize: '0.88rem' }}>
+                <Linkedin size={16} /> LinkedIn
+              </a>
+              <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.6rem 1rem', fontSize: '0.88rem' }}>
+                <Github size={16} /> @unitybtw
+              </a>
+              <a href="https://unitybtw.itch.io" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.6rem 1rem', fontSize: '0.88rem' }}>
+                <Gamepad2 size={16} /> Itch.io
               </a>
             </div>
             
-            <div className="availability-card" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem', padding: '0.75rem 1.25rem', border: '1px solid var(--border-subtle)', borderRadius: '12px', fontSize: '0.9rem', color: 'var(--text-secondary)', background: 'var(--bg-card)' }}>
-              <span style={{ display: 'inline-block', width: '6px', height: '6px', background: '#10b981', borderRadius: '50%', flexShrink: 0 }}></span>
-              {t('about_stat_4_val')}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+              <div className="availability-card" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem', padding: '0.65rem 1.15rem', border: '1px solid var(--border-subtle)', borderRadius: '12px', fontSize: '0.86rem', color: 'var(--text-secondary)', background: 'var(--bg-card)' }}>
+                <span style={{ display: 'inline-block', width: '7px', height: '7px', background: '#10b981', borderRadius: '50%', flexShrink: 0 }}></span>
+                <span>{t('about_stat_4_val')}</span>
+              </div>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem', padding: '0.55rem 1.15rem', border: '1px solid var(--border-subtle)', borderRadius: '12px', fontSize: '0.84rem', color: 'var(--text-secondary)', background: 'var(--bg-card)' }}>
+                <MapPin size={14} style={{ color: 'var(--accent-cta)' }} />
+                <span>İstanbul, TR · Remote / Hybrid</span>
+              </div>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem', padding: '0.55rem 1.15rem', border: '1px solid var(--border-subtle)', borderRadius: '12px', fontSize: '0.84rem', color: 'var(--text-secondary)', background: 'var(--bg-card)' }}>
+                <span style={{ fontSize: '0.85rem' }}>⚡</span>
+                <span>Response Time: Typically within 24 hours</span>
+              </div>
             </div>
           </div>
           
