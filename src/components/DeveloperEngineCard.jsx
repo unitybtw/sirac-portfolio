@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Gamepad2, Cpu, Sparkles, Box, Terminal, Activity, Layers } from 'lucide-react';
+import { Gamepad2, Cpu, Box, Terminal, Activity, Layers } from 'lucide-react';
 
 export default function DeveloperEngineCard() {
   const { t } = useTranslation();
