@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, Cpu, Layers, Sparkles, ChevronDown, ChevronUp, ExternalLink, Code2, ShieldCheck, Gauge } from 'lucide-react';
+import { Terminal, Cpu, Layers, ChevronDown, ExternalLink, Code2, ShieldCheck, Gauge } from 'lucide-react';
 
 export default function CaseStudiesSection() {
   const { t, i18n } = useTranslation();
@@ -163,66 +163,93 @@ export default function CaseStudiesSection() {
                 </div>
               </div>
 
-              {/* Metrics Row */}
-              <div className="case-study-metrics-row">
-                {cs.metrics.map((m, idx) => (
-                  <div key={idx} className="metric-chip">
-                    <span className="metric-value">{m.val}</span>
-                    <span className="metric-label">{m.label}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Expandable Technical Details */}
-              <button
-                type="button"
-                className="case-study-expand-btn"
-                onClick={() => toggleExpand(cs.id)}
-                aria-expanded={isExpanded}
-              >
-                <span>{isExpanded ? (isTr ? 'Detayları Gizle' : 'Collapse Technical Specs') : (isTr ? 'Teknik Şartnameyi İncele' : 'Inspect Architectural Specs')}</span>
-                {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-              </button>
-
-              <AnimatePresence>
-                {isExpanded && (
-                  <motion.div
-                    className="case-study-expanded-content"
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                  >
-                    <div className="case-study-details-box">
-                      <h4 className="case-study-details-heading">
-                        <Code2 size={15} />
-                        <span>{isTr ? 'Temel Mühendislik Kararları' : 'Key Engineering Decisions'}</span>
-                      </h4>
-                      <ul className="case-study-details-list">
-                        {cs.details.map((detail, dIdx) => (
-                          <li key={dIdx} className="case-study-detail-item">
-                            <span className="bullet-indicator">✓</span>
-                            <span>{detail}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      {cs.link && (
-                        <div className="case-study-link-wrap">
-                          <a
-                            href={cs.link}
-                            target={cs.link.startsWith('http') ? '_blank' : '_self'}
-                            rel={cs.link.startsWith('http') ? 'noopener noreferrer' : ''}
-                            className="btn-outline text-xs inline-flex items-center gap-1.5"
-                          >
-                            <span>{isTr ? 'Depoyu / Sistemi Gör' : 'View System / Repository'}</span>
-                            <ExternalLink size={13} />
-                          </a>
-                        </div>
-                      )}
+              {/* Bottom Actions Cluster */}
+              <div className="case-study-footer">
+                {/* Metrics Row */}
+                <div className="case-study-metrics-row">
+                  {cs.metrics.map((m, idx) => (
+                    <div key={idx} className="metric-chip">
+                      <span className="metric-value">{m.val}</span>
+                      <span className="metric-label">{m.label}</span>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                  ))}
+                </div>
+
+                {/* Expandable Technical Details */}
+                <button
+                  type="button"
+                  className="case-study-expand-btn"
+                  onClick={() => toggleExpand(cs.id)}
+                  aria-expanded={isExpanded}
+                >
+                  <span>{isExpanded ? (isTr ? 'Detayları Gizle' : 'Collapse Technical Specs') : (isTr ? 'Teknik Şartnameyi İncele' : 'Inspect Architectural Specs')}</span>
+                  <ChevronDown size={15} className={`case-study-chevron ${isExpanded ? 'rotated' : ''}`} />
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {isExpanded && (
+                    <motion.div
+                      className="case-study-expanded-content"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{
+                        height: 'auto',
+                        opacity: 1,
+                        transition: {
+                          height: { duration: 0.38, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: 0.28, delay: 0.05, ease: 'easeOut' }
+                        }
+                      }}
+                      exit={{
+                        height: 0,
+                        opacity: 0,
+                        transition: {
+                          height: { duration: 0.28, ease: [0.16, 1, 0.3, 1] },
+                          opacity: { duration: 0.18, ease: 'easeIn' }
+                        }
+                      }}
+                    >
+                      <div className="case-study-details-box">
+                        <h4 className="case-study-details-heading">
+                          <Code2 size={15} />
+                          <span>{isTr ? 'Temel Mühendislik Kararları' : 'Key Engineering Decisions'}</span>
+                        </h4>
+                        <ul className="case-study-details-list">
+                          {cs.details.map((detail, dIdx) => (
+                            <motion.li
+                              key={dIdx}
+                              className="case-study-detail-item"
+                              initial={{ opacity: 0, x: -6 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ duration: 0.25, delay: 0.08 + dIdx * 0.04, ease: [0.16, 1, 0.3, 1] }}
+                            >
+                              <span className="bullet-indicator">✓</span>
+                              <span>{detail}</span>
+                            </motion.li>
+                          ))}
+                        </ul>
+                        {cs.link && (
+                          <motion.div
+                            className="case-study-link-wrap"
+                            initial={{ opacity: 0, y: 3 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.2, delay: 0.22 }}
+                          >
+                            <a
+                              href={cs.link}
+                              target={cs.link.startsWith('http') ? '_blank' : '_self'}
+                              rel={cs.link.startsWith('http') ? 'noopener noreferrer' : ''}
+                              className="btn-outline text-xs inline-flex items-center gap-1.5"
+                            >
+                              <span>{isTr ? 'Depoyu / Sistemi Gör' : 'View System / Repository'}</span>
+                              <ExternalLink size={13} />
+                            </a>
+                          </motion.div>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </article>
           );
         })}
