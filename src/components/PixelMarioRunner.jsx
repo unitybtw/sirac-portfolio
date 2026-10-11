@@ -189,21 +189,26 @@ const CLOUD = [
   '.##########.',
 ];
 
-// Helper to draw square pixels ("kare kare")
+// Helper to draw square pixels ("kare kare") with horizontal run batching
 function drawPixelMatrix(ctx, matrix, startX, startY, pixelSize, color) {
   ctx.fillStyle = color;
   const rows = matrix.length;
+  const sx = Math.floor(startX);
+  const sy = Math.floor(startY);
   for (let r = 0; r < rows; r++) {
     const row = matrix[r];
     const cols = row.length;
-    for (let c = 0; c < cols; c++) {
+    let c = 0;
+    while (c < cols) {
       if (row[c] === '#') {
-        ctx.fillRect(
-          Math.floor(startX + c * pixelSize),
-          Math.floor(startY + r * pixelSize),
-          pixelSize,
-          pixelSize
-        );
+        let span = 1;
+        while (c + span < cols && row[c + span] === '#') {
+          span++;
+        }
+        ctx.fillRect(sx + c * pixelSize, sy + r * pixelSize, span * pixelSize, pixelSize);
+        c += span;
+      } else {
+        c++;
       }
     }
   }
@@ -244,6 +249,9 @@ export default function PixelMarioRunner({ theme }) {
   }, [theme]);
 
   const jumpBufferRef = useRef(0);
+  const dotPatternRef = useRef(null);
+  const ditherPatternRef = useRef(null);
+  const patternThemeRef = useRef(null);
 
   const stateRef = useRef({
     width: 740,
@@ -308,7 +316,6 @@ export default function PixelMarioRunner({ theme }) {
     if (!canvas || !container) return;
 
     const ctx = canvas.getContext('2d');
-    let animationFrameId = null;
 
     const applyTransform = () => {
       const dpr = window.devicePixelRatio || 1;
@@ -350,16 +357,47 @@ export default function PixelMarioRunner({ theme }) {
     const resizeObserver = new ResizeObserver(handleResize);
     resizeObserver.observe(container);
 
+    let isLoopRunning = false;
+    let animationFrameId = null;
+
+    const startLoop = () => {
+      if (isLoopRunning) return;
+      isLoopRunning = true;
+      lastTick = performance.now();
+      animationFrameId = requestAnimationFrame(gameLoop);
+    };
+
+    const stopLoop = () => {
+      if (!isLoopRunning) return;
+      isLoopRunning = false;
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    };
+
     const intersectionObserver = new IntersectionObserver(
       (entries) => {
-        stateRef.current.isIntersecting = entries[0].isIntersecting;
+        const isVisible = entries[0].isIntersecting;
+        stateRef.current.isIntersecting = isVisible;
+        if (isVisible && stateRef.current.isTabActive) {
+          startLoop();
+        } else {
+          stopLoop();
+        }
       },
       { threshold: 0.05 }
     );
     intersectionObserver.observe(container);
 
     const handleVisibilityChange = () => {
-      stateRef.current.isTabActive = !document.hidden;
+      const isTabActive = !document.hidden;
+      stateRef.current.isTabActive = isTabActive;
+      if (isTabActive && stateRef.current.isIntersecting) {
+        startLoop();
+      } else {
+        stopLoop();
+      }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
 
@@ -375,13 +413,13 @@ export default function PixelMarioRunner({ theme }) {
     let lastTick = performance.now();
 
     const gameLoop = (timestamp) => {
-      animationFrameId = requestAnimationFrame(gameLoop);
-
       const s = stateRef.current;
-      if (!s.isIntersecting || !s.isTabActive) {
-        lastTick = timestamp;
+      if (!isLoopRunning || !s.isIntersecting || !s.isTabActive) {
+        stopLoop();
         return;
       }
+
+      animationFrameId = requestAnimationFrame(gameLoop);
 
       const dt = Math.min((timestamp - lastTick) / 16.667, 2.2);
       lastTick = timestamp;
@@ -707,31 +745,46 @@ export default function PixelMarioRunner({ theme }) {
       const matrixDotColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.08)';
       const cloudColor = isDark ? 'rgba(255, 255, 255, 0.25)' : 'rgba(15, 23, 42, 0.22)';
 
-      // 1. Subtle Dot-Matrix Background ("nokta nokta")
-      ctx.fillStyle = matrixDotColor;
-      for (let x = 0; x < s.width; x += 8) {
-        for (let y = 0; y < s.height; y += 8) {
-          ctx.fillRect(x, y, 2, 2);
-        }
+      // 1. Subtle Dot-Matrix Background (1 GPU pattern fill instead of 1,380 fillRect calls)
+      if (!dotPatternRef.current || patternThemeRef.current !== isDark) {
+        const pCanvas = document.createElement('canvas');
+        pCanvas.width = 8;
+        pCanvas.height = 8;
+        const pCtx = pCanvas.getContext('2d');
+        pCtx.fillStyle = matrixDotColor;
+        pCtx.fillRect(0, 0, 2, 2);
+        dotPatternRef.current = ctx.createPattern(pCanvas, 'repeat');
+
+        const dCanvas = document.createElement('canvas');
+        dCanvas.width = 12;
+        dCanvas.height = 12;
+        const dCtx = dCanvas.getContext('2d');
+        dCtx.fillStyle = pixelColor;
+        dCtx.fillRect(0, 0, px, px);
+        dCtx.fillRect(6, 6, px, px);
+        ditherPatternRef.current = ctx.createPattern(dCanvas, 'repeat');
+
+        patternThemeRef.current = isDark;
       }
+
+      ctx.fillStyle = dotPatternRef.current;
+      ctx.fillRect(0, 0, s.width, s.height);
 
       // 2. Clouds (1-bit pixel blocks)
       s.clouds.forEach((c) => {
         drawPixelMatrix(ctx, CLOUD, c.x, c.y, px, cloudColor);
       });
 
-      // 3. Ground (Line of square blocks + 1-bit dithered squares underneath)
+      // 3. Ground (Line + 1-bit dithered squares pattern)
       ctx.fillStyle = pixelColor;
       ctx.fillRect(0, s.groundY, s.width, px);
 
-      const ditherOffset = Math.floor(s.distanceTraveled) % (px * 4);
-      for (let x = -px * 4; x < s.width + px * 4; x += px * 2) {
-        for (let y = s.groundY + px * 2; y < s.height; y += px * 2) {
-          if (((x + y + ditherOffset) / (px * 2)) % 2 === 0) {
-            ctx.fillRect(x, y, px, px);
-          }
-        }
-      }
+      const ditherOffset = Math.floor(s.distanceTraveled) % 12;
+      ctx.save();
+      ctx.translate(-ditherOffset, 0);
+      ctx.fillStyle = ditherPatternRef.current;
+      ctx.fillRect(ditherOffset, s.groundY + px * 2, s.width, s.height - (s.groundY + px * 2));
+      ctx.restore();
 
       // 4. Obstacles (Square pixel art)
       s.obstacles.forEach((obs) => {
@@ -789,10 +842,10 @@ export default function PixelMarioRunner({ theme }) {
       });
     };
 
-    animationFrameId = requestAnimationFrame(gameLoop);
+    startLoop();
 
     return () => {
-      cancelAnimationFrame(animationFrameId);
+      stopLoop();
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
       document.removeEventListener('visibilitychange', handleVisibilityChange);

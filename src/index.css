@@ -254,6 +254,11 @@ section {
   padding-top: 8rem;
 }
 
+section:not(#hero) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 600px;
+}
+
 .section-title {
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
@@ -320,6 +325,10 @@ section {
   }
   section {
     padding-top: 4.5rem;
+  }
+  section:not(#hero) {
+    content-visibility: auto;
+    contain-intrinsic-size: auto none auto 600px;
   }
   .section-title {
     font-size: clamp(1.75rem, 5vw, 2.25rem);
@@ -616,6 +625,7 @@ section {
 .engine-polytope-mesh {
   transform-origin: 170px 110px;
   animation: engine-polytope-float 6s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
 @keyframes engine-polytope-float {
@@ -1642,7 +1652,6 @@ section {
   flex-shrink: 0;
 }
 
-/* Active green square hopping in like a bird from screen edges */
 /* Active green square gliding in smoothly like a graceful flight */
 .gh-day-smooth-flight {
   position: absolute;
@@ -1652,20 +1661,17 @@ section {
   pointer-events: none;
   z-index: 50;
   animation: commitSmoothGlide 1.15s cubic-bezier(0.16, 1, 0.3, 1) both;
-  will-change: transform, opacity;
 }
 
 @keyframes commitSmoothGlide {
   0% {
     opacity: 0;
-    /* Sitenin ve ekranın en dış kenarlarından yüksek irtifadan başlar */
     transform: translate3d(var(--fly-x, -60vw), var(--fly-y, -140px), 0) scale(1.35) rotate(var(--fly-rot, -12deg));
   }
   20% {
     opacity: 1;
   }
   65% {
-    /* Zarif ve kesintisiz iniş kavisi — asla yukarı zıplamaz, tamamen akıcı ve pürüzsüz */
     transform: translate3d(calc(var(--fly-x, -60vw) * 0.16), calc(var(--fly-y, -140px) * 0.14), 0) scale(1.06) rotate(calc(var(--fly-rot, -12deg) * 0.2));
   }
   100% {
@@ -1676,10 +1682,9 @@ section {
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .gh-day-smooth-flight {
-    --fly-x: calc(var(--fly-x, -50vw) * 0.6);
-    --fly-y: calc(var(--fly-y, -120px) * 0.6);
+    display: none !important;
   }
 }
 

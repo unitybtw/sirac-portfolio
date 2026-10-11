@@ -263,16 +263,26 @@
   animation: arcadeTraceFlow 2.8s linear infinite reverse;
 }
 
-/* Equalizer Bars Spectrum Animation */
-@keyframes eqBounce1 { 0%, 100% { height: 16px; y: 124px; } 50% { height: 34px; y: 106px; } }
-@keyframes eqBounce2 { 0%, 100% { height: 28px; y: 112px; } 50% { height: 14px; y: 126px; } }
-@keyframes eqBounce3 { 0%, 100% { height: 38px; y: 102px; } 50% { height: 22px; y: 118px; } }
-@keyframes eqBounce4 { 0%, 100% { height: 20px; y: 120px; } 50% { height: 38px; y: 102px; } }
+/* Equalizer Bars Spectrum Animation - GPU Composited (Zero Reflow) */
+.arcade-equalizer {
+  transform-box: fill-box;
+}
 
-.eq-bar-1, .eq-bar-9 { animation: eqBounce1 1.4s ease-in-out infinite; }
-.eq-bar-2, .eq-bar-7 { animation: eqBounce2 1.6s ease-in-out infinite 0.15s; }
-.eq-bar-3, .eq-bar-5 { animation: eqBounce3 1.3s ease-in-out infinite 0.3s; }
-.eq-bar-4, .eq-bar-6, .eq-bar-8 { animation: eqBounce4 1.5s ease-in-out infinite 0.45s; }
+.eq-bar {
+  transform-box: fill-box;
+  transform-origin: bottom;
+  will-change: transform;
+}
+
+@keyframes eqScale1 { 0%, 100% { transform: scaleY(0.4); } 50% { transform: scaleY(0.95); } }
+@keyframes eqScale2 { 0%, 100% { transform: scaleY(0.7); } 50% { transform: scaleY(0.3); } }
+@keyframes eqScale3 { 0%, 100% { transform: scaleY(0.95); } 50% { transform: scaleY(0.5); } }
+@keyframes eqScale4 { 0%, 100% { transform: scaleY(0.45); } 50% { transform: scaleY(0.85); } }
+
+.eq-bar-1, .eq-bar-9 { animation: eqScale1 1.4s ease-in-out infinite; }
+.eq-bar-2, .eq-bar-7 { animation: eqScale2 1.6s ease-in-out infinite 0.15s; }
+.eq-bar-3, .eq-bar-5 { animation: eqScale3 1.3s ease-in-out infinite 0.3s; }
+.eq-bar-4, .eq-bar-6, .eq-bar-8 { animation: eqScale4 1.5s ease-in-out infinite 0.45s; }
 
 /* Ship Float Animation */
 @keyframes shipFloat {
