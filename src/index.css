@@ -661,22 +661,58 @@ section:not(#hero) {
   touch-action: pan-y;
 }
 
-.corner-mario-hint {
+.corner-mario-controls {
   position: absolute;
   top: 6px;
-  left: 16px;
+  right: 18px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  z-index: 6;
+  pointer-events: auto;
+}
+
+.mario-sound-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.62rem;
-  letter-spacing: 0.08em;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  opacity: 0.75;
+}
+
+.mario-sound-btn:hover {
+  opacity: 1;
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
+  transform: scale(1.04);
+}
+
+.mario-sound-btn:active {
+  transform: scale(0.96);
+}
+
+.corner-mario-hint {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
   color: var(--text-secondary);
-  opacity: 0.65;
+  opacity: 0.75;
   pointer-events: none;
   animation: cornerHintFade 0.2s ease-out;
 }
 
 @keyframes cornerHintFade {
   from { opacity: 0; transform: translateY(-2px); }
-  to { opacity: 0.65; transform: translateY(0); }
+  to { opacity: 0.75; transform: translateY(0); }
 }
 
 @media (max-width: 960px) {
