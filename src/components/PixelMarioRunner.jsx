@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { Volume2, VolumeX, ArrowUp } from 'lucide-react';
 
 /**
  * PixelMarioRunner
@@ -1267,7 +1268,7 @@ export default function PixelMarioRunner({ theme }) {
       ctx.font = 'bold 9px ui-monospace, SFMono-Regular, Menlo, monospace';
       ctx.letterSpacing = '0.05em';
       const scoreStr = String(s.score).padStart(6, '0');
-      const hudText = `MARIO ${scoreStr}   🪙x${s.coins}   WORLD 1-1`;
+      const hudText = `MARIO ${scoreStr}   COIN x${String(s.coins).padStart(2, '0')}   WORLD 1-1`;
       ctx.fillText(hudText, 14, 14);
     };
 
@@ -1307,20 +1308,42 @@ export default function PixelMarioRunner({ theme }) {
     >
       <canvas ref={canvasRef} className="corner-pixel-canvas" />
 
-      {/* Floating Retro Controls: Sound Toggle & Jump Hint */}
+      {/* Floating Retro Controls: Sound Toggle & Jump Button */}
       <div className="corner-mario-controls">
         <button
           type="button"
-          onClick={toggleSound}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleSound();
+          }}
           className="mario-sound-btn"
           title={isAudioEnabled ? 'Mute 8-Bit NES Audio' : 'Unmute 8-Bit NES Audio'}
           aria-label="Toggle retro audio"
         >
-          {isAudioEnabled ? '🔊 8-BIT' : '🔇 MUTE'}
+          {isAudioEnabled ? (
+            <Volume2 size={12} strokeWidth={2.4} aria-hidden="true" />
+          ) : (
+            <VolumeX size={12} strokeWidth={2.4} aria-hidden="true" />
+          )}
+          <span>{isAudioEnabled ? '8-BIT' : 'MUTE'}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            triggerJump();
+          }}
+          className="mario-ctrl-btn"
+          title="Jump (Space / Click)"
+          aria-label="Jump Mario"
+        >
+          <ArrowUp size={12} strokeWidth={2.5} aria-hidden="true" />
+          <span>JUMP</span>
         </button>
 
         {isHovered && (
-          <span className="corner-mario-hint">[SPACE / CLICK TO JUMP]</span>
+          <span className="corner-mario-hint">[SPACE / CLICK]</span>
         )}
       </div>
     </div>

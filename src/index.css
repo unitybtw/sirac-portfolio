@@ -672,7 +672,11 @@ section:not(#hero) {
   pointer-events: auto;
 }
 
-.mario-sound-btn {
+.mario-sound-btn,
+.mario-ctrl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
@@ -680,23 +684,26 @@ section:not(#hero) {
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.05em;
-  padding: 2px 7px;
+  padding: 3px 8px;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
   user-select: none;
-  opacity: 0.75;
+  opacity: 0.8;
+  line-height: 1;
 }
 
-.mario-sound-btn:hover {
+.mario-sound-btn:hover,
+.mario-ctrl-btn:hover {
   opacity: 1;
   color: var(--text-primary);
   border-color: var(--text-secondary);
-  transform: scale(1.04);
+  transform: translateY(-1px);
 }
 
-.mario-sound-btn:active {
-  transform: scale(0.96);
+.mario-sound-btn:active,
+.mario-ctrl-btn:active {
+  transform: translateY(0);
 }
 
 .corner-mario-hint {
