@@ -7,7 +7,6 @@ import './index.css';
 import { LINKEDIN_URL } from './i18n';
 import { SlideNavbar } from './components/ui/slide-tabs';
 import PixelMarioRunner from './components/PixelMarioRunner';
-import DeveloperEngineCard from './components/DeveloperEngineCard';
 import CaseStudiesSection from './components/CaseStudiesSection';
 
 // Ekranın altında kalan ağır bileşenler: ilk paint'i bloklamasın,
@@ -410,14 +409,37 @@ function App() {
                 </motion.div>
               </motion.div>
 
-              {/* Right Column: Game Developer Engine & Code Inspector Bento */}
+              {/* Right Column: AI Portrait Showcase (Cloud CDN Loaded - 0 bytes in Git Repo) */}
               <motion.div
                 className="hero-right-column"
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
               >
-                <DeveloperEngineCard />
+                <div className="hero-portrait-card">
+                  <img
+                    src={import.meta.env.VITE_PROFILE_PHOTO_URL || "https://files.catbox.moe/y8qlp8.jpg"}
+                    alt="Sıraç Göktuğ Şimşek"
+                    className="hero-portrait-img"
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                    width="380"
+                    height="475"
+                  />
+                  <div className="hero-portrait-scrim" />
+
+                  {/* Floating Meta Overlay */}
+                  <div className="hero-portrait-overlay">
+                    <div className="hero-portrait-name">
+                      Sıraç Göktuğ Şimşek
+                    </div>
+                    <div className="hero-portrait-role">
+                      <span className="hero-portrait-status-dot" />
+                      <span>{t('hero_title')}</span>
+                    </div>
+                  </div>
+                </div>
               </motion.div>
             </div>
           </div>

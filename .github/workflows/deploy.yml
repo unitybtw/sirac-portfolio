@@ -39,6 +39,7 @@ jobs:
         env:
           VITE_WEB3FORMS_KEY: ${{ secrets.VITE_WEB3FORMS_KEY }}
           VITE_FIREBASE_DB_URL: ${{ secrets.VITE_FIREBASE_DB_URL }}
+          VITE_PROFILE_PHOTO_URL: ${{ secrets.VITE_PROFILE_PHOTO_URL }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
