@@ -93,22 +93,22 @@ const MARIO_RUN_3 = [
 ];
 
 const MARIO_JUMP = [
-  '......#####.....',
+  '..###...........',
+  '..###.#####.....',
   '.....#########..',
   '.....###...#.#..',
   '....#.###.###.#.',
   '....#.###.#####.',
   '....##.###.####.',
-  '..#...#######...',
-  '..####.###......',
-  '..#####.##.###..',
-  '...#.##.###.###.',
-  '....#.#..#..#.##',
-  '....#.#####.###.',
-  '.....#######.##.',
-  '....####.####...',
-  '...###....###...',
-  '..####....####..'
+  '......#######...',
+  '...###.###......',
+  '..####.##.###...',
+  '..###.###.###...',
+  '..##..#..#.##...',
+  '..###.#####.##..',
+  '...##########...',
+  '..####...####...',
+  '.#####....####..'
 ];
 
 // ── 1-Bit Enemies, Blocks & Items ───────────────────────────────────────────
@@ -194,14 +194,14 @@ const BLOCK_QUESTION_2 = [
   '#...########...#',
   '#..##########..#',
   '#..###....###..#',
-  '#.........###..#',
+  '#..###....###..#',
   '#........###...#',
   '#.......###....#',
   '#......###.....#',
   '#......###.....#',
   '#..............#',
   '#......###.....#',
-  '#..............#',
+  '#......###.....#',
   '#..............#',
   '#..............#',
   '################'
@@ -265,6 +265,7 @@ const SUPER_MUSHROOM = [
 ];
 
 const COIN_FRAMES = [
+  // Frame 0: Wide Face (10x12)
   [
     '..######..',
     '.########.',
@@ -279,40 +280,50 @@ const COIN_FRAMES = [
     '.########.',
     '..######..'
   ],
+  // Frame 1: Three-quarter turn (10x12)
   [
-    '..####..',
-    '.######.',
-    '##.##.##',
-    '##.##.##',
-    '##.##.##',
-    '##.##.##',
-    '##.##.##',
-    '##.##.##',
-    '.######.',
-    '..####..'
+    '...####...',
+    '..######..',
+    '.##.##.##.',
+    '.##.##.##.',
+    '.##.##.##.',
+    '.##.##.##.',
+    '.##.##.##.',
+    '.##.##.##.',
+    '.##.##.##.',
+    '.##.##.##.',
+    '..######..',
+    '...####...'
   ],
+  // Frame 2: Side profile (10x12)
   [
-    '.##.',
-    '####',
-    '####',
-    '####',
-    '####',
-    '####',
-    '####',
-    '####',
-    '.##.'
+    '....##....',
+    '...####...',
+    '...####...',
+    '...####...',
+    '...####...',
+    '...####...',
+    '...####...',
+    '...####...',
+    '...####...',
+    '...####...',
+    '...####...',
+    '....##....'
   ],
+  // Frame 3: Three-quarter turn opposite (10x12)
   [
-    '..####..',
-    '.######.',
-    '##.##.##',
-    '##.##.##',
-    '##.##.##',
-    '##.##.##',
-    '##.##.##',
-    '##.##.##',
-    '.######.',
-    '..####..'
+    '...####...',
+    '..######..',
+    '.##.##.##.',
+    '.##.##.##.',
+    '.##.##.##.',
+    '.##.##.##.',
+    '.##.##.##.',
+    '.##.##.##.',
+    '.##.##.##.',
+    '.##.##.##.',
+    '..######..',
+    '...####...'
   ]
 ];
 
@@ -1154,14 +1165,19 @@ export default function PixelMarioRunner({ theme }) {
       const matrixDotColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.08)';
       const cloudColor = isDark ? 'rgba(255, 255, 255, 0.35)' : 'rgba(15, 23, 42, 0.3)';
 
-      // 1. Subtle Dot-Matrix Background Pattern
+      // 1. Solid LCD Background (Eliminates transparent HTML bleed and ghosting)
+      const screenBgColor = isDark ? '#060913' : '#f8fafc';
+      ctx.fillStyle = screenBgColor;
+      ctx.fillRect(0, 0, s.width, s.height);
+
+      // 2. Subtle Dot-Matrix Background Pattern
       if (!dotPatternRef.current || patternThemeRef.current !== isDark) {
         const pCanvas = document.createElement('canvas');
         pCanvas.width = 8;
         pCanvas.height = 8;
         const pCtx = pCanvas.getContext('2d');
         pCtx.fillStyle = matrixDotColor;
-        pCtx.fillRect(0, 0, 2, 2);
+        pCtx.fillRect(0, 0, px, px);
         dotPatternRef.current = ctx.createPattern(pCanvas, 'repeat');
 
         // 1-Bit Dither Pattern for Ground Tiling
@@ -1180,17 +1196,17 @@ export default function PixelMarioRunner({ theme }) {
       ctx.fillStyle = dotPatternRef.current;
       ctx.fillRect(0, 0, s.width, s.height);
 
-      // 2. 1-Bit Clouds
+      // 3. 1-Bit Clouds
       s.clouds.forEach((c) => {
         drawPixelMatrix(ctx, CLOUD_1BIT, c.x, c.y, px, cloudColor);
       });
 
-      // 3. 1-Bit Bushes on Ground
+      // 4. 1-Bit Bushes on Ground
       s.bushes.forEach((b) => {
         drawPixelMatrix(ctx, BUSH_1BIT, b.x, s.groundY - 18, px, pixelColor);
       });
 
-      // 4. Ground: Solid Rail + Scrolling Dither Pattern
+      // 5. Ground: Solid Rail + Scrolling Dither Pattern
       ctx.fillStyle = pixelColor;
       ctx.fillRect(0, s.groundY, s.width, px);
 
@@ -1201,7 +1217,7 @@ export default function PixelMarioRunner({ theme }) {
       ctx.fillRect(ditherOffset, s.groundY + px, s.width + 24, s.height - (s.groundY + px));
       ctx.restore();
 
-      // 5. Obstacles
+      // 6. Obstacles
       s.obstacles.forEach((obs) => {
         if (obs.type === 'pipe') {
           drawPixelMatrix(ctx, PIPE_LIP, obs.x, obs.y, px, pixelColor);
@@ -1228,24 +1244,24 @@ export default function PixelMarioRunner({ theme }) {
         }
       });
 
-      // 6. Mushrooms
+      // 7. Mushrooms
       s.mushrooms.forEach((mush) => {
         drawPixelMatrix(ctx, SUPER_MUSHROOM, mush.x, mush.y, px, pixelColor);
       });
 
-      // 7. Popped Coins from ? Blocks
+      // 8. Popped Coins from ? Blocks
       s.poppedCoins.forEach((pc) => {
         const cFrame = COIN_FRAMES[Math.floor(s.distanceTraveled / 4) % COIN_FRAMES.length];
         drawPixelMatrix(ctx, cFrame, pc.x, pc.y, px, pixelColor);
       });
 
-      // 8. Dust & Sparkle Particles
+      // 9. Dust & Sparkle Particles (Grid-aligned 2x2 pixels)
       ctx.fillStyle = pixelColor;
       s.particles.forEach((p) => {
-        ctx.fillRect(Math.floor(p.x), Math.floor(p.y), 3, 3);
+        ctx.fillRect(Math.floor(p.x), Math.floor(p.y), px, px);
       });
 
-      // 9. Mario (1-Bit Running Animation)
+      // 10. Mario (1-Bit Running & Jumping Animation)
       if (m.isBlinking <= 0 || Math.floor(m.isBlinking / 4) % 2 === 0) {
         let marioSprite = MARIO_STAND;
         if (!m.isGrounded) {
@@ -1260,20 +1276,22 @@ export default function PixelMarioRunner({ theme }) {
         drawPixelMatrix(ctx, marioSprite, m.x, m.y, px, pixelColor);
       }
 
-      // 10. Floating 1-Bit Scores
+      // 11. Floating 1-Bit Scores
+      ctx.fillStyle = pixelColor;
+      ctx.font = 'bold 10px ui-monospace, SFMono-Regular, Menlo, monospace';
+      ctx.textBaseline = 'bottom';
       s.floatingTexts.forEach((ft) => {
-        ctx.fillStyle = pixelColor;
-        ctx.font = 'bold 11px ui-monospace, SFMono-Regular, Menlo, monospace';
-        ctx.fillText(ft.text, ft.x, ft.y);
+        ctx.fillText(ft.text, Math.floor(ft.x), Math.floor(ft.y));
       });
 
-      // 11. Retro LCD HUD
-      ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.75)' : 'rgba(15, 23, 42, 0.82)';
-      ctx.font = 'bold 9px ui-monospace, SFMono-Regular, Menlo, monospace';
+      // 12. Retro LCD HUD
+      ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.82)' : 'rgba(15, 23, 42, 0.85)';
+      ctx.font = 'bold 10px ui-monospace, SFMono-Regular, Menlo, monospace';
+      ctx.textBaseline = 'top';
       ctx.letterSpacing = '0.05em';
       const scoreStr = String(s.score).padStart(6, '0');
       const hudText = `MARIO ${scoreStr}   COIN x${String(s.coins).padStart(2, '0')}   WORLD 1-1`;
-      ctx.fillText(hudText, 14, 14);
+      ctx.fillText(hudText, 14, 10);
     };
 
     startLoop();
