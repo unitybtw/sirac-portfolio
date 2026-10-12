@@ -1,170 +1,154 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 /**
- * Authentic NES Super Mario Bros Runner
- * - Full authentic NES color palette & multi-color 16x16 pixel sprites
- * - Authentic Mario running animation (Stand, Run 1, Run 2, Run 3, Jump)
- * - Authentic Goomba with 2-frame walking wobble and flat pancake stomp
- * - Authentic Question Blocks with animated shimmer, spring bump & coin pop
- * - Breakable Brick Blocks & Super Mushroom powerups
- * - Nintendo Warp Pipes with authentic green highlights & shadows
- * - World 1-1 Earth & Grass ground tiles and puffy clouds
- * - Pure Web Audio 8-bit sound synthesizer (jump, coin, stomp, bump, powerup) with mute toggle
- * - Autonomous AI pilot + interactive Spacebar / Click / Touch control
- * - 0% CPU consumption off-screen via IntersectionObserver
+ * PixelMarioRunner
+ * Large-format 1-bit dot-matrix Mario runner stuck to the window corner.
+ * - Monochromatic Black & White dot-matrix / LCD pixel aesthetic ("siyah beyaz noktalı").
+ * - In Light Mode: Solid black square pixel blocks on the background.
+ * - In Dark Mode: Solid white square pixel blocks on the background.
+ * - Authentic 1-bit NES Mario sprites (Stand, Run 1, Run 2, Run 3, Jump).
+ * - Authentic Goomba with walking wobble & pancake stomp.
+ * - Animated Question Block with spring bounce, spent block, and popping coins/mushrooms.
+ * - Breakable brick blocks & Warp pipes with dither shading.
+ * - 1-bit dithered ground, drifting clouds, and bushes.
+ * - Autonomous AI pilot with interactive Space / ArrowUp / Click jump.
+ * - Pure Web Audio 8-bit sound synthesizer with mute toggle.
+ * - 0% CPU consumption off-screen via IntersectionObserver.
  */
 
-// ── Retro Palette Mapping ───────────────────────────────────────────────────
-const PALETTE = {
-  K: '#000000', // Black outline & pupils
-  R: '#E52521', // Mario iconic Red cap & shirt / Mushroom cap
-  B: '#0045B5', // Mario Blue overalls
-  P: '#FCD8A8', // Peach skin / face & hands
-  D: '#4A2000', // Dark brown mustache, hair, boots & spent block
-  Y: '#F8D800', // Gold yellow buttons & coin base
-  W: '#FFFFFF', // Pure white eye gleam, mushroom spots, ? shine
-  M: '#B84418', // Goomba chestnut cap & brick red
-  F: '#FCD8A8', // Goomba stem & face
-  O: '#FC9838', // Question block amber/gold
-  H: '#80D010', // Pipe & grass highlight lime green
-  G: '#00A800', // Pipe & grass Nintendo green
-  S: '#005000', // Pipe shadow forest green
-  E: '#8C4000', // Spent metal block dark bronze
-  C: '#6888FC', // Cloud / Sky shadow light blue
-};
-
-// ── 16x16 Authentic NES Sprites ─────────────────────────────────────────────
+// ── 1-Bit Authentic Mario Sprites (16x16) ───────────────────────────────────
 const MARIO_STAND = [
-  '....RRRRR.......',
-  '...RRRRRRRRR....',
-  '...DDD..P.P.....',
-  '..D.P.D.PPP.P...',
-  '..D.P.DD.PPP.P..',
-  '..DD.P...PPPP...',
-  '....PPPPPPP.....',
-  '...RRBRRR.......',
-  '..RRRBRRBRRR....',
-  '.RRRRBBBBBRRR...',
-  '.PPR.BYB.B.RPP..',
-  '.PPP.BBBBB.PPP..',
-  '.PPP.BBBBB.PPP..',
-  '....BBBBBBB.....',
-  '...DDD...DDD....',
-  '..DDDD...DDDD...'
+  '.....#####......',
+  '....#########...',
+  '....###...#.#...',
+  '...#.###.###.#..',
+  '...#.###.#####.#',
+  '...##.###.####..',
+  '.....#######....',
+  '....##.###......',
+  '...###.##.###...',
+  '..####.###.###..',
+  '..##.#..#..#.##.',
+  '..###.#####.###.',
+  '..###.#####.###.',
+  '....#######.....',
+  '...###...###....',
+  '..####...####...'
 ];
 
 const MARIO_RUN_1 = [
-  '....RRRRR.......',
-  '...RRRRRRRRR....',
-  '...DDD..P.P.....',
-  '..D.P.D.PPP.P...',
-  '..D.P.DD.PPP.P..',
-  '..DD.P...PPPP...',
-  '....PPPPPPP.....',
-  '....RRBRRR......',
-  '...RRRBRRBRRR...',
-  '..RRRRBBBBBRRR..',
-  '..PPR.BYB.B.RPP.',
-  '..PPP.BBBBB.PPP.',
-  '..PPP.BBBBB.PPP.',
-  '....BBBBBBBBB...',
-  '.....DDDDD......',
-  '....DDDDDD......'
+  '.....#####......',
+  '....#########...',
+  '....###...#.#...',
+  '...#.###.###.#..',
+  '...#.###.#####.#',
+  '...##.###.####..',
+  '.....#######....',
+  '....##.###......',
+  '...###.##.###...',
+  '..####.###.###..',
+  '..##.#..#..#.##.',
+  '..###.#####.###.',
+  '..###.#####.###.',
+  '....#########...',
+  '.....#####......',
+  '....######......'
 ];
 
 const MARIO_RUN_2 = [
-  '.....RRRRR......',
-  '....RRRRRRRRR...',
-  '....DDD..P.P....',
-  '...D.P.D.PPP.P..',
-  '...D.P.DD.PPP.P.',
-  '...DD.P...PPPP..',
-  '.....PPPPPPP....',
-  '....RRBRRR......',
-  '...RRRBRRBRRR...',
-  '..RRRRBBBBBRRR..',
-  '..PPR.BYB.B.RPP.',
-  '..PPP.BBBBB.PPP.',
-  '..PPP.BBBBB.PPP.',
-  '....BBBBBBBBB...',
-  '...DDD...DDD....',
-  '..DDDD...DDDD...'
+  '.....#####......',
+  '....#########...',
+  '....###...#.#...',
+  '...#.###.###.#..',
+  '...#.###.#####.#',
+  '...##.###.####..',
+  '.....#######....',
+  '....##.###......',
+  '...###.##.###...',
+  '..####.###.###..',
+  '..##.#..#..#.##.',
+  '..###.#####.###.',
+  '..###.#####.###.',
+  '....#########...',
+  '...###...###....',
+  '..####...####...'
 ];
 
 const MARIO_RUN_3 = [
-  '.....RRRRR......',
-  '....RRRRRRRRR...',
-  '....DDD..P.P....',
-  '...D.P.D.PPP.P..',
-  '...D.P.DD.PPP.P.',
-  '...DD.P...PPPP..',
-  '.....PPPPPPP....',
-  '....RRBRRR......',
-  '...RRRBRRBRRR...',
-  '..RRRRBBBBBRRR..',
-  '..PPR.BYB.B.RPP.',
-  '..PPP.BBBBB.PPP.',
-  '..PPP.BBBBB.PPP.',
-  '....BBBBBBBBB...',
-  '......DDDDD.....',
-  '.....DDDDDD.....'
+  '.....#####......',
+  '....#########...',
+  '....###...#.#...',
+  '...#.###.###.#..',
+  '...#.###.#####.#',
+  '...##.###.####..',
+  '.....#######....',
+  '....##.###......',
+  '...###.##.###...',
+  '..####.###.###..',
+  '..##.#..#..#.##.',
+  '..###.#####.###.',
+  '..###.#####.###.',
+  '....#########...',
+  '......#####.....',
+  '.....######.....'
 ];
 
 const MARIO_JUMP = [
-  '......RRRRR.....',
-  '.....RRRRRRRRR..',
-  '.....DDD..P.P...',
-  '....D.P.D.PPP.P.',
-  '....D.P.DD.PPP.P',
-  '....DD.P...PPPP.',
-  '..P...PPPPPPP...',
-  '..PPRRRBBRRR....',
-  '..PPPRRBRRBRRR..',
-  '...P.RRBBBBBBRR.',
-  '....R.BYB.B.RPP.',
-  '....R.BBBBB.PPP.',
-  '.....BBBBBBB.PP.',
-  '....BBBB.BBBB...',
-  '...DDD....DDD...',
-  '..DDDD....DDDD..'
+  '......#####.....',
+  '.....#########..',
+  '.....###...#.#..',
+  '....#.###.###.#.',
+  '....#.###.#####.',
+  '....##.###.####.',
+  '..#...#######...',
+  '..####.###......',
+  '..#####.##.###..',
+  '...#.##.###.###.',
+  '....#.#..#..#.##',
+  '....#.#####.###.',
+  '.....#######.##.',
+  '....####.####...',
+  '...###....###...',
+  '..####....####..'
 ];
 
+// ── 1-Bit Enemies, Blocks & Items ───────────────────────────────────────────
 const GOOMBA_WALK_1 = [
-  '......MMMM......',
-  '....MMMMMMMM....',
-  '...MMMMMMMMMM...',
-  '..MMMMMMMMMMMM..',
-  '.MMMMMMMMMMMMMM.',
-  '.MMKKMMMMMMKKMM.',
-  '.MMKWMMMMMMWKMM.',
-  'MMMKKMMMMMMKKMMM',
-  'MMMMMMMMMMMMMMMM',
-  '..FFFFFFFFFFFF..',
-  '..FFFFFFFFFFFF..',
-  '...FFFFFFFFFF...',
-  '...KKKKKKKKKK...',
-  '..KKKKKK..KKKK..',
-  '.KKKKKK....KKKK.',
-  '..KKKK......KK..'
+  '......####......',
+  '....########....',
+  '...##########...',
+  '..############..',
+  '.##############.',
+  '.##..######..##.',
+  '.##..######..##.',
+  '###..######..###',
+  '################',
+  '..############..',
+  '..#..######..#..',
+  '...#..####..#...',
+  '...##########...',
+  '..######..####..',
+  '.######....####.',
+  '..####......##..'
 ];
 
 const GOOMBA_WALK_2 = [
-  '......MMMM......',
-  '....MMMMMMMM....',
-  '...MMMMMMMMMM...',
-  '..MMMMMMMMMMMM..',
-  '.MMMMMMMMMMMMMM.',
-  '.MMKKMMMMMMKKMM.',
-  '.MMKWMMMMMMWKMM.',
-  'MMMKKMMMMMMKKMMM',
-  'MMMMMMMMMMMMMMMM',
-  '..FFFFFFFFFFFF..',
-  '..FFFFFFFFFFFF..',
-  '...FFFFFFFFFF...',
-  '...KKKKKKKKKK...',
-  '..KKKK..KKKKKK..',
-  '.KKKK....KKKKKK.',
-  '..KK......KKKK..'
+  '......####......',
+  '....########....',
+  '...##########...',
+  '..############..',
+  '.##############.',
+  '.##..######..##.',
+  '.##..######..##.',
+  '###..######..###',
+  '################',
+  '..############..',
+  '..#..######..#..',
+  '...#..####..#...',
+  '...##########...',
+  '..####..######..',
+  '.####....######.',
+  '..##......####..'
 ];
 
 const GOOMBA_SQUISHED = [
@@ -175,243 +159,237 @@ const GOOMBA_SQUISHED = [
   '................',
   '................',
   '................',
-  '................',
-  '....MMMMMMMM....',
-  '..MMMMMMMMMMMM..',
-  '.MMKKMMMMMMKKMM.',
-  'MMMKKMMMMMMKKMMM',
-  'MMMMMMMMMMMMMMMM',
-  '..FFFFFFFFFFFF..',
-  '..KKKKKKKKKKKK..',
-  '..KKKKKKKKKKKK..'
+  '....########....',
+  '..############..',
+  '.##..######..##.',
+  '###..######..###',
+  '################',
+  '..############..',
+  '..############..',
+  '.##############.',
+  '..############..'
 ];
 
 const BLOCK_QUESTION_1 = [
-  'KKKKKKKKKKKKKKKK',
-  'KHHHHHHHHHHHHHHK',
-  'KHOOOOOOOOOOOOOK',
-  'KHOOOWWWWOOOOOOK',
-  'KHOOWWWWWWOOOOOK',
-  'KHOOWWOOWWOOOOOK',
-  'KHOOOOOOWWOOOOOK',
-  'KHOOOOOWWOOOOOOK',
-  'KHOOOOWWOOOOOOOK',
-  'KHOOOOWWOOOOOOOK',
-  'KHOOOOOOOOOOOOOK',
-  'KHOOOOWWOOOOOOOK',
-  'KHOOOOWWOOOOOOOK',
-  'KHOOOOOOOOOOOOOK',
-  'KSSSSSSSSSSSSSSK',
-  'KKKKKKKKKKKKKKKK'
+  '################',
+  '#..............#',
+  '#...########...#',
+  '#..##########..#',
+  '#..###....###..#',
+  '#.........###..#',
+  '#........###...#',
+  '#.......###....#',
+  '#......###.....#',
+  '#......###.....#',
+  '#..............#',
+  '#......###.....#',
+  '#......###.....#',
+  '#..............#',
+  '#..............#',
+  '################'
 ];
 
 const BLOCK_QUESTION_2 = [
-  'KKKKKKKKKKKKKKKK',
-  'KHHHHHHHHHHHHHHK',
-  'KHOOOOOOOOOOOOOK',
-  'KHOOOHHHHOOOOOOK',
-  'KHOOHHHHHHOOOOOK',
-  'KHOOHHOOHHOOOOOK',
-  'KHOOOOOOHHOOOOOK',
-  'KHOOOOOHHOOOOOOK',
-  'KHOOOOHHOOOOOOOK',
-  'KHOOOOHHOOOOOOOK',
-  'KHOOOOOOOOOOOOOK',
-  'KHOOOOHHOOOOOOOK',
-  'KHOOOOHHOOOOOOOK',
-  'KHOOOOOOOOOOOOOK',
-  'KSSSSSSSSSSSSSSK',
-  'KKKKKKKKKKKKKKKK'
+  '################',
+  '#..............#',
+  '#...########...#',
+  '#..##########..#',
+  '#..###....###..#',
+  '#.........###..#',
+  '#........###...#',
+  '#.......###....#',
+  '#......###.....#',
+  '#......###.....#',
+  '#..............#',
+  '#......###.....#',
+  '#..............#',
+  '#..............#',
+  '#..............#',
+  '################'
 ];
 
 const BLOCK_SPENT = [
-  'KKKKKKKKKKKKKKKK',
-  'KEEEEEEEEEEEEEKK',
-  'KEEDDDDDDDDDDEEK',
-  'KEDDDDDDDDDDDDEK',
-  'KEDDKKDDDDDKKDEK',
-  'KEDDKKDDDDDKKDEK',
-  'KEDDDDDDDDDDDDEK',
-  'KEDDDDDDDDDDDDEK',
-  'KEDDDDDDDDDDDDEK',
-  'KEDDDDDDDDDDDDEK',
-  'KEDDKKDDDDDKKDEK',
-  'KEDDKKDDDDDKKDEK',
-  'KEDDDDDDDDDDDDEK',
-  'KEEDDDDDDDDDDEEK',
-  'KEEEEEEEEEEEEEKK',
-  'KKKKKKKKKKKKKKKK'
+  '################',
+  '#..............#',
+  '#..##......##..#',
+  '#..##......##..#',
+  '#..............#',
+  '#..............#',
+  '#..............#',
+  '#..............#',
+  '#..............#',
+  '#..............#',
+  '#..............#',
+  '#..............#',
+  '#..##......##..#',
+  '#..##......##..#',
+  '#..............#',
+  '################'
 ];
 
 const BRICK_BLOCK = [
-  'KKKKKKKKKKKKKKKK',
-  'KHHHHHKHHHHHHHHK',
-  'KMMMMMKMMMMMMMMK',
-  'KMMMMMKMMMMMMMMK',
-  'KKKKKKKKKKKKKKKK',
-  'KHHHHHHHHKHHHHHK',
-  'KMMMMMMMMKMMMMMK',
-  'KMMMMMMMMKMMMMMK',
-  'KKKKKKKKKKKKKKKK',
-  'KHHHHHKHHHHHHHHK',
-  'KMMMMMKMMMMMMMMK',
-  'KMMMMMKMMMMMMMMK',
-  'KKKKKKKKKKKKKKKK',
-  'KHHHHHHHHKHHHHHK',
-  'KMMMMMMMMKMMMMMK',
-  'KKKKKKKKKKKKKKKK'
+  '################',
+  '#......#.......#',
+  '#......#.......#',
+  '################',
+  '#.......#......#',
+  '#.......#......#',
+  '################',
+  '#......#.......#',
+  '#......#.......#',
+  '################',
+  '#.......#......#',
+  '#.......#......#',
+  '################',
+  '#......#.......#',
+  '#......#.......#',
+  '################'
 ];
 
 const SUPER_MUSHROOM = [
-  '.....KKKKKK.....',
-  '...KKRRRRRRKK...',
-  '..KRRWWWRRWWWRK..',
-  '.KRRWWWWWWWWWWRK.',
-  '.KRWWWWWWWWWWWRK.',
-  '.KRWWWWWWWWWWWRK.',
-  'KRRRRWWWRRWWWRRRK',
-  'KRRRRRRRRRRRRRRRK',
-  'KKKKKKKKKKKKKKKKK',
-  '..KPPPPPPPPPPK...',
-  '..KPPKP..PKPPK...',
-  '..KPPKP..PKPPK...',
-  '..KPPPPPPPPPPK...',
-  '..KPPPPPPPPPPK...',
-  '...KKPPPPPPKK....',
-  '.....KKKKKK......'
+  '.....######.....',
+  '...##########...',
+  '..###..##..###..',
+  '.###....####.##.',
+  '.##....######.##',
+  '.##....######.##',
+  '####..##..######',
+  '################',
+  '################',
+  '..############..',
+  '..###.####.###..',
+  '..###.####.###..',
+  '..############..',
+  '..############..',
+  '...##########...',
+  '.....######.....'
 ];
 
 const COIN_FRAMES = [
   [
-    '..KKKKKK..',
-    '.KGGGGGGK.',
-    'KGHHGGGGGK',
-    'KGHHGGGGGK',
-    'KGGGGGGGGK',
-    'KGGGGGGGGK',
-    'KGGGGGGGGK',
-    'KGGGGGGGGK',
-    'KGGGGGGGGK',
-    'KGGGGGGGGK',
-    'KGHHGGGGGK',
-    '.KGGGGGGK.',
-    '..KKKKKK..'
+    '..######..',
+    '.########.',
+    '##..##..##',
+    '##..##..##',
+    '##..##..##',
+    '##..##..##',
+    '##..##..##',
+    '##..##..##',
+    '##..##..##',
+    '##..##..##',
+    '.########.',
+    '..######..'
   ],
   [
-    '..KKKK..',
-    '.KGGGGK.',
-    'KGHHGGGK',
-    'KGHHGGGK',
-    'KGGGGGGK',
-    'KGGGGGGK',
-    'KGGGGGGK',
-    'KGGGGGGK',
-    'KGGGGGGK',
-    'KGHHGGGK',
-    '.KGGGGK.',
-    '..KKKK..'
+    '..####..',
+    '.######.',
+    '##.##.##',
+    '##.##.##',
+    '##.##.##',
+    '##.##.##',
+    '##.##.##',
+    '##.##.##',
+    '.######.',
+    '..####..'
   ],
   [
-    '.KK.',
-    'KGHK',
-    'KGHK',
-    'KGHK',
-    'KGGK',
-    'KGGK',
-    'KGGK',
-    'KGGK',
-    'KGGK',
-    'KGHK',
-    'KGHK',
-    '.KK.'
+    '.##.',
+    '####',
+    '####',
+    '####',
+    '####',
+    '####',
+    '####',
+    '####',
+    '.##.'
   ],
   [
-    '..KKKK..',
-    '.KGGGGK.',
-    'KGHHGGGK',
-    'KGHHGGGK',
-    'KGGGGGGK',
-    'KGGGGGGK',
-    'KGGGGGGK',
-    'KGGGGGGK',
-    'KGGGGGGK',
-    'KGHHGGGK',
-    '.KGGGGK.',
-    '..KKKK..'
+    '..####..',
+    '.######.',
+    '##.##.##',
+    '##.##.##',
+    '##.##.##',
+    '##.##.##',
+    '##.##.##',
+    '##.##.##',
+    '.######.',
+    '..####..'
   ]
 ];
 
 const PIPE_LIP = [
-  'KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK',
-  'KHHHHHHHHGGGGGGGGGGGGGGGGSSSSSSK',
-  'KHHHHHHHHGGGGGGGGGGGGGGGGSSSSSSK',
-  'KHHGGGGGGGGGGGGGGGGGGGGGGSSSSSSK',
-  'KHHGGGGGGGGGGGGGGGGGGGGGGSSSSSSK',
-  'KHHGGGGGGGGGGGGGGGGGGGGGGSSSSSSK',
-  'KHHGGGGGGGGGGGGGGGGGGGGGGSSSSSSK',
-  'KHHGGGGGGGGGGGGGGGGGGGGGGSSSSSSK',
-  'KHHGGGGGGGGGGGGGGGGGGGGGGSSSSSSK',
-  'KHHGGGGGGGGGGGGGGGGGGGGGGSSSSSSK',
-  'KHHHHHHHHGGGGGGGGGGGGGGGGSSSSSSK',
-  'KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK'
+  '################################',
+  '#..............................#',
+  '#..##########################..#',
+  '#..#........................#..#',
+  '#..#........................#..#',
+  '#..#........................#..#',
+  '#..#........................#..#',
+  '#..#........................#..#',
+  '#..#........................#..#',
+  '#..#........................#..#',
+  '#..#........................#..#',
+  '#..##########################..#',
+  '#..............................#',
+  '################################'
 ];
 
 const PIPE_BODY = [
-  '..KHHHHHHGGGGGGGGGGGGGGSSSSSSK..',
-  '..KHHHHHHGGGGGGGGGGGGGGSSSSSSK..',
-  '..KHHGGGGGGGGGGGGGGGGGGSSSSSSK..',
-  '..KHHGGGGGGGGGGGGGGGGGGSSSSSSK..',
-  '..KHHGGGGGGGGGGGGGGGGGGSSSSSSK..',
-  '..KHHGGGGGGGGGGGGGGGGGGSSSSSSK..',
-  '..KHHGGGGGGGGGGGGGGGGGGSSSSSSK..',
-  '..KHHGGGGGGGGGGGGGGGGGGSSSSSSK..',
-  '..KHHGGGGGGGGGGGGGGGGGGSSSSSSK..',
-  '..KHHGGGGGGGGGGGGGGGGGGSSSSSSK..',
-  '..KHHGGGGGGGGGGGGGGGGGGSSSSSSK..',
-  '..KHHHHHHGGGGGGGGGGGGGGSSSSSSK..'
+  '..############################..',
+  '..#..........................#..',
+  '..#..######################..#..',
+  '..#..#....................#..#..',
+  '..#..#....................#..#..',
+  '..#..#....................#..#..',
+  '..#..#....................#..#..',
+  '..#..#....................#..#..',
+  '..#..#....................#..#..',
+  '..#..#....................#..#..',
+  '..#..######################..#..',
+  '..#..........................#..',
+  '..############################..'
 ];
 
-const CLOUD_NES = [
-  '.......WWWWWWWWWW.......',
-  '....WWWWWWWWWWWWWWWW....',
-  '..WWWWWWWWWWWWWWWWWWWW..',
-  '.WWWWWWWWWWWWWWWWWWWWWW.',
-  '.WWWWWWWWWWWWWWWWWWWWWW.',
-  'WWWWWWWWWWWWWWWWWWWWWWWW',
-  'WWWWWWWWWWWWWWWWWWWWWWWW',
-  '.WWWWWWWWWWWWWWWWWWWWWW.',
-  '..CCCCCCCCCCCCCCCCCCCC..'
+const CLOUD_1BIT = [
+  '.......##########.......',
+  '....################....',
+  '..####################..',
+  '.######################.',
+  '.#....................#.',
+  '#..##################..#',
+  '#..#................#..#',
+  '.######################.',
+  '..####################..'
 ];
 
-const BUSH_NES = [
-  '.......GGGGGGGGGG.......',
-  '....GGGGGGGGGGGGGGGG....',
-  '..GGGGGGGGGGGGGGGGGGGG..',
-  '.GGGGGGGGGGGGGGGGGGGGGG.',
-  '.GGHHGGGGGGGGGGGGGGSSGG.',
-  'GGHHHGGGGGGGGGGGGGGSSSGG',
-  'GGHHHGGGGGGGGGGGGGGSSSGG',
-  '.GGGGGGGGGGGGGGGGGGGGGG.',
-  '..SSSSSSSSSSSSSSSSSSSS..'
+const BUSH_1BIT = [
+  '.......##########.......',
+  '....################....',
+  '..####################..',
+  '.######################.',
+  '.#..##..########..##..#.',
+  '#..####..######..####..#',
+  '#..####..######..####..#',
+  '.######################.',
+  '..####################..'
 ];
 
 // Helper to batch-draw pixel runs
-function drawSprite(ctx, matrix, x, y, pixelSize, palette) {
+function drawPixelMatrix(ctx, matrix, startX, startY, pixelSize, color) {
+  ctx.fillStyle = color;
   const rows = matrix.length;
-  const sx = Math.floor(x);
-  const sy = Math.floor(y);
+  const sx = Math.floor(startX);
+  const sy = Math.floor(startY);
   for (let r = 0; r < rows; r++) {
     const row = matrix[r];
     const cols = row.length;
     let c = 0;
     while (c < cols) {
-      const char = row[c];
-      if (char !== '.' && palette[char]) {
+      if (row[c] === '#') {
         let span = 1;
-        while (c + span < cols && row[c + span] === char) {
+        while (c + span < cols && row[c + span] === '#') {
           span++;
         }
-        ctx.fillStyle = palette[char];
         ctx.fillRect(sx + c * pixelSize, sy + r * pixelSize, span * pixelSize, pixelSize);
         c += span;
       } else {
@@ -571,6 +549,9 @@ export default function PixelMarioRunner({ theme }) {
   }, [theme]);
 
   const jumpBufferRef = useRef(0);
+  const dotPatternRef = useRef(null);
+  const ditherPatternRef = useRef(null);
+  const patternThemeRef = useRef(null);
 
   const stateRef = useRef({
     width: 740,
@@ -629,8 +610,8 @@ export default function PixelMarioRunner({ theme }) {
 
       // Launch little jump dust puff
       s.particles.push(
-        { x: m.x + 4, y: s.groundY - 4, vx: -1.0, vy: -0.6, life: 10, color: '#FFFFFF' },
-        { x: m.x + 12, y: s.groundY - 4, vx: 0.8, vy: -0.6, life: 10, color: '#FFFFFF' }
+        { x: m.x + 4, y: s.groundY - 4, vx: -1.0, vy: -0.6, life: 10 },
+        { x: m.x + 12, y: s.groundY - 4, vx: 0.8, vy: -0.6, life: 10 }
       );
     } else {
       jumpBufferRef.current = 8;
@@ -792,8 +773,8 @@ export default function PixelMarioRunner({ theme }) {
 
           // Landing dust puff
           s.particles.push(
-            { x: m.x + 4, y: s.groundY - 4, vx: -0.8, vy: -0.4, life: 8, color: '#FFFFFF' },
-            { x: m.x + 12, y: s.groundY - 4, vx: 0.8, vy: -0.4, life: 8, color: '#FFFFFF' }
+            { x: m.x + 4, y: s.groundY - 4, vx: -0.8, vy: -0.4, life: 8 },
+            { x: m.x + 12, y: s.groundY - 4, vx: 0.8, vy: -0.4, life: 8 }
           );
 
           if (jumpBufferRef.current > 0) {
@@ -944,10 +925,10 @@ export default function PixelMarioRunner({ theme }) {
             setCoins((prev) => prev + 1);
 
             s.particles.push(
-              { x: coinCenterX - 4, y: coinCenterY - 4, vx: -1.2, vy: -1.2, life: 10, color: '#F8D800' },
-              { x: coinCenterX + 4, y: coinCenterY - 4, vx: 1.2, vy: -1.2, life: 10, color: '#F8D800' },
-              { x: coinCenterX - 4, y: coinCenterY + 4, vx: -1.2, vy: 1.2, life: 10, color: '#FFFFFF' },
-              { x: coinCenterX + 4, y: coinCenterY + 4, vx: 1.2, vy: 1.2, life: 10, color: '#FFFFFF' }
+              { x: coinCenterX - 4, y: coinCenterY - 4, vx: -1.2, vy: -1.2, life: 10 },
+              { x: coinCenterX + 4, y: coinCenterY - 4, vx: 1.2, vy: -1.2, life: 10 },
+              { x: coinCenterX - 4, y: coinCenterY + 4, vx: -1.2, vy: 1.2, life: 10 },
+              { x: coinCenterX + 4, y: coinCenterY + 4, vx: 1.2, vy: 1.2, life: 10 }
             );
             s.floatingTexts.push({
               x: obs.x,
@@ -1016,7 +997,7 @@ export default function PixelMarioRunner({ theme }) {
                 s.floatingTexts.push({
                   x: obs.x,
                   y: obs.y - 16,
-                  text: '🪙 +200',
+                  text: '★ +200',
                   life: 30,
                 });
               }
@@ -1041,13 +1022,13 @@ export default function PixelMarioRunner({ theme }) {
               setScore((prev) => prev + 200);
 
               s.particles.push(
-                { x: goombaCenterX - 6, y: goombaTop + 12, vx: -1.4, vy: -0.8, life: 8, color: '#FFFFFF' },
-                { x: goombaCenterX + 6, y: goombaTop + 12, vx: 1.4, vy: -0.8, life: 8, color: '#FFFFFF' }
+                { x: goombaCenterX - 6, y: goombaTop + 12, vx: -1.4, vy: -0.8, life: 8 },
+                { x: goombaCenterX + 6, y: goombaTop + 12, vx: 1.4, vy: -0.8, life: 8 }
               );
               s.floatingTexts.push({
                 x: obs.x,
                 y: obs.y - 8,
-                text: '200',
+                text: '+200',
                 life: 25,
               });
             } else if (m.isBlinking <= 0 && marioFeet > goombaTop + 10) {
@@ -1113,55 +1094,67 @@ export default function PixelMarioRunner({ theme }) {
         if (ft.life <= 0 || ft.x < -60) s.floatingTexts.splice(i, 1);
       }
 
-      // ── RENDER AUTHENTIC NES WORLD ──────────────────────────────────────────
+      // ── RENDER 1-BIT MONOCHROME DOT-MATRIX SCREEN ───────────────────────────
       ctx.clearRect(0, 0, s.width, s.height);
 
-      const px = s.pixelSize; // 2px
+      const px = s.pixelSize; // 2px square pixel blocks
+      const pixelColor = isDark ? '#ffffff' : '#090d16';
+      const matrixDotColor = isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(15, 23, 42, 0.08)';
+      const cloudColor = isDark ? 'rgba(255, 255, 255, 0.35)' : 'rgba(15, 23, 42, 0.3)';
 
-      // 1. Clouds (Authentic SMB1)
-      s.clouds.forEach((c) => {
-        drawSprite(ctx, CLOUD_NES, c.x, c.y, px, PALETTE);
-      });
+      // 1. Subtle Dot-Matrix Background Pattern (1 GPU pattern fill)
+      if (!dotPatternRef.current || patternThemeRef.current !== isDark) {
+        const pCanvas = document.createElement('canvas');
+        pCanvas.width = 8;
+        pCanvas.height = 8;
+        const pCtx = pCanvas.getContext('2d');
+        pCtx.fillStyle = matrixDotColor;
+        pCtx.fillRect(0, 0, 2, 2);
+        dotPatternRef.current = ctx.createPattern(pCanvas, 'repeat');
 
-      // 2. Bushes on Ground
-      s.bushes.forEach((b) => {
-        drawSprite(ctx, BUSH_NES, b.x, s.groundY - 18, px, PALETTE);
-      });
+        // 1-Bit Dither Pattern for Ground Tiling
+        const dCanvas = document.createElement('canvas');
+        dCanvas.width = 12;
+        dCanvas.height = 12;
+        const dCtx = dCanvas.getContext('2d');
+        dCtx.fillStyle = pixelColor;
+        dCtx.fillRect(0, 0, px, px);
+        dCtx.fillRect(6, 6, px, px);
+        ditherPatternRef.current = ctx.createPattern(dCanvas, 'repeat');
 
-      // 3. World 1-1 Authentic Earth Ground
-      // Top Grass Line:
-      ctx.fillStyle = PALETTE.H; // Lime highlight
-      ctx.fillRect(0, s.groundY, s.width, 2);
-      ctx.fillStyle = PALETTE.G; // Green
-      ctx.fillRect(0, s.groundY + 2, s.width, 3);
-      ctx.fillStyle = PALETTE.S; // Dark border
-      ctx.fillRect(0, s.groundY + 5, s.width, 2);
-
-      // Earth Brick Tiling:
-      const groundScroll = Math.floor(s.distanceTraveled) % 32;
-      ctx.save();
-      ctx.translate(-groundScroll, 0);
-      for (let gx = -32; gx < s.width + 64; gx += 32) {
-        ctx.fillStyle = PALETTE.M; // Reddish brown dirt
-        ctx.fillRect(gx, s.groundY + 7, 30, 26);
-        ctx.fillStyle = PALETTE.K; // Black mortar line
-        ctx.fillRect(gx + 30, s.groundY + 7, 2, 26);
-        ctx.fillRect(gx, s.groundY + 20, 30, 2);
-        // Little NES dirt specks
-        ctx.fillStyle = PALETTE.D;
-        ctx.fillRect(gx + 6, s.groundY + 12, 4, 4);
-        ctx.fillRect(gx + 20, s.groundY + 24, 4, 4);
+        patternThemeRef.current = isDark;
       }
+
+      ctx.fillStyle = dotPatternRef.current;
+      ctx.fillRect(0, 0, s.width, s.height);
+
+      // 2. 1-Bit Clouds
+      s.clouds.forEach((c) => {
+        drawPixelMatrix(ctx, CLOUD_1BIT, c.x, c.y, px, cloudColor);
+      });
+
+      // 3. 1-Bit Bushes on Ground
+      s.bushes.forEach((b) => {
+        drawPixelMatrix(ctx, BUSH_1BIT, b.x, s.groundY - 18, px, pixelColor);
+      });
+
+      // 4. Ground: Solid Rail + Scrolling Dither Pattern
+      ctx.fillStyle = pixelColor;
+      ctx.fillRect(0, s.groundY, s.width, px);
+
+      const ditherOffset = Math.floor(s.distanceTraveled) % 12;
+      ctx.save();
+      ctx.translate(-ditherOffset, 0);
+      ctx.fillStyle = ditherPatternRef.current;
+      ctx.fillRect(ditherOffset, s.groundY + px * 2, s.width, s.height - (s.groundY + px * 2));
       ctx.restore();
 
-      // 4. Obstacles
+      // 5. Obstacles
       s.obstacles.forEach((obs) => {
         if (obs.type === 'pipe') {
-          // Lip
-          drawSprite(ctx, PIPE_LIP, obs.x, obs.y, px, PALETTE);
-          // Body
-          for (let py = obs.y + 12 * px; py < s.groundY; py += 12 * px) {
-            drawSprite(ctx, PIPE_BODY, obs.x, py, px, PALETTE);
+          drawPixelMatrix(ctx, PIPE_LIP, obs.x, obs.y, px, pixelColor);
+          for (let py = obs.y + 14 * px; py < s.groundY; py += 13 * px) {
+            drawPixelMatrix(ctx, PIPE_BODY, obs.x, py, px, pixelColor);
           }
         } else if (obs.type === 'block') {
           const matrix = obs.hit
@@ -1169,37 +1162,37 @@ export default function PixelMarioRunner({ theme }) {
             : Math.floor(s.distanceTraveled / 8) % 2 === 0
             ? BLOCK_QUESTION_1
             : BLOCK_QUESTION_2;
-          drawSprite(ctx, matrix, obs.x, obs.y + (obs.bumpY || 0), px, PALETTE);
+          drawPixelMatrix(ctx, matrix, obs.x, obs.y + (obs.bumpY || 0), px, pixelColor);
         } else if (obs.type === 'brick') {
-          drawSprite(ctx, BRICK_BLOCK, obs.x, obs.y + (obs.bumpY || 0), px, PALETTE);
+          drawPixelMatrix(ctx, BRICK_BLOCK, obs.x, obs.y + (obs.bumpY || 0), px, pixelColor);
         } else if (obs.type === 'mushroom') {
-          drawSprite(ctx, SUPER_MUSHROOM, obs.x, obs.y, px, PALETTE);
+          drawPixelMatrix(ctx, SUPER_MUSHROOM, obs.x, obs.y, px, pixelColor);
         } else if (obs.type === 'coin' && !obs.collected) {
           const cFrame = COIN_FRAMES[Math.floor(s.distanceTraveled / 5) % COIN_FRAMES.length];
-          drawSprite(ctx, cFrame, obs.x, obs.y, px, PALETTE);
+          drawPixelMatrix(ctx, cFrame, obs.x, obs.y, px, pixelColor);
         } else if (obs.type === 'goomba') {
           if (obs.squished > 0) {
-            drawSprite(ctx, GOOMBA_SQUISHED, obs.x, obs.y + 16, px, PALETTE);
+            drawPixelMatrix(ctx, GOOMBA_SQUISHED, obs.x, obs.y + 16, px, pixelColor);
           } else if (!obs.dead) {
             const gFrame = Math.floor(s.distanceTraveled / 5) % 2 === 0 ? GOOMBA_WALK_1 : GOOMBA_WALK_2;
-            drawSprite(ctx, gFrame, obs.x, obs.y, px, PALETTE);
+            drawPixelMatrix(ctx, gFrame, obs.x, obs.y, px, pixelColor);
           }
         }
       });
 
-      // 5. Popped Coins from ? Blocks
+      // 6. Popped Coins from ? Blocks
       s.poppedCoins.forEach((pc) => {
         const cFrame = COIN_FRAMES[Math.floor(s.distanceTraveled / 4) % COIN_FRAMES.length];
-        drawSprite(ctx, cFrame, pc.x, pc.y, px, PALETTE);
+        drawPixelMatrix(ctx, cFrame, pc.x, pc.y, px, pixelColor);
       });
 
-      // 6. Dust & Sparkle Particles
+      // 7. Dust & Sparkle Particles
+      ctx.fillStyle = pixelColor;
       s.particles.forEach((p) => {
-        ctx.fillStyle = p.color || '#FFFFFF';
         ctx.fillRect(Math.floor(p.x), Math.floor(p.y), 3, 3);
       });
 
-      // 7. Authentic Mario
+      // 8. Mario (1-Bit Running Animation)
       if (m.isBlinking <= 0 || Math.floor(m.isBlinking / 4) % 2 === 0) {
         let marioSprite = MARIO_STAND;
         if (!m.isGrounded) {
@@ -1211,20 +1204,17 @@ export default function PixelMarioRunner({ theme }) {
         } else {
           marioSprite = MARIO_RUN_3;
         }
-        drawSprite(ctx, marioSprite, m.x, m.y, px, PALETTE);
+        drawPixelMatrix(ctx, marioSprite, m.x, m.y, px, pixelColor);
       }
 
-      // 8. Floating NES Points
+      // 9. Floating 1-Bit Scores
       s.floatingTexts.forEach((ft) => {
-        ctx.fillStyle = '#FFFFFF';
+        ctx.fillStyle = pixelColor;
         ctx.font = 'bold 11px ui-monospace, SFMono-Regular, Menlo, monospace';
-        ctx.shadowColor = '#000000';
-        ctx.shadowBlur = 3;
         ctx.fillText(ft.text, ft.x, ft.y);
-        ctx.shadowBlur = 0;
       });
 
-      // 9. Retro NES HUD in top corner
+      // 10. Retro LCD HUD
       ctx.fillStyle = isDark ? 'rgba(255, 255, 255, 0.75)' : 'rgba(15, 23, 42, 0.82)';
       ctx.font = 'bold 9px ui-monospace, SFMono-Regular, Menlo, monospace';
       ctx.letterSpacing = '0.05em';
@@ -1264,8 +1254,8 @@ export default function PixelMarioRunner({ theme }) {
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleCanvasClick}
       role="region"
-      aria-label="Authentic NES Super Mario Bros World 1-1 Runner"
-      title="Authentic Mario · Click or press Space to jump!"
+      aria-label="1-Bit Dot-Matrix Super Mario Bros Runner"
+      title="1-Bit Mario · Click or press Space to jump!"
     >
       <canvas ref={canvasRef} className="corner-pixel-canvas" />
 
