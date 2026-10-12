@@ -158,15 +158,15 @@ const GOOMBA_SQUISHED = [
   '................',
   '................',
   '................',
-  '....########....',
-  '..############..',
-  '.##..######..##.',
-  '###..######..###',
-  '################',
-  '..############..',
+  '................',
   '..############..',
   '.##############.',
-  '..############..'
+  '###..######..###',
+  '################',
+  '################',
+  '.##############.',
+  '..############..',
+  '....########....'
 ];
 
 const BLOCK_QUESTION_1 = [
@@ -317,36 +317,27 @@ const COIN_FRAMES = [
 ];
 
 const PIPE_LIP = [
-  '################################',
-  '#..............................#',
-  '#..##########################..#',
-  '#..#........................#..#',
-  '#..#........................#..#',
-  '#..#........................#..#',
-  '#..#........................#..#',
-  '#..#........................#..#',
-  '#..#........................#..#',
-  '#..#........................#..#',
-  '#..#........................#..#',
-  '#..##########################..#',
-  '#..............................#',
-  '################################'
+  '##################',
+  '#................#',
+  '#.##############.#',
+  '#.#............#.#',
+  '#.#............#.#',
+  '#.##############.#',
+  '#................#',
+  '##################'
 ];
 
 const PIPE_BODY = [
-  '..############################..',
-  '..#..........................#..',
-  '..#..######################..#..',
-  '..#..#....................#..#..',
-  '..#..#....................#..#..',
-  '..#..#....................#..#..',
-  '..#..#....................#..#..',
-  '..#..#....................#..#..',
-  '..#..#....................#..#..',
-  '..#..#....................#..#..',
-  '..#..######################..#..',
-  '..#..........................#..',
-  '..############################..'
+  '################',
+  '#..............#',
+  '#.############.#',
+  '#.#..........#.#',
+  '#.#..........#.#',
+  '#.#..........#.#',
+  '#.#..........#.#',
+  '#.############.#',
+  '#..............#',
+  '################'
 ];
 
 const CLOUD_1BIT = [
@@ -639,6 +630,7 @@ export default function PixelMarioRunner({ theme }) {
     const applyTransform = () => {
       const dpr = window.devicePixelRatio || 1;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.imageSmoothingEnabled = false;
     };
 
     const handleResize = () => {
@@ -797,18 +789,18 @@ export default function PixelMarioRunner({ theme }) {
         m.isBlinking -= dt;
       }
 
-      // ── Procedural Level Spawner (Guaranteed Minimum 190px Spacing - Zero Overlap) ──
+      // ── Procedural Level Spawner (Guaranteed Minimum 200px Spacing - Zero Overlap) ──
       s.spawnTimer -= dt;
       if (s.spawnTimer <= 0) {
         let rightmostEdge = 0;
         for (const obs of s.obstacles) {
-          const w = obs.width || (obs.type === 'pipe' ? 40 : 32);
+          const w = obs.width || 36;
           const edge = obs.x + w;
           if (edge > rightmostEdge) rightmostEdge = edge;
         }
 
         if (rightmostEdge < s.width + 60) {
-          const spawnX = Math.max(rightmostEdge + 190 + Math.random() * 80, s.width + 40);
+          const spawnX = Math.max(rightmostEdge + 200 + Math.random() * 60, s.width + 40);
           const pattern = Math.random();
 
           if (pattern < 0.3) {
@@ -823,16 +815,14 @@ export default function PixelMarioRunner({ theme }) {
               dead: false,
             });
           } else if (pattern < 0.58) {
-            // Pattern 2: Warp Pipe
-            const isTall = Math.random() < 0.25;
-            const pHeight = isTall ? 44 : 32;
+            // Pattern 2: Warp Pipe (Uniform 32px height, 36px width)
             s.obstacles.push({
               id: Date.now() + Math.random(),
               type: 'pipe',
               x: spawnX,
-              y: s.groundY - pHeight,
+              y: s.groundY - 32,
               width: 36,
-              height: pHeight,
+              height: 32,
             });
           } else if (pattern < 0.82) {
             // Pattern 3: Block Arrangement
@@ -864,68 +854,65 @@ export default function PixelMarioRunner({ theme }) {
             );
           }
 
-          s.spawnTimer = 40 + Math.random() * 25;
+          s.spawnTimer = 42 + Math.random() * 24;
         }
       }
 
-      // ── Master Autonomous AI Pilot (Mathematically Calibrated Jump Arcs) ──
+      // ── Master Autonomous AI Pilot (100% Reliable Threat Analysis) ──
       if (m.isGrounded) {
         let shouldJump = false;
 
-        // 1. Check for immediate ground threats
+        // 1. Find the nearest upcoming ground threat in front of Mario
+        let nearestThreat = null;
+        let minThreatDist = Infinity;
+
         for (let i = 0; i < s.obstacles.length; i++) {
           const obs = s.obstacles[i];
-          const dist = obs.x - m.x;
+          const isThreat =
+            obs.type === 'pipe' ||
+            (obs.type === 'goomba' && !obs.dead && obs.squished <= 0);
 
-          if (dist > 0 && dist < 120) {
-            if (obs.type === 'pipe') {
-              // Perfect leap window over pipe: 20px to 28px ahead
-              if (dist >= 20 && dist <= 28) {
-                shouldJump = true;
-                break;
-              }
-            } else if (obs.type === 'goomba' && !obs.dead && obs.squished <= 0) {
-              // Perfect stomp window onto Goomba: 36px to 44px ahead
-              if (dist >= 36 && dist <= 44) {
-                shouldJump = true;
-                break;
-              }
+          if (isThreat) {
+            const dist = obs.x - m.x;
+            if (dist > 0 && dist < minThreatDist) {
+              minThreatDist = dist;
+              nearestThreat = obs;
             }
           }
         }
 
-        // 2. Bonus Opportunity (? Block / Coin) with Landing Safety Check
-        if (!shouldJump) {
-          for (let i = 0; i < s.obstacles.length; i++) {
-            const obs = s.obstacles[i];
-            const dist = obs.x - m.x;
-
-            if (dist >= 24 && dist <= 32) {
-              if ((obs.type === 'block' && !obs.hit) || (obs.type === 'coin' && !obs.collected && obs.y < 50)) {
-                // Ensure landing zone (~62px ahead) is completely free of pipes or living enemies
-                const landingX = m.x + 62;
-                const isLandingUnsafe = s.obstacles.some((o) => {
-                  if (o.type === 'pipe' && Math.abs(o.x + 16 - landingX) < 28) return true;
-                  if (o.type === 'goomba' && !o.dead && o.squished <= 0 && Math.abs(o.x - landingX) < 24) return true;
-                  return false;
-                });
-
-                if (!isLandingUnsafe) {
-                  shouldJump = true;
-                  break;
-                }
-              }
+        if (nearestThreat) {
+          if (nearestThreat.type === 'pipe') {
+            // Pipe takeoff window: Mario takes off 14-34px before pipe
+            if (minThreatDist <= 34 && minThreatDist >= 14) {
+              shouldJump = true;
+            } else if (minThreatDist < 14 && minThreatDist > 0) {
+              // Emergency jump if slipped too close
+              shouldJump = true;
+            }
+          } else if (nearestThreat.type === 'goomba') {
+            // Goomba stomping window: Goomba approaches at ~2.57px/frame
+            // Jumping at 40-65px causes Mario to land directly on top of its head
+            if (minThreatDist <= 65 && minThreatDist >= 40) {
+              shouldJump = true;
+            } else if (minThreatDist < 40 && minThreatDist > 0) {
+              // Emergency jump if slipped too close
+              shouldJump = true;
             }
           }
         }
 
-        // 3. Emergency panic jump if obstacle slipped too close
-        if (!shouldJump) {
+        // 2. Bonus Opportunity (? Block / Coin) ONLY when track is 100% clear of ground threats
+        if (!shouldJump && minThreatDist > 160) {
           for (let i = 0; i < s.obstacles.length; i++) {
             const obs = s.obstacles[i];
             const dist = obs.x - m.x;
-            if (dist > 4 && dist < 18) {
-              if (obs.type === 'pipe' || (obs.type === 'goomba' && !obs.dead && obs.squished <= 0)) {
+
+            if (dist >= 20 && dist <= 32) {
+              if (
+                (obs.type === 'block' && !obs.hit) ||
+                (obs.type === 'coin' && !obs.collected && obs.y < 50)
+              ) {
                 shouldJump = true;
                 break;
               }
@@ -1004,7 +991,8 @@ export default function PixelMarioRunner({ theme }) {
                 s.mushrooms.push({
                   id: Date.now(),
                   x: obs.x,
-                  y: obs.y - 32,
+                  y: obs.y - 18,
+                  vy: -2.2,
                 });
               } else {
                 audioRef.current.coin();
@@ -1019,7 +1007,7 @@ export default function PixelMarioRunner({ theme }) {
                 s.floatingTexts.push({
                   x: obs.x,
                   y: obs.y - 16,
-                  text: '★ +200',
+                  text: '+200',
                   life: 30,
                 });
               }
@@ -1035,11 +1023,12 @@ export default function PixelMarioRunner({ theme }) {
           const marioFeet = m.y + 32;
           const goombaTop = obs.y;
 
-          if (Math.abs(marioCenterX - goombaCenterX) < 20) {
-            if (m.vy > 0 && marioFeet >= goombaTop && marioFeet <= goombaTop + 24) {
+          if (Math.abs(marioCenterX - goombaCenterX) < 22) {
+            // 100% Reliable Stomp: falling downwards and at or near Goomba head
+            if (m.vy > 0 && marioFeet >= goombaTop - 6) {
               obs.squished = 24;
               obs.dead = true;
-              m.vy = -5.0; // Stomp spring
+              m.vy = -5.4; // Authentic high stomp bounce!
               audioRef.current.stomp();
               s.score += 200;
 
@@ -1053,9 +1042,10 @@ export default function PixelMarioRunner({ theme }) {
                 text: '+200',
                 life: 25,
               });
-            } else if (m.isBlinking <= 0 && marioFeet > goombaTop + 10) {
+            } else if (m.isBlinking <= 0 && marioFeet > goombaTop + 12 && m.vy <= 0) {
+              // Side collision while walking
               m.isBlinking = 35;
-              m.vy = -3.2;
+              m.vy = -3.0;
               m.isGrounded = false;
               audioRef.current.bump();
             }
@@ -1067,15 +1057,17 @@ export default function PixelMarioRunner({ theme }) {
             continue;
           }
         } else if (obs.type === 'pipe') {
-          const pipeCenterX = obs.x + 18;
-          const marioCenterX = m.x + 16;
+          const pipeLeft = obs.x;
+          const pipeRight = obs.x + 36;
+          const marioLeft = m.x + 4;
+          const marioRight = m.x + 28;
           const marioFeet = m.y + 32;
           const pipeTop = obs.y;
 
-          if (Math.abs(marioCenterX - pipeCenterX) < 22) {
-            if (marioFeet > pipeTop + 6 && m.isBlinking <= 0) {
+          if (marioRight > pipeLeft && marioLeft < pipeRight) {
+            if (marioFeet > pipeTop + 4 && m.isBlinking <= 0) {
               m.isBlinking = 35;
-              m.vy = -3.0;
+              m.vy = -2.8;
               m.isGrounded = false;
               audioRef.current.bump();
             }
@@ -1087,14 +1079,26 @@ export default function PixelMarioRunner({ theme }) {
         }
       }
 
-      // ── Update Mushrooms ──
+      // ── Update Mushrooms (Realistic Arc, Ground Slide & Collection) ──
       for (let i = s.mushrooms.length - 1; i >= 0; i--) {
         const mush = s.mushrooms[i];
+        mush.vy = (mush.vy || 0) + 0.3 * dt;
+        mush.y += mush.vy * dt;
+        if (mush.y >= s.groundY - 32) {
+          mush.y = s.groundY - 32;
+          mush.vy = 0;
+        }
         mush.x += 0.8 * dt; // Slides forward
+
         const mushCenterX = mush.x + 16;
         const marioCenterX = m.x + 16;
+        const mushCenterY = mush.y + 16;
+        const marioCenterY = m.y + 16;
 
-        if (Math.abs(mushCenterX - marioCenterX) < 22 && m.y + 32 >= mush.y) {
+        if (
+          Math.abs(mushCenterX - marioCenterX) < 22 &&
+          Math.abs(mushCenterY - marioCenterY) < 26
+        ) {
           s.mushrooms.splice(i, 1);
           audioRef.current.powerup();
           s.score += 1000;
@@ -1102,13 +1106,15 @@ export default function PixelMarioRunner({ theme }) {
           s.floatingTexts.push({
             x: m.x,
             y: m.y - 12,
-            text: '★ 1000',
+            text: '+1000',
             life: 35,
           });
           continue;
         }
 
-        if (mush.x < -80) s.mushrooms.splice(i, 1);
+        if (mush.x < -80 || mush.x > s.width + 120) {
+          s.mushrooms.splice(i, 1);
+        }
       }
 
       // Update Particles
@@ -1192,16 +1198,14 @@ export default function PixelMarioRunner({ theme }) {
       ctx.save();
       ctx.translate(-ditherOffset, 0);
       ctx.fillStyle = ditherPatternRef.current;
-      ctx.fillRect(ditherOffset, s.groundY + px * 2, s.width, s.height - (s.groundY + px * 2));
+      ctx.fillRect(ditherOffset, s.groundY + px, s.width + 24, s.height - (s.groundY + px));
       ctx.restore();
 
       // 5. Obstacles
       s.obstacles.forEach((obs) => {
         if (obs.type === 'pipe') {
           drawPixelMatrix(ctx, PIPE_LIP, obs.x, obs.y, px, pixelColor);
-          for (let py = obs.y + 14 * px; py < s.groundY; py += 13 * px) {
-            drawPixelMatrix(ctx, PIPE_BODY, obs.x, py, px, pixelColor);
-          }
+          drawPixelMatrix(ctx, PIPE_BODY, obs.x + 1 * px, obs.y + 8 * px, px, pixelColor);
         } else if (obs.type === 'block') {
           const matrix = obs.hit
             ? BLOCK_SPENT
@@ -1216,7 +1220,7 @@ export default function PixelMarioRunner({ theme }) {
           drawPixelMatrix(ctx, cFrame, obs.x, obs.y, px, pixelColor);
         } else if (obs.type === 'goomba') {
           if (obs.squished > 0) {
-            drawPixelMatrix(ctx, GOOMBA_SQUISHED, obs.x, obs.y + 16, px, pixelColor);
+            drawPixelMatrix(ctx, GOOMBA_SQUISHED, obs.x, obs.y, px, pixelColor);
           } else if (!obs.dead) {
             const gFrame = Math.floor(s.distanceTraveled / 5) % 2 === 0 ? GOOMBA_WALK_1 : GOOMBA_WALK_2;
             drawPixelMatrix(ctx, gFrame, obs.x, obs.y, px, pixelColor);
