@@ -169,26 +169,7 @@ const GOOMBA_SQUISHED = [
   '....########....'
 ];
 
-const BLOCK_QUESTION_1 = [
-  '################',
-  '#..............#',
-  '#...########...#',
-  '#..##########..#',
-  '#..###....###..#',
-  '#.........###..#',
-  '#........###...#',
-  '#.......###....#',
-  '#......###.....#',
-  '#......###.....#',
-  '#..............#',
-  '#......###.....#',
-  '#......###.....#',
-  '#..............#',
-  '#..............#',
-  '################'
-];
-
-const BLOCK_QUESTION_2 = [
+const BLOCK_QUESTION = [
   '################',
   '#..............#',
   '#...########...#',
@@ -604,7 +585,7 @@ export default function PixelMarioRunner({ theme }) {
     const m = s.mario;
 
     if (m.isGrounded) {
-      m.vy = -6.4;
+      m.vy = -6.6;
       m.isGrounded = false;
       jumpBufferRef.current = 0;
       audioRef.current.jump();
@@ -724,9 +705,9 @@ export default function PixelMarioRunner({ theme }) {
 
     // Initial course obstacles: spaced 200px+ apart to guarantee zero overlap
     stateRef.current.obstacles = [
-      { id: 1, type: 'block', x: 220, y: 26, width: 32, hit: false, bumpY: 0, hasItem: 'coin' },
-      { id: 2, type: 'goomba', x: 440, y: 94 - 32, width: 32, squished: 0, dead: false },
-      { id: 3, type: 'pipe', x: 660, y: 94 - 32, width: 36, height: 32 },
+      { id: 1, type: 'block', x: 240, y: 16, width: 32, hit: false, bumpY: 0, hasItem: 'coin' },
+      { id: 2, type: 'goomba', x: 480, y: 94 - 32, width: 32, squished: 0, dead: false },
+      { id: 3, type: 'pipe', x: 720, y: 94 - 32, width: 36, height: 32 },
     ];
     stateRef.current.mushrooms = [];
 
@@ -759,28 +740,72 @@ export default function PixelMarioRunner({ theme }) {
         if (b.x < -80) b.x = s.width + 60 + Math.random() * 80;
       });
 
-      // Mario Physics
+      // Mario Physics & Platform Collision
       const groundStandingY = s.groundY - 32;
+      let platformLandingY = groundStandingY;
+
+      // Check if Mario is falling onto any block platform top
+      if (m.vy >= 0) {
+        for (const obs of s.obstacles) {
+          if (obs.type === 'block' || obs.type === 'brick') {
+            const blockTop = obs.y + (obs.bumpY || 0);
+            const mFeet = m.y + 32;
+            const mCenter = m.x + 16;
+            if (
+              mCenter >= obs.x &&
+              mCenter <= obs.x + (obs.width || 32) &&
+              mFeet >= blockTop - 4 &&
+              mFeet <= blockTop + 14
+            ) {
+              platformLandingY = blockTop - 32;
+              break;
+            }
+          }
+        }
+      }
+
       if (!m.isGrounded) {
         m.vy += 0.44 * dt;
         m.y += m.vy * dt;
 
-        if (m.y >= groundStandingY) {
-          m.y = groundStandingY;
+        if (m.y >= platformLandingY) {
+          m.y = platformLandingY;
           m.vy = 0;
           m.isGrounded = true;
 
           // Landing dust puff
           s.particles.push(
-            { x: m.x + 4, y: s.groundY - 4, vx: -0.8, vy: -0.4, life: 8 },
-            { x: m.x + 12, y: s.groundY - 4, vx: 0.8, vy: -0.4, life: 8 }
+            { x: m.x + 4, y: m.y + 28, vx: -0.8, vy: -0.4, life: 8 },
+            { x: m.x + 12, y: m.y + 28, vx: 0.8, vy: -0.4, life: 8 }
           );
 
           if (jumpBufferRef.current > 0) {
             jumpBufferRef.current = 0;
-            m.vy = -6.4;
+            m.vy = -6.6;
             m.isGrounded = false;
             audioRef.current.jump();
+          }
+        }
+      } else {
+        // If Mario is currently running on top of an elevated block, check if he walked off!
+        if (m.y < groundStandingY) {
+          let onSolidBlock = false;
+          for (const obs of s.obstacles) {
+            if (obs.type === 'block' || obs.type === 'brick') {
+              const blockTop = obs.y + (obs.bumpY || 0);
+              const mCenter = m.x + 16;
+              if (
+                mCenter >= obs.x &&
+                mCenter <= obs.x + (obs.width || 32) &&
+                Math.abs(m.y - (blockTop - 32)) < 6
+              ) {
+                onSolidBlock = true;
+                break;
+              }
+            }
+          }
+          if (!onSolidBlock) {
+            m.isGrounded = false; // Walked off block edge, begin falling!
           }
         }
       }
@@ -836,20 +861,20 @@ export default function PixelMarioRunner({ theme }) {
               height: 32,
             });
           } else if (pattern < 0.82) {
-            // Pattern 3: Block Arrangement
+            // Pattern 3: Block Arrangement (Elevated at y = 16 for clean overhead clearance)
             const hasTrio = Math.random() < 0.4;
             if (hasTrio) {
               s.obstacles.push(
-                { id: Date.now() + 1, type: 'brick', x: spawnX, y: 26, width: 32, bumpY: 0 },
-                { id: Date.now() + 2, type: 'block', x: spawnX + 32, y: 26, width: 32, hit: false, bumpY: 0, hasItem: Math.random() < 0.3 ? 'mushroom' : 'coin' },
-                { id: Date.now() + 3, type: 'brick', x: spawnX + 64, y: 26, width: 32, bumpY: 0 }
+                { id: Date.now() + 1, type: 'brick', x: spawnX, y: 16, width: 32, bumpY: 0 },
+                { id: Date.now() + 2, type: 'block', x: spawnX + 32, y: 16, width: 32, hit: false, bumpY: 0, hasItem: Math.random() < 0.3 ? 'mushroom' : 'coin' },
+                { id: Date.now() + 3, type: 'brick', x: spawnX + 64, y: 16, width: 32, bumpY: 0 }
               );
             } else {
               s.obstacles.push({
                 id: Date.now() + Math.random(),
                 type: 'block',
                 x: spawnX,
-                y: 26,
+                y: 16,
                 width: 32,
                 hit: false,
                 bumpY: 0,
@@ -869,13 +894,14 @@ export default function PixelMarioRunner({ theme }) {
         }
       }
 
-      // ── Master Autonomous AI Pilot (100% Reliable Threat Analysis) ──
+      // ── Master Autonomous AI Pilot (Genius Level Threat Prediction) ──
       if (m.isGrounded) {
         let shouldJump = false;
+        const marioFront = m.x + 30; // Mario leading front edge (x ≈ 74)
 
         // 1. Find the nearest upcoming ground threat in front of Mario
         let nearestThreat = null;
-        let minThreatDist = Infinity;
+        let minThreatGap = Infinity;
 
         for (let i = 0; i < s.obstacles.length; i++) {
           const obs = s.obstacles[i];
@@ -884,9 +910,9 @@ export default function PixelMarioRunner({ theme }) {
             (obs.type === 'goomba' && !obs.dead && obs.squished <= 0);
 
           if (isThreat) {
-            const dist = obs.x - m.x;
-            if (dist > 0 && dist < minThreatDist) {
-              minThreatDist = dist;
+            const gap = obs.x - marioFront;
+            if (gap > -6 && gap < minThreatGap) {
+              minThreatGap = gap;
               nearestThreat = obs;
             }
           }
@@ -894,32 +920,32 @@ export default function PixelMarioRunner({ theme }) {
 
         if (nearestThreat) {
           if (nearestThreat.type === 'pipe') {
-            // Pipe takeoff window: Mario takes off 14-34px before pipe
-            if (minThreatDist <= 34 && minThreatDist >= 14) {
+            // Pipe leap window: takes off 12px to 28px in front of pipe
+            if (minThreatGap <= 28 && minThreatGap >= 12) {
               shouldJump = true;
-            } else if (minThreatDist < 14 && minThreatDist > 0) {
-              // Emergency jump if slipped too close
+            } else if (minThreatGap < 12 && minThreatGap > -6) {
+              // Emergency panic leap
               shouldJump = true;
             }
           } else if (nearestThreat.type === 'goomba') {
-            // Goomba stomping window: Goomba approaches at ~2.57px/frame
-            // Jumping at 40-65px causes Mario to land directly on top of its head
-            if (minThreatDist <= 65 && minThreatDist >= 40) {
+            // Goomba stomp window: approaches at ~2.57px/frame
+            // Takes off 40px to 62px before Goomba to land right on its head
+            if (minThreatGap <= 62 && minThreatGap >= 40) {
               shouldJump = true;
-            } else if (minThreatDist < 40 && minThreatDist > 0) {
-              // Emergency jump if slipped too close
+            } else if (minThreatGap < 40 && minThreatGap > -6) {
+              // Emergency panic leap
               shouldJump = true;
             }
           }
         }
 
         // 2. Bonus Opportunity (? Block / Coin) ONLY when track is 100% clear of ground threats
-        if (!shouldJump && minThreatDist > 160) {
+        if (!shouldJump && minThreatGap > 140) {
           for (let i = 0; i < s.obstacles.length; i++) {
             const obs = s.obstacles[i];
-            const dist = obs.x - m.x;
+            const gap = obs.x - marioFront;
 
-            if (dist >= 20 && dist <= 32) {
+            if (gap >= 10 && gap <= 24) {
               if (
                 (obs.type === 'block' && !obs.hit) ||
                 (obs.type === 'coin' && !obs.collected && obs.y < 50)
@@ -980,20 +1006,21 @@ export default function PixelMarioRunner({ theme }) {
             });
           }
         }
-        // Question Block / Brick Bump
+        // Question Block / Brick Bump (Hit from Below)
         else if ((obs.type === 'block' && !obs.hit) || obs.type === 'brick') {
           const blockCenterX = obs.x + 16;
           const marioCenterX = m.x + 16;
           const blockBottom = obs.y + 32 + (obs.bumpY || 0);
 
           if (
-            Math.abs(marioCenterX - blockCenterX) < 18 &&
-            m.y <= blockBottom + 4 &&
-            m.y >= obs.y + 8 &&
+            Math.abs(marioCenterX - blockCenterX) < 20 &&
+            m.y <= blockBottom + 6 &&
+            m.y >= obs.y &&
             m.vy < 0
           ) {
+            m.y = blockBottom; // Clamp head strictly below block - never phase inside!
+            m.vy = 2.4; // Immediate downward rebound
             obs.bumpY = -8;
-            m.vy = 2.0;
 
             if (obs.type === 'block') {
               obs.hit = true;
@@ -1056,8 +1083,6 @@ export default function PixelMarioRunner({ theme }) {
             } else if (m.isBlinking <= 0 && marioFeet > goombaTop + 12 && m.vy <= 0) {
               // Side collision while walking
               m.isBlinking = 35;
-              m.vy = -3.0;
-              m.isGrounded = false;
               audioRef.current.bump();
             }
           }
@@ -1078,8 +1103,6 @@ export default function PixelMarioRunner({ theme }) {
           if (marioRight > pipeLeft && marioLeft < pipeRight) {
             if (marioFeet > pipeTop + 4 && m.isBlinking <= 0) {
               m.isBlinking = 35;
-              m.vy = -2.8;
-              m.isGrounded = false;
               audioRef.current.bump();
             }
           }
@@ -1223,11 +1246,7 @@ export default function PixelMarioRunner({ theme }) {
           drawPixelMatrix(ctx, PIPE_LIP, obs.x, obs.y, px, pixelColor);
           drawPixelMatrix(ctx, PIPE_BODY, obs.x + 1 * px, obs.y + 8 * px, px, pixelColor);
         } else if (obs.type === 'block') {
-          const matrix = obs.hit
-            ? BLOCK_SPENT
-            : Math.floor(s.distanceTraveled / 8) % 2 === 0
-            ? BLOCK_QUESTION_1
-            : BLOCK_QUESTION_2;
+          const matrix = obs.hit ? BLOCK_SPENT : BLOCK_QUESTION;
           drawPixelMatrix(ctx, matrix, obs.x, obs.y + (obs.bumpY || 0), px, pixelColor);
         } else if (obs.type === 'brick') {
           drawPixelMatrix(ctx, BRICK_BLOCK, obs.x, obs.y + (obs.bumpY || 0), px, pixelColor);
