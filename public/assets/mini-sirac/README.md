@@ -114,3 +114,8 @@ One seated clock continues through placement and skip; departure waits for
 the idle cycle to return to frame 120, which matches the stand-up clip's first
 frame. Run node scripts/test-mini-sirac-timing.mjs for long-wait and handoff
 continuity regressions.
+
+Carry/push video cadence follows linear journey time while panel placement
+retains its easing curve. This avoids frozen walking frames during the long
+deceleration at the end of navbar transport. Placement proceeds immediately
+into the release clip, without holding the reset carry frame for 450 ms.

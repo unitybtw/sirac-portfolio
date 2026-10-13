@@ -261,7 +261,10 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
             const progress = clamp((elapsed - start) / duration);
             const movement = travelProgress(progress);
             const travel = 1 - movement;
-            const frame = frameAt(pose, movement, cycles);
+            // Keep gait cadence independent from the eased panel motion.
+            // Easing near placement must not slow the video down to a held frame.
+            const frame = frameAt(pose, progress, cycles);
+            if (block.name === 'navbar') canvas.dataset.navbarMotion = JSON.stringify({ progress, frame, phase: 'carry' });
             const neutral = contacts[pose][CREW[pose].cycle[0]];
             const contact = contacts[pose][frame];
             const lift = pose === 'carry' ? height * ((contact[1] - contact[3]) - (neutral[1] - neutral[3])) : 0;
@@ -281,7 +284,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
               return;
             }
             if (elapsed < start) return;
-            const leaving = Math.max(0, elapsed - start - duration - 0.45);
+            const leaving = Math.max(0, elapsed - start - duration);
             const worker = (workerPose, handX, handY, size, facing, workerFrame, workerIndex = 0) => {
               const id = `${block.name}:${workerIndex}`;
               if (grabbedActors.has(id)) return;
@@ -305,6 +308,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
               const distance = Math.max(0, leaving - walkingStart) * speed;
               const cx = center + direction * distance;
               const releaseFrame = leaving < loopStart ? Math.floor(leaving * 24) : release.cycle[0] + Math.floor((leaving - loopStart) * 24 % period);
+              if (block.name === 'navbar') canvas.dataset.navbarMotion = JSON.stringify({ progress, frame: releaseFrame, phase: 'release' });
               const [, , shoe, floor, bodyX, head] = contacts[releasePose][releaseFrame];
               const releaseSize = size * (held[3] - held[5]) / (floor - head);
               const releaseWidth = release.width / 240 * releaseSize;
