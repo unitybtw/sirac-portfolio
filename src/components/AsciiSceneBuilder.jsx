@@ -129,7 +129,11 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
       window.addEventListener('pagehide', finish);
       try {
         await Promise.race([
-          Promise.all(Object.entries(CREW).map(([name, cfg]) => load(name, cfg))),
+          Promise.all([
+            ...Object.entries(CREW).map(([name, cfg]) => load(name, cfg)),
+            load('companionSit', { file: 'sit-phone-hd.webp' }),
+            load('companionRun', { file: 'stand-run-hd.webp' }),
+          ]),
           timeout(4000).then(() => { throw new Error('Crew preload timeout'); }),
         ]);
         await Promise.race([document.fonts.ready, timeout(600)]);
@@ -247,10 +251,6 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
           blocks.forEach((block) => {
             const { rect, clone, pose, side, start, duration, height, cycles, revealOnly } = block;
             const progress = clamp((elapsed - start) / duration);
-            if (block.name === 'portrait' && progress === 1 && !block.notified) {
-              block.notified = true;
-              window.dispatchEvent(new Event('mini-sirac-portrait-ready'));
-            }
             const movement = travelProgress(progress);
             const travel = 1 - movement;
             const frame = frameAt(pose, movement, cycles);
@@ -261,6 +261,12 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
             const ty = block.dy * travel + lift;
             clone.style.visibility = elapsed < start ? 'hidden' : 'visible';
             clone.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
+            if (block.name === 'portrait') {
+              window.dispatchEvent(new CustomEvent('mini-sirac-portrait-pose', { detail: {
+                left: rect.left + tx, top: rect.top + ty, width: rect.width, right: rect.right + tx,
+                visible: elapsed >= start, settled: progress === 1,
+              } }));
+            }
             if (revealOnly) {
               clone.style.opacity = String(movement);
               clone.style.transform = `translate3d(0, ${(1 - movement) * 12}px, 0)`;

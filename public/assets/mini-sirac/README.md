@@ -67,14 +67,16 @@ Comic companions generated with Omni 1.1 Flash in the same Flow project:
 - Man_running_in_place_20261013090534.mp4
 - Man_waving_and_pointing_20261013090353.mp4
 The run clip starts from source frame 180 of the seated clip. Keyed companion
-atlases use 128 frames at 16 fps, each 160px high, in a 16×8 grid. Widths are
-134px for sit/run and 160px for the button helper. prepare-mini-companion.py
-reproduces the conversion. The seated character waves, scrolls his phone, then
+atlases use 128 frames at 16 fps, in a 16×8 grid. Sit/run frames are 268×320px for sharp high-density
+rendering; the button helper uses 160×160px frames. prepare-mini-companion.py
+reproduces the conversion. The seated character follows the transported portrait from its first visible
+frame, waves, scrolls his phone, then
 pockets it, stands up and runs off the portrait edge with a downward exit.
 The button helper appears only in the left corner, waves and points right toward
 the label. Neither character receives pointer input or covers the label.
 
-Companions load when their anchor becomes visible. Animation pauses offscreen
+Portrait companions preload with the intro so they enter on the carried photo;
+the button companion loads when its anchor becomes visible. Animation pauses offscreen
 and in hidden tabs, uses a static pose for reduced motion, and is replayed with
 the existing intro replay button. The portrait gag runs once per replay; the
 button holds its pointing gesture with a small breathing loop. The intro crew
