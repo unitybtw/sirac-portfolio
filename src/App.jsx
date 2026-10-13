@@ -14,7 +14,7 @@ import CaseStudiesSection from './components/CaseStudiesSection';
 // Ekranın altında kalan ağır bileşenler: ilk paint'i bloklamasın,
 // main thread boş kalsın ki scroll 120Hz'de takılmasın.
 const GitHubCommitHistory = lazy(() => import('./GitHubCommitHistory'));
-const NovaBrowserCard = lazy(() => import('./NovaBrowserCard'));
+const NovaBrowserShowcase = lazy(() => import('./NovaBrowserShowcase'));
 const GameLibrary = lazy(() => import('./GameLibrary'));
 
 
@@ -245,7 +245,8 @@ function App() {
       if (target && target.getAttribute('href')?.startsWith('#')) {
         const id = target.getAttribute('href');
         if (id === '#') return;
-        const targetElement = document.querySelector(id);
+        const anchorSelector = id === '#projects' ? '#projects .nova-showcase' : id;
+        const targetElement = document.querySelector(anchorSelector) || document.querySelector(id);
         if (targetElement) {
           e.preventDefault();
           // Measure after the mobile drawer releases body scroll. Lazy sections can
@@ -257,7 +258,8 @@ function App() {
               offset, duration: 0.8,
               onComplete: () => {
                 lenis.resize();
-                lenis.scrollTo(targetElement, { offset, immediate: true });
+                const settledTarget = document.querySelector(anchorSelector) || document.querySelector(id);
+                if (settledTarget) lenis.scrollTo(settledTarget, { offset, immediate: true });
               },
             });
           });
@@ -310,14 +312,14 @@ function App() {
       (entries) => {
         entries.forEach((e) => {
           if (e.isIntersecting) {
-            setActiveSection(e.target.id === 'hero' ? null : e.target.id);
+            setActiveSection(e.target.id === 'hero' ? null : e.target.id === 'other-projects' ? 'projects' : e.target.id);
           }
         });
       },
       { rootMargin: '-40% 0px -55% 0px', threshold: 0 }
     );
 
-    const spyIds = ['hero', 'about', 'projects', 'case-studies', 'github-activity', 'arcade', 'contact'];
+    const spyIds = ['hero', 'about', 'projects', 'other-projects', 'case-studies', 'github-activity', 'arcade', 'contact'];
     spyIds.forEach((id) => {
       const el = document.getElementById(id);
       if (el) spy.observe(el);
@@ -638,16 +640,17 @@ function App() {
         </section>
 
         {/* ── Projects Section ── */}
-        <section id="projects">
+        <section id="projects" aria-labelledby="nova-heading">
+          <Suspense fallback={<div className="nova-showcase" style={{ minHeight: '950px' }} />}>
+            <NovaBrowserShowcase />
+          </Suspense>
+        </section>
+
+        <section id="other-projects">
           <h2 className="section-title">{t('archives_title')}</h2>
           <p className="section-subtitle">{t('archives_subtitle')}</p>
 
           <div className="bento-grid">
-            {/* Flagship Project: Nova Browser with Screenshot Showcase */}
-            <Suspense fallback={<div className="bento-card bento-col-12" style={{ minHeight: '300px' }} />}>
-              <NovaBrowserCard />
-            </Suspense>
-
             {/* Featured Project: Legend of the Three Masks */}
             <div className="bento-card bento-col-12">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>

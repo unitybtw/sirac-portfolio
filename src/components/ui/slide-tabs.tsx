@@ -76,18 +76,8 @@ export const SlideTabs: React.FC<SlideTabsProps> = ({
     return () => window.removeEventListener("resize", handleResize);
   }, [activeId, items]);
 
-  const handleTabClick = (e: React.MouseEvent<HTMLAnchorElement>, item: TabItem) => {
-    if (item.href.startsWith("#")) {
-      e.preventDefault();
-      const target = document.querySelector(item.href);
-      if (target) {
-        if (typeof window !== "undefined" && (window as any).lenis) {
-          (window as any).lenis.scrollTo(target, { offset: -40, duration: 1.2 });
-        } else {
-          target.scrollIntoView({ behavior: "smooth" });
-        }
-      }
-    }
+  const handleTabClick = (item: TabItem) => {
+    // Let the app's shared anchor handler align after lazy content settles.
     onSelect?.(item.id);
   };
 
@@ -114,7 +104,7 @@ export const SlideTabs: React.FC<SlideTabsProps> = ({
           >
             <a
               href={tab.href}
-              onClick={(e) => handleTabClick(e, tab)}
+              onClick={() => handleTabClick(tab)}
               className="inline-flex items-center gap-1.5 text-inherit no-underline"
             >
               {showIcons && tab.icon}
@@ -155,7 +145,7 @@ export const SlideTabs: React.FC<SlideTabsProps> = ({
           >
             <a
               href={tab.href}
-              onClick={(e) => handleTabClick(e, tab)}
+              onClick={() => handleTabClick(tab)}
               className={`slide-tab-link ${isActive ? 'is-active' : ''}`}
             >
               {showIcons && <span className="slide-tab-icon" style={{ opacity: 0.85, display: "flex" }}>{tab.icon}</span>}
