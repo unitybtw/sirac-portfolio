@@ -22,14 +22,12 @@ import {
     LayoutGrid,
     Pencil,
     Flame,
-    Compass,
-    Zap,
     Crown
 } from 'lucide-react';
 import './arcade.css';
 import ArcadeCabinet from './components/ArcadeCabinet';
-import { playClick, playHover, playSuccess, playArcadeOpen } from './soundEffects';
-import { gamesList, categoryLabels, getGameCategory, RANDOM_PREFIXES, RANDOM_SUFFIXES } from './gamesData';
+import { playClick, playHover, playSuccess } from './soundEffects';
+import { gamesList, getGameCategory, RANDOM_PREFIXES, RANDOM_SUFFIXES } from './gamesData';
 
 const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
     const { t } = useTranslation();
@@ -435,6 +433,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                     </span>
                                                     <input
                                                         type="text"
+                                                        aria-label={t('arcade_search_placeholder')}
                                                         placeholder={t('arcade_search_placeholder')}
                                                         value={searchQuery}
                                                         onChange={(e) => setSearchQuery(e.target.value)}
@@ -445,6 +444,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                             type="button"
                                                             onClick={() => setSearchQuery('')}
                                                             className="arcade-search-clear"
+                                                            aria-label={t('arcade_clear_search')}
                                                         >
                                                             <X size={13} />
                                                         </button>
@@ -692,6 +692,10 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                         ) : !activeGameId ? (
                                             /* ── C: OYUN LİSTESİ VE KATEGORİ IZGARASI ── */
                                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
+                                                <div className="arcade-catalog-intro">
+                                                    <div><h2>{t('arcade_catalog_title')}</h2><p>{t('arcade_catalog_description')}</p></div>
+                                                    <span className="arcade-result-count" role="status">{t('arcade_result_count', { count: filteredGames.length })}</span>
+                                                </div>
                                                 {/* Kategori Sekme Çubuğu */}
                                                 <div className="arcade-tab-bar">
                                                     {[
@@ -704,6 +708,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                             key={cat.id}
                                                             type="button"
                                                             className={`arcade-tab-item ${activeTab === cat.id ? 'active' : ''}`}
+                                                            aria-pressed={activeTab === cat.id}
                                                             onClick={() => { playClick(); setActiveTab(cat.id); }}
                                                             onMouseEnter={playHover}
                                                         >
@@ -736,62 +741,32 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                         const userScore = localScores[game.id];
 
                                                         return (
-                                                            <div
+                                                            <button
+                                                                type="button"
                                                                 key={game.id}
                                                                 className="arcade-game-card"
-                                                                onMouseEnter={playHover}
+                                                                aria-label={`${t('arcade_play')} ${game.title}`}
                                                                 onClick={() => {
                                                                     playClick();
                                                                     setActiveGameId(game.id);
                                                                     setGameReloadKey((prev) => prev + 1);
                                                                 }}
-                                                                style={{ '--game-color': game.color }}
                                                             >
-                                                                {/* Ambient Renk Işıltısı */}
-                                                                <div className="arcade-card-ambient" />
-
-                                                                {/* Kart Üst Bilgisi */}
-                                                                <div className="arcade-card-top">
-                                                                    <span className="arcade-card-badge">
-                                                                        {cat === 'simulation' ? <Compass size={11} /> : cat === 'puzzle' ? <Cpu size={11} /> : <Zap size={11} />}
-                                                                        {categoryLabels[cat]}
+                                                                <span className="arcade-card-number" aria-hidden="true">{String(gamesList.indexOf(game) + 1).padStart(2, '0')}</span>
+                                                                <span className="arcade-card-content">
+                                                                    <span className="arcade-card-icon" aria-hidden="true">{game.icon}</span>
+                                                                    <span className="arcade-card-copy">
+                                                                        <span className="arcade-card-title">{game.title}</span>
+                                                                        <span className="arcade-card-category">{t(`arcade_cat_${cat}`)}</span>
                                                                     </span>
-
-                                                                    <div className={`arcade-card-status-pill ${userScore ? 'has-record' : ''}`}>
-                                                                        {userScore ? (
-                                                                            <>
-                                                                                <Trophy size={11} color="#f59e0b" />
-                                                                                <span>{Number(userScore).toLocaleString()}</span>
-                                                                            </>
-                                                                        ) : (
-                                                                            <span>{t('arcade_ready')}</span>
-                                                                        )}
-                                                                    </div>
-                                                                </div>
-
-                                                                {/* Kart İkon & Başlık */}
-                                                                <div className="arcade-card-content">
-                                                                    <div className="arcade-card-icon">
-                                                                        {game.icon}
-                                                                    </div>
-                                                                    <h3 className="arcade-card-title">{game.title}</h3>
-                                                                </div>
-
-                                                                {/* Kart Alt Çubuğu */}
-                                                                <div className="arcade-card-bottom">
+                                                                </span>
+                                                                <span className="arcade-card-bottom">
                                                                     <span className="arcade-card-score-info">
-                                                                        {userScore ? (
-                                                                            <span className="arcade-card-score-num">#{t('arcade_personal_best')}: {userScore}</span>
-                                                                        ) : (
-                                                                            <span>Web Port</span>
-                                                                        )}
+                                                                        {userScore ? `${t('arcade_personal_best')}: ${Number(userScore).toLocaleString()}` : t('arcade_in_browser')}
                                                                     </span>
-
-                                                                    <span className="arcade-card-play-tag">
-                                                                        {t('arcade_play')} <Play size={11} fill="currentColor" />
-                                                                    </span>
-                                                                </div>
-                                                            </div>
+                                                                    <span className="arcade-card-play-tag">{t('arcade_play')} <Play size={12} /></span>
+                                                                </span>
+                                                            </button>
                                                         );
                                                     })}
                                                 </div>

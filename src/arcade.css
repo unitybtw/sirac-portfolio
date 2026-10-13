@@ -342,12 +342,12 @@
   width: 38px;
   height: 38px;
   border-radius: 6px;
-  background: linear-gradient(135deg, var(--arcade-text-primary), rgba(var(--arcade-accent-rgb), 0.8));
-  color: #ffffff;
+  background: var(--arcade-text-primary);
+  color: var(--arcade-bg-surface);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(var(--arcade-accent-rgb), 0.25);
+
 }
 
 .arcade-brand-info h2 {
@@ -369,8 +369,8 @@
 }
 
 .arcade-player-name {
-  color: var(--arcade-accent);
-  font-weight: 700;
+  color: var(--arcade-text-primary);
+  font-weight: 600;
 }
 
 .arcade-edit-name-btn {
@@ -408,14 +408,14 @@
   color: var(--arcade-text-primary);
   font-size: 0.85rem;
   padding: 0.5rem 1rem 0.5rem 2.25rem;
-  width: 220px;
+  width: 240px;
   outline: none;
   font-family: var(--arcade-font-body);
   transition: all 0.2s ease;
 }
 
 .arcade-search-input:focus {
-  width: 260px;
+  width: 240px;
   border-color: var(--arcade-accent);
   background: var(--arcade-bg-surface);
   box-shadow: 0 0 0 3px rgba(var(--arcade-accent-rgb), 0.12);
@@ -516,225 +516,31 @@
   width: 100%;
 }
 
-/* Kategori Sekme Çubuğu (Segmented control) */
-.arcade-tab-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 2.5rem;
-  width: 100%;
-}
-
-.arcade-tab-item {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--arcade-text-secondary);
-  background: var(--arcade-bg-surface);
-  border: 1px solid var(--arcade-border);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.arcade-tab-item:hover {
-  color: var(--arcade-text-primary);
-  border-color: var(--arcade-border-hover);
-  transform: translateY(-1px);
-}
-
-.arcade-tab-item.active {
-  color: var(--arcade-bg-subtle);
-  background: var(--arcade-text-primary);
-  border-color: var(--arcade-text-primary);
-  box-shadow: 0 4px 14px -4px rgba(0, 0, 0, 0.16);
-}
-
-.arcade-tab-counter {
-  font-size: 0.72rem;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: var(--arcade-bg-subtle);
-  color: var(--arcade-text-primary);
-  transition: all 0.2s ease;
-}
-
-.arcade-tab-item.active .arcade-tab-counter {
-  background: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-}
-
-/* ───────────────────────────────────────────────────────────────────
-   4. OYUN IZGARASI & OYUN KARTLARI
-─────────────────────────────────────────────────────────────────── */
-.arcade-games-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-  gap: 1.15rem;
-  width: 100%;
-}
-
-.arcade-games-grid.is-scrolling .arcade-game-card {
-  pointer-events: none;
-}
-
-/* Oyun Kartı */
-.arcade-game-card {
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-  border-radius: 8px;
-  padding: 1.35rem 1.25rem 1.15rem;
-  background: var(--arcade-bg-surface);
-  border: 1px solid var(--arcade-border);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 195px;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-              border-color 0.25s ease,
-              box-shadow 0.25s ease;
-}
-
-.arcade-game-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--game-color, var(--arcade-accent));
-  box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.12),
-              0 0 24px -6px color-mix(in srgb, var(--game-color, var(--arcade-accent)) 25%, transparent);
-}
-
-/* Kart Ambient Işık Lekesi */
-.arcade-card-ambient {
-  position: absolute;
-  top: -20px;
-  right: -20px;
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  background: radial-gradient(circle, color-mix(in srgb, var(--game-color, var(--arcade-accent)) 22%, transparent) 0%, transparent 70%);
-  pointer-events: none;
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  opacity: 0.6;
-}
-
-.arcade-game-card:hover .arcade-card-ambient {
-  transform: scale(1.4);
-  opacity: 1;
-}
-
-/* Kart Üst Başlık Şeridi */
-.arcade-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 1rem;
-}
-
-.arcade-card-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  color: var(--arcade-text-secondary);
-  background: var(--arcade-bg-subtle);
-  border: 1px solid var(--arcade-border);
-  padding: 3px 8px;
-  border-radius: 4px;
-}
-
-.arcade-card-status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: var(--arcade-text-muted);
-}
-
-.arcade-card-status-pill.has-record {
-  color: var(--arcade-gold);
-}
-
-/* Kart İkon & Başlık */
-.arcade-card-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 1.25rem;
-}
-
-.arcade-card-icon {
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--game-color, var(--arcade-accent));
-  background: color-mix(in srgb, var(--game-color, var(--arcade-accent)) 12%, var(--arcade-bg-surface));
-  border: 1px solid color-mix(in srgb, var(--game-color, var(--arcade-accent)) 28%, transparent);
-  box-shadow: 0 4px 12px -2px color-mix(in srgb, var(--game-color, var(--arcade-accent)) 20%, transparent);
-  transition: transform 0.25s ease;
-}
-
-.arcade-game-card:hover .arcade-card-icon {
-  transform: scale(1.06);
-}
-
-.arcade-card-title {
-  margin: 0;
-  font-size: 0.98rem;
-  font-weight: 700;
-  font-family: var(--arcade-font-heading);
-  letter-spacing: -0.01em;
-  color: var(--arcade-text-primary);
-  line-height: 1.3;
-}
-
-/* Kart Alt Buton / Aksiyon */
-.arcade-card-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 0.75rem;
-  border-top: 1px solid var(--arcade-border);
-}
-
-.arcade-card-score-info {
-  font-size: 0.75rem;
-  font-family: var(--arcade-font-mono);
-  color: var(--arcade-text-secondary);
-}
-
-.arcade-card-score-num {
-  font-weight: 700;
-  color: var(--arcade-text-primary);
-}
-
-.arcade-card-play-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  color: var(--game-color, var(--arcade-accent));
-  transition: transform 0.2s ease;
-}
-
-.arcade-game-card:hover .arcade-card-play-tag {
-  transform: translateX(3px);
-}
+/* A quiet catalogue: clear type, flat surfaces and compact game entries. */
+.arcade-catalog-intro { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; width:100%; margin:12px 0 28px; }
+.arcade-catalog-intro h2 { font-family:var(--arcade-font-heading); font-size:clamp(1.7rem,3vw,2.5rem); letter-spacing:-.04em; margin:0 0 8px; }
+.arcade-catalog-intro p { margin:0; color:var(--arcade-text-secondary); font-size:.92rem; line-height:1.6; }
+.arcade-result-count { color:var(--arcade-text-secondary); font-size:.8rem; white-space:nowrap; padding-bottom:4px; }
+.arcade-tab-bar { display:flex; gap:28px; width:100%; border-bottom:1px solid var(--arcade-border); margin-bottom:28px; overflow-x:auto; }
+.arcade-tab-item { display:inline-flex; align-items:center; gap:8px; padding:14px 0; border:0; border-bottom:2px solid transparent; border-radius:0; background:none; color:var(--arcade-text-secondary); font:inherit; font-size:.85rem; white-space:nowrap; cursor:pointer; }
+.arcade-tab-item:hover, .arcade-tab-item.active { color:var(--arcade-text-primary); }
+.arcade-tab-item.active { border-bottom-color:var(--arcade-text-primary); font-weight:650; }
+.arcade-tab-item > svg { display:none; }
+.arcade-tab-counter { font-size:.72rem; color:var(--arcade-text-muted); font-variant-numeric:tabular-nums; }
+.arcade-games-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; width:100%; }
+.arcade-games-grid.is-scrolling .arcade-game-card { pointer-events:none; }
+.arcade-game-card { position:relative; display:flex; flex-direction:column; text-align:left; font:inherit; color:var(--arcade-text-primary); cursor:pointer; padding:22px; min-width:0; border:1px solid var(--arcade-border); border-radius:10px; background:var(--arcade-bg-surface); transition:border-color .15s ease,background .15s ease; }
+.arcade-game-card:hover { border-color:var(--arcade-text-muted); background:var(--arcade-bg-subtle); }
+.arcade-game-card:focus-visible, .arcade-tab-item:focus-visible, .arcade-action-btn:focus-visible { outline:2px solid var(--arcade-text-primary); outline-offset:3px; }
+.arcade-card-number { font: .7rem var(--arcade-font-mono); color:var(--arcade-text-muted); margin-bottom:20px; }
+.arcade-card-content { display:flex; align-items:center; gap:14px; flex:1; margin-bottom:24px; }
+.arcade-card-icon { width:42px; height:42px; flex-shrink:0; display:flex; align-items:center; justify-content:center; border-radius:8px; background:var(--arcade-bg-subtle); color:var(--arcade-text-secondary); }
+.arcade-card-copy { display:flex; flex-direction:column; gap:6px; }
+.arcade-card-title { font-family:var(--arcade-font-heading); font-size:1rem; font-weight:650; letter-spacing:-.02em; line-height:1.4; }
+.arcade-card-category { color:var(--arcade-text-secondary); font-size:.75rem; line-height:1.4; }
+.arcade-card-bottom { display:flex; justify-content:space-between; align-items:center; gap:12px; padding-top:16px; border-top:1px solid var(--arcade-border); }
+.arcade-card-score-info { font-size:.72rem; color:var(--arcade-text-secondary); }
+.arcade-card-play-tag { display:flex; align-items:center; gap:7px; font-size:.75rem; font-weight:650; color:var(--arcade-text-primary); }
 
 /* ───────────────────────────────────────────────────────────────────
    5. OYUN SAHNESİ & DOCK KONTROLLERİ (Active Player)
@@ -963,7 +769,7 @@
 .arcade-podium-card.first {
   border-color: rgba(245, 158, 11, 0.4);
   background: rgba(245, 158, 11, 0.05);
-  box-shadow: 0 8px 24px -6px rgba(245, 158, 11, 0.15);
+
 }
 
 .arcade-podium-rank {
@@ -996,7 +802,7 @@
 .arcade-score-row.is-me {
   background: rgba(var(--arcade-accent-rgb), 0.08);
   border-color: rgba(var(--arcade-accent-rgb), 0.35);
-  box-shadow: 0 4px 14px rgba(var(--arcade-accent-rgb), 0.12);
+
 }
 
 /* ───────────────────────────────────────────────────────────────────
@@ -1017,7 +823,7 @@
   width: 76px;
   height: 76px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--arcade-accent), var(--arcade-text-primary));
+  background: var(--arcade-text-primary);
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -1025,7 +831,7 @@
   font-size: 2rem;
   font-weight: 800;
   margin: 0 auto 1.5rem;
-  box-shadow: 0 12px 28px rgba(var(--arcade-accent-rgb), 0.3);
+
 }
 
 /* ───────────────────────────────────────────────────────────────────
@@ -1101,4 +907,28 @@
   .arcade-player-record-pill {
     display: none;
   }
+}
+
+/* Library layout refinements at narrow widths. */
+@media (max-width:1000px) { .arcade-games-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width:860px) {
+  .arcade-modal-header-inner { display:grid; grid-template-columns:1fr auto; }
+  .arcade-header-actions { grid-column:1 / -1; grid-row:2; flex-wrap:wrap; }
+  .arcade-search-box { flex:1; min-width:140px; }
+  .arcade-search-input, .arcade-search-input:focus { width:100%; box-sizing:border-box; }
+  .arcade-game-card { padding:18px; min-height:0; }
+}
+@media (max-width:520px) {
+  .arcade-header-brand h2 { display:block; font-size:1rem; }
+  .arcade-brand-badge { display:none; }
+  .arcade-header-actions { gap:8px; }
+  .arcade-search-box { flex-basis:100%; }
+  .arcade-catalog-intro { align-items:flex-start; gap:12px; margin:8px 0 20px; }
+  .arcade-catalog-intro h2 { font-size:1.65rem; }
+  .arcade-result-count { padding-top:6px; }
+  .arcade-tab-bar { gap:22px; flex-wrap:nowrap; }
+  .arcade-tab-item { padding:12px 0; }
+  .arcade-games-grid { grid-template-columns:1fr; gap:10px; }
+  .arcade-card-number { margin-bottom:12px; }
+  .arcade-card-content { margin-bottom:18px; }
 }
