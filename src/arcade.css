@@ -238,74 +238,28 @@
   overflow: visible;
 }
 
-/* Animated Circuit Lines */
-@keyframes arcadeTraceFlow {
-  to {
-    stroke-dashoffset: -40;
-  }
-}
-
-.arcade-circuit-line {
-  animation: arcadeTraceFlow 2.8s linear infinite;
-}
-
-.arcade-circuit-line.reverse {
-  animation: arcadeTraceFlow 2.8s linear infinite reverse;
-}
-
-/* Equalizer Bars Spectrum Animation - GPU Composited (Zero Reflow) */
-.arcade-equalizer {
-  transform-box: fill-box;
-}
-
-.eq-bar {
-  transform-box: fill-box;
-  transform-origin: bottom;
-  will-change: transform;
-}
-
-@keyframes eqScale1 { 0%, 100% { transform: scaleY(0.4); } 50% { transform: scaleY(0.95); } }
-@keyframes eqScale2 { 0%, 100% { transform: scaleY(0.7); } 50% { transform: scaleY(0.3); } }
-@keyframes eqScale3 { 0%, 100% { transform: scaleY(0.95); } 50% { transform: scaleY(0.5); } }
-@keyframes eqScale4 { 0%, 100% { transform: scaleY(0.45); } 50% { transform: scaleY(0.85); } }
-
-.eq-bar-1, .eq-bar-9 { animation: eqScale1 1.4s ease-in-out infinite; }
-.eq-bar-2, .eq-bar-7 { animation: eqScale2 1.6s ease-in-out infinite 0.15s; }
-.eq-bar-3, .eq-bar-5 { animation: eqScale3 1.3s ease-in-out infinite 0.3s; }
-.eq-bar-4, .eq-bar-6, .eq-bar-8 { animation: eqScale4 1.5s ease-in-out infinite 0.45s; }
-
-/* Ship Float Animation */
-@keyframes shipFloat {
-  0%, 100% { transform: translate(0, 0); }
-  50% { transform: translate(6px, -3px); }
-}
-
-.arcade-vector-ship {
-  animation: shipFloat 2.6s ease-in-out infinite;
-}
-
-/* Button Glow Pulse */
-@keyframes btnGlowPulse {
-  0%, 100% { opacity: 0.4; transform: scale(0.9); }
-  50% { opacity: 1; transform: scale(1.1); }
-}
-
-.btn-glow {
-  transform-origin: center;
-  animation: btnGlowPulse 2.2s ease-in-out infinite;
-}
-.arcade-btn-y .btn-glow { animation-delay: 0s; }
-.arcade-btn-x .btn-glow { animation-delay: 0.55s; }
-.arcade-btn-b .btn-glow { animation-delay: 1.1s; }
-.arcade-btn-a .btn-glow { animation-delay: 1.65s; }
-
-/* Floating Stars */
-@keyframes starFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-.arcade-floating-stars {
-  animation: starFloat 4s ease-in-out infinite;
+/* Cabinet animation: transforms/opacity only; pause outside the viewport. */
+.arcade-cabinet .ac-coin { animation: acCoinFloat 5s ease-in-out infinite; }
+.arcade-cabinet .ac-coin-right { animation-delay: -2.5s; }
+.arcade-cabinet .ac-enemies { animation: acEnemyPatrol 3s ease-in-out infinite; }
+.arcade-cabinet .ac-player { animation: acPlayerMove 4s ease-in-out infinite; }
+.arcade-cabinet .ac-shot { animation: acShotFire 1.8s linear infinite; }
+.arcade-cabinet .ac-scan { animation: acScanPass 5s linear infinite; }
+.arcade-cabinet .ac-marquee-light { animation: acMarqueePulse 4s ease-in-out infinite; }
+.arcade-cabinet .ac-button { animation: acButtonPress 3.6s ease-in-out infinite; }
+.arcade-cabinet .ac-button-two { animation-delay: -1.8s; }
+.arcade-cabinet [class^="ac-"] { animation-play-state: paused; }
+.arcade-cabinet.is-visible [class^="ac-"] { animation-play-state: running; }
+@keyframes acCoinFloat { 50% { transform: translateY(-7px); } }
+@keyframes acEnemyPatrol { 0%,100% { transform: translateX(-6px); } 50% { transform: translateX(6px); } }
+@keyframes acPlayerMove { 0%,100% { transform: translateX(-8px); } 50% { transform: translateX(8px); } }
+@keyframes acShotFire { 0% { transform: translate(0,0); opacity: 0; } 15% { opacity: 1; } 85%,100% { transform: translate(0,-30px); opacity: 0; } }
+@keyframes acScanPass { to { transform: translateY(54px); } }
+@keyframes acMarqueePulse { 50% { opacity: .4; } }
+@keyframes acButtonPress { 12%,18% { transform: translateY(1.5px); opacity: .65; } }
+@media (prefers-reduced-motion: reduce) {
+  .arcade-cabinet [class^="ac-"] { animation: none !important; }
+  .arcade-portal-card:hover .arcade-cabinet { transform: none; }
 }
 
 @media (max-width: 900px) {
