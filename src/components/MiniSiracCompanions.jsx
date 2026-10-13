@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import runFloor from '../data/miniCompanionRunFloor.json';
+import { seatedFrameAt, departureTimeFor } from '../utils/miniSiracTiming';
 
 const PLATES = {
   sit: { file: 'sit-phone-hd.webp', width: 268, height: 320 },
@@ -31,7 +32,7 @@ export default function MiniSiracCompanions() {
     let contactVisible = false;
     let heroReady = false;
     let heroDone = false;
-    let heroTime = 0;
+    let departureTime = Infinity;
     let contactTime = 0;
     let dpr = 1;
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -39,6 +40,7 @@ export default function MiniSiracCompanions() {
       if (!images[name]) return;
       const id = name === 'point' ? 'contact-companion' : 'portrait-companion';
       if (removed.has(id)) return;
+      if (id === 'portrait-companion') { canvas.dataset.portraitPlate = name; canvas.dataset.portraitFrame = String(frame); }
       const cfg = PLATES[name];
       const width = cfg.width / cfg.height * height;
       hitTargets.push({ id, left: x + width * .2, right: x + width * .8, top: y + height * .06, bottom: y + height * .98, height });
@@ -62,7 +64,7 @@ export default function MiniSiracCompanions() {
     };
     const ready = () => {
       introPose = null;
-      if (!heroReady) { heroReady = true; heroTime = 0; }
+      if (!heroReady) { heroReady = true; departureTime = departureTimeFor(seatedTime); }
       wake();
     };
     const reset = () => {
@@ -71,7 +73,7 @@ export default function MiniSiracCompanions() {
       seatedTime = 0;
       heroReady = false;
       heroDone = false;
-      heroTime = 0;
+      departureTime = Infinity;
       wake();
     };
     const followPortrait = ({ detail }) => {
@@ -79,7 +81,7 @@ export default function MiniSiracCompanions() {
       if (detail.visible) { load('sit'); load('run'); }
       if (detail.settled && !heroReady) {
         heroReady = true;
-        heroTime = Math.min(7.5, seatedTime);
+        departureTime = departureTimeFor(seatedTime);
       }
       wake();
     };
@@ -94,8 +96,7 @@ export default function MiniSiracCompanions() {
       lastTime = now;
       const onPortrait = introPose ? introPose.visible && introPose.left + introPose.width * 0.68 < innerWidth + 40 : heroVisible;
       if (onPortrait && images.sit && images.run && !motion.matches) {
-        if (heroReady) heroTime += delta;
-        else seatedTime += delta;
+        seatedTime += delta;
       }
       if (contactVisible && images.point && !motion.matches) contactTime += delta;
       {
@@ -110,10 +111,10 @@ export default function MiniSiracCompanions() {
           const seatX = rect.left + rect.width * 0.68;
           const x = seatX - width * 0.25;
           const y = rect.top - height * (448 / 720);
-          if (motion.matches || !heroReady || heroTime < 8) {
-            draw('sit', motion.matches ? 40 : Math.min(120, Math.floor((heroReady ? heroTime : seatedTime) * 16)), x, y, height);
+          if (motion.matches || !heroReady || seatedTime < departureTime) {
+            draw('sit', motion.matches ? 40 : seatedFrameAt(seatedTime), x, y, height);
           } else {
-            const running = heroTime - 8;
+            const running = seatedTime - departureTime;
             const frame = running < 8 ? Math.min(127, Math.floor(running * 16)) : 92 + Math.floor((running - 8) * 16 % 28);
             // Frame 67 is the first running stride: move immediately, never jog on the spot.
             const distance = Math.max(0, running - 67 / 16) * height * 0.62;
@@ -138,6 +139,9 @@ export default function MiniSiracCompanions() {
           ctx.restore();
         }
       }
+      canvas.dataset.seatedTime = String(seatedTime);
+      canvas.dataset.seatedFrame = String(seatedFrameAt(seatedTime));
+      canvas.dataset.departureTime = String(departureTime);
       canvas.dataset.siracTargets = JSON.stringify(hitTargets);
       window.dispatchEvent(new CustomEvent('mini-sirac-targets', { detail: { source: 'companions', targets: hitTargets } }));
       if (!motion.matches && ((onPortrait && (heroReady || introPose) && images.sit && images.run && !heroDone) || (contactVisible && images.point && !removed.has('contact-companion')))) wake();

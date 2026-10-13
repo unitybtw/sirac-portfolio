@@ -107,3 +107,10 @@ the landing ground and body size. Reduced motion keeps a static landing pose.
 Release/walk footage faces left in its original frames. Both intro departures
 and dragged-actor departures mirror it only for rightward travel; the carry/
 push arrival orientation is independent from the release video's orientation.
+
+While the portrait is still being transported, the seated companion plays the
+phone-idle frames 96–120 forwards/backwards instead of clamping at frame 120.
+One seated clock continues through placement and skip; departure waits for
+the idle cycle to return to frame 120, which matches the stand-up clip's first
+frame. Run node scripts/test-mini-sirac-timing.mjs for long-wait and handoff
+continuity regressions.
