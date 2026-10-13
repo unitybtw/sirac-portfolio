@@ -2463,52 +2463,64 @@ body.ascii-intro-blank-mode .ascii-scene-replay-pill {
 /* Cover the first paint and asset loading, before the canvas stage exists. */
 .mini-crew-curtain { position: fixed; inset: 0; z-index: 99980; background: var(--bg-primary); }
 
-/* Mobile portfolio: portrait and title share the opening, with a clear crew lane. */
+/* Mobile portfolio: readable hierarchy, generous touch targets and room for the crew. */
 @media (max-width: 768px) {
-  .mobile-nav-header { height: 64px; padding: 0 16px; }
-  .mobile-brand-title { font-size: 12px; }
-  .mobile-brand-tag { display: none; }
-  .mobile-nav-controls { gap: 5px; }
-  .mobile-action-pill, .mobile-action-icon-btn, .mobile-hamburger-btn { min-width: 40px; min-height: 44px; }
-  .hero-section { padding-top: 96px !important; padding-bottom: 32px !important; }
-  .hero-layout-grid { grid-template-columns: minmax(0, 1fr) clamp(136px, 39vw, 164px) !important; gap: 24px 12px !important; padding: 0 20px !important; align-items: start; }
-  .hero-left-column { display: contents !important; }
-  .hero-left-column > .ascii-target-group { min-width: 0; width: 100%; gap: 12px; }
-  [data-ascii-target="title"] { grid-column: 1; grid-row: 1; }
-  [data-ascii-target="details"] { grid-column: 1 / -1; grid-row: 2; }
-  [data-ascii-target="actions"] { grid-column: 1 / -1; grid-row: 3; }
-  .hero-right-column { display: flex !important; grid-column: 2; grid-row: 1; padding-right: 48px; align-items: flex-start; justify-content: flex-start; box-sizing: border-box; }
-  .hero-portrait-card { max-width: none; aspect-ratio: 3 / 4; border-radius: 16px; margin: 0; box-shadow: 0 12px 32px #00000016; }
-  .hero-portrait-img { object-position: center 20%; }
-  .hero-portrait-overlay, .hero-portrait-scrim { display: none; }
-  .hero-meta-row { flex-direction: column; align-items: flex-start; gap: 6px; font-size: 11px; line-height: 1.5; margin: 0; }
-  .hero-meta-divider { display: none; }
-  .hero-meta-status { max-width: 180px; }
-  .hero-heading-group { margin: 0; }
-  .hero-main-title { font-size: clamp(23px, 6.7vw, 30px) !important; line-height: 1.16 !important; letter-spacing: -0.045em !important; margin: 0 !important; word-break: normal !important; overflow-wrap: normal; }
-  .hero-name-lead { font-size: 11px; line-height: 1.5; letter-spacing: 0.015em; margin-bottom: 9px; }
-  .hero-tagline-text { font-size: 14px !important; line-height: 1.75 !important; margin: 0 !important; }
-  .hero-stack-pills { gap: 7px; margin: 0; }
-  .tech-tag { padding: 6px 9px; font-size: 11px; border-radius: 7px; }
-  .hero-actions-row { gap: 10px !important; margin: 0 !important; }
-  .hero-actions-row .btn-primary, .hero-actions-row .btn-outline { min-width: 0 !important; min-height: 48px; padding: 12px 8px !important; font-size: 12px !important; gap: 6px; border-radius: 10px; box-sizing: border-box; }
-  .hero-socials-group { justify-content: flex-start !important; gap: 10px !important; margin: 0 !important; }
-  .hero-social-btn { max-width: none !important; border-radius: 10px; }
-  .mini-crew-controls { left: auto; right: 16px; bottom: 16px; }
-  .mini-crew-controls > span { display: none; }
-  .mini-crew-controls button { min-height: 44px; padding: 10px 15px; font-size: 12px; }
-  .mini-crew-replay { width: 44px; height: 44px; justify-content: center; padding: 0; right: 16px; bottom: 16px; }
-  .mini-crew-replay span { display: none; }
+  .mobile-nav-header { height:64px; padding:0 16px; box-shadow:none; }
+  .mobile-brand-title { font-size:12px; }
+  .mobile-brand-tag { display:none; }
+  .mobile-nav-controls { gap:5px; }
+  .mobile-action-pill, .mobile-action-icon-btn, .mobile-hamburger-btn { min-width:40px; min-height:44px; }
+  .hero-section { padding-top:96px !important; padding-bottom:40px !important; }
+  .hero-layout-grid { grid-template-columns:minmax(0,1fr) !important; gap:24px !important; padding:0 24px !important; align-items:start; box-sizing:border-box; }
+  .hero-left-column { display:contents !important; }
+  .hero-left-column > .ascii-target-group { min-width:0; width:100%; gap:16px; }
+  [data-ascii-target="title"] { grid-column:1; grid-row:1; }
+  [data-ascii-target="details"] { grid-column:1; grid-row:3; }
+  [data-ascii-target="actions"] { grid-column:1; grid-row:4; }
+  .hero-right-column { display:flex !important; grid-column:1; grid-row:2; padding:54px 48px 4px 0; align-items:center; justify-content:center; box-sizing:border-box; width:100%; }
+  .hero-portrait-card { width:clamp(168px,50vw,220px); max-width:100%; flex-shrink:0; aspect-ratio:4 / 5; border-radius:12px; margin:0; box-shadow:none; border:1px solid var(--border-subtle); }
+  .hero-portrait-img { object-position:center 20%; }
+  .hero-portrait-overlay, .hero-portrait-scrim { display:none; }
+  .hero-meta-row { flex-direction:column; align-items:flex-start; gap:6px; font-size:12px; line-height:1.5; margin:0 0 18px; }
+  .hero-meta-divider { display:none; }
+  .hero-meta-status { max-width:100%; }
+  .hero-heading-group { margin:0; }
+  .hero-main-title { font-size:clamp(30px,8.5vw,42px) !important; line-height:1.14 !important; letter-spacing:-.04em !important; margin:0 !important; word-break:normal !important; overflow-wrap:break-word; }
+  .hero-name-lead { font-size:12px; line-height:1.5; letter-spacing:.015em; margin-bottom:10px; }
+  .hero-tagline-text { font-size:15px !important; line-height:1.75 !important; margin:0 !important; }
+  .hero-stack-pills { gap:8px; margin:0; flex-wrap:wrap; }
+  .tech-tag { padding:6px 10px; font-size:11px; border-radius:6px; }
+  .hero-actions-row { grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important; gap:12px !important; margin:0 !important; }
+  .hero-actions-row .btn-primary, .hero-actions-row .btn-outline { min-width:0 !important; min-height:48px; padding:12px 8px !important; font-size:12px !important; gap:6px; border-radius:8px; box-sizing:border-box; }
+  .hero-socials-group { justify-content:flex-start !important; gap:10px !important; margin:0 !important; }
+  .hero-social-btn { width:44px; height:44px; max-width:none !important; border-radius:8px; }
+  .app-container { padding-left:24px; padding-right:24px; }
+  .section-title { font-size:28px; letter-spacing:-.035em; }
+  .section-subtitle { font-size:14px; line-height:1.65; }
+  .bento-card { padding:22px; border-radius:12px; min-width:0; }
+  .bento-card:hover { transform:none; }
+  .contact-grid { gap:24px; }
+  .contact-form input, .contact-form textarea { font-size:16px; min-width:0; }
+  .contact-form-container { padding:22px; }
+  .contact-submit-scene { margin-top:44px; }
+  .metric-label { white-space:normal; line-height:1.4; }
+  .metric-chip { padding:8px 5px; }
+  .mini-crew-controls { left:auto; right:16px; bottom:max(16px,env(safe-area-inset-bottom)); }
+  .mini-crew-controls > span { display:none; }
+  .mini-crew-controls button { min-height:44px; padding:10px 15px; font-size:12px; }
+  .mini-crew-replay { width:44px; height:44px; justify-content:center; padding:0; right:16px; bottom:max(16px,env(safe-area-inset-bottom)); }
+  .mini-crew-replay span { display:none; }
 }
-@media (max-width: 360px) {
-  .hero-layout-grid { padding: 0 16px !important; column-gap: 8px !important; }
-  .mobile-nav-header { padding: 0 12px; }
-}
-@media (max-width: 768px) {
-  .hero-right-column { padding-top: 64px; }
-  .hero-actions-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; }
+@media (max-width:360px) {
+  .hero-layout-grid { padding:0 16px !important; }
+  .app-container { padding-left:16px; padding-right:16px; }
+  .mobile-nav-header { padding:0 12px; }
+  .bento-card, .contact-form-container { padding:18px; }
+  .hero-main-title { font-size:30px !important; }
 }
 
 .mini-sirac-companions { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99985; }
 .contact-submit-scene { position: relative; margin-top: 24px; }
 .contact-submit-scene > button { min-height: 48px; }
+
+@media (max-width:768px) { .contact-submit-scene { margin-top:44px; } }

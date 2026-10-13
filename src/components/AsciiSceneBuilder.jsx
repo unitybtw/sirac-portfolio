@@ -150,7 +150,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
         const vw = window.innerWidth;
         const vh = window.innerHeight;
         const mobile = vw <= 768;
-        const charH = mobile ? 88 : Math.min(146, vh * 0.18);
+        const charH = mobile ? 76 : Math.min(146, vh * 0.18);
         layer = document.createElement('div');
         layer.className = 'mini-crew-stage';
         layer.setAttribute('aria-hidden', 'true');

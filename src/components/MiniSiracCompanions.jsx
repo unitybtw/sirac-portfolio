@@ -106,7 +106,7 @@ export default function MiniSiracCompanions() {
         canvas.style.zIndex = document.querySelector('.mini-crew-stage') ? '99985' : '90';
         if (onPortrait && (heroReady || introPose) && images.sit && images.run && !heroDone) {
           const rect = introPose || portrait.getBoundingClientRect();
-          const height = innerWidth <= 768 ? 96 : 150;
+          const height = innerWidth <= 768 ? 80 : 150;
           const width = 134 / 160 * height;
           const seatX = rect.left + rect.width * 0.68;
           const x = seatX - width * 0.25;
@@ -128,7 +128,7 @@ export default function MiniSiracCompanions() {
         }
         if (contactVisible && images.point && !button.disabled && !document.querySelector('.mini-crew-curtain')) {
           const rect = button.getBoundingClientRect();
-          const height = innerWidth <= 768 ? 74 : 88;
+          const height = innerWidth <= 768 ? 64 : 88;
           const frame = motion.matches ? 110 : contactTime < 6 ? Math.min(95, Math.floor(contactTime * 16)) : 96 + Math.floor((contactTime - 6) * 16 % 24);
           // Place the right-pointing actor at the left corner, aimed at the button label.
           ctx.save();
