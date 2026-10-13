@@ -15,7 +15,7 @@ const clamp = (n) => Math.min(1, Math.max(0, n));
 // Cosine ramps preserve a steady cruising speed instead of accelerating throughout.
 const travelProgress = (value) => {
   const t = clamp(value);
-  const ramp = 0.15;
+  const ramp = 0.025;
   const accelerate = (x) => (x / 2 - ramp / (2 * Math.PI) * Math.sin(Math.PI * x / ramp)) / (1 - ramp);
   return t < ramp ? accelerate(t) : t > 1 - ramp ? 1 - accelerate(1 - t) : (t - ramp / 2) / (1 - ramp);
 };
@@ -164,14 +164,24 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
           const clone = visualCopy(source);
           Object.assign(clone.style, { left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` });
           layer.append(clone);
-          // A short entrance keeps the crew immediately visible and avoids a blank page.
+          // Position the leading person's full sprite just outside the edge.
+          // Moving the whole panel outside adds a long invisible walk before anyone arrives.
           const revealOnly = mobile && entry.name !== 'portrait';
-          const entranceDistance = Math.min(90, charH * 0.55);
-          const dx = revealOnly ? 0 : entry.side === 'left' ? -entranceDistance : entry.side === 'right' ? entranceDistance : 0;
-          const dy = entry.side === 'bottom' ? vh - rect.top + charH : 0;
-          clone.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
           const pose = mobile && entry.name === 'portrait' ? 'push' : entry.name === 'portrait' && rect.bottom + charH > vh ? 'push' : entry.pose;
           const height = entry.name === 'navbar' ? charH * 0.85 : charH;
+          const cfg = CREW[pose];
+          const width = cfg.width / 240 * height;
+          const flip = (entry.side !== 'right') !== cfg.facesRight;
+          const hand = contacts[pose][cfg.cycle[0]][0];
+          const anchors = pose === 'carry'
+            ? (['navbar', 'portrait'].includes(entry.name) && rect.width > height * 2.4 ? [0.25, 0.75] : [0.5]).map((offset) => rect.left + rect.width * offset)
+            : [entry.side === 'right' ? rect.right : rect.left];
+          const spriteLefts = anchors.map((anchor) => anchor - (flip ? 1 - hand : hand) * width);
+          const dx = revealOnly ? 0 : entry.side === 'left'
+            ? -Math.max(...spriteLefts.map((left) => left + width)) - 2
+            : vw - Math.min(...spriteLefts) + 2;
+          const dy = 0;
+          clone.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
           const distance = Math.hypot(dx, dy);
           const speed = Math.min(entry.speed, height * CREW[pose].stride * 0.9);
           const duration = revealOnly ? 0.55 : Math.max(3.5, distance / (speed * 0.85));
