@@ -220,7 +220,7 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
       {/* ── Desktop Floating Dock (>= 769px) ── */}
       <motion.header
         className="slide-navbar-root"
-        initial={{ y: -80, opacity: 0 }}
+        initial={false}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: "spring", stiffness: 240, damping: 24, delay: 0.08 }}
         aria-label="Primary Navigation"
@@ -232,7 +232,7 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
           {/* Sağ Hızlı Butonlar: 3 Hızlı Buton (TR/EN, Tema, CV) */}
           <motion.div
             className="slide-controls-cluster"
-            initial="hidden"
+            initial={false}
             animate="visible"
             variants={{
               hidden: { opacity: 0 },
