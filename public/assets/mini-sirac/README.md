@@ -103,3 +103,7 @@ and Escape release the actor; hidden tabs pause animation. Reduced motion uses
 static held/landed poses. Departure uses the existing push-release turn/walk footage, with translation
 starting on its first walking step and per-frame foot/head tracking preserving
 the landing ground and body size. Reduced motion keeps a static landing pose.
+
+Release/walk footage faces left in its original frames. Both intro departures
+and dragged-actor departures mirror it only for rightward travel; the carry/
+push arrival orientation is independent from the release video's orientation.

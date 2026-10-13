@@ -6,8 +6,8 @@ import contacts from '../data/miniCrewContacts.json';
 // Omni 1.1 Flash clips, generated in Google Flow from the live site's portrait.
 // Video frames are packed into transparent atlases for consistent Safari/Chrome playback.
 const CREW = {
-  carryRelease: { file: 'carry-release.webp', width: 112, facesRight: true, cycle: [89, 122], walkStart: 68, stride: 0.26 },
-  pushRelease: { file: 'push-release.webp', width: 156, facesRight: true, cycle: [74, 106], walkStart: 58, stride: 0.35 },
+  carryRelease: { file: 'carry-release.webp', width: 112, facesRight: false, cycle: [89, 122], walkStart: 68, stride: 0.26 },
+  pushRelease: { file: 'push-release.webp', width: 156, facesRight: false, cycle: [74, 106], walkStart: 58, stride: 0.35 },
   push: { file: 'push.webp', width: 156, hand: [0.92, 0.34], facesRight: true, cycle: [82, 116], stride: 0.39 },
   carry: { file: 'carry.webp', width: 112, hand: [0.57, 0.045], facesRight: true, cycle: [59, 96], stride: 0.24 },
 };
@@ -296,6 +296,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
               const direction = side === 'right' ? 1 : -1;
               const releasePose = workerPose === 'carry' ? 'carryRelease' : 'pushRelease';
               const release = CREW[releasePose];
+              const releaseFlip = (direction > 0) !== release.facesRight;
               const loopStart = release.cycle[0] / 24;
               const walkingStart = release.walkStart / 24;
               const period = release.cycle[1] - release.cycle[0];
@@ -312,9 +313,9 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
               hitTargets.push({ id, left: cx - releaseWidth * .35, right: cx + releaseWidth * .35, top: ground - releaseSize, bottom: ground, height: releaseSize });
               ctx.save();
               ctx.fillStyle = 'rgba(20,20,24,0.19)';
-              ctx.beginPath(); ctx.ellipse(cx + (flip ? bodyX - shoe : shoe - bodyX) * releaseWidth, ground + 1, size * 0.105, 2.2, 0, 0, Math.PI * 2); ctx.fill();
+              ctx.beginPath(); ctx.ellipse(cx + (releaseFlip ? bodyX - shoe : shoe - bodyX) * releaseWidth, ground + 1, size * 0.105, 2.2, 0, 0, Math.PI * 2); ctx.fill();
               ctx.translate(cx, ground - floor * releaseSize);
-              if (flip) ctx.scale(-1, 1);
+              if (releaseFlip) ctx.scale(-1, 1);
               ctx.drawImage(images[releasePose], releaseFrame % 12 * release.width, Math.floor(releaseFrame / 12) * 240, release.width, 240, -bodyX * releaseWidth, 0, releaseWidth, releaseSize);
               ctx.restore();
             };

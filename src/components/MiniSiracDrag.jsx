@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import contacts from '../data/miniDragContacts.json';
 import crewContacts from '../data/miniCrewContacts.json';
 
-const WALK = { first: 36, step: 58, loop: 74, end: 106, width: 156, stride: .35 };
+const WALK = { first: 36, step: 58, loop: 74, end: 106, width: 156, facesRight: false, stride: .35 };
 const contains = (actor, x, y) => {
   if (!actor || actor.done) return false;
   const box = actor.bounds || { left: actor.x - actor.height * .32, right: actor.x + actor.height * .32, top: actor.y - actor.height * .15, bottom: actor.y + actor.height * .85 };
@@ -118,7 +118,7 @@ export default function MiniSiracDrag() {
           actor.bounds = { left: actor.x - width * .35, right: actor.x + width * .35, top: actor.ground - actor.bodyHeight, bottom: actor.ground };
           if (actor.x + width < 0 || actor.x - width > innerWidth) { actor.done = true; continue; }
           ctx.save(); ctx.translate(actor.x, actor.ground - floor * size);
-          if (actor.direction < 0) ctx.scale(-1, 1);
+          if ((actor.direction > 0) !== WALK.facesRight) ctx.scale(-1, 1);
           ctx.drawImage(images.walk, frame % 12 * WALK.width, Math.floor(frame / 12) * 240, WALK.width, 240, -bodyX * width, 0, width, size);
           ctx.restore();
           animating = true;
