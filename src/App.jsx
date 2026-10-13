@@ -6,7 +6,7 @@ import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Do
 import './index.css';
 import { LINKEDIN_URL } from './i18n';
 import { SlideNavbar } from './components/ui/slide-tabs';
-import PixelMarioRunner from './components/PixelMarioRunner';
+import AsciiSceneBuilder from './components/AsciiSceneBuilder';
 import CaseStudiesSection from './components/CaseStudiesSection';
 
 // Ekranın altında kalan ağır bileşenler: ilk paint'i bloklamasın,
@@ -330,7 +330,7 @@ function App() {
         onToggleLang={toggleLanguage}
       />
 
-      {/* ── Hero Section (Full-Width with Corner Pinned Mario) ── */}
+      {/* ── Hero Section ── */}
       <section className="hero-section" id="hero">
         <div className="hero-parallax-content">
           <div className="hero-layout-grid">
@@ -341,82 +341,89 @@ function App() {
                 initial="hidden"
                 animate="show"
               >
-                {/* Clean Metadata Line (No SaaS pill container, no pulsing neon dot) */}
-                <motion.div variants={heroChild} className="hero-meta-row">
-                  <span className="hero-meta-location"><MapPin size={13} /> {t('hero_location')}</span>
-                  <span className="hero-meta-divider">/</span>
-                  <span className="hero-meta-status">{t('badge_hire')}</span>
-                </motion.div>
+                <div className="ascii-target-group" data-ascii-target="title">
+                  {/* Clean Metadata Line (No SaaS pill container, no pulsing neon dot) */}
+                  <motion.div variants={heroChild} className="hero-meta-row">
+                    <span className="hero-meta-location"><MapPin size={13} /> {t('hero_location')}</span>
+                    <span className="hero-meta-divider">/</span>
+                    <span className="hero-meta-status">{t('badge_hire')}</span>
+                  </motion.div>
 
-                {/* Direct, Authentic Main Title */}
-                <motion.div variants={heroChild} className="hero-heading-group">
-                  <h1 className="hero-main-title">
-                    <span className="hero-name-lead">{t('hero_name')}:</span> {t('hero_title')}
-                  </h1>
-                </motion.div>
+                  {/* Direct, Authentic Main Title */}
+                  <motion.div variants={heroChild} className="hero-heading-group">
+                    <h1 className="hero-main-title">
+                      <span className="hero-name-lead">{t('hero_name')}:</span> {t('hero_title')}
+                    </h1>
+                  </motion.div>
+                </div>
 
-                {/* Narrative Intro */}
-                <motion.p variants={heroChild} className="hero-tagline-text">
-                  {t('hero_tagline')}
-                </motion.p>
+                <div className="ascii-target-group" data-ascii-target="details">
+                  {/* Narrative Intro */}
+                  <motion.p variants={heroChild} className="hero-tagline-text">
+                    {t('hero_tagline')}
+                  </motion.p>
 
-                {/* Tech Stack Pills */}
-                <motion.div variants={heroChild} className="hero-stack-pills">
-                  <span className="tech-tag">Unity 3D</span>
-                  <span className="tech-tag">C#</span>
-                  <span className="tech-tag">TypeScript</span>
-                  <span className="tech-tag">Electron</span>
-                  <span className="tech-tag">React</span>
-                  <span className="tech-tag">Blender</span>
-                </motion.div>
+                  {/* Tech Stack Pills */}
+                  <motion.div variants={heroChild} className="hero-stack-pills">
+                    <span className="tech-tag">Unity 3D</span>
+                    <span className="tech-tag">C#</span>
+                    <span className="tech-tag">TypeScript</span>
+                    <span className="tech-tag">Electron</span>
+                    <span className="tech-tag">React</span>
+                    <span className="tech-tag">Blender</span>
+                  </motion.div>
+                </div>
 
                 {/* Action Buttons & Social Links */}
-                <motion.div variants={heroChild} className="hero-actions-row">
-                  <a href="#projects" className="btn-primary">
-                    {t('btn_explore')} <ArrowRight size={17} />
-                  </a>
-                  <a
-                    href={`${import.meta.env.BASE_URL}cv.pdf`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-outline"
-                  >
-                    <Download size={17} /> {t('btn_view_cv')}
-                  </a>
-                  <div className="hero-social-divider" />
-                  <div className="hero-socials-group">
-                    <a
-                      href="https://github.com/unitybtw"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hero-social-btn"
-                      title="GitHub"
-                      aria-label="GitHub"
-                    >
-                      <Github size={18} />
+                <div className="ascii-target-group" data-ascii-target="actions">
+                  <motion.div variants={heroChild} className="hero-actions-row">
+                    <a href="#projects" className="btn-primary">
+                      {t('btn_explore')} <ArrowRight size={17} />
                     </a>
                     <a
-                      href={LINKEDIN_URL}
+                      href={`${import.meta.env.BASE_URL}cv.pdf`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="hero-social-btn"
-                      title="LinkedIn"
-                      aria-label="LinkedIn"
+                      className="btn-outline"
                     >
-                      <Linkedin size={18} />
+                      <Download size={17} /> {t('btn_view_cv')}
                     </a>
-                  </div>
-                </motion.div>
+                    <div className="hero-social-divider" />
+                    <div className="hero-socials-group">
+                      <a
+                        href="https://github.com/unitybtw"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hero-social-btn"
+                        title="GitHub"
+                        aria-label="GitHub"
+                      >
+                        <Github size={18} />
+                      </a>
+                      <a
+                        href={LINKEDIN_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hero-social-btn"
+                        title="LinkedIn"
+                        aria-label="LinkedIn"
+                      >
+                        <Linkedin size={18} />
+                      </a>
+                    </div>
+                  </motion.div>
+                </div>
               </motion.div>
 
-              {/* Right Column: AI Portrait Showcase (Cloud CDN Loaded - 0 bytes in Git Repo) */}
+              {/* Right Column: AI Portrait Showcase + Full-Body ASCII Scene Builder */}
               <motion.div
                 className="hero-right-column"
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                style={{ flexDirection: 'column', gap: '0.75rem' }}
               >
-                <div className="hero-portrait-card">
+                <div className="hero-portrait-card" data-ascii-target="portrait">
                   <img
                     src={import.meta.env.VITE_PROFILE_PHOTO_URL || "https://files.catbox.moe/y8qlp8.jpg"}
                     alt="Sıraç Göktuğ Şimşek"
@@ -440,14 +447,12 @@ function App() {
                     </div>
                   </div>
                 </div>
+
+                <AsciiSceneBuilder lang={currentLang} />
               </motion.div>
             </div>
           </div>
 
-          {/* Large-Format 1-Bit Dot-Matrix Mario Corner Runner */}
-          <div className="hero-corner-mario-anchor">
-            <PixelMarioRunner theme={theme} />
-          </div>
         </section>
 
         <main className="app-container">

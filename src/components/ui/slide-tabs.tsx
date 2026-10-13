@@ -235,7 +235,7 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
         transition={{ type: "spring", stiffness: 240, damping: 24, delay: 0.08 }}
         aria-label="Primary Navigation"
       >
-        <div className="slide-navbar-dock">
+        <div className="slide-navbar-dock" data-ascii-target="navbar">
           {/* Orta Kayar Sekmeler (SlideTabs) */}
           <SlideTabs items={tabs} activeId={activeSection} />
 
@@ -340,7 +340,7 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
       </motion.header>
 
       {/* ── Mobile Top Header & Hamburger Navigation (< 769px) ── */}
-      <header className="mobile-nav-header">
+      <header className="mobile-nav-header" data-ascii-target="navbar">
         <a
           href="#hero"
           className="mobile-brand"
