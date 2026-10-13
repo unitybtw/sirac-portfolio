@@ -20,11 +20,11 @@ const travelProgress = (value) => {
   return t < ramp ? accelerate(t) : t > 1 - ramp ? 1 - accelerate(1 - t) : (t - ramp / 2) / (1 - ramp);
 };
 const SCHEDULE = [
-  { name: 'navbar', start: 0.15, speed: 38, side: 'left', pose: 'carry' },
-  { name: 'title', start: 1.2, speed: 52, side: 'left', pose: 'push' },
-  { name: 'portrait', start: 2.8, speed: 38, side: 'right', pose: 'carry' },
-  { name: 'details', start: 4, speed: 50, side: 'left', pose: 'push' },
-  { name: 'actions', start: 5.5, speed: 38, side: 'left', pose: 'carry' },
+  { name: 'navbar', start: 0, speed: 38, side: 'left', pose: 'carry' },
+  { name: 'title', start: 0.1, speed: 52, side: 'left', pose: 'push' },
+  { name: 'portrait', start: 0.15, speed: 38, side: 'right', pose: 'carry' },
+  { name: 'details', start: 0.2, speed: 50, side: 'left', pose: 'push' },
+  { name: 'actions', start: 0.25, speed: 38, side: 'left', pose: 'carry' },
 ];
 const COPY = {
   tr: { loading: 'Minik Sıraçlar hazırlanıyor…', nav: 'Menü ekibi iş başında.', title: 'Başlık geliyor!', photo: 'Dikkat, fotoğraf taşınıyor.', finish: 'Son dokunuşlar…', skip: 'Geç', replay: 'Minik Sıraçları tekrar oynat' },
@@ -124,29 +124,27 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
     const start = async () => {
       window.dispatchEvent(new Event('mini-sirac-start'));
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || (run === 0 && (window.scrollY > 80 || (location.hash && !['#home', '#hero'].includes(location.hash))))) {
-        if (!cancelled) setPhase('done');
+        if (!cancelled) finish();
         return;
       }
-      if (root) root.inert = true;
-      window.addEventListener('wheel', pauseScroll, { passive: false, capture: true });
-      window.addEventListener('touchmove', pauseScroll, { passive: false, capture: true });
+      // Keep the real page usable while assets load; slow networks skip the intro.
       window.addEventListener('keydown', onKey);
       window.addEventListener('resize', finish);
       window.addEventListener('pagehide', finish);
+      window.addEventListener('scroll', finish, { passive: true, once: true });
+      inputsUnlocked = true;
       try {
         await Promise.race([
           Promise.all([
             ...Object.entries(CREW).map(([name, cfg]) => load(name, cfg)),
-            load('companionSit', { file: 'sit-phone-hd.webp' }),
-            load('companionRun', { file: 'stand-run-hd.webp' }),
           ]),
-          timeout(4000).then(() => { throw new Error('Crew preload timeout'); }),
+          timeout(1200).then(() => { throw new Error('Crew preload timeout'); }),
         ]);
-        await Promise.race([document.fonts.ready, timeout(600)]);
+        await Promise.race([document.fonts.ready, timeout(150)]);
         const portrait = document.querySelector('[data-ascii-target="portrait"] img');
-        if (portrait) await Promise.race([portrait.decode().catch(() => {}), timeout(800)]);
-        // Let Framer finish its initial layout before measuring the real blocks.
-        await timeout(run === 0 ? 650 : 20);
+        if (portrait) await Promise.race([portrait.decode().catch(() => {}), timeout(150)]);
+        // Measure after the next layout turn, without an artificial opening delay.
+        await timeout(20);
         if (cancelled) return;
         if (window.scrollY > 80) { finish(); return; }
         const vw = window.innerWidth;
@@ -166,9 +164,10 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
           const clone = visualCopy(source);
           Object.assign(clone.style, { left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` });
           layer.append(clone);
-          // Every piece and its crew start fully beyond the viewport edge.
+          // A short entrance keeps the crew immediately visible and avoids a blank page.
           const revealOnly = mobile && entry.name !== 'portrait';
-          const dx = revealOnly ? 0 : entry.side === 'left' ? -rect.right - charH : entry.side === 'right' ? vw - rect.left + charH : 0;
+          const entranceDistance = Math.min(90, charH * 0.55);
+          const dx = revealOnly ? 0 : entry.side === 'left' ? -entranceDistance : entry.side === 'right' ? entranceDistance : 0;
           const dy = entry.side === 'bottom' ? vh - rect.top + charH : 0;
           clone.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
           const pose = mobile && entry.name === 'portrait' ? 'push' : entry.name === 'portrait' && rect.bottom + charH > vh ? 'push' : entry.pose;
@@ -177,7 +176,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
           const speed = Math.min(entry.speed, height * CREW[pose].stride * 0.9);
           const duration = revealOnly ? 0.55 : Math.max(3.5, distance / (speed * 0.85));
           const cycles = Math.max(1, Math.round(distance / (height * CREW[pose].stride)));
-          const start = mobile ? ({ navbar: 0.55, title: 0.7, portrait: 0.75, details: 0.95, actions: 1.2 }[entry.name]) : entry.start + 0.8;
+          const start = mobile ? ({ navbar: 0, title: 0.05, portrait: 0.15, details: 0.1, actions: 0.15 }[entry.name]) : entry.start;
           if (revealOnly) clone.style.opacity = '0';
           return [{ ...entry, start, revealOnly, pose, height, cycles, duration, rect, clone, dx, dy }];
         });
@@ -188,6 +187,8 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
         canvas.height = vh * dpr;
         layer.append(canvas);
         document.body.append(layer);
+        inputsUnlocked = false;
+        window.removeEventListener('scroll', finish);
         if (root) root.inert = true;
         document.querySelector('.mini-crew-controls button')?.focus({ preventScroll: true });
         document.documentElement.classList.add('mini-crew-playing');
@@ -254,7 +255,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
             window.addEventListener('scroll', finish, { passive: true, once: true });
             setPhase('leaving');
           }
-          const nextAct = elapsed < 0.8 ? 'loading' : unlocked ? 'finish' : elapsed < 1.2 ? 'nav' : elapsed < 2.8 ? 'title' : elapsed < total - 3 ? 'photo' : 'finish';
+          const nextAct = unlocked ? 'finish' : elapsed < 1.2 ? 'nav' : elapsed < 2.8 ? 'title' : elapsed < total - 3 ? 'photo' : 'finish';
           if (nextAct !== lastAct) { lastAct = nextAct; setAct(nextAct); }
           blocks.forEach((block) => {
             const { rect, clone, pose, side, start, duration, height, cycles, revealOnly } = block;
@@ -357,7 +358,10 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
         <Play size={13} /><span>{words.replay}</span>
       </button>
     ) : phase === 'loading' ? (
-      <div className="mini-crew-curtain" aria-hidden="true" />
+      <div className="mini-crew-controls">
+        <span role="status"><span className="mini-crew-dot" />{words.loading}</span>
+        <button type="button" onClick={finish}><FastForward size={14} /> {words.skip}<kbd>Esc</kbd></button>
+      </div>
     ) : (
       <div className="mini-crew-controls" style={{ visibility: act === 'loading' ? 'hidden' : 'visible' }}>
         <span role="status"><span className="mini-crew-dot" />{words[act]}</span>
