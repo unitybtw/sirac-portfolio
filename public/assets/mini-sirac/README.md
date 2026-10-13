@@ -71,7 +71,8 @@ atlases use 128 frames at 16 fps, in a 16×8 grid. Sit/run frames are 268×320px
 rendering; the button helper uses 160×160px frames. prepare-mini-companion.py
 reproduces the conversion. The seated character follows the transported portrait from its first visible
 frame, waves, scrolls his phone, then
-pockets it, stands up and runs off the portrait edge with a downward exit.
+pockets it, stands up and runs horizontally beyond the screen. Per-frame shoe tracking keeps the
+standing/running feet on the portrait top plane without falling or vertical drift.
 The button helper appears only in the left corner, waves and points right toward
 the label. Neither character receives pointer input or covers the label.
 

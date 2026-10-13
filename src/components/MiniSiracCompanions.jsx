@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import runFloor from '../data/miniCompanionRunFloor.json';
 
 const PLATES = {
   sit: { file: 'sit-phone-hd.webp', width: 268, height: 320 },
@@ -109,11 +110,10 @@ export default function MiniSiracCompanions() {
             // Frame 67 is the first running stride: move immediately, never jog on the spot.
             const distance = Math.max(0, running - 67 / 16) * height * 0.62;
             const rise = Math.min(1, Math.max(0, (running - 2) / 2)) * height * 0.35;
-            const beyondEdge = Math.max(0, x + distance + width * 0.6 - rect.right);
-            const falling = beyondEdge / (height * 0.62);
-            const drop = 180 * (height / 150) * falling * falling;
-            const runY = y - rise + drop;
-            if (x + distance > innerWidth + width || runY > innerHeight) heroDone = true;
+            // Once standing, keep every stride on the portrait's top plane.
+            // Per-frame shoe tracking cancels the generated clip's vertical drift.
+            const runY = running >= 67 / 16 ? rect.top - runFloor[frame] * height : y - rise;
+            if (x + distance > innerWidth + width) heroDone = true;
             else draw('run', frame, x + distance, runY, height);
           }
         }

@@ -3,6 +3,7 @@ Usage: python3 scripts/prepare-mini-companion.py input.mp4 sit-phone|stand-run|w
 """
 from pathlib import Path
 import sys
+import json
 import cv2
 import numpy as np
 from PIL import Image
@@ -27,4 +28,11 @@ if name=='stand-run':
 output_name=name if name=='wave-point' else f'{name}-hd'
 Image.fromarray(atlas).save(root/f'{output_name}.webp',quality=95,method=4)
 Image.fromarray(atlas).save(f'/private/tmp/{name}-atlas.png')
+if name=='stand-run':
+    floors=[]
+    for index in range(128):
+        alpha=atlas[index//16*height:(index//16+1)*height,index%16*width:(index%16+1)*width,3]
+        rows=np.where((alpha>160).sum(axis=1)>3)[0]
+        floors.append(round((int(rows[-1])+1)/height,5))
+    (root.parents[2]/'src/data/miniCompanionRunFloor.json').write_text(json.dumps(floors)+'\n')
 print(root/f'{output_name}.webp')
