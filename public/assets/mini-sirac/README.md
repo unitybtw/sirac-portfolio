@@ -94,8 +94,12 @@ columns, with collar tracking so dragging does not shift the attachment point.
 
 MiniSiracDrag receives visible hit regions from both the intro crew and the
 portrait/button companions. Picking an actor removes its original instance;
-released actors remain individually re-grabbable until intro replay. Pointer
+released actors react, then turn and walk toward the nearest screen edge.
+They stay re-grabbable during their departure and are removed only when fully
+offscreen. Intro replay restores the original crew. Pointer
 input outside the characters continues to reach normal controls. Pickup clicks
 do not submit the underlying contact button. Pointer cancellation, window blur
 and Escape release the actor; hidden tabs pause animation. Reduced motion uses
-static held/landed poses. After landing, no continuous animation is scheduled.
+static held/landed poses. Departure uses the existing push-release turn/walk footage, with translation
+starting on its first walking step and per-frame foot/head tracking preserving
+the landing ground and body size. Reduced motion keeps a static landing pose.
