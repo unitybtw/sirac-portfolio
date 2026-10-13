@@ -82,3 +82,20 @@ and in hidden tabs, uses a static pose for reduced motion, and is replayed with
 the existing intro replay button. The portrait gag runs once per replay; the
 button holds its pointing gesture with a small breathing loop. The intro crew
 atlases are released once their stage is disposed.
+
+
+Mouse/touch collar interaction (Omni 1.1 Flash):
+- Grab source: 4092eaef-c21d-49ce-874c-478ccca4daab, frames 0–48.
+- Hold source: 54076c9f-e43c-42a1-8863-e2b70f2b6eb3, first 18 frames with a reverse return.
+- Release source: 649e4f01-c384-4276-9aa7-ba787c4fd8cd, full landing/reaction clip.
+The generated hold later grounded the actor; the prepared loop uses only its
+airborne segment. prepare-mini-drag.py keys and packs 160×240px frames in 12
+columns, with collar tracking so dragging does not shift the attachment point.
+
+MiniSiracDrag receives visible hit regions from both the intro crew and the
+portrait/button companions. Picking an actor removes its original instance;
+released actors remain individually re-grabbable until intro replay. Pointer
+input outside the characters continues to reach normal controls. Pickup clicks
+do not submit the underlying contact button. Pointer cancellation, window blur
+and Escape release the actor; hidden tabs pause animation. Reduced motion uses
+static held/landed poses. After landing, no continuous animation is scheduled.

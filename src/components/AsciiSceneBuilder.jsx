@@ -82,6 +82,10 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
     const previousFocus = document.activeElement;
     const timers = new Set();
     const images = {};
+    const grabbedActors = new Set();
+    let hitTargets = [];
+    const grabbed = ({ detail }) => { grabbedActors.add(detail.id); };
+    window.addEventListener('mini-sirac-grabbed', grabbed);
     const pauseScroll = (event) => event.preventDefault();
     const onKey = (event) => {
       if (event.key === 'Escape') finish();
@@ -89,6 +93,8 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
     };
     const dispose = () => {
       cancelled = true;
+      window.removeEventListener('mini-sirac-grabbed', grabbed);
+      window.dispatchEvent(new CustomEvent('mini-sirac-targets', { detail: { source: 'crew', targets: [] } }));
       cancelAnimationFrame(raf);
       timers.forEach(clearTimeout);
       layer?.remove();
@@ -196,7 +202,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
           const [first, last] = CREW[pose].cycle;
           return first + Math.floor((progress * cycles % 1) * (last - first));
         };
-        const draw = (pose, handX, restingHandY, height, facingRight, frame, alpha) => {
+        const draw = (pose, handX, restingHandY, height, facingRight, frame, alpha, id) => {
           const cfg = CREW[pose];
           const width = cfg.width / 240 * height;
           const flip = facingRight !== cfg.facesRight;
@@ -208,6 +214,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
           const y = ground - floor * height;
           const shoeX = x + (flip ? 1 - fx : fx) * width;
           if (x + width > 0 && x < vw) visibleWorkers += 1;
+          hitTargets.push({ id, left: x + width * .15, right: x + width * .85, top: y, bottom: ground, height });
           ctx.save();
           ctx.globalAlpha = alpha;
           ctx.fillStyle = 'rgba(20,20,24,0.19)';
@@ -234,6 +241,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
           ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
           ctx.clearRect(0, 0, vw, vh);
           visibleWorkers = 0;
+          hitTargets = [];
           if (!unlocked && elapsed >= placementEnd) {
             unlocked = true;
             inputsUnlocked = true;
@@ -274,8 +282,10 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
             }
             if (elapsed < start) return;
             const leaving = Math.max(0, elapsed - start - duration - 0.45);
-            const worker = (workerPose, handX, handY, size, facing, workerFrame) => {
-              if (!leaving) { draw(workerPose, handX, handY, size, facing, workerFrame, 1); return; }
+            const worker = (workerPose, handX, handY, size, facing, workerFrame, workerIndex = 0) => {
+              const id = `${block.name}:${workerIndex}`;
+              if (grabbedActors.has(id)) return;
+              if (!leaving) { draw(workerPose, handX, handY, size, facing, workerFrame, 1, id); return; }
               const cfg = CREW[workerPose];
               const held = contacts[workerPose][cfg.cycle[0]];
               const width = cfg.width / 240 * size;
@@ -299,6 +309,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
               const releaseWidth = release.width / 240 * releaseSize;
               if (cx + releaseWidth < 0 || cx - releaseWidth > vw) return;
               visibleWorkers += 1;
+              hitTargets.push({ id, left: cx - releaseWidth * .35, right: cx + releaseWidth * .35, top: ground - releaseSize, bottom: ground, height: releaseSize });
               ctx.save();
               ctx.fillStyle = 'rgba(20,20,24,0.19)';
               ctx.beginPath(); ctx.ellipse(cx + (flip ? bodyX - shoe : shoe - bodyX) * releaseWidth, ground + 1, size * 0.105, 2.2, 0, 0, Math.PI * 2); ctx.fill();
@@ -313,12 +324,14 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
               // Both people face the travel direction and share one stable floor plane.
               const restingBottom = rect.bottom + block.dy * travel;
               const team = ['navbar', 'portrait'].includes(block.name) && rect.width > height * 2.4 ? [0.25, 0.75] : [0.5];
-              team.forEach((offset) => worker('carry', left + rect.width * offset, restingBottom, height, facingRight, frame));
+              team.forEach((offset, index) => worker('carry', left + rect.width * offset, restingBottom, height, facingRight, frame, index));
             } else if (pose === 'push') {
               worker('push', side === 'right' ? left + rect.width : left, rect.top + Math.min(rect.height * 0.55, 65), height, facingRight, frame);
 
             }
           });
+          canvas.dataset.siracTargets = JSON.stringify(hitTargets);
+          window.dispatchEvent(new CustomEvent('mini-sirac-targets', { detail: { source: 'crew', targets: hitTargets } }));
           // The stage is removed only after the last worker has walked beyond its edge.
           if (elapsed < total && !(elapsed > placementEnd + 4 && visibleWorkers === 0)) raf = requestAnimationFrame(tick);
           else finish();

@@ -8,6 +8,7 @@ import { LINKEDIN_URL } from './i18n';
 import { SlideNavbar } from './components/ui/slide-tabs';
 import AsciiSceneBuilder from './components/AsciiSceneBuilder';
 import MiniSiracCompanions from './components/MiniSiracCompanions';
+import MiniSiracDrag from './components/MiniSiracDrag';
 import CaseStudiesSection from './components/CaseStudiesSection';
 
 // Ekranın altında kalan ağır bileşenler: ilk paint'i bloklamasın,
@@ -335,6 +336,7 @@ function App() {
     <>
       <PageProgress />
       <MiniSiracCompanions />
+      <MiniSiracDrag />
       
       {/* ── SlideTabs Floating Dock Navbar ── */}
       <SlideNavbar

@@ -18,6 +18,9 @@ export default function MiniSiracCompanions() {
     const button = document.querySelector('[data-sirac-submit]');
     if (!portrait || !button || !ctx) return;
     const images = {};
+    const removed = new Set();
+    let hitTargets = [];
+    const grabbed = ({ detail }) => { removed.add(detail.id); wake(); };
     const requested = new Set();
     let disposed = false;
     let raf = 0;
@@ -34,8 +37,11 @@ export default function MiniSiracCompanions() {
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const draw = (name, frame, x, y, height) => {
       if (!images[name]) return;
+      const id = name === 'point' ? 'contact-companion' : 'portrait-companion';
+      if (removed.has(id)) return;
       const cfg = PLATES[name];
       const width = cfg.width / cfg.height * height;
+      hitTargets.push({ id, left: x + width * .2, right: x + width * .8, top: y + height * .06, bottom: y + height * .98, height });
       ctx.drawImage(images[name], frame % 16 * cfg.width, Math.floor(frame / 16) * cfg.height, cfg.width, cfg.height, x, y, width, height);
     };
     const wake = () => {
@@ -60,6 +66,7 @@ export default function MiniSiracCompanions() {
       wake();
     };
     const reset = () => {
+      removed.clear();
       introPose = null;
       seatedTime = 0;
       heroReady = false;
@@ -92,6 +99,7 @@ export default function MiniSiracCompanions() {
       }
       if (contactVisible && images.point && !motion.matches) contactTime += delta;
       {
+        hitTargets = [];
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.clearRect(0, 0, innerWidth, innerHeight);
         canvas.style.zIndex = document.querySelector('.mini-crew-stage') ? '99985' : '90';
@@ -130,7 +138,9 @@ export default function MiniSiracCompanions() {
           ctx.restore();
         }
       }
-      if (!motion.matches && ((onPortrait && (heroReady || introPose) && images.sit && images.run && !heroDone) || (contactVisible && images.point))) wake();
+      canvas.dataset.siracTargets = JSON.stringify(hitTargets);
+      window.dispatchEvent(new CustomEvent('mini-sirac-targets', { detail: { source: 'companions', targets: hitTargets } }));
+      if (!motion.matches && ((onPortrait && (heroReady || introPose) && images.sit && images.run && !heroDone) || (contactVisible && images.point && !removed.has('contact-companion')))) wake();
       else lastTime = 0;
     }
     const observer = new IntersectionObserver((entries) => {
@@ -151,6 +161,7 @@ export default function MiniSiracCompanions() {
     observer.observe(button);
     const mutations = new MutationObserver(checkStage);
     mutations.observe(document.body, { childList: true });
+    window.addEventListener('mini-sirac-grabbed', grabbed);
     window.addEventListener('mini-sirac-start', reset);
     window.addEventListener('mini-sirac-ready', ready);
     window.addEventListener('mini-sirac-portrait-pose', followPortrait);
@@ -165,6 +176,8 @@ export default function MiniSiracCompanions() {
       cancelAnimationFrame(raf);
       observer.disconnect();
       mutations.disconnect();
+      window.dispatchEvent(new CustomEvent('mini-sirac-targets', { detail: { source: 'companions', targets: [] } }));
+      window.removeEventListener('mini-sirac-grabbed', grabbed);
       window.removeEventListener('mini-sirac-start', reset);
       window.removeEventListener('mini-sirac-ready', ready);
       window.removeEventListener('mini-sirac-portrait-pose', followPortrait);
