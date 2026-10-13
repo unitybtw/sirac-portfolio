@@ -92,6 +92,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
       cancelAnimationFrame(raf);
       timers.forEach(clearTimeout);
       layer?.remove();
+      Object.keys(images).forEach((name) => { delete images[name]; });
       if (root) root.inert = wasInert;
       if (previousFocus instanceof HTMLElement && previousFocus !== document.body && previousFocus.isConnected) previousFocus.focus({ preventScroll: true });
       window.removeEventListener('wheel', pauseScroll, true);
@@ -101,6 +102,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
       window.removeEventListener('pagehide', finish);
       window.removeEventListener('scroll', finish);
       document.documentElement.classList.remove('mini-crew-playing');
+      window.dispatchEvent(new Event('mini-sirac-ready'));
     };
     disposeRef.current = dispose;
     const timeout = (ms) => new Promise((resolve) => {
@@ -109,11 +111,12 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
     });
     const load = (name, cfg) => new Promise((resolve, reject) => {
       const image = new Image();
-      image.onload = () => { images[name] = image; resolve(); };
+      image.onload = () => { if (!cancelled) images[name] = image; resolve(); };
       image.onerror = reject;
       image.src = `${import.meta.env.BASE_URL}assets/mini-sirac/${cfg.file}`;
     });
     const start = async () => {
+      window.dispatchEvent(new Event('mini-sirac-start'));
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || (run === 0 && (window.scrollY > 80 || (location.hash && !['#home', '#hero'].includes(location.hash))))) {
         if (!cancelled) setPhase('done');
         return;
@@ -244,6 +247,10 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
           blocks.forEach((block) => {
             const { rect, clone, pose, side, start, duration, height, cycles, revealOnly } = block;
             const progress = clamp((elapsed - start) / duration);
+            if (block.name === 'portrait' && progress === 1 && !block.notified) {
+              block.notified = true;
+              window.dispatchEvent(new Event('mini-sirac-portrait-ready'));
+            }
             const movement = travelProgress(progress);
             const travel = 1 - movement;
             const frame = frameAt(pose, movement, cycles);

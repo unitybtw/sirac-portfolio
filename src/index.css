@@ -2522,3 +2522,7 @@ body.ascii-intro-blank-mode .ascii-scene-replay-pill {
   .hero-right-column { padding-top: 64px; }
   .hero-actions-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; }
 }
+
+.mini-sirac-companions { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 99985; }
+.contact-submit-scene { position: relative; margin-top: 24px; }
+.contact-submit-scene > button { min-height: 48px; }

@@ -7,6 +7,7 @@ import './index.css';
 import { LINKEDIN_URL } from './i18n';
 import { SlideNavbar } from './components/ui/slide-tabs';
 import AsciiSceneBuilder from './components/AsciiSceneBuilder';
+import MiniSiracCompanions from './components/MiniSiracCompanions';
 import CaseStudiesSection from './components/CaseStudiesSection';
 
 // Ekranın altında kalan ağır bileşenler: ilk paint'i bloklamasın,
@@ -333,6 +334,7 @@ function App() {
   return (
     <>
       <PageProgress />
+      <MiniSiracCompanions />
       
       {/* ── SlideTabs Floating Dock Navbar ── */}
       <SlideNavbar
@@ -858,7 +860,9 @@ function App() {
                 )}
               </AnimatePresence>
               
+              <div className="contact-submit-scene">
               <button 
+                data-sirac-submit
                 type="submit" 
                 className="btn-primary" 
                 style={{ width: '100%', justifyContent: 'center', marginTop: '0.5rem' }}
@@ -866,6 +870,7 @@ function App() {
               >
                 {submitStatus === 'sending' ? t('form_sending') : t('form_submit')}
               </button>
+              </div>
             </form>
           </div>
         </div>
