@@ -138,13 +138,13 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
     // Rastgele oyun seçip başlat
     const handleQuickShuffle = useCallback(() => {
         playSuccess();
-        const candidatePool = activeTab === 'all' 
-            ? gamesList 
+        const candidatePool = activeTab === 'all'
+            ? gamesList
             : gamesList.filter(g => getGameCategory(g.id) === activeTab);
-        
+
         const listToUse = candidatePool.length > 0 ? candidatePool : gamesList;
         const randomPick = listToUse[Math.floor(Math.random() * listToUse.length)];
-        
+
         setShowScoreboard(false);
         setActiveGameId(randomPick.id);
         setGameReloadKey(prev => prev + 1);
@@ -291,11 +291,11 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
 
     // Öne çıkan oyunlar (Portal kartında rozet olarak gösterilir)
     const featuredHighlights = [
-        { id: 'minecraft_classic', title: 'Minecraft 1.5.2', color: '#55aa55' },
-        { id: 'cs16', title: 'CS:GO Web', color: '#ffd700' },
+        { id: 'minecraft_classic', title: 'Minecraft Classic', color: '#55aa55' },
+        { id: 'cs16', title: 'Kirka.io', color: '#ffd700' },
         { id: 'gtavicecity', title: 'GTA Vice City', color: '#ff66b2' },
         { id: 'quake3', title: 'Quake III', color: '#ffcc00' },
-        { id: 'mario64', title: 'Mario 64', color: '#ffaa00' },
+
         { id: 'subway', title: 'Subway Surfers', color: '#00ffcc' },
         { id: 'doom', title: 'DOOM', color: '#ff0033' },
     ];
@@ -762,7 +762,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
                                                                 </span>
                                                                 <span className="arcade-card-bottom">
                                                                     <span className="arcade-card-score-info">
-                                                                        {userScore ? `${t('arcade_personal_best')}: ${Number(userScore).toLocaleString()}` : t('arcade_in_browser')}
+                                                                        {userScore ? `${t('arcade_personal_best')}: ${Number(userScore).toLocaleString()}` : game.launchMode === 'external' ? t('arcade_new_tab') : t('arcade_in_browser')}
                                                                     </span>
                                                                     <span className="arcade-card-play-tag">{t('arcade_play')} <Play size={12} /></span>
                                                                 </span>

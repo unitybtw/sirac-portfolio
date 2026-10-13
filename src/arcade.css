@@ -932,3 +932,11 @@
   .arcade-card-number { margin-bottom:12px; }
   .arcade-card-content { margin-bottom:18px; }
 }
+
+.hosted-arcade-game { width:100%; height:100%; display:flex; flex-direction:column; background:var(--arcade-bg-surface); }
+.hosted-arcade-game iframe { flex:1; min-height:0; width:100%; border:0; background:#fff; }
+.hosted-arcade-info { display:flex; justify-content:space-between; gap:12px; padding:10px 14px; font-size:12px; color:var(--arcade-text-secondary); line-height:1.5; flex-wrap:wrap; }
+.hosted-arcade-info a { color:var(--arcade-text-primary); text-decoration:underline; text-underline-offset:3px; }
+
+.hosted-arcade-launch { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center; gap:20px; }
+.hosted-arcade-launch p { color:var(--arcade-text-secondary); max-width:420px; line-height:1.6; }
