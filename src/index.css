@@ -2476,3 +2476,49 @@ body.ascii-intro-blank-mode .ascii-scene-replay-pill {
 
 /* Cover the first paint and asset loading, before the canvas stage exists. */
 .mini-crew-curtain { position: fixed; inset: 0; z-index: 99980; background: var(--bg-primary); }
+
+/* Mobile portfolio: portrait and title share the opening, with a clear crew lane. */
+@media (max-width: 768px) {
+  .mobile-nav-header { height: 64px; padding: 0 16px; }
+  .mobile-brand-title { font-size: 12px; }
+  .mobile-brand-tag { display: none; }
+  .mobile-nav-controls { gap: 5px; }
+  .mobile-action-pill, .mobile-action-icon-btn, .mobile-hamburger-btn { min-width: 40px; min-height: 44px; }
+  .hero-section { padding-top: 96px !important; padding-bottom: 32px !important; }
+  .hero-layout-grid { grid-template-columns: minmax(0, 1fr) clamp(136px, 39vw, 164px) !important; gap: 24px 12px !important; padding: 0 20px !important; align-items: start; }
+  .hero-left-column { display: contents !important; }
+  .hero-left-column > .ascii-target-group { min-width: 0; width: 100%; gap: 12px; }
+  [data-ascii-target="title"] { grid-column: 1; grid-row: 1; }
+  [data-ascii-target="details"] { grid-column: 1 / -1; grid-row: 2; }
+  [data-ascii-target="actions"] { grid-column: 1 / -1; grid-row: 3; }
+  .hero-right-column { display: flex !important; grid-column: 2; grid-row: 1; padding-right: 48px; align-items: flex-start; justify-content: flex-start; box-sizing: border-box; }
+  .hero-portrait-card { max-width: none; aspect-ratio: 3 / 4; border-radius: 16px; margin: 0; box-shadow: 0 12px 32px #00000016; }
+  .hero-portrait-img { object-position: center 20%; }
+  .hero-portrait-overlay, .hero-portrait-scrim { display: none; }
+  .hero-meta-row { flex-direction: column; align-items: flex-start; gap: 6px; font-size: 11px; line-height: 1.5; margin: 0; }
+  .hero-meta-divider { display: none; }
+  .hero-meta-status { max-width: 180px; }
+  .hero-heading-group { margin: 0; }
+  .hero-main-title { font-size: clamp(23px, 6.7vw, 30px) !important; line-height: 1.16 !important; letter-spacing: -0.045em !important; margin: 0 !important; word-break: normal !important; overflow-wrap: normal; }
+  .hero-name-lead { font-size: 11px; line-height: 1.5; letter-spacing: 0.015em; margin-bottom: 9px; }
+  .hero-tagline-text { font-size: 14px !important; line-height: 1.75 !important; margin: 0 !important; }
+  .hero-stack-pills { gap: 7px; margin: 0; }
+  .tech-tag { padding: 6px 9px; font-size: 11px; border-radius: 7px; }
+  .hero-actions-row { gap: 10px !important; margin: 0 !important; }
+  .hero-actions-row .btn-primary, .hero-actions-row .btn-outline { min-width: 0 !important; min-height: 48px; padding: 12px 8px !important; font-size: 12px !important; gap: 6px; border-radius: 10px; box-sizing: border-box; }
+  .hero-socials-group { justify-content: flex-start !important; gap: 10px !important; margin: 0 !important; }
+  .hero-social-btn { max-width: none !important; border-radius: 10px; }
+  .mini-crew-controls { left: auto; right: 16px; bottom: 16px; }
+  .mini-crew-controls > span { display: none; }
+  .mini-crew-controls button { min-height: 44px; padding: 10px 15px; font-size: 12px; }
+  .mini-crew-replay { width: 44px; height: 44px; justify-content: center; padding: 0; right: 16px; bottom: 16px; }
+  .mini-crew-replay span { display: none; }
+}
+@media (max-width: 360px) {
+  .hero-layout-grid { padding: 0 16px !important; column-gap: 8px !important; }
+  .mobile-nav-header { padding: 0 12px; }
+}
+@media (max-width: 768px) {
+  .hero-right-column { padding-top: 64px; }
+  .hero-actions-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; }
+}

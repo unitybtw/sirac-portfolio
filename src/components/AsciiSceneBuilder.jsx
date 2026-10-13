@@ -138,7 +138,8 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
         if (window.scrollY > 80) { finish(); return; }
         const vw = window.innerWidth;
         const vh = window.innerHeight;
-        const charH = vw < 600 ? 92 : Math.min(146, vh * 0.18);
+        const mobile = vw <= 768;
+        const charH = mobile ? 88 : Math.min(146, vh * 0.18);
         layer = document.createElement('div');
         layer.className = 'mini-crew-stage';
         layer.setAttribute('aria-hidden', 'true');
@@ -153,16 +154,19 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
           Object.assign(clone.style, { left: `${rect.left}px`, top: `${rect.top}px`, width: `${rect.width}px`, height: `${rect.height}px` });
           layer.append(clone);
           // Every piece and its crew start fully beyond the viewport edge.
-          const dx = entry.side === 'left' ? -rect.right - charH : entry.side === 'right' ? vw - rect.left + charH : 0;
+          const revealOnly = mobile && entry.name !== 'portrait';
+          const dx = revealOnly ? 0 : entry.side === 'left' ? -rect.right - charH : entry.side === 'right' ? vw - rect.left + charH : 0;
           const dy = entry.side === 'bottom' ? vh - rect.top + charH : 0;
           clone.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
-          const pose = entry.name === 'portrait' && rect.bottom + charH > vh ? 'push' : vw < 600 && ['title', 'details'].includes(entry.name) ? 'carry' : entry.pose;
+          const pose = mobile && entry.name === 'portrait' ? 'push' : entry.name === 'portrait' && rect.bottom + charH > vh ? 'push' : entry.pose;
           const height = entry.name === 'navbar' ? charH * 0.85 : charH;
           const distance = Math.hypot(dx, dy);
           const speed = Math.min(entry.speed, height * CREW[pose].stride * 0.9);
-          const duration = Math.max(3.5, distance / (speed * 0.85));
+          const duration = revealOnly ? 0.55 : Math.max(3.5, distance / (speed * 0.85));
           const cycles = Math.max(1, Math.round(distance / (height * CREW[pose].stride)));
-          return [{ ...entry, start: entry.start + 0.8, pose, height, cycles, duration, rect, clone, dx, dy }];
+          const start = mobile ? ({ navbar: 0.55, title: 0.7, portrait: 0.75, details: 0.95, actions: 1.2 }[entry.name]) : entry.start + 0.8;
+          if (revealOnly) clone.style.opacity = '0';
+          return [{ ...entry, start, revealOnly, pose, height, cycles, duration, rect, clone, dx, dy }];
         });
         const canvas = document.createElement('canvas');
         canvas.className = 'mini-crew-canvas';
@@ -238,7 +242,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
           const nextAct = elapsed < 0.8 ? 'loading' : unlocked ? 'finish' : elapsed < 1.2 ? 'nav' : elapsed < 2.8 ? 'title' : elapsed < total - 3 ? 'photo' : 'finish';
           if (nextAct !== lastAct) { lastAct = nextAct; setAct(nextAct); }
           blocks.forEach((block) => {
-            const { rect, clone, pose, side, start, duration, height, cycles } = block;
+            const { rect, clone, pose, side, start, duration, height, cycles, revealOnly } = block;
             const progress = clamp((elapsed - start) / duration);
             const movement = travelProgress(progress);
             const travel = 1 - movement;
@@ -250,6 +254,11 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
             const ty = block.dy * travel + lift;
             clone.style.visibility = elapsed < start ? 'hidden' : 'visible';
             clone.style.transform = `translate3d(${tx}px, ${ty}px, 0)`;
+            if (revealOnly) {
+              clone.style.opacity = String(movement);
+              clone.style.transform = `translate3d(0, ${(1 - movement) * 12}px, 0)`;
+              return;
+            }
             if (elapsed < start) return;
             const leaving = Math.max(0, elapsed - start - duration - 0.45);
             const worker = (workerPose, handX, handY, size, facing, workerFrame) => {
@@ -313,8 +322,8 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
   if (typeof document === 'undefined') return null;
   return createPortal(
     phase === 'done' ? (
-      <button type="button" className="mini-crew-replay" onClick={() => { setPhase('loading'); setAct('loading'); window.scrollTo({ top: 0, behavior: 'instant' }); setRun((n) => n + 1); }}>
-        <Play size={13} /> {words.replay}
+      <button type="button" className="mini-crew-replay" aria-label={words.replay} onClick={() => { setPhase('loading'); setAct('loading'); window.scrollTo({ top: 0, behavior: 'instant' }); setRun((n) => n + 1); }}>
+        <Play size={13} /><span>{words.replay}</span>
       </button>
     ) : phase === 'loading' ? (
       <div className="mini-crew-curtain" aria-hidden="true" />

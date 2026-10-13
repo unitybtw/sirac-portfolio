@@ -239,13 +239,26 @@ function App() {
     // Handle Anchor Clicks smoothly with Lenis
     const handleAnchorClick = (e) => {
       const target = e.target.closest('a');
+      if (e.defaultPrevented || target?.classList.contains('skip-link')) return;
       if (target && target.getAttribute('href')?.startsWith('#')) {
         const id = target.getAttribute('href');
         if (id === '#') return;
         const targetElement = document.querySelector(id);
         if (targetElement) {
           e.preventDefault();
-          lenis.scrollTo(targetElement, { offset: -40, duration: 1.2 });
+          // Measure after the mobile drawer releases body scroll. Lazy sections can
+          // also change the page height during the journey, so align once more at rest.
+          requestAnimationFrame(() => {
+            const offset = window.innerWidth <= 768 ? -96 : -40;
+            lenis.resize();
+            lenis.scrollTo(targetElement, {
+              offset, duration: 0.8,
+              onComplete: () => {
+                lenis.resize();
+                lenis.scrollTo(targetElement, { offset, immediate: true });
+              },
+            });
+          });
         }
       }
     };

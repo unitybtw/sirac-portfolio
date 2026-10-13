@@ -55,3 +55,8 @@ The opening is blank, including during asset loading. All staged pieces start
 fully outside the viewport. Departure travel starts on the first walking step
 (push frame 58, carry frame 68), before the later seamless-loop boundary.
 Walking frames and body travel share the source 24 fps cadence.
+
+Mobile (up to 768px) uses one pusher in the portrait gutter. Navigation, title,
+details and actions reveal within the first two seconds; only the portrait is
+transported. The reserved right gutter keeps arrival and departure clear of
+text and buttons. The replay control is an icon with an accessible label.
