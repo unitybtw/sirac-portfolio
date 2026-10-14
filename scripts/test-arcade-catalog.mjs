@@ -6,8 +6,8 @@ try {
   const { gamesList, getGameCategory } = await server.ssrLoadModule('/src/gamesData.jsx');
   const ids = new Set(gamesList.map(game => game.id));
   assert.equal(ids.size, gamesList.length, 'Game IDs must be unique for scores and restart');
-  for (const id of ['mario64', 'lale_savascilari', 'flappy_bird', 'tetris', 'breakout', 'astray', 'clumsy_bird', 'minesweeper', 'raft']) assert(!ids.has(id), `Removed game ${id} must not reappear`);
-  for (const id of ['doom3', 'arx_fatalis', 'netquake', 'red_alert2', 'hotline_miami']) assert(ids.has(id), `Missing port ${id}`);
+  for (const id of ['mario64', 'lale_savascilari', 'flappy_bird', 'tetris', 'breakout', 'astray', 'clumsy_bird', 'minesweeper', 'raft', 'untitled_goose']) assert(!ids.has(id), `Removed game ${id} must not reappear`);
+  for (const id of ['doom3', 'arx_fatalis', 'netquake', 'red_alert2', 'hotline_miami', 'celeste', 'plants_vs_zombies', 'slime_rancher', 'cuphead', 'silksong', 'bendy', 'iron_lung', 'tabs', 'miside']) assert(ids.has(id), `Missing port ${id}`);
   for (const game of gamesList) assert(['simulation','arcade','puzzle'].includes(getGameCategory(game.id)));
   const code = await readFile('src/gamesData.jsx', 'utf8');
   const html = await readFile('index.html','utf8');
@@ -20,6 +20,13 @@ try {
   const framePolicy = html.match(/frame-src ([^;]+);/)[1];
   for (const match of code.matchAll(/hosted\(\{([^\n]+)\}\)/g)) {
     if (match[1].includes('external:true')) continue;
+    const local = match[1].match(/url:`\$\{import.meta.env.BASE_URL\}ports\/([^`]+)`/);
+    if (local) {
+      assert(match[1].includes('opaqueOrigin:true'), 'Local adapters must isolate remote scripts from the portfolio');
+      const adapter = await readFile(`public/ports/${local[1]}`, 'utf8');
+      assert(adapter.includes('<base href="https://cdn.jsdelivr.net/gh/web-ports/'), 'Adapter assets must retain their upstream base');
+      continue;
+    }
     const url = match[1].match(/url:'([^']+)'/)[1];
     assert(framePolicy.includes(new URL(url).origin), `Frame policy blocks ${url}`);
   }

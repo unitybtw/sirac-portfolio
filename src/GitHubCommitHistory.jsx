@@ -163,6 +163,13 @@ export default function GitHubCommitHistory() {
     return { weeks: wList, monthLabels: mLabels };
   }, [contributions]);
 
+  useEffect(() => {
+    const chart = containerRef.current;
+    if (chart && isInView && window.matchMedia('(max-width: 820px)').matches) {
+      chart.scrollLeft = chart.scrollWidth - chart.clientWidth;
+    }
+  }, [selectedYear, weeks.length, isInView]);
+
   const palette = isDark ? COLOR_LEVELS.dark : COLOR_LEVELS.light;
 
   // Tooltip map
@@ -235,7 +242,7 @@ export default function GitHubCommitHistory() {
   return (
     <div className="gh-activity-wrapper">
       {/* Section Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+      <div className="gh-section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
         <div>
           <h2 className="section-title" style={{ margin: 0, fontSize: '2rem' }}>
             {isTr ? 'GitHub Katkı Haritası' : 'GitHub Contribution Graph'}
@@ -275,7 +282,7 @@ export default function GitHubCommitHistory() {
       {/* Main Container */}
       <div className="bento-card bento-col-12 gh-heatmap-card" style={{ padding: '2rem 2.2rem' }}>
         {/* Top Header Row of the Graph */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
+        <div className="gh-summary" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
           <div style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.02em', minHeight: '32px', display: 'flex', alignItems: 'center' }}>
             <AnimatePresence mode="wait">
               <motion.span
@@ -340,7 +347,7 @@ export default function GitHubCommitHistory() {
                     cursor: 'pointer'
                   }}
                 >
-                  {isTr ? 'Son 1 Yıl (3,101)' : 'Last Year (3,101)'}
+                  {isTr ? 'Son 1 Yıl' : 'Last Year'}
                 </button>
                 <a
                   href="https://github.com/unitybtw"
@@ -362,10 +369,15 @@ export default function GitHubCommitHistory() {
 
         {/* Heatmap Box + Right Year Selectors */}
         <div className="gh-layout-container" style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start', position: 'relative' }}>
+          <div className="gh-map-area">
+          <p className="gh-scroll-hint">{isTr ? 'Diğer aylar için yana kaydır' : 'Swipe to explore other months'} <span aria-hidden="true">↔</span></p>
           {/* Heatmap Border Box */}
           <div 
             ref={containerRef}
             className="gh-heatmap-scroll"
+            role="region"
+            aria-label={isTr ? 'GitHub katkı takvimi, yatay kaydırılabilir' : 'GitHub contribution calendar, scroll horizontally'}
+            tabIndex={0}
             style={{
               flex: 1,
               background: 'transparent',
@@ -377,7 +389,7 @@ export default function GitHubCommitHistory() {
           >
             <div
               key={`${selectedYear}-${animKey}`}
-              style={{ minWidth: '720px', position: 'relative' }}
+              style={{ width: `${Math.max(720, weeks.length * 14 + 32)}px`, position: 'relative' }}
             >
               {/* Month Labels Row */}
               <div style={{ display: 'flex', marginLeft: '32px', marginBottom: '8px', fontSize: '11px', color: 'var(--text-secondary)', height: '16px', position: 'relative' }}>
@@ -507,8 +519,10 @@ export default function GitHubCommitHistory() {
                 </div>
               )}
 
-              {/* Bottom Footer inside Box */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.2rem', paddingTop: '0.5rem', fontSize: '11px', color: 'var(--text-secondary)' }}>
+            </div>
+          </div>
+              {/* Calendar information remains visible outside the scrolling grid. */}
+              <div className="gh-map-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.2rem', paddingTop: '0.5rem', fontSize: '11px', color: 'var(--text-secondary)' }}>
                 <a
                   href="https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/why-are-my-contributions-not-showing-up-on-my-profile"
                   target="_blank"
@@ -535,7 +549,6 @@ export default function GitHubCommitHistory() {
                   <span>{isTr ? 'Daha çok' : 'More'}</span>
                 </div>
               </div>
-            </div>
           </div>
 
           {/* Year Buttons on the Right with Animated Smooth Highlight */}

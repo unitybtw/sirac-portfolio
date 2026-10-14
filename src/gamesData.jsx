@@ -33,7 +33,29 @@ const RedAlert2 = hosted({external:true,title:'Red Alert 2 — Chrono Divide',ur
 
 const HotlineMiami = hosted({title:'Hotline Miami',url:'https://raw.githack.com/genizy/web-port/main/hotline-miami/index.html',source:'https://github.com/genizy/web-port/tree/main/hotline-miami',controls:{en:'WASD: move · Mouse: aim / attack',tr:'WASD: hareket · Fare: nişan / saldırı'}});
 
+const Celeste = hosted({opaqueOrigin:true,title:'Celeste',url:`${import.meta.env.BASE_URL}ports/celeste.html`,source:'https://github.com/web-ports/celeste',controls:{en:'Community port · Arrow keys: move · C: jump · X: dash',tr:'Topluluk portu · Ok tuşları: hareket · C: zıpla · X: atıl'}});
+const PlantsVsZombies = hosted({opaqueOrigin:true,title:'Plants vs. Zombies',url:`${import.meta.env.BASE_URL}ports/pvz.html`,source:'https://github.com/web-ports/pvz',controls:{en:'Community port · Mouse: select / plant',tr:'Topluluk portu · Fare: seç / bitki yerleştir'}});
+const SlimeRancher = hosted({opaqueOrigin:true,title:'Slime Rancher — Alpha',url:`${import.meta.env.BASE_URL}ports/slime-ranchers.html`,source:'https://github.com/web-ports/slime-ranchers',controls:{en:'Community alpha · WASD + mouse · Space: jump',tr:'Topluluk alfası · WASD + fare · Boşluk: zıpla'}});
+
+const Cuphead = hosted({opaqueOrigin:true,title:'Cuphead',url:`${import.meta.env.BASE_URL}ports/cuphead.html`,source:'https://github.com/web-ports/cuphead',controls:{en:'Community port · ≈2.1 GB initial download · Check in-game controls',tr:'Topluluk portu · İlk indirme ≈2,1 GB · Tuşlar oyun içinde'}});
+const Silksong = hosted({opaqueOrigin:true,title:'Hollow Knight: Silksong',url:`${import.meta.env.BASE_URL}ports/hollow-knight-silksong.html`,source:'https://github.com/web-ports/hollow-knight-silksong',controls:{en:'Community port · ≈2 GB initial download · Keyboard / gamepad',tr:'Topluluk portu · İlk indirme ≈2 GB · Klavye / oyun kolu'}});
+const Bendy = hosted({opaqueOrigin:true,title:'Bendy and the Ink Machine',url:`${import.meta.env.BASE_URL}ports/bendy-and-the-ink-machine.html`,source:'https://github.com/web-ports/bendy-and-the-ink-machine',controls:{en:'Community port · ≈685 MB initial download · WASD + mouse',tr:'Topluluk portu · İlk indirme ≈685 MB · WASD + fare'}});
+const IronLung = hosted({opaqueOrigin:true,title:'Iron Lung',url:`${import.meta.env.BASE_URL}ports/iron-lung.html`,source:'https://github.com/web-ports/iron-lung',controls:{en:'Community port · Keyboard + mouse · Controls in game',tr:'Topluluk portu · Klavye + fare · Tuşlar oyun içinde'}});
+const Tabs = hosted({opaqueOrigin:true,title:'Totally Accurate Battle Simulator',url:`${import.meta.env.BASE_URL}ports/tabs.html`,source:'https://github.com/web-ports/tabs',controls:{en:'Community port · ≈1.75 GB initial download · Mouse + keyboard',tr:'Topluluk portu · İlk indirme ≈1,75 GB · Fare + klavye'}});
+const MiSide = hosted({opaqueOrigin:true,title:'MiSide',url:`${import.meta.env.BASE_URL}ports/miside.html`,source:'https://github.com/web-ports/miside',controls:{en:'Community port · WASD + mouse · E: interact',tr:'Topluluk portu · WASD + fare · E: etkileşim'}});
+
 export const gamesList = [
+    { id: 'cuphead', title: 'Cuphead', icon: <Gamepad2 size={24} />, color: '#71717a', comp: Cuphead },
+    { id: 'silksong', title: 'Hollow Knight: Silksong', icon: <Ghost size={24} />, color: '#71717a', comp: Silksong },
+    { id: 'bendy', title: 'Bendy and the Ink Machine', icon: <Eye size={24} />, color: '#71717a', comp: Bendy },
+    { id: 'iron_lung', title: 'Iron Lung', icon: <Navigation size={24} />, color: '#71717a', comp: IronLung },
+    { id: 'tabs', title: 'Totally Accurate Battle Simulator', icon: <Target size={24} />, color: '#71717a', comp: Tabs },
+    { id: 'miside', title: 'MiSide', icon: <Eye size={24} />, color: '#71717a', comp: MiSide },
+
+    { id: 'celeste', title: 'Celeste', icon: <Zap size={24} />, color: '#71717a', comp: Celeste },
+    { id: 'plants_vs_zombies', title: 'Plants vs. Zombies', icon: <Flame size={24} />, color: '#71717a', comp: PlantsVsZombies },
+    { id: 'slime_rancher', title: 'Slime Rancher — Alpha', icon: <Box size={24} />, color: '#71717a', comp: SlimeRancher },
+
     { id: 'hotline_miami', title: 'Hotline Miami', icon: <Crosshair size={24} />, color: '#71717a', comp: HotlineMiami },
     { id: 'doom3', title: 'DOOM 3 — Demo', icon: <Flame size={24} />, color: '#71717a', comp: Doom3 },
     { id: 'arx_fatalis', title: 'Arx Fatalis — Demo', icon: <Gem size={24} />, color: '#71717a', comp: ArxFatalis },
@@ -68,7 +90,7 @@ export const categoryLabels = {
 };
 
 export const getGameCategory = (id) => {
-    const simList = ['doom3', 'arx_fatalis', 'netquake', 'red_alert2', 'gtavicecity', 'hl1', 'quake3', 'doom', 'diablo', 'minecraft_classic', 'cs16', 'drift'];
+    const simList = ['bendy', 'iron_lung', 'tabs', 'miside', 'slime_rancher', 'doom3', 'arx_fatalis', 'netquake', 'red_alert2', 'gtavicecity', 'hl1', 'quake3', 'doom', 'diablo', 'minecraft_classic', 'cs16', 'drift'];
     const puzzleList = ['pacman', 'original_2048', 'cookie_clicker', 'worlds_hardest'];
     
     if (simList.includes(id)) return 'simulation';

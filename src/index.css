@@ -2524,3 +2524,22 @@ body.ascii-intro-blank-mode .ascii-scene-replay-pill {
 .contact-submit-scene > button { min-height: 48px; }
 
 @media (max-width:768px) { .contact-submit-scene { margin-top:44px; } }
+
+/* Keep the contribution calendar inside its card at every viewport width. */
+.gh-activity-wrapper, .gh-heatmap-card, .gh-layout-container, .gh-map-area { min-width:0; max-width:100%; }
+.gh-map-area { flex:1; width:100%; }
+.gh-heatmap-scroll { min-width:0; width:100%; max-width:100%; box-sizing:border-box; }
+.gh-scroll-hint { display:none; }
+.gh-map-footer { gap:12px; flex-wrap:wrap; }
+.gh-map-footer > div { flex-shrink:0; }
+@media (max-width:820px) {
+  .gh-heatmap-card { padding:20px 16px !important; }
+  .gh-layout-container { flex-direction:column; }
+  .gh-heatmap-scroll { overflow:auto !important; padding:16px 12px !important; min-height:0; overscroll-behavior-x:contain; scrollbar-width:thin; }
+  .gh-scroll-hint { display:flex; justify-content:space-between; gap:8px; margin:0 0 10px; color:var(--text-secondary); font-size:12px; }
+  .gh-summary { gap:12px !important; }
+  .gh-summary > div:first-child { font-size:1rem !important; line-height:1.5; }
+  .gh-map-footer { margin-top:12px !important; line-height:1.5; }
+  .gh-section-header .section-title { font-size:1.6rem !important; }
+  .gh-section-header .section-subtitle { font-size:.9rem !important; }
+}
