@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "test:arcade": "node scripts/test-arcade-security.mjs && node scripts/test-arcade-catalog.mjs",
     "test:arcade:browser": "node scripts/test-arcade-browser-security.mjs",
-    "test:motion": "node scripts/test-scroll-frame-loop.mjs"
+    "test:motion": "node scripts/test-scroll-frame-loop.mjs && node scripts/test-initial-paint.mjs"
   },
   "dependencies": {
     "framer-motion": "^12.34.3",

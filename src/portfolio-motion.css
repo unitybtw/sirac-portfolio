@@ -1,5 +1,6 @@
 /* Short, composited movements; no continuous page-wide glow, blur or tilt loop. */
 @media(prefers-reduced-motion:no-preference){
+  [data-motion-state="pending"]{opacity:0;transform:translateY(26px)}
   .work-row{transition:transform .35s cubic-bezier(.2,.75,.25,1),border-color .2s ease,box-shadow .35s ease}
   .capability-top svg{transition:transform .4s cubic-bezier(.2,.75,.25,1)}
   .capability li{transition:transform .25s ease,background-color .25s ease}
@@ -27,3 +28,5 @@
   .engineering-note .note-detail{animation:none}
   .work-row,.capability-top svg,.capability li,.contact-social-links a,.portfolio-contact .form-group,.engineering-note summary,.contact-submit-scene>button{transition:none!important}
 }
+
+@media(max-width:768px) and (prefers-reduced-motion:no-preference){[data-motion-state="pending"]{transform:translateY(16px)}}

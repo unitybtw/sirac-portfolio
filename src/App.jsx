@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, lazy, Suspense } from 'react';
+import React, { useEffect, useState, useRef, Suspense } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -16,12 +16,11 @@ import MiniSiracCompanions from './components/MiniSiracCompanions';
 import MiniSiracDrag from './components/MiniSiracDrag';
 import CaseStudiesSection from './components/CaseStudiesSection';
 
-// Ekranın altında kalan ağır bileşenler: ilk paint'i bloklamasın,
-// main thread boş kalsın ki scroll 120Hz'de takılmasın.
-const GitHubCommitHistory = lazy(() => import('./GitHubCommitHistory'));
-const NovaBrowserShowcase = lazy(() => import('./NovaBrowserShowcase'));
-const GameLibrary = lazy(() => import('./GameLibrary'));
-
+// Keep section geometry available on the first render. Lazy game runtimes still
+// load only after selection; delaying page sections shifted restored scroll positions.
+import GitHubCommitHistory from './GitHubCommitHistory';
+import NovaBrowserShowcase from './NovaBrowserShowcase';
+import GameLibrary from './GameLibrary';
 
 // ── Page Progress Indicator ──────────────────────────────────────────────
 const PageProgress = () => {
@@ -208,10 +207,8 @@ function App() {
 
   // Smooth Scrolling (120Hz-tuned: lerp-based, leaksiz rAF, reduced-motion saygılı)
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      window.history.scrollRestoration = 'manual';
-      window.scrollTo(0, 0);
-    }
+    // Let the browser preserve the visitor's position across reload/back navigation.
+    window.history.scrollRestoration = 'auto';
 
     // Hareket hassasiyeti olan kullanıcıda smooth-scroll'u kapat (erişilebilirlik + pil)
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
@@ -268,7 +265,10 @@ function App() {
                 lenis.resize();
                 const settledSection = document.querySelector(id);
                 const settledTarget = document.querySelector(anchorSelector) || settledSection?.querySelector(':scope > .section-title') || settledSection;
-                if (settledTarget) lenis.scrollTo(destination(settledTarget), { immediate: true });
+                if (settledTarget && Math.abs(destination(settledTarget) - window.scrollY) > 2) {
+                  lenis.scrollTo(destination(settledTarget), { duration: 0.18 });
+                  frames.wake();
+                }
               },
             });
             frames.wake();

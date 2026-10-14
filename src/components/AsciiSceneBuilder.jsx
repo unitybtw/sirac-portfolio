@@ -42,6 +42,7 @@ function visualCopy(source) {
     for (const prop of style) copy.style.setProperty(prop, style.getPropertyValue(prop));
     copy.removeAttribute('id');
     copy.removeAttribute('data-ascii-target');
+    copy.style.visibility = 'visible';
     copy.style.animation = 'none';
     copy.style.transition = 'none';
     // Framer's entrance state must not fade the carried pieces.
@@ -64,10 +65,14 @@ function visualCopy(source) {
 export default function AsciiSceneBuilder({ lang = 'tr' }) {
   const words = COPY[lang] || COPY.tr;
   const [run, setRun] = useState(0);
-  const [phase, setPhase] = useState('loading');
+  const introAtMount = useRef(typeof document !== 'undefined' && document.documentElement.dataset.intro === 'pending');
+  const [phase, setPhase] = useState(() => introAtMount.current ? 'loading' : 'done');
   const [act, setAct] = useState('loading');
   const disposeRef = useRef(() => {});
   const finish = useCallback(() => {
+    document.documentElement.classList.remove('mini-crew-pending');
+    document.documentElement.dataset.intro = 'skip';
+    try { sessionStorage.setItem('sirac-intro-seen', '1'); } catch { /* Optional session memory. */ }
     disposeRef.current();
     setPhase('done');
   }, []);
@@ -122,12 +127,13 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
       image.src = `${import.meta.env.BASE_URL}assets/mini-sirac/${cfg.file}`;
     });
     const start = async () => {
+      if (run === 0 && !introAtMount.current) { finish(); return; }
       window.dispatchEvent(new Event('mini-sirac-start'));
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || (run === 0 && (window.scrollY > 80 || (location.hash && !['#home', '#hero'].includes(location.hash))))) {
         if (!cancelled) finish();
         return;
       }
-      // Keep the real page usable while assets load; slow networks skip the intro.
+      // The first paint stays blank until the stage is ready; slow loads skip it.
       window.addEventListener('keydown', onKey);
       window.addEventListener('resize', finish);
       window.addEventListener('pagehide', finish);
@@ -140,12 +146,14 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
           ]),
           timeout(1200).then(() => { throw new Error('Crew preload timeout'); }),
         ]);
-        await Promise.race([document.fonts.ready, timeout(150)]);
+        await Promise.race([document.fonts.ready, timeout(600)]);
+        if (document.fonts.status === 'loading') { finish(); return; }
         const portrait = document.querySelector('[data-ascii-target="portrait"] img');
         if (portrait) await Promise.race([portrait.decode().catch(() => {}), timeout(150)]);
         // Measure after the next layout turn, without an artificial opening delay.
         await timeout(20);
         if (cancelled) return;
+        if (run === 0 && document.documentElement.dataset.intro === 'skip') { finish(); return; }
         if (window.scrollY > 80) { finish(); return; }
         const vw = window.innerWidth;
         const vh = window.innerHeight;
@@ -197,6 +205,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
         canvas.height = vh * dpr;
         layer.append(canvas);
         document.body.append(layer);
+        document.documentElement.classList.remove('mini-crew-pending');
         inputsUnlocked = false;
         window.removeEventListener('scroll', finish);
         if (root) root.inert = true;

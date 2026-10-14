@@ -7,6 +7,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Siraç Göktuğ Şimşek | Game Developer &amp; Software Engineer</title>
 
+  <!-- Decide the first paint before React or the crew assets can appear. -->
+  <style>html{background:#fafafa}html.dark{background:#09090b}html.mini-crew-pending #root{visibility:hidden}</style>
+  <script>
+    (() => {
+      const root = document.documentElement;
+      let seen = false;
+      try {
+        seen = sessionStorage.getItem('sirac-intro-seen') === '1';
+        root.classList.toggle('dark', localStorage.getItem('theme') === 'dark');
+      } catch { /* Storage can be unavailable in private/embedded contexts. */ }
+      const type = performance.getEntriesByType('navigation')[0]?.type;
+      const home = !location.hash || ['#home', '#hero'].includes(location.hash);
+      const intro = !seen && home && type !== 'reload' && type !== 'back_forward' && !matchMedia('(prefers-reduced-motion: reduce)').matches;
+      root.dataset.intro = intro ? 'pending' : 'skip';
+      root.dataset.enterMotion = type === 'reload' || type === 'back_forward' || !home ? 'off' : 'on';
+      if (intro) {
+        root.classList.add('mini-crew-pending');
+        setTimeout(() => {
+          // Fail open if the application or assets cannot initialize promptly.
+          if (root.classList.contains('mini-crew-pending')) {
+            root.dataset.intro = 'skip';
+            root.classList.remove('mini-crew-pending');
+          }
+        }, 2200);
+      }
+    })();
+  </script>
+
   <!-- Critical resource preconnects: establish TLS early -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

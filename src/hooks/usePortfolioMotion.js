@@ -6,6 +6,9 @@ export function usePortfolioMotion() {
   useEffect(() => {
     const root = document.getElementById('root');
     if (!root || !window.IntersectionObserver) return;
+    // Restored pages must retain their painted state, rather than replaying
+    // entrances after the browser has put the visitor back down the page.
+    if (document.documentElement.dataset.enterMotion === 'off') return;
     const preference = window.matchMedia('(prefers-reduced-motion: reduce)');
     let seen = new WeakSet();
     const active = new Map();
@@ -17,15 +20,24 @@ export function usePortfolioMotion() {
         element.dataset.motionState = 'done';
       }
       active.clear();
+      root.querySelectorAll('[data-motion-state="pending"]').forEach(element => { element.dataset.motionState = 'done'; });
     };
     const register = node => {
       if (!(node instanceof Element) || !observer || preference.matches) return;
       const targets = [...node.querySelectorAll('[data-motion]')];
       if (node.matches('[data-motion]')) targets.unshift(node);
-      for (const element of targets) {
-        if (seen.has(element) || element.dataset.motionState === 'done') continue;
+      // Read layout together, before any writes. Already-visible content must
+      // never disappear and jump down when the observer's first callback arrives.
+      const fresh = targets.filter(element => !seen.has(element) && element.dataset.motionState !== 'done')
+        .map(element => ({ element, top: element.getBoundingClientRect().top }));
+      for (const { element, top } of fresh) {
         seen.add(element);
-        observer.observe(element);
+        if (top < window.innerHeight || !element.animate) {
+          element.dataset.motionState = 'done';
+        } else {
+          element.dataset.motionState = 'pending';
+          observer.observe(element);
+        }
       }
     };
     const start = () => {
@@ -40,14 +52,14 @@ export function usePortfolioMotion() {
           const compact = window.innerWidth < 769;
           const delay = Math.min(Number(element.dataset.motionOrder) || 0, 3) * (compact ? 45 : 75);
           const animation = element.animate([
-            { opacity: 0.15, transform: `translateY(${compact ? 16 : 26}px)` },
+            { opacity: 0, transform: `translateY(${compact ? 16 : 26}px)` },
             { opacity: 1, transform: 'translateY(0)' },
           ], { duration: compact ? 480 : 650, delay, easing: 'cubic-bezier(.2,.75,.25,1)', fill: 'backwards' });
           element.dataset.motionState = 'playing';
           active.set(element, animation);
           animation.onfinish = () => { active.delete(element); element.dataset.motionState = 'done'; };
         }
-      }, { threshold: 0.12, rootMargin: '0px 0px -24px 0px' });
+      }, { threshold: 0, rootMargin: '0px 0px 64px 0px' });
       register(root);
     };
     const change = () => { stop(); if (!preference.matches) start(); };

@@ -255,8 +255,8 @@ section {
 }
 
 section:not(#hero) {
-  content-visibility: auto;
-  contain-intrinsic-size: auto none auto 600px;
+  content-visibility: visible;
+  contain-intrinsic-size: none;
 }
 
 .section-title {
@@ -327,8 +327,8 @@ section:not(#hero) {
     padding-top: 4.5rem;
   }
   section:not(#hero) {
-    content-visibility: auto;
-    contain-intrinsic-size: auto none auto 600px;
+    content-visibility: visible;
+    contain-intrinsic-size: none;
   }
   .section-title {
     font-size: clamp(1.75rem, 5vw, 2.25rem);
