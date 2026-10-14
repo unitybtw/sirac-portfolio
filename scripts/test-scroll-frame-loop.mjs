@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import { createScrollFrameLoop } from '../src/utils/scrollFrameLoop.js';
+const queued=new Map();let nextId=0;let visible=true;let animating=false;const ticks=[];
+const loop=createScrollFrameLoop({tick:time=>ticks.push(time),isAnimating:()=>animating,request:callback=>{const id=nextId++;queued.set(id,callback);return id},cancel:id=>queued.delete(id),isVisible:()=>visible});
+const step=time=>{const [id,callback]=queued.entries().next().value;queued.delete(id);callback(time)};
+loop.wake();loop.wake();assert.equal(queued.size,1,'Input bursts share one frame');
+step(100);assert.equal(queued.size,0,'An idle scroller leaves no RAF running');
+animating=true;loop.wake();step(10000);assert(ticks.at(-1)-ticks.at(-2)<20,'Idle time must not jump the easing clock');
+step(10008);assert.equal(Math.round(ticks.at(-1)-ticks.at(-2)),8,'120Hz frame timing stays time-based');
+loop.pause();assert.equal(queued.size,0);loop.wake();assert.equal(queued.size,0,'Modal pause blocks wheel input');
+visible=false;loop.resume();assert.equal(queued.size,0,'Resume cannot start a hidden page');
+visible=true;loop.visibilityChanged();assert.equal(queued.size,1);loop.pause();visible=false;loop.visibilityChanged();visible=true;loop.visibilityChanged();assert.equal(queued.size,0,'Visibility cannot override a modal pause');
+loop.resume();animating=false;step(90000);assert.equal(queued.size,0);
+loop.dispose();loop.wake();assert.equal(queued.size,0,'Unmount cannot restart the loop');
+console.log('Scroll frame loop: idle, input bursts, 120Hz clock, long pauses, modal, visibility and disposal passed.');

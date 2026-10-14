@@ -5,6 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database, X, GraduationCap, Award, BookOpen, ChevronDown, ChevronUp, FolderGit2, Activity, MapPin, User } from 'lucide-react';
 import './index.css';
 import './portfolio-refresh.css';
+import './portfolio-motion.css';
+import { usePortfolioMotion } from './hooks/usePortfolioMotion';
+import { createScrollFrameLoop } from './utils/scrollFrameLoop';
 import { AboutSection, SkillsSection, ProjectsSection, ContactIntro } from './components/PortfolioSections';
 import { LINKEDIN_URL } from './i18n';
 import { SlideNavbar } from './components/ui/slide-tabs';
@@ -68,6 +71,7 @@ const heroChild = {
 
 // ── Main App Component ────────────────────────────────────────────────────
 function App() {
+  usePortfolioMotion();
   const { t, i18n } = useTranslation();
   const [theme, setTheme] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -215,30 +219,28 @@ function App() {
     }
 
     const lenis = new Lenis({
-      lerp: 0.14, // Akıcı ve gecikmesiz 120Hz/60Hz tepki
+      lerp: 0.14, // Responsive easing without a long trailing scroll
       wheelMultiplier: 1,
       touchMultiplier: 1.5,
       smoothWheel: true,
       smoothTouch: false,
     });
 
-    let rafId = 0;
-    function raf(time) {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
-    }
-    rafId = requestAnimationFrame(raf);
-
-    // Expose the real instance + RAF pause/resume helpers so GameLibrary (arcade
-    // modal) can freeze background scrolling. Guards inside GameLibrary treat
-    // anything without a start/stop function (e.g. Vite's leaked module shim on
-    // window.lenis) as absent instead of crashing.
+    const frames = createScrollFrameLoop({
+      tick: time => lenis.raf(time),
+      isAnimating: () => lenis.isScrolling === 'smooth',
+      request: callback => requestAnimationFrame(callback),
+      cancel: id => cancelAnimationFrame(id),
+      isVisible: () => !document.hidden,
+    });
+    const wake = () => frames.wake();
+    const visibilityChanged = () => frames.visibilityChanged();
+    window.addEventListener('wheel', wake, { passive: true });
+    lenis.on('scroll', wake);
+    document.addEventListener('visibilitychange', visibilityChanged);
     window.lenis = lenis;
-    window.lenisRafPause = () => cancelAnimationFrame(rafId);
-    window.lenisRafResume = () => {
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(raf);
-    };
+    window.lenisRafPause = () => frames.pause();
+    window.lenisRafResume = () => frames.resume();
 
     // Handle Anchor Clicks smoothly with Lenis
     const handleAnchorClick = (e) => {
@@ -247,56 +249,41 @@ function App() {
       if (target && target.getAttribute('href')?.startsWith('#')) {
         const id = target.getAttribute('href');
         if (id === '#') return;
-        const anchorSelector = id === '#projects' ? '#projects .nova-showcase' : id;
-        const targetElement = document.querySelector(anchorSelector) || document.querySelector(id);
+        const section = document.querySelector(id);
+        const anchorSelector = id === '#projects' ? '#projects .nova-showcase' : `${id} .portfolio-section-heading, ${id} .gh-section-header, ${id} .contact-grid`;
+        const targetElement = document.querySelector(anchorSelector) || section?.querySelector(':scope > .section-title') || section;
         if (targetElement) {
           e.preventDefault();
           // Measure after the mobile drawer releases body scroll. Lazy sections can
           // also change the page height during the journey, so align once more at rest.
           requestAnimationFrame(() => {
-            const offset = window.innerWidth <= 768 ? -96 : -40;
+            const gap = window.innerWidth <= 768 ? 88 : 96;
+            // Numeric destinations avoid applying both CSS scroll-margin and the
+            // navigation offset. Align visible content rather than section padding.
+            const destination = element => element.getBoundingClientRect().top + window.scrollY - gap;
             lenis.resize();
-            lenis.scrollTo(targetElement, {
-              offset, duration: 0.8,
+            lenis.scrollTo(destination(targetElement), {
+              duration: 0.85,
               onComplete: () => {
                 lenis.resize();
-                const settledTarget = document.querySelector(anchorSelector) || document.querySelector(id);
-                if (settledTarget) lenis.scrollTo(settledTarget, { offset, immediate: true });
+                const settledSection = document.querySelector(id);
+                const settledTarget = document.querySelector(anchorSelector) || settledSection?.querySelector(':scope > .section-title') || settledSection;
+                if (settledTarget) lenis.scrollTo(destination(settledTarget), { immediate: true });
               },
             });
+            frames.wake();
           });
         }
       }
     };
     document.addEventListener('click', handleAnchorClick);
 
-    // Clean up fallback observer if it exists
-    let observer;
-    if (!CSS.supports('(animation-timeline: view()) and (animation-range: entry)')) {
-      observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry, index) => {
-            if (entry.isIntersecting) {
-              setTimeout(() => {
-                entry.target.classList.add('is-revealed');
-              }, index * 100);
-              observer.unobserve(entry.target); 
-            }
-          });
-        },
-        { threshold: 0.1, rootMargin: "0px 0px -50px 0px" }
-      );
-
-      document.querySelectorAll('.bento-card, .section-title, .section-subtitle, .contact-info, .contact-form-container').forEach((el) => {
-        el.classList.add('js-scroll-reveal');
-        observer.observe(el);
-      });
-    }
-
     return () => {
-      if (observer) observer.disconnect();
       document.removeEventListener('click', handleAnchorClick);
-      cancelAnimationFrame(rafId);
+      window.removeEventListener('wheel', wake);
+      document.removeEventListener('visibilitychange', visibilityChanged);
+      lenis.off('scroll', wake);
+      frames.dispose();
       if (window.lenis === lenis) window.lenis = undefined;
       window.lenisRafPause = undefined;
       window.lenisRafResume = undefined;
@@ -304,7 +291,7 @@ function App() {
     };
   }, []);
 
-  // Parallax for Hero is now handled purely in CSS via .hero-parallax-content
+  // Section reveals share one observer; hero character motion is independent.
 
   // Scroll spy: sayfanın neresinde olduğumuzu tespit edip SlideTabs'a bildirir
   const [activeSection, setActiveSection] = useState(null);
@@ -480,7 +467,7 @@ function App() {
           <AboutSection />
           <SkillsSection />
 
-        <section id="timeline">
+        <section id="timeline" data-motion>
           <h2 className="section-title">{t('timeline_title')}</h2>
           <p className="section-subtitle">{t('timeline_subtitle')}</p>
 
@@ -576,7 +563,7 @@ function App() {
         <div className="contact-grid">
           <ContactIntro />
 
-          <div className="contact-form-container">
+          <div className="contact-form-container" data-motion data-motion-order="1">
             <div className="contact-form-heading"><Mail size={18}/><span>{currentLang === 'tr' ? 'Aklında ne var?' : 'What do you have in mind?'}</span></div>
             <form onSubmit={handleFormSubmit} className="contact-form">
               <div className="form-group">

@@ -936,61 +936,6 @@ body.ascii-intro-blank-mode .ascii-scene-replay-pill {
   }
 }
 
-@supports (animation-timeline: scroll()) {
-  @media (min-width: 961px) {
-    .hero-parallax-content {
-      animation: hero-fade-down auto linear both;
-      animation-timeline: scroll(root);
-      animation-range: 0 450px;
-    }
-
-    .hero-corner-mario-anchor {
-      animation: hero-corner-scroll-fade auto linear both;
-      animation-timeline: scroll(root);
-      animation-range: 0 350px;
-    }
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  /* Mobil hap alttan belirir */
-  @keyframes pill-up {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  @supports ((animation-timeline: view()) and (animation-range: entry)) {
-    @keyframes scroll-reveal {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .bento-card, .section-title, .section-subtitle,
-    .contact-info, .contact-form-container {
-      animation: scroll-reveal auto linear both;
-      animation-timeline: view();
-      animation-range: entry 5% cover 15%;
-    }
-  }
-}
-
-.js-scroll-reveal {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
-}
-
-.js-scroll-reveal.is-revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 .footer {
   margin-top: 8rem;
   text-align: center;

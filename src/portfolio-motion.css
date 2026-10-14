@@ -1,0 +1,29 @@
+/* Short, composited movements; no continuous page-wide glow, blur or tilt loop. */
+@media(prefers-reduced-motion:no-preference){
+  .work-row{transition:transform .35s cubic-bezier(.2,.75,.25,1),border-color .2s ease,box-shadow .35s ease}
+  .capability-top svg{transition:transform .4s cubic-bezier(.2,.75,.25,1)}
+  .capability li{transition:transform .25s ease,background-color .25s ease}
+  .portfolio-text-link{position:relative}
+  .portfolio-text-link::after{content:"";position:absolute;left:0;right:28px;bottom:7px;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.2,.75,.25,1)}
+  .portfolio-text-link:is(:hover,:focus-visible)::after{transform:scaleX(1)}
+  .contact-social-links a{transition:transform .25s ease,color .2s ease}
+  .portfolio-contact .form-group{transition:transform .25s ease}
+  .portfolio-contact .form-group:focus-within{transform:translateX(3px)}
+  .engineering-note .note-detail{animation:note-arrive .3s ease both}
+  .engineering-note summary{transition:padding-left .25s ease,background-color .25s ease}
+  .contact-submit-scene>button{transition:transform .25s ease,box-shadow .25s ease}
+  .contact-submit-scene>button:active{transform:scale(.985)}
+  @keyframes note-arrive{from{opacity:.2;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+}
+@media(hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference){
+  .work-row:hover{transform:translateY(-5px);box-shadow:0 12px 28px -22px rgba(15,23,42,.35)}
+  .capability:hover .capability-top svg{transform:translateY(-4px) rotate(-5deg)}
+  .capability li:hover{transform:translateY(-2px)}
+  .contact-social-links a:hover{transform:translateY(-3px)}
+  .engineering-note summary:hover{padding-left:8px}
+}
+@media(prefers-reduced-motion:reduce){
+  [data-motion]{opacity:1;transform:none}
+  .engineering-note .note-detail{animation:none}
+  .work-row,.capability-top svg,.capability li,.contact-social-links a,.portfolio-contact .form-group,.engineering-note summary,.contact-submit-scene>button{transition:none!important}
+}
