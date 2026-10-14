@@ -1,5 +1,4 @@
-/* Fonts are preloaded non-blocking in index.html (Inter + Outfit).
-   No @import here: @import blocks first paint and would double-download fonts. */
+/* Local Inter and Outfit variable fonts are declared before the app in index.html. */
 
 /* ── View Transitions: Theme Toggle Fade ────────────────────────────
    A clean crossfade that works perfectly on mobile and desktop.

@@ -17,3 +17,19 @@ result=boot({storageBlocked:true});assert.equal(result.root.dataset.intro,'pendi
 const app=await readFile('src/App.jsx','utf8');assert(!app.includes('window.scrollTo(0, 0)'));assert(!app.includes('immediate: true'));
 const css=await readFile('src/index.css','utf8');assert(!/section:not\(#hero\)\s*\{[^}]*content-visibility:\s*auto/.test(css));
 console.log('Initial paint: first visit, reload, history, anchors, session reuse, reduced motion, blocked storage and timeout fallback passed.');
+
+// The no-JS document must never paint as a competing layout before React mounts.
+assert.match(html, /<div id="root">\s*<noscript>/);
+assert(!html.includes('fonts.googleapis.com'));
+assert(!html.includes('Early Theme Init'));
+const fontCSS=await readFile('public/fonts/fonts.css','utf8');
+const faces=[...fontCSS.matchAll(/@font-face\s*\{([^}]+)\}/g)];
+assert.equal(faces.length,4);
+for(const [,face] of faces) {
+ assert.match(face,/font-display:\s*optional/);
+ const name=face.match(/url\(\.\/([^)]+)\)/)[1];
+ assert(html.includes(`href="/fonts/${name}" as="font"`));
+ const bytes=await readFile(`public/fonts/${name}`);
+ assert.equal(bytes.subarray(0,4).toString(),'wOF2');
+}
+console.log('Typography: local variable fonts, early preloads, no late swaps, no competing static layout or theme bootstrap passed.');

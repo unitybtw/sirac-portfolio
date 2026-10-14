@@ -36,8 +36,6 @@
   </script>
 
   <!-- Critical resource preconnects: establish TLS early -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="dns-prefetch" href="https://github-contributions-api.jogruber.de">
   <link rel="dns-prefetch" href="https://api.web3forms.com">
 
@@ -48,8 +46,8 @@
     script-src 'self' 'unsafe-inline';
     worker-src 'self' blob:;
     child-src 'self' blob:;
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    font-src 'self' https://fonts.gstatic.com;
+    style-src 'self' 'unsafe-inline';
+    font-src 'self';
     img-src 'self' data: https: blob:;
     connect-src 'self' https://api.web3forms.com https://github-contributions-api.jogruber.de https://sirac-portfolio-default-rtdb.europe-west1.firebasedatabase.app ws://localhost:* ws://127.0.0.1:*;
     frame-src 'self' https://wasm.continuation-labs.com https://www.netquake.io https://3kh0.github.io https://64.js.org https://classic.minecraft.net https://d07riv.github.io https://diekmann.github.io https://gabrielecirulli.github.io https://html-classic.itch.zone https://htmlxm.github.io https://kirka.io https://macek.github.io https://mathiasgredal.github.io https://q3js.com https://raw.githack.com https://staticquasar931.github.io https://ubg365.github.io https://wayou.github.io https://www.youtube.com https://x8bitrain.github.io blob: data:;
@@ -58,9 +56,12 @@
     form-action https://api.web3forms.com;
   " />
 
-  <!-- Non-critical font stylesheet -->
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" as="style" fetchpriority="low" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap"></noscript>
+  <!-- Load the exact local variable fonts before application text is painted. -->
+  <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/inter-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/fonts/outfit-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/fonts/fonts.css">
 
   <!-- Authoritative SEO & Metadata -->
   <meta name="description" content="Siraç Göktuğ Şimşek, Game Developer and Software Engineer based in Istanbul, Turkey. Building 3D games with Unity and C#, desktop architectures with Electron and TypeScript, and native macOS utilities with Swift." />
@@ -285,24 +286,12 @@
   }
   </script>
 
-  <!-- Early Theme Init to avoid flash -->
-  <script>
-    (function() {
-      try {
-        var t = localStorage.getItem('theme');
-        if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      } catch (e) {}
-    })();
-  </script>
 </head>
 
 <body>
-  <!-- Pre-rendered Static Semantic Structure: Cleanly parsed by search engines, AI crawlers (ChatGPT, Perplexity, Claude), and readers before React client hydration -->
+  <!-- Keep the accessible no-JavaScript document from flashing before the React layout. -->
   <div id="root">
+    <noscript>
     <header role="banner" style="padding: 1.5rem 1rem; max-width: 1100px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(125,125,125,0.15);">
       <div>
         <strong style="font-size: 1.1rem; letter-spacing: -0.01em;">Siraç Göktuğ Şimşek</strong>
@@ -482,6 +471,7 @@
     <footer role="contentinfo" style="padding: 2rem 1rem; max-width: 1100px; margin: 0 auto; text-align: center; border-top: 1px solid rgba(125,125,125,0.15); font-size: 0.85rem; color: #71717a;">
       <p>© 2026 Siraç Göktuğ Şimşek. Built with React, Vite, Framer Motion, and Lenis.</p>
     </footer>
+    </noscript>
   </div>
 
   <noscript>
