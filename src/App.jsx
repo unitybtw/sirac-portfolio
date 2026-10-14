@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database, X, GraduationCap, Award, BookOpen, ChevronDown, ChevronUp, FolderGit2, Activity, MapPin, User } from 'lucide-react';
 import './index.css';
+import './portfolio-refresh.css';
+import { AboutSection, SkillsSection, ProjectsSection, ContactIntro } from './components/PortfolioSections';
 import { LINKEDIN_URL } from './i18n';
 import { SlideNavbar } from './components/ui/slide-tabs';
 import AsciiSceneBuilder from './components/AsciiSceneBuilder';
@@ -475,115 +477,8 @@ function App() {
         </section>
 
         <main className="app-container">
-          {/* ── About Section ── */}
-          <section id="about">
-          <h2 className="section-title">{t('about_title')}</h2>
-          <p className="section-subtitle">{t('about_subtitle')}</p>
-          
-          <div className="bento-grid">
-            <div className="bento-card bento-col-8">
-              <h3 style={{ marginBottom: '1.25rem', fontSize: '1.45rem', fontWeight: 700 }}>{t('about_bio_heading')}</h3>
-              <p style={{ marginBottom: '1rem', fontSize: '1.05rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-                {t('about_text_1')}
-              </p>
-              <p style={{ marginBottom: '1rem', fontSize: '1.02rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-                {t('about_text_2')}
-              </p>
-              <p style={{ fontSize: '0.98rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-                {t('about_text_3')}
-              </p>
-            </div>
-            
-            <div className="bento-card bento-col-4">
-              <h3 style={{ fontSize: '1.2rem', marginBottom: '1.5rem' }}>{t('about_stats_heading')}</h3>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
-                <div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>{t('about_stat_1')}</div>
-                  <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{t('about_stat_1_val')}</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>{t('about_stat_2')}</div>
-                  <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{t('about_stat_2_val')}</div>
-                </div>
-                <div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.2rem' }}>{t('about_stat_4')}</div>
-                  <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{t('about_stat_4_val')}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ── Skills / Tech Stack Section ── */}
-        <section id="skills">
-          <h2 className="section-title">{t('skills_title')}</h2>
-          <p className="section-subtitle">{t('skills_subtitle')}</p>
-          
-          <div className="bento-grid">
-            <div className="bento-card bento-col-4">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
-                <Gamepad2 size={24} />
-                <h3 style={{ fontSize: '1.2rem' }}>{t('skill_cat_engines')}</h3>
-              </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-                <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong>Unity 3D</strong>
-                  <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
-                </li>
-                <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong>URP / HDRP</strong>
-                  <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
-                </li>
-              </ul>
-              <p style={{ marginTop: '1.25rem', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{t('skill_unity_desc')}</p>
-            </div>
-
-            <div className="bento-card bento-col-4">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
-                <Code size={24} />
-                <h3 style={{ fontSize: '1.2rem' }}>{t('skill_cat_languages')}</h3>
-              </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-                <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong>C#</strong>
-                  <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
-                </li>
-                <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong>TypeScript / JavaScript</strong>
-                  <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
-                </li>
-                <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong>Electron & React</strong>
-                  <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
-                </li>
-              </ul>
-              <p style={{ marginTop: '1.25rem', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{t('skill_languages_desc')}</p>
-            </div>
-
-            <div className="bento-card bento-col-4">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', color: 'var(--text-primary)' }}>
-                <Box size={24} />
-                <h3 style={{ fontSize: '1.2rem' }}>{t('skill_cat_tools')}</h3>
-              </div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-                <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong>Blender 3D</strong>
-                  <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
-                </li>
-                <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong>Git & GitHub</strong>
-                  <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
-                </li>
-                <li style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <strong>Vite & Node.js</strong>
-                  <span className="skill-pill-badge">{t('skill_level_advanced')}</span>
-                </li>
-              </ul>
-              <p style={{ marginTop: '1.25rem', fontSize: '0.9rem', color: 'var(--text-secondary)', lineHeight: 1.55 }}>{t('skill_blender_desc')}</p>
-            </div>
-          </div>
-        </section>
+          <AboutSection />
+          <SkillsSection />
 
         <section id="timeline">
           <h2 className="section-title">{t('timeline_title')}</h2>
@@ -646,86 +541,7 @@ function App() {
           </Suspense>
         </section>
 
-        <section id="other-projects">
-          <h2 className="section-title">{t('archives_title')}</h2>
-          <p className="section-subtitle">{t('archives_subtitle')}</p>
-
-          <div className="bento-grid">
-            {/* Featured Project: Legend of the Three Masks */}
-            <div className="bento-card bento-col-12">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
-                <div style={{ flex: 1, minWidth: '280px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
-                    <h3 style={{ fontSize: '1.8rem', margin: 0, fontWeight: 700 }}>{t('games.m_title')}</h3>
-                    <span className="project-badge project-badge-released">
-                      {t('games.badge_released')}
-                    </span>
-                  </div>
-                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.9rem' }}>
-                    <span className="tech-tag">Unity 3D</span>
-                    <span className="tech-tag">C#</span>
-                    <span className="tech-tag">URP</span>
-                    <span className="tech-tag">Blender</span>
-                  </div>
-                  <p style={{ color: 'var(--text-secondary)', maxWidth: '800px', lineHeight: 1.6, fontSize: '0.95rem' }}>{t('games.m_desc')}</p>
-                  
-                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem' }}>
-                    <a href="https://unitybtw.itch.io/legend-of-the-three-masks" target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ padding: '0.45rem 1.1rem', fontSize: '0.85rem' }}>
-                      <Gamepad2 size={16} /> Itch.io
-                    </a>
-                  </div>
-                </div>
-                <Gamepad2 size={36} color="var(--text-secondary)" style={{ opacity: 0.25 }} />
-              </div>
-            </div>
-
-            {/* Signal */}
-            <div className="bento-card bento-col-6" style={{ justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
-                  <h3 style={{ fontSize: '1.3rem', margin: 0, fontWeight: 700 }}>{t('games.signal_title')}</h3>
-                  <span className="project-badge project-badge-open">
-                    {t('games.badge_open_source')}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
-                  <span className="tech-tag">Swift</span>
-                  <span className="tech-tag">SwiftUI</span>
-                  <span className="tech-tag">Core Audio</span>
-                </div>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.6 }}>{t('games.signal_desc')}</p>
-              </div>
-              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem' }}>
-                <a href="https://github.com/unitybtw/Signal-macOS" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem', width: 'fit-content' }}>
-                  <Github size={16} /> GitHub
-                </a>
-              </div>
-            </div>
-
-            {/* Aether Command */}
-            <div className="bento-card bento-col-6" style={{ justifyContent: 'space-between' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
-                  <h3 style={{ fontSize: '1.3rem', margin: 0, fontWeight: 700 }}>{t('games.aether_title')}</h3>
-                  <span className="project-badge project-badge-open">
-                    {t('games.badge_open_source')}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '0.75rem' }}>
-                  <span className="tech-tag">Swift</span>
-                  <span className="tech-tag">Vision API</span>
-                  <span className="tech-tag">AppKit</span>
-                </div>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.6 }}>{t('games.aether_desc')}</p>
-              </div>
-              <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.25rem' }}>
-                <a href="https://github.com/unitybtw/aether-command" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.45rem 1rem', fontSize: '0.85rem', width: 'fit-content' }}>
-                  <Github size={16} /> GitHub
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
+        <ProjectsSection />
 
         {/* ── Engineering Case Studies Section ── */}
         <CaseStudiesSection />
@@ -755,50 +571,19 @@ function App() {
       {/* ── Footer / Contact ── */}
       <footer
         id="contact"
-        className="footer app-container"
+        className="footer app-container portfolio-contact"
       >
         <div className="contact-grid">
-          <div className="contact-info">
-            <h2 className="section-title" style={{ textAlign: 'left', marginBottom: '0.75rem' }}>{t('footer_title')}</h2>
-            <p className="contact-subtitle" style={{ marginBottom: '1.5rem', lineHeight: 1.6 }}>{t('footer_subtitle')}</p>
-            
-            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginBottom: '1.75rem' }}>
-              <a href="mailto:sgoktug34@gmail.com" className="btn-primary" style={{ padding: '0.6rem 1.1rem', fontSize: '0.88rem' }}>
-                <Mail size={16} /> sgoktug34@gmail.com
-              </a>
-              <a href={LINKEDIN_URL} target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.6rem 1rem', fontSize: '0.88rem' }}>
-                <Linkedin size={16} /> LinkedIn
-              </a>
-              <a href="https://github.com/unitybtw" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.6rem 1rem', fontSize: '0.88rem' }}>
-                <Github size={16} /> @unitybtw
-              </a>
-              <a href="https://unitybtw.itch.io" target="_blank" rel="noopener noreferrer" className="btn-outline" style={{ padding: '0.6rem 1rem', fontSize: '0.88rem' }}>
-                <Gamepad2 size={16} /> Itch.io
-              </a>
-            </div>
-            
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-              <div className="availability-card" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem', padding: '0.65rem 1.15rem', border: '1px solid var(--border-subtle)', borderRadius: '12px', fontSize: '0.86rem', color: 'var(--text-secondary)', background: 'var(--bg-card)' }}>
-                <span style={{ display: 'inline-block', width: '7px', height: '7px', background: '#10b981', borderRadius: '50%', flexShrink: 0 }}></span>
-                <span>{t('about_stat_4_val')}</span>
-              </div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem', padding: '0.55rem 1.15rem', border: '1px solid var(--border-subtle)', borderRadius: '12px', fontSize: '0.84rem', color: 'var(--text-secondary)', background: 'var(--bg-card)' }}>
-                <MapPin size={14} style={{ color: 'var(--accent-cta)' }} />
-                <span>İstanbul, TR · Remote / Hybrid</span>
-              </div>
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem', padding: '0.55rem 1.15rem', border: '1px solid var(--border-subtle)', borderRadius: '12px', fontSize: '0.84rem', color: 'var(--text-secondary)', background: 'var(--bg-card)' }}>
-                <span style={{ fontSize: '0.85rem' }}>⚡</span>
-                <span>Response Time: Typically within 24 hours</span>
-              </div>
-            </div>
-          </div>
-          
+          <ContactIntro />
+
           <div className="contact-form-container">
+            <div className="contact-form-heading"><Mail size={18}/><span>{currentLang === 'tr' ? 'Aklında ne var?' : 'What do you have in mind?'}</span></div>
             <form onSubmit={handleFormSubmit} className="contact-form">
               <div className="form-group">
                 <label htmlFor="name">{t('form_name')}</label>
                 <input
                   type="text"
+                  autoComplete="name"
                   id="name"
                   name="name"
                   value={formState.name}
@@ -813,6 +598,7 @@ function App() {
                 <label htmlFor="email">{t('form_email')}</label>
                 <input
                   type="email"
+                  autoComplete="email"
                   id="email"
                   name="email"
                   value={formState.email}
