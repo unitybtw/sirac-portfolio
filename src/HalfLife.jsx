@@ -1,3 +1,4 @@
+import { FRAME_PERMISSIONS } from './utils/arcadeSecurity';
 import { motion } from 'framer-motion';
 import React, { useState, useRef, useEffect } from 'react';
 import { RotateCcw, Info, MousePointer2 } from 'lucide-react';
@@ -50,8 +51,8 @@ export default function HalfLife() {
                         src="https://x8bitrain.github.io/webXash/"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Half-Life Web"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals"
-                        allow="autoplay; fullscreen"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock"
+                        allow={FRAME_PERMISSIONS} referrerPolicy="no-referrer"
                         onLoad={() => {
                             if (iframeRef.current) iframeRef.current.focus();
                         }}

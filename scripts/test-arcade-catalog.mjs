@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createServer } from 'vite';
-const server = await createServer({ server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom' });
+const server = await createServer({ server: { middlewareMode: true, hmr: false, ws: false }, appType: 'custom', optimizeDeps: { noDiscovery: true, include: [] } });
 try {
   const { gamesList, getGameCategory } = await server.ssrLoadModule('/src/gamesData.jsx');
   const ids = new Set(gamesList.map(game => game.id));
@@ -12,18 +12,14 @@ try {
   const code = await readFile('src/gamesData.jsx', 'utf8');
   const html = await readFile('index.html','utf8');
   const scriptPolicy = html.match(/script-src ([^;]+);/)[1];
-  const basePolicy = html.match(/base-uri ([^;]+);/)[1];
-  const viceBase = 'https://cdn.jsdelivr.net/gh/web-ports/vice-city@49409b9dd26b45d0cbfdb5c93dd19f38750e4207/';
-  const hollowBase = 'https://cdn.jsdelivr.net/gh/web-ports/hollow-knight@latest/';
-  assert(scriptPolicy.includes(viceBase) && basePolicy.includes(viceBase), 'Vice City requires its pinned CDN base and script policy');
-  assert(scriptPolicy.includes(hollowBase), 'Hollow Knight requires its CDN loader policy');
+  assert(!scriptPolicy.includes('cdn.jsdelivr.net') && !scriptPolicy.includes('unsafe-eval'), 'Portfolio must not execute upstream game scripts');
   const framePolicy = html.match(/frame-src ([^;]+);/)[1];
   for (const match of code.matchAll(/hosted\(\{([^\n]+)\}\)/g)) {
     if (match[1].includes('external:true')) continue;
     const local = match[1].match(/url:`\$\{import.meta.env.BASE_URL\}ports\/([^`]+)`/);
     if (local) {
       assert(match[1].includes('opaqueOrigin:true'), 'Local adapters must isolate remote scripts from the portfolio');
-      const adapter = await readFile(`public/ports/${local[1]}`, 'utf8');
+      const adapter = JSON.parse(await readFile(`public/ports/${local[1]}`, 'utf8')).html;
       assert(adapter.includes('<base href="https://cdn.jsdelivr.net/gh/web-ports/'), 'Adapter assets must retain their upstream base');
       continue;
     }
@@ -35,11 +31,11 @@ try {
   for (const port of additions) {
     assert(ids.has(port.id), `Bulk port missing from catalogue: ${port.id}`);
     assert.equal(getGameCategory(port.id), port.category, `Incorrect category: ${port.id}`);
-    assert(/^[a-z0-9-]+\.html$/.test(port.entry), `Unsafe entry path: ${port.entry}`);
+    assert(/^[a-z0-9-]+\.json$/.test(port.entry), `Unsafe entry path: ${port.entry}`);
     assert(new URL(port.source).hostname === 'github.com', 'Every port must link its source');
-    const entry = await readFile(`public/ports/${port.entry}`, 'utf8');
+    const entry = JSON.parse(await readFile(`public/ports/${port.entry}`, 'utf8')).html;
     assert(entry.includes('<base href="https://cdn.jsdelivr.net/gh/web-ports/'), `Missing upstream base: ${port.entry}`);
-    assert(entry.indexOf('src="sandbox-storage.js"') < entry.indexOf('<base '), `Local storage adapter must load before the remote base: ${port.entry}`);
+    assert(entry.indexOf('const memoryStorage') < entry.indexOf('<base '), `Memory storage must load before the remote base: ${port.entry}`);
   }
   const library = await readFile('src/GameLibrary.jsx','utf8');
   const highlights = library.split('const featuredHighlights = [')[1].split('];')[0];

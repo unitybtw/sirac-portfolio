@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <!-- This trusted shell never executes the payload in its own document. The broader
+       runtime policy is inherited by the opaque child, not by the portfolio. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://ajax.googleapis.com; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src data: https://cdn.jsdelivr.net https://fonts.gstatic.com; img-src data: blob: https://cdn.jsdelivr.net; media-src blob: data: https://cdn.jsdelivr.net; connect-src 'self' blob: data: https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://terraria.mercurywork.shop; worker-src blob: https://cdn.jsdelivr.net; frame-src blob: 'self'; object-src 'none'; base-uri https://cdn.jsdelivr.net; form-action 'none'">
+  <title>Isolated arcade player</title>
+  <link rel="stylesheet" href="arcade-player.css">
+</head>
+<body>
+  <p id="status" role="status">Loading game…</p>
+  <script type="module" src="arcade-player.js"></script>
+</body>
+</html>

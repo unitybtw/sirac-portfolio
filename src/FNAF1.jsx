@@ -1,3 +1,4 @@
+import { FRAME_PERMISSIONS } from './utils/arcadeSecurity';
 import { motion } from 'framer-motion';
 import React, { useState, useRef, useEffect } from 'react';
 import { Eye, AlertTriangle } from 'lucide-react';
@@ -146,10 +147,11 @@ export default function FNAF1() {
                 <div style={{ flex: 1, position: 'relative' }}>
                     <iframe
                         ref={iframeRef}
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock"
                         src="https://html-classic.itch.zone/html/6346238/index.html"
                         style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
                         title="Five Nights at Freddy's HTML5 Fan Port"
-                        allow="autoplay; fullscreen"
+                        allow={FRAME_PERMISSIONS} referrerPolicy="no-referrer"
                         onLoad={() => { if (iframeRef.current) iframeRef.current.focus(); }}
                     />
                 </div>

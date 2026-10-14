@@ -1,3 +1,4 @@
+import { FRAME_PERMISSIONS } from './utils/arcadeSecurity';
 import React, { useState } from 'react';
 import { Download, MonitorPlay, XCircle } from 'lucide-react';
 
@@ -15,12 +16,12 @@ const LaleSavascilari = ({ onGameOver }) => {
                 pointerEvents: 'none',
                 zIndex: 10
             }} />
-            
+
             {view === 'menu' && (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', zIndex: 5, position: 'relative' }}>
                     <h1 style={{ fontSize: '2.5rem', textAlign: 'center', marginBottom: '1rem', textShadow: '0 0 10px #0f0' }}>İSTANBUL EFSANELERİ: LALE SAVAŞÇILARI</h1>
                     <h2 style={{ fontSize: '1.2rem', color: '#aaa', marginBottom: '3rem' }}>SiliconWorx (1994) - DOS / Amiga</h2>
-                    
+
                     <div style={{ maxWidth: '600px', textAlign: 'center', marginBottom: '3rem', lineHeight: '1.6' }}>
                         <p>
                             Türkiye'nin ilk ve en efsanevi yerli RPG oyunu. Orijinal dosyaların devasa boyutu (326MB) ve platform sınırlamaları nedeniyle doğrudan web tarayıcısında çalıştırılamamaktadır. Ancak orijinal arşive ulaşabilir veya oyunun tam deneyimini izleyebilirsiniz.
@@ -28,10 +29,10 @@ const LaleSavascilari = ({ onGameOver }) => {
                     </div>
 
                     <div style={{ display: 'flex', gap: '2rem' }}>
-                        <button 
+                        <button
                             onClick={() => setView('watch')}
-                            style={{ 
-                                background: 'transparent', border: '2px solid #0f0', color: '#0f0', padding: '1rem 2rem', 
+                            style={{
+                                background: 'transparent', border: '2px solid #0f0', color: '#0f0', padding: '1rem 2rem',
                                 fontFamily: 'monospace', fontSize: '1.2rem', cursor: 'pointer',
                                 display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 0 15px rgba(0,255,0,0.3)',
                                 transition: 'all 0.3s'
@@ -42,10 +43,10 @@ const LaleSavascilari = ({ onGameOver }) => {
                             <MonitorPlay size={24} /> OYUNU İZLE
                         </button>
 
-                        <button 
+                        <button
                             onClick={() => window.open('https://archive.org/download/istanbulefsanelerilalesavascilari/istanbulefsanelerilalesavascilari.zip', '_blank')}
-                            style={{ 
-                                background: 'transparent', border: '2px solid #00f0ff', color: '#00f0ff', padding: '1rem 2rem', 
+                            style={{
+                                background: 'transparent', border: '2px solid #00f0ff', color: '#00f0ff', padding: '1rem 2rem',
                                 fontFamily: 'monospace', fontSize: '1.2rem', cursor: 'pointer',
                                 display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 0 15px rgba(0,240,255,0.3)',
                                 transition: 'all 0.3s'
@@ -64,7 +65,7 @@ const LaleSavascilari = ({ onGameOver }) => {
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0' }}>
                         <span>LALE SAVAŞÇILARI OYNANIŞ (YOUTUBE STREAM)</span>
                         <div style={{ display: 'flex', gap: '10px' }}>
-                            <button 
+                            <button
                                 onClick={() => setView('menu')}
                                 style={{ background: 'transparent', border: '1px solid #0f0', color: '#0f0', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', padding: '4px 8px' }}
                             >
@@ -72,13 +73,12 @@ const LaleSavascilari = ({ onGameOver }) => {
                             </button>
                         </div>
                     </div>
-                    <iframe 
-                        width="100%" 
-                        height="100%" 
-                        src="https://www.youtube.com/embed/Q4Xz6C3k4eI?autoplay=1" 
-                        title="İstanbul Efsaneleri Lale Savaşçıları" 
-                        frameBorder="0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture" 
+                    <iframe sandbox="allow-scripts allow-same-origin allow-pointer-lock" allow={FRAME_PERMISSIONS} referrerPolicy="no-referrer"
+                        width="100%"
+                        height="100%"
+                        src="https://www.youtube.com/embed/Q4Xz6C3k4eI?autoplay=1"
+                        title="İstanbul Efsaneleri Lale Savaşçıları"
+                        frameBorder="0"
                         allowFullScreen
                         style={{ border: '2px solid #333' }}
                     ></iframe>

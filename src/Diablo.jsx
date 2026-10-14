@@ -1,3 +1,4 @@
+import { FRAME_PERMISSIONS } from './utils/arcadeSecurity';
 import { motion } from 'framer-motion';
 import React, { useState, useRef, useEffect } from 'react';
 import { RotateCcw, Info, MousePointer, BookOpen, Gamepad2 } from 'lucide-react';
@@ -48,8 +49,8 @@ export default function Diablo() {
                         src="https://d07riv.github.io/diabloweb/"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Diablo 1 Web"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals"
-                        allow="autoplay; fullscreen"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock"
+                        allow={FRAME_PERMISSIONS} referrerPolicy="no-referrer"
                         onLoad={() => {
                             if (iframeRef.current) iframeRef.current.focus();
                         }}

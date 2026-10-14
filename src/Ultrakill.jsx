@@ -1,3 +1,4 @@
+import { FRAME_PERMISSIONS } from './utils/arcadeSecurity';
 import { motion } from 'framer-motion';
 import React, { useState, useRef, useEffect } from 'react';
 import { Zap, Crosshair, AlertTriangle } from 'lucide-react';
@@ -55,8 +56,8 @@ export default function Ultrakill() {
                         src="https://raw.githack.com/genizy/web-port/main/ultrakill/index.html"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Ultrakill Web"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals blob: *"
-                        allow="autoplay; fullscreen"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock"
+                        allow={FRAME_PERMISSIONS} referrerPolicy="no-referrer"
                         onLoad={() => {
                             if (iframeRef.current) iframeRef.current.focus();
                         }}

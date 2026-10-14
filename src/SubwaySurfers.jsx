@@ -1,3 +1,4 @@
+import { FRAME_PERMISSIONS } from './utils/arcadeSecurity';
 import { motion } from 'framer-motion';
 import React, { useState, useRef, useEffect } from 'react';
 import { Zap, PlayCircle, Gamepad2 } from 'lucide-react';
@@ -53,8 +54,8 @@ export default function SubwaySurfers() {
                         src="https://staticquasar931.github.io/SubwaySurfers/"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Subway Surfers"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals"
-                        allow="autoplay; fullscreen"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock"
+                        allow={FRAME_PERMISSIONS} referrerPolicy="no-referrer"
                         onLoad={() => {
                             if (iframeRef.current) iframeRef.current.focus();
                         }}

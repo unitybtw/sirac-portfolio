@@ -15,19 +15,19 @@
 
   <!-- Security Headers -->
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta http-equiv="Content-Security-Policy" content="
     default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://cdn.jsdelivr.net/gh/web-ports/vice-city@49409b9dd26b45d0cbfdb5c93dd19f38750e4207/ https://cdn.jsdelivr.net/gh/web-ports/hollow-knight@latest/;
+    script-src 'self' 'unsafe-inline';
     worker-src 'self' blob:;
     child-src 'self' blob:;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     font-src 'self' https://fonts.gstatic.com;
     img-src 'self' data: https: blob:;
-    connect-src 'self' https://api.web3forms.com https://github-contributions-api.jogruber.de https://sirac-portfolio-default-rtdb.europe-west1.firebasedatabase.app https://firebasedatabase.app https: wss: ws: blob: data:;
+    connect-src 'self' https://api.web3forms.com https://github-contributions-api.jogruber.de https://sirac-portfolio-default-rtdb.europe-west1.firebasedatabase.app ws://localhost:* ws://127.0.0.1:*;
     frame-src 'self' https://wasm.continuation-labs.com https://www.netquake.io https://3kh0.github.io https://64.js.org https://classic.minecraft.net https://d07riv.github.io https://diekmann.github.io https://gabrielecirulli.github.io https://html-classic.itch.zone https://htmlxm.github.io https://kirka.io https://macek.github.io https://mathiasgredal.github.io https://q3js.com https://raw.githack.com https://staticquasar931.github.io https://ubg365.github.io https://wayou.github.io https://www.youtube.com https://x8bitrain.github.io blob: data:;
     object-src 'none';
-    base-uri 'self' https://cdn.jsdelivr.net/gh/web-ports/vice-city@49409b9dd26b45d0cbfdb5c93dd19f38750e4207/;
+    base-uri 'self';
+    form-action https://api.web3forms.com;
   " />
 
   <!-- Non-critical font stylesheet -->

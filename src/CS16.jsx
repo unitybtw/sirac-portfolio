@@ -1,3 +1,4 @@
+import { FRAME_PERMISSIONS } from './utils/arcadeSecurity';
 import { motion } from 'framer-motion';
 import React, { useState, useRef, useEffect } from 'react';
 import { Target, Wifi } from 'lucide-react';
@@ -123,13 +124,12 @@ export default function CS16() {
                 </div>
             ) : (
                 <div style={{ flex: 1, position: 'relative' }}>
-                    <iframe
+                    <iframe allow={FRAME_PERMISSIONS} referrerPolicy="no-referrer"
                         ref={iframeRef}
                         src="https://kirka.io/"
                         style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
                         title="Kirka Web FPS"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"
-                        allow="autoplay; fullscreen; microphone; camera"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock"
                         onLoad={() => { if (iframeRef.current) iframeRef.current.focus(); }}
                     />
                 </div>

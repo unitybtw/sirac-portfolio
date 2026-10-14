@@ -1,3 +1,4 @@
+import { FRAME_PERMISSIONS } from './utils/arcadeSecurity';
 import { motion } from 'framer-motion';
 import React, { useState, useRef, useEffect } from 'react';
 import { Zap, Sparkles } from 'lucide-react';
@@ -60,8 +61,8 @@ export default function CookieClicker() {
                         src="https://htmlxm.github.io/h/cookie-clicker/"
                         style={{ width: '100%', height: '100%', border: 'none' }}
                         title="Cookie Clicker"
-                        sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals"
-                        allow="autoplay; fullscreen"
+                        sandbox="allow-scripts allow-same-origin allow-pointer-lock"
+                        allow={FRAME_PERMISSIONS} referrerPolicy="no-referrer"
                         onLoad={() => {
                             if (iframeRef.current) iframeRef.current.focus();
                         }}

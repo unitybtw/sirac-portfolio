@@ -1,3 +1,4 @@
+import { scoreRecordKey } from './utils/arcadeSecurity';
 import React, { useState, useEffect, useCallback, useRef, useMemo, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
@@ -252,7 +253,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
     // Skor kaydetme fonksiyonu
     const handleGameOver = useCallback(async (score, gameId) => {
         const id = gameId || activeGameId;
-        if (!id) return;
+        if (!gamesList.some(game => game.id === id) || !Number.isSafeInteger(score) || score < 0 || score > 1_000_000_000) return;
 
         // 1. Yerel Kayıt
         setLocalScores((prev) => {
@@ -268,7 +269,7 @@ const GameLibrary = ({ isOpen, setIsOpen, activeGameId, setActiveGameId }) => {
         // 2. Firebase Bulut Kaydı
         if (score > 0 && nickname) {
             try {
-                const scoreKey = `${nickname}_${id}`.replace(/[.#$[\]]/g, '_');
+                const scoreKey = scoreRecordKey(nickname, id);
                 const scoreData = {
                     name: nickname,
                     gameId: id,

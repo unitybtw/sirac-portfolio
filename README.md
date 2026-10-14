@@ -8,7 +8,7 @@ Welcome to my interactive portfolio and game hub! This project is a modern, web-
 *   **The Arcade (Game Library):** A dedicated section hosting a variety of playable web games.
     *   **Classics:** DOOM, Quake 3, Super Mario 64, Half-Life, GTA Vice City.
     *   **Modern Web Ports:** Hollow Knight, ULTRAKILL, Subway Surfers, Geometry Dash.
-    *   **Features:** All games are fully sandboxed for security (`allow-popups` disabled to prevent ads/redirects), with localized loading mechanisms and full-screen support.
+    *   **Features:** Embedded games use capability restrictions; local runtime payloads execute only in opaque sandbox frames. See [arcade security](docs/arcade-security.md) for the trust boundary and limits.
 *   **Performance Optimization:** 
     *   Dynamic code splitting via `React.lazy()` ensures fast initial load times.
     *   Games load their assets (some up to 800MB) smartly inside their own iframe wrappers.
@@ -34,7 +34,7 @@ To run this project on your local machine:
 
 ## 📝 Notes on Game Embeds
 
-The games hosted in the Arcade section are fetched via secure `iframe` elements using community-created open web ports (like `reVC`, `ioquake3` js ports, etc.). They have been configured with strict sandbox policies to prevent external redirects and block popup advertisements.
+The games hosted in the Arcade section are fetched via secure `iframe` elements using community-created open web ports (like `reVC`, `ioquake3` js ports, etc.). Embedded players restrict top navigation, popups and sensitive devices. Local ports use a trusted shell and inert JSON payloads so direct navigation cannot bypass origin isolation. External launches and third-party code have separate risks; see [arcade security](docs/arcade-security.md).
 
 ---
 *Built with passion for gaming and clean code.*
