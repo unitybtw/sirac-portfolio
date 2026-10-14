@@ -56,3 +56,41 @@ Added Cuphead, Hollow Knight: Silksong, Bendy and the Ink Machine, Iron Lung, To
 Mobile GitHub layout: the flex chart container now has a zero minimum width and a bounded width. Only the calendar grid scrolls; the explanatory link and colour legend remain outside it. The mobile card uses smaller padding and a scroll hint, and initially positions the calendar at its newest weeks.
 
 Dia visual review confirmed that the GitHub card fits 390 px and 320 px device widths, with its footer and year selectors visible. The newly added six game runtimes were not opened. Earlier in the work, Celeste reached its title screen, Plants vs. Zombies reached its new-player/menu screen, and Slime Rancher reached its alpha menu; these are opening-screen checks, not complete-playthrough evidence.
+
+
+## Bulk catalogue expansion — 2026-10-14
+
+Added 28 more community browser ports, bringing the catalogue to 62 entries. Descriptors are centralized in `src/data/additionalBrowserPorts.json`, with categories, source links, pinned entry revisions and download sizes when the source loader provides them. The adapters keep runtime binaries upstream and retain the opaque sandbox and session-only storage. No game binary is downloaded just by opening the catalogue.
+
+The user requested additions without opening or gameplay-testing each game. Only source entries were read and catalogue/build checks were run; these additions are not gameplay-verified. ANTONBLAST is explicitly labelled as a demo. KinitoPET's repository had no entry to retrieve; Animal Crossing's ROM-import client was omitted from this batch. Previously excluded broken games remain excluded.
+
+| Added game | Source | Entry revision |
+| --- | --- | --- |
+| Terraria | https://github.com/web-ports/terraria | `47731568354e` |
+| Granny | https://github.com/web-ports/granny | `60c96c26856a` |
+| Granny: Chapter Two | https://github.com/web-ports/granny-2 | `93217d1f5384` |
+| ANTONBLAST — Demo | https://github.com/web-ports/antonblast | `1534cf1f683c` |
+| NEEDY STREAMER OVERLOAD | https://github.com/web-ports/needy-streamer-overload | `59681566ec4e` |
+| 20 Minutes Till Dawn | https://github.com/web-ports/20-minutes | `e82366ecffd3` |
+| Fear & Hunger | https://github.com/web-ports/fear-and-hunger | `491156e1a00d` |
+| Fear & Hunger 2: Termina | https://github.com/web-ports/fear-and-hunger-2 | `b52a0b60d230` |
+| Your Only Move Is HUSTLE | https://github.com/web-ports/yomi-hustle | `dab11bc3c2f5` |
+| Cruelty Squad | https://github.com/web-ports/cruelty-squad | `19362b389fec` |
+| Just Shapes & Beats | https://github.com/web-ports/jsab | `d641f8b750b2` |
+| FNaF World — Refreshed | https://github.com/web-ports/fnaf-world-refreshed | `5ad15720ba66` |
+| Peaks of Yore | https://github.com/web-ports/peaks-of-yore | `2ea4ff35ac44` |
+| CloverPit | https://github.com/web-ports/clover-pit | `2ea4c7c5e25f` |
+| Spaceflight Simulator | https://github.com/web-ports/spaceflight-simulator | `c10c91692e4e` |
+| Look Outside | https://github.com/web-ports/look-outside | `648f71f7680a` |
+| In Stars and Time | https://github.com/web-ports/in-stars-and-time | `27e9333ba913` |
+| Sonic Robo Blast 2 | https://github.com/web-ports/srb2 | `f6702b8f077b` |
+| Christmas Massacre | https://github.com/web-ports/christmas-massacre | `156b0e5a5665` |
+| MINDWAVE | https://github.com/web-ports/mindwave | `df0638158961` |
+| Saihate Station | https://github.com/web-ports/saihate-station | `d9537964e102` |
+| Gorilla Tag — Web | https://github.com/web-ports/gorilla-tag | `01e75c72bbf0` |
+| Five Nights at Candy’s | https://github.com/web-ports/fnac/tree/ba0ff4088706af7db1da0a60a77b5b8704863376/1 | `ba0ff4088706` |
+| Five Nights at Candy’s 2 | https://github.com/web-ports/fnac/tree/ba0ff4088706af7db1da0a60a77b5b8704863376/2 | `ba0ff4088706` |
+| Five Nights at Candy’s 3 | https://github.com/web-ports/fnac/tree/ba0ff4088706af7db1da0a60a77b5b8704863376/3 | `ba0ff4088706` |
+| Slendytubbies | https://github.com/web-ports/slendytubbies/tree/efd9ef91acd1282a9ec4cae5bfd2fadc4f9f07ce/1 | `efd9ef91acd1` |
+| Slendytubbies II | https://github.com/web-ports/slendytubbies/tree/efd9ef91acd1282a9ec4cae5bfd2fadc4f9f07ce/2 | `efd9ef91acd1` |
+| Slendytubbies 2D | https://github.com/web-ports/slendytubbies/tree/efd9ef91acd1282a9ec4cae5bfd2fadc4f9f07ce/2d | `efd9ef91acd1` |

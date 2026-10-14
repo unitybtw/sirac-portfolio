@@ -30,6 +30,17 @@ try {
     const url = match[1].match(/url:'([^']+)'/)[1];
     assert(framePolicy.includes(new URL(url).origin), `Frame policy blocks ${url}`);
   }
+  const additions = JSON.parse(await readFile('src/data/additionalBrowserPorts.json', 'utf8'));
+  assert(code.includes('opaqueOrigin: true'), 'Bulk ports must retain the opaque-origin sandbox');
+  for (const port of additions) {
+    assert(ids.has(port.id), `Bulk port missing from catalogue: ${port.id}`);
+    assert.equal(getGameCategory(port.id), port.category, `Incorrect category: ${port.id}`);
+    assert(/^[a-z0-9-]+\.html$/.test(port.entry), `Unsafe entry path: ${port.entry}`);
+    assert(new URL(port.source).hostname === 'github.com', 'Every port must link its source');
+    const entry = await readFile(`public/ports/${port.entry}`, 'utf8');
+    assert(entry.includes('<base href="https://cdn.jsdelivr.net/gh/web-ports/'), `Missing upstream base: ${port.entry}`);
+    assert(entry.indexOf('src="sandbox-storage.js"') < entry.indexOf('<base '), `Local storage adapter must load before the remote base: ${port.entry}`);
+  }
   const library = await readFile('src/GameLibrary.jsx','utf8');
   const highlights = library.split('const featuredHighlights = [')[1].split('];')[0];
   for (const match of highlights.matchAll(/id: '([^']+)'/g)) assert(ids.has(match[1]), `Portal references removed game ${match[1]}`);

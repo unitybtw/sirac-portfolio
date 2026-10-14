@@ -1,5 +1,6 @@
 import React, { lazy } from 'react';
 import HostedArcadeGame from './HostedArcadeGame';
+import additionalBrowserPorts from './data/additionalBrowserPorts.json';
 import { Ghost, Navigation, Box, Gamepad2, Zap, Crosshair, Eye, Target, Gem, Activity, Flame } from 'lucide-react';
 
 // Browser games and retro ports. Keep each upstream runtime and attribution intact.
@@ -44,7 +45,31 @@ const IronLung = hosted({opaqueOrigin:true,title:'Iron Lung',url:`${import.meta.
 const Tabs = hosted({opaqueOrigin:true,title:'Totally Accurate Battle Simulator',url:`${import.meta.env.BASE_URL}ports/tabs.html`,source:'https://github.com/web-ports/tabs',controls:{en:'Community port · ≈1.75 GB initial download · Mouse + keyboard',tr:'Topluluk portu · İlk indirme ≈1,75 GB · Fare + klavye'}});
 const MiSide = hosted({opaqueOrigin:true,title:'MiSide',url:`${import.meta.env.BASE_URL}ports/miside.html`,source:'https://github.com/web-ports/miside',controls:{en:'Community port · WASD + mouse · E: interact',tr:'Topluluk portu · WASD + fare · E: etkileşim'}});
 
+// Keep the bulk catalogue declarative; game binaries load only after selection.
+const additionalCategories = new Map(additionalBrowserPorts.map(port => [port.id, port.category]));
+const additionalGames = additionalBrowserPorts.map(port => {
+    const downloadEn = port.downloadMB ? `Initial download ≈${Math.ceil(port.downloadMB)} MB · ` : '';
+    const downloadTr = port.downloadMB ? `İlk indirme ≈${Math.ceil(port.downloadMB)} MB · ` : '';
+    return {
+        id: port.id,
+        title: port.title,
+        icon: port.category === 'simulation' ? <Box size={24} /> : <Gamepad2 size={24} />,
+        color: '#71717a',
+        comp: hosted({
+            opaqueOrigin: true,
+            title: port.title,
+            url: `${import.meta.env.BASE_URL}ports/${port.entry}`,
+            source: port.source,
+            controls: {
+                en: `Community port · ${downloadEn}Keyboard / mouse · Controls in game`,
+                tr: `Topluluk portu · ${downloadTr}Klavye / fare · Tuşlar oyun içinde`,
+            },
+        }),
+    };
+});
+
 export const gamesList = [
+    ...additionalGames,
     { id: 'cuphead', title: 'Cuphead', icon: <Gamepad2 size={24} />, color: '#71717a', comp: Cuphead },
     { id: 'silksong', title: 'Hollow Knight: Silksong', icon: <Ghost size={24} />, color: '#71717a', comp: Silksong },
     { id: 'bendy', title: 'Bendy and the Ink Machine', icon: <Eye size={24} />, color: '#71717a', comp: Bendy },
@@ -90,6 +115,7 @@ export const categoryLabels = {
 };
 
 export const getGameCategory = (id) => {
+    if (additionalCategories.has(id)) return additionalCategories.get(id);
     const simList = ['bendy', 'iron_lung', 'tabs', 'miside', 'slime_rancher', 'doom3', 'arx_fatalis', 'netquake', 'red_alert2', 'gtavicecity', 'hl1', 'quake3', 'doom', 'diablo', 'minecraft_classic', 'cs16', 'drift'];
     const puzzleList = ['pacman', 'original_2048', 'cookie_clicker', 'worlds_hardest'];
     

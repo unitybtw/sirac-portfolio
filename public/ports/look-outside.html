@@ -1,0 +1,32 @@
+<!-- Entry adapter from https://github.com/web-ports/look-outside. Game runtime and assets remain upstream. -->
+<!DOCTYPE html>
+<html>
+    <head>
+<script src="sandbox-storage.js"></script>
+<base href="https://cdn.jsdelivr.net/gh/web-ports/look-outside@648f71f7680a78513695a579bbeab8e44066c501/">
+        <meta charset="UTF-8">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta name="viewport" content="user-scalable=no">
+        <link rel="icon" href="icon/icon.png" type="image/png">
+        <link rel="apple-touch-icon" href="icon/icon.png">
+        <link rel="stylesheet" type="text/css" href="css/game.css">
+        <title>Look Outside</title>
+    </head>
+    <body style="background-color: black">
+        <script type="text/javascript" src="js/main.js"></script>
+    </body>
+</html>
+
+<style>
+html,body { margin:0; }
+#loading-text, #loading-textt { font:16px/1.5 system-ui !important; -webkit-text-fill-color:currentColor !important; -webkit-text-stroke:0 !important; animation:none !important; background:none !important; }
+</style>
+<script>
+window.addEventListener('unhandledrejection', () => {
+ const message=document.createElement('p');
+ message.textContent='Game could not load. Use Restart or try again later.';
+ message.style.cssText='position:fixed;bottom:12px;left:12px;right:12px;padding:12px;background:#fff;color:#222;font:14px sans-serif;z-index:99999';
+ document.body.appendChild(message);
+}, {once:true});
+</script>
