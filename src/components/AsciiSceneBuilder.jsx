@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Play, FastForward } from 'lucide-react';
 import contacts from '../data/miniCrewContacts.json';
+import { observeCrewViewport } from '../utils/crewViewport';
 
 // Omni 1.1 Flash clips, generated in Google Flow from the live site's portrait.
 // Video frames are packed into transparent atlases for consistent Safari/Chrome playback.
@@ -91,6 +92,19 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
     let hitTargets = [];
     const grabbed = ({ detail }) => { grabbedActors.add(detail.id); };
     window.addEventListener('mini-sirac-grabbed', grabbed);
+    const viewport = observeCrewViewport({
+      readSize: () => ({ width: window.innerWidth, height: window.innerHeight }),
+      rebuild: () => {
+        // Loading already measures the latest size. Rebuild only an existing stage.
+        if (cancelled || !layer) return;
+        document.documentElement.dataset.intro = 'rebuilding';
+        document.documentElement.classList.add('mini-crew-pending');
+        setPhase('loading');
+        setAct('loading');
+        setRun(value => value + 1);
+      },
+    });
+    const onResize = () => viewport.changed();
     const pauseScroll = (event) => event.preventDefault();
     const onKey = (event) => {
       if (event.key === 'Escape') finish();
@@ -109,7 +123,8 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
       window.removeEventListener('wheel', pauseScroll, true);
       window.removeEventListener('touchmove', pauseScroll, true);
       window.removeEventListener('keydown', onKey);
-      window.removeEventListener('resize', finish);
+      window.removeEventListener('resize', onResize);
+      viewport.dispose();
       window.removeEventListener('pagehide', finish);
       window.removeEventListener('scroll', finish);
       document.documentElement.classList.remove('mini-crew-playing');
@@ -122,7 +137,13 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
     });
     const load = (name, cfg) => new Promise((resolve, reject) => {
       const image = new Image();
-      image.onload = () => { if (!cancelled) images[name] = image; resolve(); };
+      image.onload = async () => {
+        try {
+          await image.decode();
+          if (!cancelled) images[name] = image;
+          resolve();
+        } catch (error) { reject(error); }
+      };
       image.onerror = reject;
       image.src = `${import.meta.env.BASE_URL}assets/mini-sirac/${cfg.file}`;
     });
@@ -135,7 +156,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
       }
       // The first paint stays blank until the stage is ready; slow loads skip it.
       window.addEventListener('keydown', onKey);
-      window.addEventListener('resize', finish);
+      window.addEventListener('resize', onResize);
       window.addEventListener('pagehide', finish);
       window.addEventListener('scroll', finish, { passive: true, once: true });
       inputsUnlocked = true;
@@ -144,10 +165,9 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
           Promise.all([
             ...Object.entries(CREW).map(([name, cfg]) => load(name, cfg)),
           ]),
-          timeout(1200).then(() => { throw new Error('Crew preload timeout'); }),
+          timeout(8000).then(() => { throw new Error('Crew preload timeout'); }),
         ]);
         await Promise.race([document.fonts.ready, timeout(600)]);
-        if (document.fonts.status === 'loading') { finish(); return; }
         const portrait = document.querySelector('[data-ascii-target="portrait"] img');
         if (portrait) await Promise.race([portrait.decode().catch(() => {}), timeout(150)]);
         // Measure after the next layout turn, without an artificial opening delay.
@@ -158,7 +178,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
         const vw = window.innerWidth;
         const vh = window.innerHeight;
         const mobile = vw <= 768;
-        const charH = mobile ? 76 : Math.min(146, vh * 0.18);
+        const charH = mobile ? 76 : Math.min(180, Math.max(146, vw * 0.085), vh * 0.18);
         layer = document.createElement('div');
         layer.className = 'mini-crew-stage';
         layer.setAttribute('aria-hidden', 'true');
@@ -214,7 +234,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
         window.addEventListener('wheel', pauseScroll, { passive: false, capture: true });
         window.addEventListener('touchmove', pauseScroll, { passive: false, capture: true });
         window.addEventListener('keydown', onKey);
-        window.addEventListener('resize', finish);
+        window.addEventListener('resize', onResize);
         window.addEventListener('pagehide', finish);
         setPhase('building');
         const ctx = canvas.getContext('2d');

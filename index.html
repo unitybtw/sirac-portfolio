@@ -24,9 +24,17 @@
       root.dataset.enterMotion = type === 'reload' || type === 'back_forward' || !home ? 'off' : 'on';
       if (intro) {
         root.classList.add('mini-crew-pending');
+        // Start atlas requests alongside the app, not after React has mounted.
+        for (const name of ['carry', 'push', 'carry-release', 'push-release']) {
+          const link = document.createElement('link');
+          link.rel = 'preload';
+          link.as = 'image';
+          link.href = `/assets/mini-sirac/${name}.webp`;
+          document.head.append(link);
+        }
         setTimeout(() => {
           // Fail open if the application or assets cannot initialize promptly.
-          if (root.classList.contains('mini-crew-pending')) {
+          if (root.dataset.intro === 'pending' && root.classList.contains('mini-crew-pending')) {
             root.dataset.intro = 'skip';
             root.classList.remove('mini-crew-pending');
           }

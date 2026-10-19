@@ -4,10 +4,10 @@ import vm from 'node:vm';
 const html=await readFile('index.html','utf8');
 const source=html.match(/<script>\s*(\(\(\) => \{[\s\S]*?)<\/script>/)[1];
 function boot({type='navigate',hash='',seen=false,reduced=false,storageBlocked=false}={}) {
-  const classes=new Set();const timers=[];const root={dataset:{},classList:{add:x=>classes.add(x),remove:x=>classes.delete(x),contains:x=>classes.has(x),toggle:(x,on)=>on?classes.add(x):classes.delete(x)}};
+  const preloads=[];const classes=new Set();const timers=[];const root={dataset:{},classList:{add:x=>classes.add(x),remove:x=>classes.delete(x),contains:x=>classes.has(x),toggle:(x,on)=>on?classes.add(x):classes.delete(x)}};
   const storage=value=>({getItem(){if(storageBlocked)throw Error('blocked');return value}});
-  vm.runInNewContext(source,{document:{documentElement:root},sessionStorage:storage(seen?'1':null),localStorage:storage('dark'),performance:{getEntriesByType:()=>[{type}]},location:{hash},matchMedia:()=>({matches:reduced}),setTimeout:callback=>timers.push(callback)});
-  return {root,classes,timers};
+  vm.runInNewContext(source,{document:{documentElement:root,createElement:()=>({}),head:{append:link=>preloads.push(link)}},sessionStorage:storage(seen?'1':null),localStorage:storage('dark'),performance:{getEntriesByType:()=>[{type}]},location:{hash},matchMedia:()=>({matches:reduced}),setTimeout:callback=>timers.push(callback)});
+  return {root,classes,timers,preloads};
 }
 let result=boot();assert.equal(result.root.dataset.enterMotion,'on');assert.equal(result.root.dataset.intro,'pending');assert(result.classes.has('mini-crew-pending'));assert(result.classes.has('dark'));
 for (const options of [{type:'reload'},{type:'back_forward'},{seen:true},{hash:'#contact'},{reduced:true}]) {
@@ -33,3 +33,7 @@ for(const [,face] of faces) {
  assert.equal(bytes.subarray(0,4).toString(),'wOF2');
 }
 console.log('Typography: local variable fonts, early preloads, no late swaps, no competing static layout or theme bootstrap passed.');
+
+result=boot();assert.equal(result.preloads.length,4,'First visits request atlases before the app mounts');
+for(const options of [{type:'reload'},{seen:true},{reduced:true}]) assert.equal(boot(options).preloads.length,0,'Skipped intros must not eagerly download atlases');
+result=boot();result.root.dataset.intro='rebuilding';result.timers[0]();assert(result.classes.has('mini-crew-pending'),'The first-visit timeout must not cancel a fullscreen rebuild');
