@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 import { transformWithEsbuild } from 'vite';
+import { createAtlasLoader } from '../src/utils/atlasLoader.js';
 import { seatedFrameAt, departureTimeFor } from '../src/utils/miniSiracTiming.js';
 
 // Run the actual effects with a deterministic DOM/RAF adapter. No page or game is opened.
@@ -26,9 +27,10 @@ async function mount(name) {
   const document = Object.assign(eventTarget(), { hidden: false, body: { style: {} }, querySelector: () => null });
   const context2d = new Proxy({}, { get: () => () => {} });
   const canvas = { dataset: {}, style: {}, getContext: () => context2d };
-  const observed = [];
+  const observed = [], mutations = [];
   const portrait = { getBoundingClientRect: () => ({ left: 600, top: 200, width: 300 }) };
-  document.querySelector = selector => selector.includes('data-ascii-target') ? portrait : selector.includes('data-sirac-submit') ? { disabled: false } : null;
+  const button = { disabled: false, getBoundingClientRect: () => ({ left: 400, top: 800, width: 320, height: 48 }) };
+  document.querySelector = selector => selector.includes('data-ascii-target') ? portrait : selector.includes('data-sirac-submit') ? button : null;
   class FakeImage { constructor() { images.push(this); } }
   const runtime = { jsx: () => null, jsxs: () => null };
   const react = { useRef: () => ({ current: canvas }), useEffect: callback => effects.push(callback) };
@@ -41,6 +43,7 @@ async function mount(name) {
       if (path === 'react') return react;
       if (path === 'react-dom') return { createPortal: () => null };
       if (path === 'react/jsx-runtime') return runtime;
+      if (path.includes('atlasLoader')) return { createAtlasLoader: options => createAtlasLoader({ ...options, createImage: () => new FakeImage(), schedule: callback => { timers.set(++sequence, callback); return sequence; }, cancel: id => timers.delete(id) }) };
       if (path.includes('miniSiracTiming')) return { seatedFrameAt, departureTimeFor };
       const key = Object.keys(data).find(key => path.includes(key));
       if (key) return data[key];
@@ -50,7 +53,7 @@ async function mount(name) {
     innerWidth: 1920, innerHeight: 1080, devicePixelRatio: 1,
     Element: class {}, CustomEvent: class { constructor(type, options = {}) { this.type = type; this.detail = options.detail; } },
     IntersectionObserver: class { constructor(callback) { observed.push(callback); } observe() {} disconnect() {} },
-    MutationObserver: class { observe() {} disconnect() {} },
+    MutationObserver: class { constructor(callback) { mutations.push(callback); } observe() {} disconnect() {} },
     requestAnimationFrame: callback => { frames.set(++sequence, callback); return sequence; },
     cancelAnimationFrame: id => frames.delete(id),
     setTimeout: callback => { timers.set(++sequence, callback); return sequence; },
@@ -63,8 +66,10 @@ async function mount(name) {
     window.dispatchEvent(event); return event;
   };
   return {
-    canvas, motion, frames, send,
-    loadImages: () => images.forEach(image => image.onload?.()),
+    canvas, motion, frames, send, images, button, document,
+    loadImages: () => Promise.all(images.map(image => image.onload?.())),
+    showContact: () => observed[0]([{ target: button, isIntersecting: true }]),
+    changeButton: () => mutations.forEach(callback => callback()),
     showPortrait: () => observed[0]([{ target: portrait, isIntersecting: true }]),
     step(time) { const queued = [...frames.values()]; frames.clear(); queued.forEach(callback => callback(time)); },
     dispose() { cleanups.forEach(callback => callback?.()); },
@@ -73,7 +78,7 @@ async function mount(name) {
 async function grabActor() {
   const app = await mount('MiniSiracDrag');
   app.send('mini-sirac-targets', { detail: { source: 'crew', targets: [{ id: 'title:0', left: 90, right: 150, top: 100, bottom: 250, height: 140 }] } });
-  app.loadImages();
+  await app.loadImages();
   app.send('pointerdown', { button: 0, pointerId: 1, clientX: 120, clientY: 140 });
   app.step(100);
   return app;
@@ -103,10 +108,36 @@ app.dispose();
 assert.equal(app.frames.size, 0);
 
 app = await mount('MiniSiracCompanions');
-app.showPortrait(); app.loadImages(); app.step(100);
+app.showPortrait(); await app.loadImages(); app.step(100);
 assert(app.frames.size > 0, 'The seated portrait companion animates while visible');
 app.send('mini-sirac-grabbed', { detail: { id: 'portrait-companion' } }); app.step(200);
 assert.equal(app.canvas.dataset.siracTargets, '[]');
 assert.equal(app.frames.size, 0, 'A grabbed portrait companion must not keep rendering invisibly');
 app.dispose();
 console.log('Mini Siraç lifecycle: drag/replay click recovery, release walking, live reduced-motion pause/resume and grabbed companion disposal passed.');
+
+app = await mount('MiniSiracCompanions');
+app.showPortrait(); await app.images[0].onload(); app.step(100);
+assert(JSON.parse(app.canvas.dataset.siracTargets).some(target => target.id === 'portrait-companion'), 'The seated character remains visible when only the running atlas fails');
+app.dispose();
+
+app = await mount('MiniSiracCompanions');
+app.showContact(); await app.loadImages(); app.step(100);
+assert(app.frames.size > 0);
+app.button.disabled = true; app.changeButton(); app.step(200);
+assert.equal(app.frames.size, 0, 'Submitting a message pauses the hidden contact character');
+assert.equal(app.canvas.dataset.siracTargets, '[]');
+app.button.disabled = false; app.changeButton(); app.step(300);
+assert(app.frames.size > 0, 'Finishing submission wakes the character');
+assert(JSON.parse(app.canvas.dataset.siracTargets).some(target => target.id === 'contact-companion'));
+app.dispose();
+console.log('Companion recovery: missing running atlas and contact submission pause/resume passed.');
+
+app = await mount('MiniSiracDrag');
+app.send('mini-sirac-targets', { detail: { source: 'crew', targets: [{ id: 'title:0', left: 90, right: 150, top: 100, bottom: 250, height: 140 }] } });
+await app.images[0].onload();
+app.send('pointermove', { clientX: 120, clientY: 140 });
+assert.notEqual(app.document.body.style.cursor, 'grab', 'Do not advertise grabbing until all required clips are ready');
+await app.loadImages(); app.send('pointermove', { clientX: 120, clientY: 140 });
+assert.equal(app.document.body.style.cursor, 'grab');
+app.dispose();

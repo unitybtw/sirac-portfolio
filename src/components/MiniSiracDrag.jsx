@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { createAtlasLoader } from '../utils/atlasLoader';
 import contacts from '../data/miniDragContacts.json';
 import crewContacts from '../data/miniCrewContacts.json';
 
@@ -18,7 +19,6 @@ export default function MiniSiracDrag() {
     if (!ctx) return;
     const targets = new Map();
     const images = {};
-    let loading = false;
     let disposed = false;
     let active = null;
     const parked = [];
@@ -30,17 +30,16 @@ export default function MiniSiracDrag() {
     const originalCursor = document.body.style.cursor;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
     const wake = () => { if (!raf && !disposed && !document.hidden) raf = requestAnimationFrame(paint); };
-    const preload = () => {
-      if (loading) return;
-      loading = true;
-      for (const name of ['grab', 'hold', 'release', 'walk']) {
-        const image = new Image();
-        image.onload = () => { if (!disposed) { images[name] = image; wake(); } };
-        image.src = `${import.meta.env.BASE_URL}assets/mini-sirac/${name === 'walk' ? 'push-release' : `drag-${name}`}.webp`;
-      }
-    };
+    const loader = createAtlasLoader({
+      files: { grab: 'drag-grab.webp', hold: 'drag-hold.webp', release: 'drag-release.webp', walk: 'push-release.webp' },
+      baseURL: import.meta.env.BASE_URL,
+      onLoad: (name, image) => { images[name] = image; wake(); },
+    });
+    const preload = () => { for (const name of ['grab', 'hold', 'release', 'walk']) loader.load(name); };
+    const canGrab = () => ['grab', 'hold', 'release', 'walk'].every(name => images[name]);
     const receive = ({ detail }) => { targets.set(detail.source, detail.targets); if (detail.targets.length) preload(); };
     const reset = () => {
+      loader.retryFailed();
       clearTimeout(clickTimer);
       suppressClick = false;
       cancelAnimationFrame(raf);
@@ -63,10 +62,10 @@ export default function MiniSiracDrag() {
         active.x = x; active.y = y;
         event.preventDefault();
         wake();
-      } else if (!active?.held) document.body.style.cursor = images.grab && (hit(event.clientX, event.clientY) || [active, ...parked].some(actor => contains(actor, event.clientX, event.clientY))) ? 'grab' : originalCursor;
+      } else if (!active?.held) document.body.style.cursor = canGrab() && (hit(event.clientX, event.clientY) || [active, ...parked].some(actor => contains(actor, event.clientX, event.clientY))) ? 'grab' : originalCursor;
     };
     const down = (event) => {
-      if (event.button !== 0 || !images.grab || !images.hold || !images.release || !images.walk || active?.held) return;
+      if (event.button !== 0 || !canGrab() || active?.held) return;
       if (event.target instanceof Element && event.target.closest('.mini-crew-controls')) return;
       const target = hit(event.clientX, event.clientY);
       const own = [active, ...parked].find(actor => contains(actor, event.clientX, event.clientY));
@@ -167,7 +166,7 @@ export default function MiniSiracDrag() {
     document.addEventListener('visibilitychange', visibility);
     resize();
     return () => {
-      disposed = true; clearTimeout(clickTimer); cancelAnimationFrame(raf);
+      disposed = true; loader.dispose(); clearTimeout(clickTimer); cancelAnimationFrame(raf);
       reduced.removeEventListener('change', motionChanged);
       window.removeEventListener('click', click, true);
       window.removeEventListener('keydown', key); document.body.style.cursor = originalCursor;

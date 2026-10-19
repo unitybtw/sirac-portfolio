@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
+import { createAtlasLoader } from '../utils/atlasLoader';
 import runFloor from '../data/miniCompanionRunFloor.json';
 import { seatedFrameAt, departureTimeFor } from '../utils/miniSiracTiming';
 
@@ -22,7 +23,6 @@ export default function MiniSiracCompanions() {
     const removed = new Set();
     let hitTargets = [];
     const grabbed = ({ detail }) => { removed.add(detail.id); wake(); };
-    const requested = new Set();
     let disposed = false;
     let raf = 0;
     let lastTime = 0;
@@ -49,13 +49,17 @@ export default function MiniSiracCompanions() {
     const wake = () => {
       if (!raf && !disposed && !document.hidden) raf = requestAnimationFrame(tick);
     };
-    const load = (name) => {
-      if (requested.has(name)) return;
-      requested.add(name);
-      const img = new Image();
-      img.onload = () => { if (!disposed) { images[name] = img; wake(); } };
-      img.src = `${import.meta.env.BASE_URL}assets/mini-sirac/${PLATES[name].file}`;
-    };
+    const loader = createAtlasLoader({
+      files: Object.fromEntries(Object.entries(PLATES).map(([name, plate]) => [name, plate.file])),
+      baseURL: import.meta.env.BASE_URL,
+      onLoad: (name, image) => {
+        images[name] = image;
+        // A late running clip joins at a matching seated pose, never halfway through a run.
+        if (name === 'run' && heroReady) departureTime = departureTimeFor(seatedTime);
+        wake();
+      },
+    });
+    const load = name => loader.load(name);
     const resize = () => {
       dpr = Math.min(devicePixelRatio || 1, 2);
       canvas.width = innerWidth * dpr;
@@ -68,6 +72,7 @@ export default function MiniSiracCompanions() {
       wake();
     };
     const reset = () => {
+      loader.retryFailed();
       removed.clear();
       introPose = null;
       seatedTime = 0;
@@ -95,7 +100,7 @@ export default function MiniSiracCompanions() {
       const delta = lastTime ? Math.min((now - lastTime) / 1000, 0.12) : 0;
       lastTime = now;
       const onPortrait = !removed.has('portrait-companion') && (introPose ? introPose.visible && introPose.left + introPose.width * 0.68 < innerWidth + 40 : heroVisible);
-      if (onPortrait && images.sit && images.run && !motion.matches) {
+      if (onPortrait && images.sit && !motion.matches) {
         seatedTime += delta;
       }
       if (contactVisible && images.point && !motion.matches) contactTime += delta;
@@ -104,14 +109,14 @@ export default function MiniSiracCompanions() {
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.clearRect(0, 0, innerWidth, innerHeight);
         canvas.style.zIndex = document.querySelector('.mini-crew-stage') ? '99985' : '90';
-        if (onPortrait && (heroReady || introPose) && images.sit && images.run && !heroDone) {
+        if (onPortrait && (heroReady || introPose) && images.sit && !heroDone) {
           const rect = introPose || portrait.getBoundingClientRect();
           const height = innerWidth <= 768 ? 80 : 150;
           const width = 134 / 160 * height;
           const seatX = rect.left + rect.width * 0.68;
           const x = seatX - width * 0.25;
           const y = rect.top - height * (448 / 720);
-          if (motion.matches || !heroReady || seatedTime < departureTime) {
+          if (motion.matches || !heroReady || !images.run || seatedTime < departureTime) {
             draw('sit', motion.matches ? 40 : seatedFrameAt(seatedTime), x, y, height);
           } else {
             const running = seatedTime - departureTime;
@@ -144,7 +149,7 @@ export default function MiniSiracCompanions() {
       canvas.dataset.departureTime = String(departureTime);
       canvas.dataset.siracTargets = JSON.stringify(hitTargets);
       window.dispatchEvent(new CustomEvent('mini-sirac-targets', { detail: { source: 'companions', targets: hitTargets } }));
-      if (!motion.matches && ((onPortrait && (heroReady || introPose) && images.sit && images.run && !heroDone) || (contactVisible && images.point && !removed.has('contact-companion')))) wake();
+      if (!motion.matches && ((onPortrait && (heroReady || introPose) && images.sit && !heroDone) || (contactVisible && images.point && !button.disabled && !removed.has('contact-companion')))) wake();
       else lastTime = 0;
     }
     const observer = new IntersectionObserver((entries) => {
@@ -163,8 +168,9 @@ export default function MiniSiracCompanions() {
     });
     observer.observe(portrait);
     observer.observe(button);
-    const mutations = new MutationObserver(checkStage);
+    const mutations = new MutationObserver(() => { checkStage(); wake(); });
     mutations.observe(document.body, { childList: true });
+    mutations.observe(button, { attributes: true, attributeFilter: ['disabled'] });
     window.addEventListener('mini-sirac-grabbed', grabbed);
     window.addEventListener('mini-sirac-start', reset);
     window.addEventListener('mini-sirac-ready', ready);
@@ -177,6 +183,7 @@ export default function MiniSiracCompanions() {
     checkStage();
     return () => {
       disposed = true;
+      loader.dispose();
       cancelAnimationFrame(raf);
       observer.disconnect();
       mutations.disconnect();
