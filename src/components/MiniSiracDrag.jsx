@@ -41,6 +41,13 @@ export default function MiniSiracDrag() {
     };
     const receive = ({ detail }) => { targets.set(detail.source, detail.targets); if (detail.targets.length) preload(); };
     const reset = () => {
+      clearTimeout(clickTimer);
+      suppressClick = false;
+      cancelAnimationFrame(raf);
+      raf = 0;
+      last = 0;
+      canvas.dataset.phase = 'idle';
+      canvas.dataset.actors = '[]';
       active = null;
       parked.length = 0;
       targets.clear();
@@ -99,7 +106,7 @@ export default function MiniSiracDrag() {
       if (!active && !parked.length) { last = 0; return; }
       let animating = false;
       for (const actor of [...parked, active].filter(Boolean)) {
-        actor.time += delta;
+        if (!reduced.matches) actor.time += delta;
         if (actor.held && actor.phase === 'grab' && actor.time >= contacts.grab.length / 24) { actor.phase = 'hold'; actor.time = 0; }
         if (!reduced.matches && !actor.held && actor.phase === 'release' && actor.time >= contacts.release.length / 24) {
           const landing = contacts.release.at(-1);
@@ -113,7 +120,7 @@ export default function MiniSiracDrag() {
           const [, , , floor, bodyX, head] = crewContacts.pushRelease[frame];
           const size = actor.bodyHeight / (floor - head);
           const width = WALK.width / 240 * size;
-          if (actor.time >= (WALK.step - WALK.first) / 24) actor.x += actor.direction * delta * size * WALK.stride * 24 / (WALK.end - WALK.loop);
+          if (!reduced.matches && actor.time >= (WALK.step - WALK.first) / 24) actor.x += actor.direction * delta * size * WALK.stride * 24 / (WALK.end - WALK.loop);
           actor.y = actor.ground - actor.bodyHeight * .84;
           actor.bounds = { left: actor.x - width * .35, right: actor.x + width * .35, top: actor.ground - actor.bodyHeight, bottom: actor.ground };
           if (actor.x + width < 0 || actor.x - width > innerWidth) { actor.done = true; continue; }
@@ -121,7 +128,7 @@ export default function MiniSiracDrag() {
           if ((actor.direction > 0) !== WALK.facesRight) ctx.scale(-1, 1);
           ctx.drawImage(images.walk, frame % 12 * WALK.width, Math.floor(frame / 12) * 240, WALK.width, 240, -bodyX * width, 0, width, size);
           ctx.restore();
-          animating = true;
+          if (!reduced.matches) animating = true;
           continue;
         }
         const name = actor.phase;
@@ -144,6 +151,8 @@ export default function MiniSiracDrag() {
     }
     const click = (event) => { if (suppressClick) { event.preventDefault(); event.stopImmediatePropagation(); } };
     const key = (event) => { if (event.key === 'Escape') release({}); };
+    const motionChanged = () => { last = 0; wake(); };
+    reduced.addEventListener('change', motionChanged);
     window.addEventListener('click', click, true);
     window.addEventListener('keydown', key);
     window.addEventListener('mini-sirac-targets', receive);
@@ -159,6 +168,7 @@ export default function MiniSiracDrag() {
     resize();
     return () => {
       disposed = true; clearTimeout(clickTimer); cancelAnimationFrame(raf);
+      reduced.removeEventListener('change', motionChanged);
       window.removeEventListener('click', click, true);
       window.removeEventListener('keydown', key); document.body.style.cursor = originalCursor;
       window.removeEventListener('mini-sirac-targets', receive);

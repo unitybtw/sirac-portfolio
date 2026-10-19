@@ -94,7 +94,7 @@ export default function MiniSiracCompanions() {
       if (disposed || document.hidden) { lastTime = 0; return; }
       const delta = lastTime ? Math.min((now - lastTime) / 1000, 0.12) : 0;
       lastTime = now;
-      const onPortrait = introPose ? introPose.visible && introPose.left + introPose.width * 0.68 < innerWidth + 40 : heroVisible;
+      const onPortrait = !removed.has('portrait-companion') && (introPose ? introPose.visible && introPose.left + introPose.width * 0.68 < innerWidth + 40 : heroVisible);
       if (onPortrait && images.sit && images.run && !motion.matches) {
         seatedTime += delta;
       }
