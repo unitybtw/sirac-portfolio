@@ -56,6 +56,11 @@ export function usePortfolioMotion() {
             { opacity: 1, transform: 'translateY(0)' },
           ], { duration: compact ? 480 : 650, delay, easing: 'cubic-bezier(.2,.75,.25,1)', fill: 'backwards' });
           element.dataset.motionState = 'playing';
+          // Persistent marker for CSS child choreography (rules, masked words,
+          // image wipes). It is only set for entrances that really play, so
+          // reloads and already-visible content never replay anything.
+          element.style.setProperty('--pm-delay', `${delay}ms`);
+          element.dataset.motionPlayed = '';
           active.set(element, animation);
           animation.onfinish = () => { active.delete(element); element.dataset.motionState = 'done'; };
         }
