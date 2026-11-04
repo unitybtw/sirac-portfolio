@@ -11,7 +11,6 @@ import { createScrollFrameLoop } from './utils/scrollFrameLoop';
 import { AboutSection, SkillsSection, ProjectsSection, ContactIntro } from './components/PortfolioSections';
 import { LINKEDIN_URL } from './i18n';
 import { SlideNavbar } from './components/ui/slide-tabs';
-import SplitWords from './components/ui/SplitWords';
 import AsciiSceneBuilder from './components/AsciiSceneBuilder';
 import MiniSiracCompanions from './components/MiniSiracCompanions';
 import MiniSiracDrag from './components/MiniSiracDrag';
@@ -469,7 +468,7 @@ function App() {
           <SkillsSection />
 
         <section id="timeline" data-motion>
-          <h2 className="section-title"><SplitWords text={t('timeline_title')} /></h2>
+          <h2 className="section-title">{t('timeline_title')}</h2>
           <p className="section-subtitle">{t('timeline_subtitle')}</p>
 
           <div className="timeline-container">
@@ -542,8 +541,8 @@ function App() {
         </section>
 
         {/* ── Arcade / Game Library ── */}
-        <section id="arcade" data-motion>
-          <h2 className="section-title"><SplitWords text={t('arcade_section_title')} /></h2>
+        <section id="arcade">
+          <h2 className="section-title">{t('arcade_section_title')}</h2>
           <p className="section-subtitle">{t('arcade_section_subtitle')}</p>
           <Suspense fallback={<div className="bento-card bento-col-12" style={{ minHeight: '320px' }} />}>
             <GameLibrary
