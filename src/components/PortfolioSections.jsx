@@ -45,7 +45,7 @@ export function ProjectsSection() {
     {id:'aether',title:t('games.aether_title'),description:t('games.aether_desc'),type:tr?'Masaüstü aracı · Açık kaynak':'Desktop utility · Open source',stack:'Swift · Vision API · AppKit',url:'https://github.com/unitybtw/aether-command',link:tr?'Kaynak kodu':'View source',icon:Box},
   ];
   return <section id="other-projects" className="portfolio-section"><SectionHeading index="03" title={t('archives_title')} subtitle={t('archives_subtitle')}/><div className="selected-work">{projects.map(({id,title,description,type,stack,url,link,image,icon:Icon},index)=><article key={id} className={`work-row ${image?'work-row-featured':''}`} data-motion data-motion-order={index === 2 ? 1 : 0}>
-    {image && <a href={url} target="_blank" rel="noopener noreferrer" className="work-image-link" aria-label={title}><img src={image} alt={title} loading="lazy" width="1376" height="768"/></a>}
+    {image && <a href={url} target="_blank" rel="noopener noreferrer" className="work-image-link" aria-label={title}><img src={image} alt={title} loading="lazy" decoding="async" width="1376" height="768"/></a>}
     <div className="work-copy"><div className="work-meta"><span>0{index+1}</span><span>{type}</span>{Icon && <Icon size={18}/>}</div><h3>{title}</h3><p>{description}</p><div className="work-bottom"><span className="work-stack">{stack}</span><a href={url} target="_blank" rel="noopener noreferrer" className="portfolio-text-link">{link}<ArrowUpRight size={18}/></a></div></div>
   </article>)}</div></section>;
 }

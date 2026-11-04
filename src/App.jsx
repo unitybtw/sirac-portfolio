@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, Suspense } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Github, Linkedin, Gamepad2, Cpu, Mail, Sun, Moon, Globe, Download, Code, MonitorSmartphone, Box, Database, X, GraduationCap, Award, BookOpen, ChevronDown, ChevronUp, FolderGit2, Activity, MapPin, User } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, Mail, Download, Code, GraduationCap, BookOpen, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 import './index.css';
 import './portfolio-refresh.css';
 import './portfolio-motion.css';

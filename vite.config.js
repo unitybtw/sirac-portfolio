@@ -58,6 +58,10 @@ export default defineConfig({
             if (id.includes('lenis')) {
               return 'vendor-lenis';
             }
+            // UI Icons
+            if (id.includes('lucide-react')) {
+              return 'vendor-icons';
+            }
             // Remaining react runtime
             if (id.includes('react') || id.includes('react-dom')) {
               return 'vendor-react';
