@@ -1378,7 +1378,7 @@ section:not(#hero) {
   [data-ascii-target="title"] { grid-row: 1; }
   .hero-right-column {
     grid-row: 2;
-    padding: 40px 0 4px;
+    padding: 48px 0 4px;
     align-items: center;
     justify-content: center;
     gap: 10px;

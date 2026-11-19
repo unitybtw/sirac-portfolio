@@ -5,8 +5,8 @@ import runFloor from '../data/miniCompanionRunFloor.json';
 import { seatedFrameAt, departureTimeFor } from '../utils/miniSiracTiming';
 
 const PLATES = {
-  sit: { file: 'sit-phone-hd.webp', width: 201, height: 240 },
-  run: { file: 'stand-run-hd.webp', width: 201, height: 240 },
+  sit: { file: 'sit-phone-hd.webp?v=2', width: 201, height: 240 },
+  run: { file: 'stand-run-hd.webp?v=2', width: 201, height: 240 },
   point: { file: 'wave-point.webp', width: 160, height: 160 },
 };
 
@@ -60,10 +60,13 @@ export default function MiniSiracCompanions() {
       const id = name === 'point' ? 'contact-companion' : 'portrait-companion';
       if (removed.has(id)) return;
       if (id === 'portrait-companion') { canvas.dataset.portraitPlate = name; canvas.dataset.portraitFrame = String(frame); }
+      const img = images[name];
       const cfg = PLATES[name];
-      const width = cfg.width / cfg.height * height;
+      const cw = img.naturalWidth ? img.naturalWidth / 16 : cfg.width;
+      const ch = img.naturalHeight ? img.naturalHeight / 8 : cfg.height;
+      const width = cw / ch * height;
       dirtyBoxes.push({ x: Math.floor(x) - 2, y: Math.floor(y) - 2, w: Math.ceil(width) + 4, h: Math.ceil(height) + 4 });
-      ctx.drawImage(images[name], frame % 16 * cfg.width, Math.floor(frame / 16) * cfg.height, cfg.width, cfg.height, x, y, width, height);
+      ctx.drawImage(img, frame % 16 * cw, Math.floor(frame / 16) * ch, cw, ch, x, y, width, height);
     };
     const computePortraitTarget = (name, x, y, height) => {
       const cfg = PLATES[name];
