@@ -28,11 +28,13 @@
   --arcade-gold: #f59e0b;
 }
 
-/* Koyu mod için rafine cam yüzey geçişleri */
+/* Dark mode overrides */
+.dark .arcade-portal-card,
+.dark .arcade-modal-overlay,
 [data-theme="dark"] .arcade-portal-card,
 [data-theme="dark"] .arcade-modal-overlay {
-  --arcade-bg-surface: rgba(18, 18, 24, 0.85);
-  --arcade-bg-subtle: rgba(12, 12, 16, 0.95);
+  --arcade-bg-surface: #141418;
+  --arcade-bg-subtle: #09090b;
   --arcade-border: rgba(255, 255, 255, 0.08);
   --arcade-border-hover: rgba(255, 255, 255, 0.25);
   --arcade-text-primary: #ffffff;
@@ -93,42 +95,15 @@
   text-align: left;
 }
 
-/* Top Status Chip */
-.arcade-portal-live-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.3rem 0.65rem;
-  border-radius: 4px;
-  background: var(--bg-card);
-  border: 1px solid var(--arcade-border);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--arcade-text-secondary);
-  margin-bottom: 1.25rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-}
-
-.arcade-status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--arcade-success);
-  box-shadow: 0 0 8px var(--arcade-success);
-  animation: arcade-pulse 2s infinite;
-}
-
-.arcade-badge-separator {
-  opacity: 0.35;
-  margin: 0 0.1rem;
-}
-
-.arcade-badge-meta {
+.arcade-portal-kicker {
+  display: inline-block;
   font-family: var(--arcade-font-mono, monospace);
   font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  opacity: 0.8;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--arcade-text-secondary);
+  margin-bottom: 1rem;
 }
 
 /* Heading & Subtitle */
@@ -222,12 +197,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .arcade-portal-card:hover .retro-arcade-scene {
-  transform: perspective(700px) rotateY(-5deg) rotateX(3deg) scale(1.02);
+  transform: translateY(-3px);
 }
 
 .retro-arcade-svg {

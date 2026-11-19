@@ -1,189 +1,145 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
-import { ExternalLink, Github, ChevronDown, RotateCcw } from 'lucide-react';
-import CACHED_DATA from './data/githubContributions.json';
+import { ExternalLink, Github } from 'lucide-react';
 
-const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-// Colors for Light & Dark mode (level 0 is translucent to blend seamlessly)
 const COLOR_LEVELS = {
-  light: [
-    "rgba(0, 0, 0, 0.06)", // level 0 (translucent base slot on card)
-    "#9be9a8", // level 1
-    "#40c463", // level 2
-    "#30a14e", // level 3
-    "#216e39"  // level 4
-  ],
-  dark: [
-    "rgba(255, 255, 255, 0.08)", // level 0 (translucent base slot on card)
-    "#0e4429", // level 1
-    "#006d32", // level 2
-    "#26a641", // level 3
-    "#39d353"  // level 4
-  ]
+  light: ['rgba(9, 9, 11, 0.06)', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
+  dark: ['rgba(255, 255, 255, 0.07)', '#0e4429', '#006d32', '#26a641', '#39d353'],
 };
+
+const YEARS = ['2026', '2025', '2024'];
 
 export default function GitHubCommitHistory() {
   const { i18n } = useTranslation();
-  const isTr = i18n.language === 'tr';
-  const [selectedYear, setSelectedYear] = useState("last"); // "last", "2026", "2025", "2024"
-  const [animKey, setAnimKey] = useState(0);
-  const [allData, setAllData] = useState(CACHED_DATA);
+  const isTr = i18n.language.startsWith('tr');
+  const [selectedYear, setSelectedYear] = useState('last');
+  const [allData, setAllData] = useState(null);
   const [hoveredDay, setHoveredDay] = useState(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
-  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
   const containerRef = useRef(null);
-  const isInView = useInView(containerRef, { once: true, margin: "0px 0px -40px 0px" });
-  const [animActive, setAnimActive] = useState(false);
-  const [isAnimationSettled, setIsAnimationSettled] = useState(false);
-
-  useEffect(() => {
-    if (isInView) {
-      setAnimActive(true);
-      const timer = setTimeout(() => {
-        setIsAnimationSettled(true);
-      }, 2500);
-      return () => clearTimeout(timer);
-    }
-  }, [isInView, animKey]);
+  const sectionRef = useRef(null);
 
   // Detect theme from html element
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(() =>
+    typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+  );
+
   useEffect(() => {
-    const checkDark = () => {
-      setIsDark(document.documentElement.classList.contains('dark'));
-    };
+    const checkDark = () => setIsDark(document.documentElement.classList.contains('dark'));
     checkDark();
     const observer = new MutationObserver(checkDark);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
     return () => observer.disconnect();
   }, []);
 
-  // Fetch live fresh contribution data in background
+  // Load cached contribution data asynchronously so it stays out of the critical initial JS bundle
   useEffect(() => {
-    let isMounted = true;
+    let mounted = true;
     const ctrl = new AbortController();
-    async function refreshData() {
+
+    import('./data/githubContributions.json')
+      .then((mod) => {
+        if (mounted) setAllData((prev) => prev || mod.default);
+      })
+      .catch(() => {});
+
+    async function refreshLive() {
       try {
-        const years = ["last", "2026", "2025", "2024"];
         const results = await Promise.all(
-          years.map(async (y) => {
+          ['last', ...YEARS].map(async (y) => {
             try {
               const res = await fetch(`https://github-contributions-api.jogruber.de/v4/unitybtw?y=${y}`, { signal: ctrl.signal });
               if (res.ok) return [y, await res.json()];
-            } catch { /* silent fallback */ }
+            } catch { /* fallback to local JSON */ }
             return null;
           })
         );
         const fetched = Object.fromEntries(results.filter(Boolean));
-        if (isMounted && Object.keys(fetched).length > 0) {
-          setAllData((prev) => ({ ...prev, ...fetched }));
+        if (mounted && Object.keys(fetched).length > 0) {
+          setAllData((prev) => ({ ...(prev || {}), ...fetched }));
         }
-      } catch {
-        // use cached data
-      }
+      } catch { /* silent */ }
     }
-    const schedule = window.requestIdleCallback || ((cb) => setTimeout(cb, 1500));
+
+    const schedule = window.requestIdleCallback || ((cb) => setTimeout(cb, 1200));
     const cancelSchedule = window.cancelIdleCallback || clearTimeout;
-    const handle = schedule(() => refreshData(), { timeout: 4000 });
-    return () => { isMounted = false; ctrl.abort(); cancelSchedule(handle); };
+    const handle = schedule(refreshLive, { timeout: 3500 });
+    return () => {
+      mounted = false;
+      ctrl.abort();
+      cancelSchedule(handle);
+    };
   }, []);
 
-  // Current year contribution data
-  const currentYearData = allData[selectedYear] || allData["last"];
+  const currentYearData = useMemo(
+    () => (allData ? (allData[selectedYear] || allData.last || {}) : {}),
+    [allData, selectedYear]
+  );
   const contributions = useMemo(() => currentYearData.contributions || [], [currentYearData]);
 
-  // Calculate total count text
   const totalCount = useMemo(() => {
-    if (selectedYear === "last") {
-      return currentYearData.total?.lastYear || 3101;
+    if (!allData) return selectedYear === 'last' ? 3101 : 0;
+    if (selectedYear === 'last') {
+      return currentYearData.total?.lastYear || contributions.reduce((a, b) => a + b.count, 0);
     }
     return currentYearData.total?.[selectedYear] || contributions.reduce((a, b) => a + b.count, 0);
-  }, [currentYearData, selectedYear, contributions]);
+  }, [allData, currentYearData, selectedYear, contributions]);
 
-  // Build weeks array (columns of 7 days: Sun=0 to Sat=6)
   const { weeks, monthLabels } = useMemo(() => {
-    if (!contributions || contributions.length === 0) return { weeks: [], monthLabels: [] };
-
+    if (!contributions.length) return { weeks: [], monthLabels: [] };
     const wList = [];
     let currentWeek = [];
-
-    // Ensure list is chronological from oldest to newest
     const sorted = [...contributions].sort((a, b) => new Date(a.date) - new Date(b.date));
+    const firstDayOfWeek = new Date(`${sorted[0].date}T00:00:00Z`).getUTCDay();
+    for (let i = 0; i < firstDayOfWeek; i++) currentWeek.push(null);
 
-    // Pad first week if it doesn't start on Sunday
-    const firstDate = new Date(sorted[0].date + "T00:00:00Z");
-    const firstDayOfWeek = firstDate.getUTCDay();
-    for (let i = 0; i < firstDayOfWeek; i++) {
-      currentWeek.push(null);
-    }
-
-    let activeCount = 0;
-    sorted.forEach((day) => {
-      const d = new Date(day.date + "T00:00:00Z");
+    for (const day of sorted) {
+      const d = new Date(`${day.date}T00:00:00Z`);
       const dayOfWeek = d.getUTCDay();
-
       if (dayOfWeek === 0 && currentWeek.length > 0) {
         wList.push(currentWeek);
         currentWeek = [];
       }
-
-      const isActive = (day.count || 0) > 0;
-      currentWeek.push({
-        ...day,
-        dayOfWeek,
-        month: d.getUTCMonth(),
-        activeIdx: isActive ? activeCount++ : -1
-      });
-    });
-
+      currentWeek.push({ ...day, month: d.getUTCMonth() });
+    }
     if (currentWeek.length > 0) {
-      // Pad trailing days
-      while (currentWeek.length < 7) {
-        currentWeek.push(null);
-      }
+      while (currentWeek.length < 7) currentWeek.push(null);
       wList.push(currentWeek);
     }
 
-    // Determine month label positions
     let prevMonth = -1;
     const mLabels = [];
     wList.forEach((week, wIdx) => {
       const validDay = week.find((d) => d !== null);
       if (validDay && validDay.month !== prevMonth) {
         prevMonth = validDay.month;
-        mLabels.push({
-          colIndex: wIdx,
-          name: MONTH_NAMES[validDay.month]
-        });
+        mLabels.push({ colIndex: wIdx, name: MONTH_NAMES[validDay.month] });
       }
     });
-
     return { weeks: wList, monthLabels: mLabels };
   }, [contributions]);
 
   useEffect(() => {
     const chart = containerRef.current;
-    if (chart && isInView && window.matchMedia('(max-width: 820px)').matches) {
+    if (chart && weeks.length && window.matchMedia('(max-width: 820px)').matches) {
       chart.scrollLeft = chart.scrollWidth - chart.clientWidth;
     }
-  }, [selectedYear, weeks.length, isInView]);
+  }, [selectedYear, weeks.length]);
 
   const palette = isDark ? COLOR_LEVELS.dark : COLOR_LEVELS.light;
 
-  // Tooltip map
   const dayByDate = useMemo(() => {
     const map = new Map();
-    contributions.forEach((d) => map.set(d.date, d));
+    for (const d of contributions) map.set(d.date, d);
     return map;
   }, [contributions]);
 
-  // Delegated hover handler
   const hoverRaf = useRef(0);
   const handleGridOver = (e) => {
     const t = e.target?.closest?.('.gh-day');
-    if (!t) return;
+    if (!t || !t.dataset.date) return;
     if (hoverRaf.current) return;
     hoverRaf.current = requestAnimationFrame(() => {
       hoverRaf.current = 0;
@@ -194,8 +150,8 @@ export default function GitHubCommitHistory() {
       const scrollLeft = containerRef.current?.scrollLeft || 0;
       if (parentRect) {
         setTooltipPos({
-          x: rect.left - parentRect.left + scrollLeft + (rect.width / 2),
-          y: rect.top - parentRect.top - 10
+          x: rect.left - parentRect.left + scrollLeft + rect.width / 2,
+          y: rect.top - parentRect.top - 10,
         });
       }
       setHoveredDay((prev) => (prev?.date === day.date ? prev : day));
@@ -206,394 +162,148 @@ export default function GitHubCommitHistory() {
   };
   useEffect(() => () => { if (hoverRaf.current) cancelAnimationFrame(hoverRaf.current); }, []);
 
-  // Format date helper for tooltip
   const formatTooltipDate = (dateStr) => {
     try {
-      const date = new Date(dateStr + "T00:00:00Z");
-      return date.toLocaleDateString(isTr ? 'tr-TR' : 'en-US', {
+      return new Date(`${dateStr}T00:00:00Z`).toLocaleDateString(isTr ? 'tr-TR' : 'en-US', {
         month: 'short',
         day: 'numeric',
-        year: 'numeric'
+        year: 'numeric',
       });
     } catch {
       return dateStr;
     }
   };
 
-  const handleReplay = () => {
-    setIsAnimationSettled(false);
-    setAnimActive(false);
-    setTimeout(() => {
-      setAnimKey((prev) => prev + 1);
-      setAnimActive(true);
-    }, 40);
-  };
-
-  const handleYearChange = (year) => {
-    setSelectedYear(year);
-    setIsAnimationSettled(false);
-    setAnimActive(false);
-    setTimeout(() => {
-      setAnimKey((prev) => prev + 1);
-      setAnimActive(true);
-    }, 40);
-  };
-
   return (
-    <div className="gh-activity-wrapper">
-      {/* Section Header */}
-      <div className="gh-section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
-        <div>
-          <h2 className="section-title" style={{ margin: 0, fontSize: '2rem' }}>
-            {isTr ? 'GitHub Katkı Haritası' : 'GitHub Contribution Graph'}
-          </h2>
-          <p className="section-subtitle" style={{ margin: '0.4rem 0 0 0', fontSize: '1rem' }}>
-            {isTr 
-              ? '@unitybtw hesabı altındaki son bir yıllık commit ve katkı dağılımı.' 
-              : 'Real-time contribution calendar and commit telemetry from @unitybtw.'}
-          </p>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <button
-            onClick={handleReplay}
-            className="gh-replay-btn btn-outline"
-            title={isTr ? 'Uçuş animasyonunu tekrar oynat' : 'Replay smooth flight animation'}
-            style={{ fontSize: '0.85rem', padding: '0.5rem 0.9rem', display: 'inline-flex', alignItems: 'center', gap: '0.4rem', cursor: 'pointer' }}
-          >
-            <RotateCcw size={14} />
-            <span>{isTr ? 'Tekrar Oynat' : 'Replay'}</span>
-          </button>
-
+    <div ref={sectionRef} className="gh-activity-wrapper">
+      <header className="portfolio-section-heading" data-motion>
+        <span className="portfolio-index">06</span>
+        <div className="gh-section-header">
+          <div>
+            <h2 className="section-title">{isTr ? 'Açık Kaynak Aktivitesi' : 'Open-Source Activity'}</h2>
+            <p className="section-subtitle">
+              {isTr
+                ? '@unitybtw hesabı altındaki son bir yıllık commit geçmişi.'
+                : 'Contribution calendar and commit activity under @unitybtw.'}
+            </p>
+          </div>
           <a
             href="https://github.com/unitybtw"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-outline"
-            style={{ fontSize: '0.85rem', padding: '0.5rem 1.1rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+            className="portfolio-text-link gh-profile-link"
           >
             <Github size={16} />
-            <span>{isTr ? 'Profili Aç' : 'View Profile'}</span>
-            <ExternalLink size={13} style={{ opacity: 0.6 }} />
+            <span>@unitybtw</span>
+            <ExternalLink size={13} />
           </a>
         </div>
-      </div>
+      </header>
 
-      {/* Main Container */}
-      <div className="bento-card bento-col-12 gh-heatmap-card" style={{ padding: '2rem 2.2rem' }}>
-        {/* Top Header Row of the Graph */}
-        <div className="gh-summary" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
-          <div style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-primary)', letterSpacing: '-0.02em', minHeight: '32px', display: 'flex', alignItems: 'center' }}>
-            <AnimatePresence mode="wait">
-              <motion.span
-                key={selectedYear + '-' + totalCount}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.2 }}
-              >
-                <strong>{totalCount.toLocaleString()}</strong>{' '}
-                {selectedYear === "last" 
-                  ? (isTr ? 'son bir yıldaki toplam katkı' : 'contributions in the last year')
-                  : (isTr ? `${selectedYear} yılındaki katkı` : `contributions in ${selectedYear}`)}
-              </motion.span>
-            </AnimatePresence>
+      <div className="bento-card bento-col-12 gh-heatmap-card">
+        <div className="gh-summary">
+          <div className="gh-total-count">
+            <strong>{totalCount.toLocaleString()}</strong>{' '}
+            <span>
+              {selectedYear === 'last'
+                ? (isTr ? 'son bir yıldaki toplam katkı' : 'contributions in the last year')
+                : (isTr ? `${selectedYear} yılındaki katkı` : `contributions in ${selectedYear}`)}
+            </span>
           </div>
 
-          <div style={{ position: 'relative' }}>
-            <button
-              onClick={() => setShowSettingsMenu((prev) => !prev)}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--text-secondary)',
-                fontSize: '0.85rem',
-                cursor: 'pointer',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.35rem'
-              }}
-            >
-              <span>{isTr ? 'Katkı ayarları' : 'Contribution settings'}</span>
-              <ChevronDown size={14} />
-            </button>
-
-            {showSettingsMenu && (
-              <div 
-                style={{
-                  position: 'absolute',
-                  right: 0,
-                  top: '100%',
-                  marginTop: '6px',
-                  background: 'var(--bg-card)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: '8px',
-                  padding: '0.5rem 0',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
-                  zIndex: 20,
-                  minWidth: '180px',
-                  fontSize: '0.8rem'
-                }}
-              >
+          <div className="gh-year-tabs" role="tablist" aria-label={isTr ? 'Yıl seçimi' : 'Select year'}>
+            {YEARS.map((y) => {
+              const isSelected = selectedYear === y || (y === '2026' && selectedYear === 'last');
+              return (
                 <button
-                  onClick={() => { handleYearChange("last"); setShowSettingsMenu(false); }}
-                  style={{
-                    width: '100%',
-                    textAlign: 'left',
-                    padding: '0.4rem 1rem',
-                    background: selectedYear === 'last' ? 'var(--border-subtle)' : 'transparent',
-                    border: 'none',
-                    color: 'var(--text-primary)',
-                    cursor: 'pointer'
-                  }}
+                  key={y}
+                  type="button"
+                  role="tab"
+                  aria-selected={isSelected}
+                  onClick={() => setSelectedYear(y)}
+                  className={`gh-year-btn ${isSelected ? 'is-selected' : ''}`}
                 >
-                  {isTr ? 'Son 1 Yıl' : 'Last Year'}
+                  {y}
                 </button>
-                <a
-                  href="https://github.com/unitybtw"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: 'block',
-                    padding: '0.4rem 1rem',
-                    color: 'var(--text-secondary)',
-                    textDecoration: 'none'
-                  }}
-                >
-                  {isTr ? 'GitHub Profilinde Aç' : 'Open in GitHub'}
-                </a>
-              </div>
-            )}
+              );
+            })}
           </div>
         </div>
 
-        {/* Heatmap Box + Right Year Selectors */}
-        <div className="gh-layout-container" style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start', position: 'relative' }}>
-          <div className="gh-map-area">
-          <p className="gh-scroll-hint">{isTr ? 'Diğer aylar için yana kaydır' : 'Swipe to explore other months'} <span aria-hidden="true">↔</span></p>
-          {/* Heatmap Border Box */}
-          <div 
+        <div className="gh-map-area">
+          <div
             ref={containerRef}
             className="gh-heatmap-scroll"
             role="region"
-            aria-label={isTr ? 'GitHub katkı takvimi, yatay kaydırılabilir' : 'GitHub contribution calendar, scroll horizontally'}
+            aria-label={isTr ? 'GitHub katkı takvimi' : 'GitHub contribution calendar'}
             tabIndex={0}
-            style={{
-              flex: 1,
-              background: 'transparent',
-              border: '1px solid var(--border-subtle)',
-              borderRadius: '8px',
-              padding: '1.25rem',
-              position: 'relative'
-            }}
           >
-            <div
-              key={`${selectedYear}-${animKey}`}
-              style={{ width: `${Math.max(720, weeks.length * 14 + 32)}px`, position: 'relative' }}
-            >
-              {/* Month Labels Row */}
-              <div style={{ display: 'flex', marginLeft: '32px', marginBottom: '8px', fontSize: '11px', color: 'var(--text-secondary)', height: '16px', position: 'relative' }}>
-                {monthLabels.map((m, mIdx) => (
-                  <span
-                    key={mIdx}
-                    style={{
-                      position: 'absolute',
-                      left: `${m.colIndex * 14}px`,
-                      fontWeight: 500
-                    }}
+            {weeks.length === 0 ? (
+              <div className="gh-grid-placeholder" aria-hidden="true" />
+            ) : (
+              <div className="gh-grid-inner" style={{ width: `${Math.max(720, weeks.length * 14 + 32)}px` }}>
+                <div className="gh-months-row">
+                  {monthLabels.map((m, mIdx) => (
+                    <span key={mIdx} style={{ left: `${m.colIndex * 14}px` }}>{m.name}</span>
+                  ))}
+                </div>
+
+                <div className="gh-matrix-wrap">
+                  <div className="gh-days-labels">
+                    <span>Mon</span>
+                    <span>Wed</span>
+                    <span>Fri</span>
+                  </div>
+
+                  <div className="gh-weeks-row" onMouseOver={handleGridOver} onMouseOut={handleGridOut}>
+                    {weeks.map((week, colIdx) => (
+                      <div key={colIdx} className="gh-week-col">
+                        {week.map((day, rowIdx) => (
+                          day ? (
+                            <span
+                              key={day.date}
+                              className="gh-day"
+                              data-date={day.date}
+                              style={{ backgroundColor: palette[day.level || 0] }}
+                            />
+                          ) : (
+                            <span key={rowIdx} className="gh-day gh-day-empty" />
+                          )
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {hoveredDay && (
+                  <div
+                    className="gh-tooltip"
+                    style={{ left: `${tooltipPos.x}px`, top: `${tooltipPos.y}px` }}
                   >
-                    {m.name}
-                  </span>
-                ))}
+                    <strong>
+                      {hoveredDay.count > 0
+                        ? (isTr ? `${hoveredDay.count} katkı` : `${hoveredDay.count} contributions`)
+                        : (isTr ? 'Katkı yok' : 'No contributions')}
+                    </strong>{' '}
+                    {isTr ? '· ' : 'on '}
+                    {formatTooltipDate(hoveredDay.date)}
+                  </div>
+                )}
               </div>
+            )}
+          </div>
 
-              {/* Grid with Day Labels on the Left */}
-              <div style={{ display: 'flex', gap: '6px' }}>
-                {/* Day Labels (Mon, Wed, Fri) */}
-                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', height: '96px', width: '26px', fontSize: '10px', color: 'var(--text-secondary)', paddingTop: '15px', paddingBottom: '12px' }}>
-                  <span>Mon</span>
-                  <span>Wed</span>
-                  <span>Fri</span>
-                </div>
-
-                {/* 53 Columns of Squares */}
-                <div style={{ display: 'flex', gap: '3px' }} onMouseOver={handleGridOver} onMouseOut={handleGridOut}>
-                  {weeks.map((week, colIdx) => (
-                    <div key={colIdx} style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
-                      {week.map((day, rowIdx) => {
-                        if (!day) {
-                          return (
-                            <div 
-                              key={rowIdx} 
-                              style={{ width: '11px', height: '11px', background: 'transparent' }} 
-                            />
-                          );
-                        }
-
-                        const isActive = day.activeIdx >= 0;
-                        const levelColor = palette[day.level || 0];
-                        const baseColor = palette[0];
-
-                        if (!isActive) {
-                          // Empty day: renders immediately as the base slot ("ilk beyaz/taban kısım")
-                          return (
-                            <div
-                              key={day.date}
-                              className="gh-day gh-day-empty"
-                              data-date={day.date}
-                              style={{ backgroundColor: baseColor }}
-                            />
-                          );
-                        }
-
-                        // When animation is settled, render as a lightweight static square (0 GPU layer overhead)
-                        if (isAnimationSettled) {
-                          return (
-                            <div
-                              key={day.date}
-                              className="gh-day gh-day-slot"
-                              data-date={day.date}
-                              style={{ backgroundColor: levelColor }}
-                            />
-                          );
-                        }
-
-                        // Active green day: base slot underneath, green square glides in smoothly like a graceful flight from beyond screen edges
-                        const fromLeft = (colIdx + rowIdx) % 2 === 0;
-                        const sideOffset = ((colIdx * 13 + rowIdx * 19) % 120);
-                        const flightDistX = fromLeft
-                          ? `calc(-60vw - ${sideOffset}px)`
-                          : `calc(60vw + ${sideOffset}px)`;
-                        const flightDistY = `-${90 + ((colIdx * 17 + rowIdx * 11) % 90)}px`;
-                        const flightRot = `${(fromLeft ? -1 : 1) * (8 + (day.activeIdx % 4) * 3)}deg`;
-                        const delaySec = 0.12 + (colIdx * 0.02) + (rowIdx * 0.004);
-
-                        return (
-                          <div
-                            key={day.date}
-                            className="gh-day gh-day-slot"
-                            data-date={day.date}
-                            style={{ backgroundColor: baseColor }}
-                          >
-                            {animActive && (
-                              <div
-                                className="gh-day-smooth-flight"
-                                style={{
-                                  backgroundColor: levelColor,
-                                  animationDelay: `${delaySec.toFixed(3)}s`,
-                                  '--fly-x': flightDistX,
-                                  '--fly-y': flightDistY,
-                                  '--fly-rot': flightRot
-                                }}
-                              />
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Tooltip */}
-              {hoveredDay && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: `${tooltipPos.x}px`,
-                    top: `${tooltipPos.y}px`,
-                    transform: 'translate(-50%, -100%)',
-                    background: '#1f2328',
-                    color: '#ffffff',
-                    padding: '0.35rem 0.6rem',
-                    borderRadius: '6px',
-                    fontSize: '11px',
-                    whiteSpace: 'nowrap',
-                    pointerEvents: 'none',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
-                    zIndex: 100,
-                    fontWeight: 500
-                  }}
-                >
-                  <strong>{hoveredDay.count > 0 ? (isTr ? `${hoveredDay.count} katkı` : `${hoveredDay.count} contributions`) : (isTr ? 'Katkı yok' : 'No contributions')}</strong> {isTr ? '· ' : 'on '}{formatTooltipDate(hoveredDay.date)}
-                </div>
-              )}
-
+          <div className="gh-map-footer">
+            <span className="gh-legend-note">
+              {isTr ? 'GitHub API ile senkronize' : 'Synced via GitHub API'}
+            </span>
+            <div className="gh-legend-scale">
+              <span>{isTr ? 'Az' : 'Less'}</span>
+              {palette.map((color, cIdx) => (
+                <span key={cIdx} className="gh-legend-swatch" style={{ backgroundColor: color }} />
+              ))}
+              <span>{isTr ? 'Çok' : 'More'}</span>
             </div>
-          </div>
-              {/* Calendar information remains visible outside the scrolling grid. */}
-              <div className="gh-map-footer" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.2rem', paddingTop: '0.5rem', fontSize: '11px', color: 'var(--text-secondary)' }}>
-                <a
-                  href="https://docs.github.com/en/account-and-profile/setting-up-and-managing-your-github-profile/managing-contribution-settings-on-your-profile/why-are-my-contributions-not-showing-up-on-my-profile"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}
-                >
-                  {isTr ? 'Katkıların nasıl sayıldığını öğrenin' : 'Learn how we count contributions'}
-                </a>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <span>{isTr ? 'Daha az' : 'Less'}</span>
-                  {palette.map((color, cIdx) => (
-                    <span
-                      key={cIdx}
-                      style={{
-                        display: 'inline-block',
-                        width: '10px',
-                        height: '10px',
-                        borderRadius: '2px',
-                        backgroundColor: color
-                      }}
-                    />
-                  ))}
-                  <span>{isTr ? 'Daha çok' : 'More'}</span>
-                </div>
-              </div>
-          </div>
-
-          {/* Year Buttons on the Right with Animated Smooth Highlight */}
-          <div className="gh-year-buttons-col" style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', width: '92px', flexShrink: 0 }}>
-            {["2026", "2025", "2024"].map((y) => {
-              const isSelected = selectedYear === y || (y === "2026" && selectedYear === "last");
-              return (
-                <motion.button
-                  key={y}
-                  onClick={() => handleYearChange(y)}
-                  whileHover={{ x: -2 }}
-                  whileTap={{ scale: 0.96 }}
-                  className="gh-year-btn"
-                  style={{
-                    position: 'relative',
-                    padding: '0.5rem 1rem',
-                    borderRadius: '8px',
-                    border: 'none',
-                    fontWeight: 600,
-                    fontSize: '0.85rem',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    background: 'transparent',
-                    color: isSelected ? '#ffffff' : 'var(--text-secondary)',
-                    transition: 'color 0.2s ease',
-                    overflow: 'hidden'
-                  }}
-                >
-                  {isSelected && (
-                    <motion.div
-                      layoutId="activeYearHighlight"
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        borderRadius: '8px',
-                        background: '#0969da',
-                        zIndex: 0
-                      }}
-                      transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-                    />
-                  )}
-                  <span style={{ position: 'relative', zIndex: 1 }}>{y}</span>
-                </motion.button>
-              );
-            })}
           </div>
         </div>
       </div>

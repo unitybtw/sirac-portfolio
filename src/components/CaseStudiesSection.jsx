@@ -1,16 +1,75 @@
 import { useTranslation } from 'react-i18next';
 import { ArrowUpRight, ChevronDown } from 'lucide-react';
+import { SectionHeading } from './PortfolioSections';
 
 export default function CaseStudiesSection() {
   const { i18n } = useTranslation();
   const tr = i18n.language.startsWith('tr');
   const notes = [
-    { title: 'Nova Browser', category: tr ? 'Masaüstü & tarayıcı' : 'Desktop & browser', stack: 'Electron · TypeScript · MCP', summary: tr ? 'Arayüz, süreç sınırları ve yerel araçlar.' : 'Interfaces, process boundaries and local tools.', detail: tr ? 'Tarayıcı arayüzünü, yerel yapay zekâ araçlarını ve MCP entegrasyonunu bir araya getiren açık kaynak projem. Uygulamanın yapısını ve teknik kararlarını kaynak kodunda inceleyebilirsin.' : 'My open-source project combining a browser interface, local AI tools and MCP integration. Explore the source to see the application structure and technical decisions.', url: 'https://github.com/unitybtw/nova-browser' },
-    { title: 'Unity & WebGL', category: tr ? 'Oyun geliştirme' : 'Game development', stack: 'Unity · C# · WebGL', summary: tr ? 'Oynanış sistemleri ve tarayıcıda oyun deneyimi.' : 'Gameplay systems and games in the browser.', detail: tr ? 'Unity ve C# ile geliştirdiğim oyunlar ile bu portföydeki tarayıcı oyun kütüphanesi. Kendi oyun projelerim ile üçüncü taraf topluluk portları ayrı çalışmalardır; yayınlanan oyunumu Itch.io üzerinden inceleyebilirsin.' : 'Games I build with Unity and C#, alongside this portfolio’s browser arcade. My own games and the third-party community ports are separate work; explore my released game on Itch.io.', url: 'https://unitybtw.itch.io/legend-of-the-three-masks' },
-    { title: 'Signal & Aether', category: tr ? 'Native macOS' : 'Native macOS', stack: 'Swift · Core Audio · Vision', summary: tr ? 'Ses geri bildirimi ve hareketle etkileşim.' : 'Audio feedback and gesture interaction.', detail: tr ? 'Signal, klavye sesi geri bildirimi üzerine; Aether ise kamera tabanlı hareketlerle masaüstü kontrolü üzerine geliştirdiğim macOS araçları. Swift ve Apple’ın native framework’leri ile çalışıyorum.' : 'Signal explores keyboard audio feedback, while Aether brings camera-based gestures to desktop control. I build these macOS tools with Swift and Apple’s native frameworks.', url: 'https://github.com/unitybtw' },
+    {
+      title: 'Nova Browser',
+      category: tr ? 'Masaüstü & tarayıcı' : 'Desktop & browser',
+      stack: 'Electron · TypeScript · MCP',
+      summary: tr ? 'Süreç izolasyonu, WebGPU ve yerel MCP mimarisi.' : 'Process isolation, on-device WebGPU, and native MCP.',
+      detail: tr
+        ? 'Ana tarayıcı arayüzünü WebGPU çıkarım katmanından ve eklenti bağlamlarından ayıran çoklu süreç mimarisi; harici araç bağlantıları için yerleşik Model Context Protocol sunucusuyla birlikte kaynak kodda incelenebilir.'
+        : 'Multi-process boundary isolating UI threads from WebGPU inference and browser contexts, paired with a native Model Context Protocol server for local tool integrations.',
+      url: 'https://github.com/unitybtw/nova-browser',
+    },
+    {
+      title: 'Unity & WebGL',
+      category: tr ? 'Oyun geliştirme' : 'Game development',
+      stack: 'Unity · C# · WebGL',
+      summary: tr ? 'Fizik kontrolcüleri ve sıfır-tahsisli döngüler.' : 'Character physics and WebGL isolation boundaries.',
+      detail: tr
+        ? 'Itch.io üzerinde yayınlanan Legend of the Three Masks için C# fizik kontrolcüleri ve URP sahne optimizasyonu; portföydeki tarayıcı oyun alanı ise üçüncü taraf WASM portlarını opak origin iframe sınırı içinde çalıştırır.'
+        : 'Custom C# movement physics and URP optimization for Legend of the Three Masks, alongside the portfolio arcade sandboxing third-party WASM ports inside opaque-origin iframes.',
+      url: 'https://unitybtw.itch.io/legend-of-the-three-masks',
+    },
+    {
+      title: 'Signal & Aether',
+      category: tr ? 'Native macOS' : 'Native macOS',
+      stack: 'Swift · Core Audio · Vision',
+      summary: tr ? 'Düşük gecikmeli ses ve kamera hareket algılama.' : 'Low-latency Core Audio mixing and Vision hand tracking.',
+      detail: tr
+        ? 'Signal, CGEvent klavye dinleyicilerini ön belleklenmiş Core Audio kanallarına sıfır gecikmeyle bağlar. Aether Command ise Apple Vision iskelet noktalarını düşük CPU kullanımıyla sistem kısayollarına eşler.'
+        : 'Signal routes system keyboard hooks into pre-buffered Core Audio voices for zero-lag acoustic playback. Aether Command maps Apple Vision hand landmarks to desktop actions with minimal CPU overhead.',
+      url: 'https://github.com/unitybtw',
+    },
   ];
-  return <section id="case-studies" className="portfolio-section engineering-notes" aria-labelledby="case-studies-heading">
-    <header className="portfolio-section-heading" data-motion><span className="portfolio-index">04</span><div><h2 id="case-studies-heading" className="section-title">{tr ? 'İşin arkasındaki düşünce' : 'Behind the work'}</h2><p className="section-subtitle">{tr ? 'Seçili projelerden teknik notlar. Merak ettiğin bir başlığı aç.' : 'Technical notes from selected projects. Open a topic to take a closer look.'}</p></div></header>
-    <div className="engineering-notes-list">{notes.map(note=><details key={note.title} className="engineering-note" data-motion><summary><span className="note-category">{note.category}</span><span className="note-heading"><strong>{note.title}</strong><span>{note.summary}</span></span><ChevronDown size={20} className="note-chevron"/></summary><div className="note-detail"><p>{note.detail}</p><div><span className="work-stack">{note.stack}</span><a className="portfolio-text-link" href={note.url} target="_blank" rel="noopener noreferrer">{tr ? 'Projeyi incele' : 'Explore project'}<ArrowUpRight size={17}/></a></div></div></details>)}</div>
-  </section>;
+
+  return (
+    <section id="case-studies" className="portfolio-section engineering-notes" aria-labelledby="case-studies-heading">
+      <SectionHeading
+        index="05"
+        id="case-studies-heading"
+        title={tr ? 'Mühendislik Notları' : 'Engineering Notes'}
+        subtitle={tr ? 'Seçili projelerdeki mimari kararlar.' : 'Architecture notes from selected projects.'}
+      />
+      <div className="engineering-notes-list">
+        {notes.map((note) => (
+          <details key={note.title} className="engineering-note" data-motion>
+            <summary>
+              <span className="note-category">{note.category}</span>
+              <span className="note-heading">
+                <strong>{note.title}</strong>
+                <span>{note.summary}</span>
+              </span>
+              <ChevronDown size={20} className="note-chevron" />
+            </summary>
+            <div className="note-detail">
+              <p>{note.detail}</p>
+              <div>
+                <span className="work-stack">{note.stack}</span>
+                <a className="portfolio-text-link" href={note.url} target="_blank" rel="noopener noreferrer">
+                  {tr ? 'Projeyi incele' : 'Explore project'}
+                  <ArrowUpRight size={17} />
+                </a>
+              </div>
+            </div>
+          </details>
+        ))}
+      </div>
+    </section>
+  );
 }

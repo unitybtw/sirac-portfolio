@@ -28,8 +28,8 @@ const SCHEDULE = [
   { name: 'actions', start: 0.25, speed: 38, side: 'left', pose: 'carry' },
 ];
 const COPY = {
-  tr: { loading: 'Minik Sıraçlar hazırlanıyor…', nav: 'Menü ekibi iş başında.', title: 'Başlık geliyor!', photo: 'Dikkat, fotoğraf taşınıyor.', finish: 'Son dokunuşlar…', skip: 'Geç', replay: 'Minik Sıraçları tekrar oynat' },
-  en: { loading: 'Getting the tiny crew ready…', nav: 'Navigation crew, on the move.', title: 'Here comes the headline!', photo: 'Careful with the portrait.', finish: 'Finishing touches…', skip: 'Skip', replay: 'Replay the tiny Sıraç crew' },
+  tr: { loading: 'Sahne hazırlanıyor…', nav: 'Menü yerleşiyor.', title: 'Başlık geliyor.', photo: 'Portre yerine oturuyor.', finish: 'Son dokunuş…', skip: 'Geç', replay: 'Giriş animasyonunu oynat' },
+  en: { loading: 'Preparing scene…', nav: 'Placing navigation.', title: 'Bringing in headline.', photo: 'Positioning portrait.', finish: 'Finishing up…', skip: 'Skip', replay: 'Replay intro' },
 };
 
 // Freeze a visual copy, leaving React's actual elements and event handlers untouched.
@@ -391,12 +391,25 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
   }, [run, finish]);
 
   if (typeof document === 'undefined') return null;
-  return createPortal(
-    phase === 'done' ? (
-      <button type="button" className="mini-crew-replay" aria-label={words.replay} onClick={() => { setPhase('loading'); setAct('loading'); window.scrollTo({ top: 0, behavior: 'instant' }); setRun((n) => n + 1); }}>
-        <Play size={13} /><span>{words.replay}</span>
+  if (phase === 'done') {
+    return (
+      <button
+        type="button"
+        className="mini-crew-replay"
+        aria-label={words.replay}
+        onClick={() => {
+          setPhase('loading');
+          setAct('loading');
+          window.scrollTo({ top: 0, behavior: 'instant' });
+          setRun((n) => n + 1);
+        }}
+      >
+        <Play size={12} /><span>{words.replay}</span>
       </button>
-    ) : phase === 'loading' ? (
+    );
+  }
+  return createPortal(
+    phase === 'loading' ? (
       <div className="mini-crew-controls">
         <span role="status"><span className="mini-crew-dot" />{words.loading}</span>
         <button type="button" onClick={finish}><FastForward size={14} /> {words.skip}<kbd>Esc</kbd></button>
@@ -406,6 +419,7 @@ export default function AsciiSceneBuilder({ lang = 'tr' }) {
         <span role="status"><span className="mini-crew-dot" />{words[act]}</span>
         <button type="button" onClick={finish}><FastForward size={14} /> {words.skip}<kbd>Esc</kbd></button>
       </div>
-    ), document.body,
+    ),
+    document.body,
   );
 }

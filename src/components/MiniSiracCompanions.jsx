@@ -5,8 +5,8 @@ import runFloor from '../data/miniCompanionRunFloor.json';
 import { seatedFrameAt, departureTimeFor } from '../utils/miniSiracTiming';
 
 const PLATES = {
-  sit: { file: 'sit-phone-hd.webp', width: 268, height: 320 },
-  run: { file: 'stand-run-hd.webp', width: 268, height: 320 },
+  sit: { file: 'sit-phone-hd.webp', width: 201, height: 240 },
+  run: { file: 'stand-run-hd.webp', width: 201, height: 240 },
   point: { file: 'wave-point.webp', width: 160, height: 160 },
 };
 
@@ -22,7 +22,7 @@ export default function MiniSiracCompanions() {
     const images = {};
     const removed = new Set();
     let hitTargets = [];
-    const grabbed = ({ detail }) => { removed.add(detail.id); wake(); };
+    const grabbed = ({ detail }) => { removed.add(detail.id); rectDirty = true; wake(); };
     let disposed = false;
     let raf = 0;
     let lastTime = 0;
@@ -35,7 +35,26 @@ export default function MiniSiracCompanions() {
     let departureTime = Infinity;
     let contactTime = 0;
     let dpr = 1;
+    let lastDrawKey = '';
+    let lastTargetsKey = '';
+    let dirtyBoxes = [];
+    let fullClearNeeded = true;
+    let stageOpen = false;
+    let curtainOpen = false;
+    let rectDirty = true;
+    let portraitRect = null;
+    let buttonRect = null;
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const clearPrevious = () => {
+      if (fullClearNeeded) {
+        ctx.clearRect(0, 0, innerWidth, innerHeight);
+        fullClearNeeded = false;
+        dirtyBoxes = [];
+        return;
+      }
+      for (const box of dirtyBoxes) ctx.clearRect(box.x, box.y, box.w, box.h);
+      dirtyBoxes = [];
+    };
     const draw = (name, frame, x, y, height) => {
       if (!images[name]) return;
       const id = name === 'point' ? 'contact-companion' : 'portrait-companion';
@@ -43,8 +62,17 @@ export default function MiniSiracCompanions() {
       if (id === 'portrait-companion') { canvas.dataset.portraitPlate = name; canvas.dataset.portraitFrame = String(frame); }
       const cfg = PLATES[name];
       const width = cfg.width / cfg.height * height;
-      hitTargets.push({ id, left: x + width * .2, right: x + width * .8, top: y + height * .06, bottom: y + height * .98, height });
+      dirtyBoxes.push({ x: Math.floor(x) - 2, y: Math.floor(y) - 2, w: Math.ceil(width) + 4, h: Math.ceil(height) + 4 });
       ctx.drawImage(images[name], frame % 16 * cfg.width, Math.floor(frame / 16) * cfg.height, cfg.width, cfg.height, x, y, width, height);
+    };
+    const computePortraitTarget = (name, x, y, height) => {
+      const cfg = PLATES[name];
+      const width = cfg.width / cfg.height * height;
+      return { id: 'portrait-companion', left: x + width * .2, right: x + width * .8, top: y + height * .06, bottom: y + height * .98, height };
+    };
+    const computeContactTarget = (x, y, height) => {
+      const width = height;
+      return { id: 'contact-companion', left: x + width * .2, right: x + width * .8, top: y + height * .06, bottom: y + height * .98, height };
     };
     const wake = () => {
       if (!raf && !disposed && !document.hidden) raf = requestAnimationFrame(tick);
@@ -54,8 +82,8 @@ export default function MiniSiracCompanions() {
       baseURL: import.meta.env.BASE_URL,
       onLoad: (name, image) => {
         images[name] = image;
-        // A late running clip joins at a matching seated pose, never halfway through a run.
         if (name === 'run' && heroReady) departureTime = departureTimeFor(seatedTime);
+        lastDrawKey = '';
         wake();
       },
     });
@@ -64,11 +92,16 @@ export default function MiniSiracCompanions() {
       dpr = Math.min(devicePixelRatio || 1, 2);
       canvas.width = innerWidth * dpr;
       canvas.height = innerHeight * dpr;
+      rectDirty = true;
+      fullClearNeeded = true;
+      lastDrawKey = '';
       wake();
     };
     const ready = () => {
       introPose = null;
+      rectDirty = true;
       if (!heroReady) { heroReady = true; departureTime = departureTimeFor(seatedTime); }
+      lastDrawKey = '';
       wake();
     };
     const reset = () => {
@@ -79,6 +112,9 @@ export default function MiniSiracCompanions() {
       heroReady = false;
       heroDone = false;
       departureTime = Infinity;
+      rectDirty = true;
+      fullClearNeeded = true;
+      lastDrawKey = '';
       wake();
     };
     const followPortrait = ({ detail }) => {
@@ -91,64 +127,87 @@ export default function MiniSiracCompanions() {
       wake();
     };
     const checkStage = () => {
-      if (!document.querySelector('.mini-crew-stage, .mini-crew-curtain')) ready();
+      stageOpen = Boolean(document.querySelector('.mini-crew-stage'));
+      curtainOpen = Boolean(document.querySelector('.mini-crew-curtain'));
+      canvas.style.zIndex = stageOpen ? '99985' : '90';
+      if (!stageOpen && !curtainOpen) ready();
     };
-    const visibility = () => { lastTime = 0; wake(); };
+    const onScroll = () => { rectDirty = true; wake(); };
+    const visibility = () => { lastTime = 0; rectDirty = true; wake(); };
     function tick(now) {
       raf = 0;
       if (disposed || document.hidden) { lastTime = 0; return; }
       const delta = lastTime ? Math.min((now - lastTime) / 1000, 0.12) : 0;
       lastTime = now;
       const onPortrait = !removed.has('portrait-companion') && (introPose ? introPose.visible && introPose.left + introPose.width * 0.68 < innerWidth + 40 : heroVisible);
-      if (onPortrait && images.sit && !motion.matches) {
-        seatedTime += delta;
-      }
+      if (onPortrait && images.sit && !motion.matches) seatedTime += delta;
       if (contactVisible && images.point && !motion.matches) contactTime += delta;
-      {
-        hitTargets = [];
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.clearRect(0, 0, innerWidth, innerHeight);
-        canvas.style.zIndex = document.querySelector('.mini-crew-stage') ? '99985' : '90';
-        if (onPortrait && (heroReady || introPose) && images.sit && !heroDone) {
-          const rect = introPose || portrait.getBoundingClientRect();
-          const height = innerWidth <= 768 ? 80 : 150;
-          const width = 134 / 160 * height;
-          const seatX = rect.left + rect.width * 0.68;
-          const x = seatX - width * 0.25;
-          const y = rect.top - height * (448 / 720);
-          if (motion.matches || !heroReady || !images.run || seatedTime < departureTime) {
-            draw('sit', motion.matches ? 40 : seatedFrameAt(seatedTime), x, y, height);
-          } else {
-            const running = seatedTime - departureTime;
-            const frame = running < 8 ? Math.min(127, Math.floor(running * 16)) : 92 + Math.floor((running - 8) * 16 % 28);
-            // Frame 67 is the first running stride: move immediately, never jog on the spot.
-            const distance = Math.max(0, running - 67 / 16) * height * 0.62;
-            const rise = Math.min(1, Math.max(0, (running - 2) / 2)) * height * 0.35;
-            // Once standing, keep every stride on the portrait's top plane.
-            // Per-frame shoe tracking cancels the generated clip's vertical drift.
-            const runY = running >= 67 / 16 ? rect.top - runFloor[frame] * height : y - rise;
-            if (x + distance > innerWidth + width) heroDone = true;
-            else draw('run', frame, x + distance, runY, height);
-          }
+
+      if (rectDirty) {
+        portraitRect = onPortrait ? portrait.getBoundingClientRect() : null;
+        buttonRect = contactVisible ? button.getBoundingClientRect() : null;
+        rectDirty = false;
+      }
+
+      let pDraw = null;
+      if (onPortrait && (heroReady || introPose) && images.sit && !heroDone) {
+        const rect = introPose || portraitRect || portrait.getBoundingClientRect();
+        const height = innerWidth <= 768 ? 72 : 148;
+        const width = 134 / 160 * height;
+        const seatX = rect.left + rect.width * 0.68;
+        const x = seatX - width * 0.25;
+        const y = rect.top - height * (448 / 720);
+        if (motion.matches || !heroReady || !images.run || seatedTime < departureTime) {
+          pDraw = { name: 'sit', frame: motion.matches ? 40 : seatedFrameAt(seatedTime), x, y, height };
+        } else {
+          const running = seatedTime - departureTime;
+          const frame = running < 8 ? Math.min(127, Math.floor(running * 16)) : 92 + Math.floor((running - 8) * 16 % 28);
+          const distance = Math.max(0, running - 67 / 16) * height * 0.62;
+          const rise = Math.min(1, Math.max(0, (running - 2) / 2)) * height * 0.35;
+          const runY = running >= 67 / 16 ? rect.top - runFloor[frame] * height : y - rise;
+          if (x + distance > innerWidth + width) heroDone = true;
+          else pDraw = { name: 'run', frame, x: x + distance, y: runY, height };
         }
-        if (contactVisible && images.point && !button.disabled && !document.querySelector('.mini-crew-curtain')) {
-          const rect = button.getBoundingClientRect();
-          const height = innerWidth <= 768 ? 64 : 88;
-          const frame = motion.matches ? 110 : contactTime < 6 ? Math.min(95, Math.floor(contactTime * 16)) : 96 + Math.floor((contactTime - 6) * 16 % 24);
-          // Place the right-pointing actor at the left corner, aimed at the button label.
+      }
+
+      let cDraw = null;
+      if (contactVisible && images.point && !button.disabled && !curtainOpen && !removed.has('contact-companion')) {
+        const rect = buttonRect || button.getBoundingClientRect();
+        const height = innerWidth <= 768 ? 60 : 86;
+        const frame = motion.matches ? 110 : contactTime < 6 ? Math.min(95, Math.floor(contactTime * 16)) : 96 + Math.floor((contactTime - 6) * 16 % 24);
+        cDraw = { frame, rect, x: rect.left - 4, y: rect.top + rect.height * 0.5 - height * 0.82, height };
+      }
+
+      const nextTargets = [];
+      if (pDraw) nextTargets.push(computePortraitTarget(pDraw.name, pDraw.x, pDraw.y, pDraw.height));
+      if (cDraw) nextTargets.push(computeContactTarget(cDraw.x, cDraw.y, cDraw.height));
+      const drawKey = `${stageOpen ? 1 : 0}|${pDraw ? `${pDraw.name}:${pDraw.frame}:${Math.round(pDraw.x)}:${Math.round(pDraw.y)}:${pDraw.height}` : ''}|${cDraw ? `${cDraw.frame}:${Math.round(cDraw.x)}:${Math.round(cDraw.y)}:${cDraw.height}` : ''}`;
+
+      if (drawKey !== lastDrawKey || fullClearNeeded) {
+        lastDrawKey = drawKey;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        clearPrevious();
+        if (pDraw) draw(pDraw.name, pDraw.frame, pDraw.x, pDraw.y, pDraw.height);
+        if (cDraw) {
+          const { rect } = cDraw;
+          dirtyBoxes.push({ x: Math.floor(rect.left) - 4, y: Math.floor(rect.top) - 66, w: Math.ceil(rect.width) + 8, h: Math.ceil(rect.height) + 68 });
           ctx.save();
           ctx.beginPath();
           ctx.rect(rect.left - 2, rect.top - 64, rect.width + 4, rect.height + 64);
           ctx.clip();
-          draw('point', frame, rect.left - 4, rect.top + rect.height * 0.5 - height * 0.82, height);
+          draw('point', cDraw.frame, cDraw.x, cDraw.y, cDraw.height);
           ctx.restore();
         }
       }
-      canvas.dataset.seatedTime = String(seatedTime);
-      canvas.dataset.seatedFrame = String(seatedFrameAt(seatedTime));
-      canvas.dataset.departureTime = String(departureTime);
-      canvas.dataset.siracTargets = JSON.stringify(hitTargets);
-      window.dispatchEvent(new CustomEvent('mini-sirac-targets', { detail: { source: 'companions', targets: hitTargets } }));
+
+      hitTargets = nextTargets;
+      const targetsKey = nextTargets.map(t => `${t.id}:${Math.round(t.left)},${Math.round(t.top)}`).join('|');
+      if (targetsKey !== lastTargetsKey || !canvas.dataset.siracTargets) {
+        lastTargetsKey = targetsKey;
+        canvas.dataset.siracTargets = JSON.stringify(hitTargets);
+        window.dispatchEvent(new CustomEvent('mini-sirac-targets', { detail: { source: 'companions', targets: hitTargets } }));
+      }
+
       if (!motion.matches && ((onPortrait && (heroReady || introPose) && images.sit && !heroDone) || (contactVisible && images.point && !button.disabled && !removed.has('contact-companion')))) wake();
       else lastTime = 0;
     }
@@ -163,19 +222,20 @@ export default function MiniSiracCompanions() {
           if (contactVisible) { load('point'); if (!wasVisible) contactTime = 0; }
         }
       }
+      rectDirty = true;
       lastTime = 0;
       wake();
     });
     observer.observe(portrait);
     observer.observe(button);
-    const mutations = new MutationObserver(() => { checkStage(); wake(); });
+    const mutations = new MutationObserver(() => { rectDirty = true; checkStage(); wake(); });
     mutations.observe(document.body, { childList: true });
     mutations.observe(button, { attributes: true, attributeFilter: ['disabled'] });
     window.addEventListener('mini-sirac-grabbed', grabbed);
     window.addEventListener('mini-sirac-start', reset);
     window.addEventListener('mini-sirac-ready', ready);
     window.addEventListener('mini-sirac-portrait-pose', followPortrait);
-    window.addEventListener('scroll', wake, { passive: true });
+    window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', resize);
     document.addEventListener('visibilitychange', visibility);
     motion.addEventListener('change', wake);
@@ -192,7 +252,7 @@ export default function MiniSiracCompanions() {
       window.removeEventListener('mini-sirac-start', reset);
       window.removeEventListener('mini-sirac-ready', ready);
       window.removeEventListener('mini-sirac-portrait-pose', followPortrait);
-      window.removeEventListener('scroll', wake);
+      window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', resize);
       document.removeEventListener('visibilitychange', visibility);
       motion.removeEventListener('change', wake);

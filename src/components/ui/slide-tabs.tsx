@@ -336,8 +336,7 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
           className="mobile-brand"
           onClick={() => setMobileOpen(false)}
         >
-          <span className="mobile-brand-title">SİRAÇ G. ŞİMŞEK</span>
-          <span className="mobile-brand-tag">DEV</span>
+          <span className="mobile-brand-title">SİRAÇ ŞİMŞEK</span>
         </a>
 
         <div className="mobile-nav-controls">
@@ -461,27 +460,6 @@ export const SlideNavbar: React.FC<SlideNavbarProps> = ({
         )}
       </AnimatePresence>
     </>
-  );
-};
-
-// ── Demo Bileşeni ────────────────────────────────────────────────────────
-export const SlideTabsExample = () => {
-  return (
-    <div style={{ padding: "4rem 2rem", display: "flex", flexDirection: "column", gap: "2.5rem", alignItems: "center" }}>
-      <div>
-        <h3 style={{ textAlign: "center", marginBottom: "1rem", fontSize: "1rem", color: "var(--text-secondary)" }}>
-          Portföy Stili (Temaya Uyumlu Kayar Sekmeler)
-        </h3>
-        <SlideTabs activeId="projects" />
-      </div>
-
-      <div>
-        <h3 style={{ textAlign: "center", marginBottom: "1rem", fontSize: "1rem", color: "var(--text-secondary)" }}>
-          Monochrome Mix-Blend Stili
-        </h3>
-        <SlideTabs variant="monochrome" />
-      </div>
-    </div>
   );
 };
 

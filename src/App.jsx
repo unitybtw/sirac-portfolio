@@ -1,14 +1,14 @@
-import React, { useEffect, useState, useRef, Suspense } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Lenis from 'lenis';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Github, Linkedin, Mail, Download, Code, GraduationCap, BookOpen, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
+import { ArrowRight, Github, Linkedin, Download, Code, GraduationCap, BookOpen, ChevronDown, ChevronUp, MapPin } from 'lucide-react';
 import './index.css';
 import './portfolio-refresh.css';
 import './portfolio-motion.css';
 import { usePortfolioMotion } from './hooks/usePortfolioMotion';
 import { createScrollFrameLoop } from './utils/scrollFrameLoop';
-import { AboutSection, SkillsSection, ProjectsSection, ContactIntro } from './components/PortfolioSections';
+import { SectionHeading, AboutSection, SkillsSection, ProjectsSection, ContactIntro } from './components/PortfolioSections';
 import { LINKEDIN_URL } from './i18n';
 import { SlideNavbar } from './components/ui/slide-tabs';
 import AsciiSceneBuilder from './components/AsciiSceneBuilder';
@@ -216,10 +216,10 @@ function App() {
     }
 
     const lenis = new Lenis({
-      lerp: 0.14, // Responsive easing without a long trailing scroll
+      lerp: 0.14,
       wheelMultiplier: 1,
       touchMultiplier: 1.5,
-      smoothWheel: true,
+      smoothWheel: false,
       smoothTouch: false,
     });
 
@@ -442,18 +442,6 @@ function App() {
                     width="380"
                     height="475"
                   />
-                  <div className="hero-portrait-scrim" />
-
-                  {/* Floating Meta Overlay */}
-                  <div className="hero-portrait-overlay">
-                    <div className="hero-portrait-name">
-                      Sıraç Göktuğ Şimşek
-                    </div>
-                    <div className="hero-portrait-role">
-                      <span className="hero-portrait-status-dot" />
-                      <span>{t('hero_title')}</span>
-                    </div>
-                  </div>
                 </div>
 
                 <AsciiSceneBuilder lang={currentLang} />
@@ -467,9 +455,8 @@ function App() {
           <AboutSection />
           <SkillsSection />
 
-        <section id="timeline" data-motion>
-          <h2 className="section-title">{t('timeline_title')}</h2>
-          <p className="section-subtitle">{t('timeline_subtitle')}</p>
+        <section id="timeline" className="portfolio-section">
+          <SectionHeading index="03" title={t('timeline_title')} subtitle={t('timeline_subtitle')} />
 
           <div className="timeline-container">
             <div className="timeline-line"></div>
@@ -523,9 +510,7 @@ function App() {
 
         {/* ── Projects Section ── */}
         <section id="projects" aria-labelledby="nova-heading">
-          <Suspense fallback={<div className="nova-showcase" style={{ minHeight: '950px' }} />}>
-            <NovaBrowserShowcase />
-          </Suspense>
+          <NovaBrowserShowcase />
         </section>
 
         <ProjectsSection />
@@ -534,24 +519,19 @@ function App() {
         <CaseStudiesSection />
 
         {/* ── GitHub Commit History Section ── */}
-        <section id="github-activity">
-          <Suspense fallback={<div className="bento-card bento-col-12" style={{ minHeight: '300px' }} />}>
-            <GitHubCommitHistory />
-          </Suspense>
+        <section id="github-activity" className="portfolio-section">
+          <GitHubCommitHistory />
         </section>
 
         {/* ── Arcade / Game Library ── */}
-        <section id="arcade">
-          <h2 className="section-title">{t('arcade_section_title')}</h2>
-          <p className="section-subtitle">{t('arcade_section_subtitle')}</p>
-          <Suspense fallback={<div className="bento-card bento-col-12" style={{ minHeight: '320px' }} />}>
-            <GameLibrary
-              isOpen={isArcadeOpen}
-              setIsOpen={setIsArcadeOpen}
-              activeGameId={activeGameId}
-              setActiveGameId={setActiveGameId}
-            />
-          </Suspense>
+        <section id="arcade" className="portfolio-section">
+          <SectionHeading index="07" title={t('arcade_section_title')} subtitle={t('arcade_section_subtitle')} />
+          <GameLibrary
+            isOpen={isArcadeOpen}
+            setIsOpen={setIsArcadeOpen}
+            activeGameId={activeGameId}
+            setActiveGameId={setActiveGameId}
+          />
         </section>
       </main>
 
@@ -564,7 +544,7 @@ function App() {
           <ContactIntro />
 
           <div className="contact-form-container" data-motion data-motion-order="1">
-            <div className="contact-form-heading"><Mail size={18}/><span>{currentLang === 'tr' ? 'Aklında ne var?' : 'What do you have in mind?'}</span></div>
+            <div className="contact-form-heading"><span>{currentLang === 'tr' ? 'Mesaj gönder' : 'Send a message'}</span></div>
             <form onSubmit={handleFormSubmit} className="contact-form">
               <div className="form-group">
                 <label htmlFor="name">{t('form_name')}</label>

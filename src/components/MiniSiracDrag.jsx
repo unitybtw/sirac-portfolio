@@ -27,7 +27,33 @@ export default function MiniSiracDrag() {
     let dpr = 1;
     let suppressClick = false;
     let clickTimer = 0;
+    let surfaceActive = false;
     const originalCursor = document.body.style.cursor;
+    let lastCursor = originalCursor;
+    const setCursor = (next) => {
+      if (lastCursor !== next) {
+        lastCursor = next;
+        document.body.style.cursor = next;
+      }
+    };
+    const ensureSurface = (needed) => {
+      if (needed) {
+        dpr = Math.min(devicePixelRatio || 1, 2);
+        const w = innerWidth * dpr;
+        const h = innerHeight * dpr;
+        if (!surfaceActive || canvas.width !== w || canvas.height !== h) {
+          canvas.width = w;
+          canvas.height = h;
+          surfaceActive = true;
+        }
+      } else {
+        if (surfaceActive || canvas.width !== 1 || canvas.height !== 1) {
+          canvas.width = 1;
+          canvas.height = 1;
+        }
+        surfaceActive = false;
+      }
+    };
     const reduced = matchMedia('(prefers-reduced-motion: reduce)');
     const wake = () => { if (!raf && !disposed && !document.hidden) raf = requestAnimationFrame(paint); };
     const loader = createAtlasLoader({
@@ -50,11 +76,12 @@ export default function MiniSiracDrag() {
       active = null;
       parked.length = 0;
       targets.clear();
-      document.body.style.cursor = originalCursor;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      setCursor(originalCursor);
+      if (surfaceActive) ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ensureSurface(false);
     };
     const hit = (x, y) => [...targets.values()].flat().reverse().find((t) => x >= t.left && x <= t.right && y >= t.top && y <= t.bottom);
-    const move = (event) => {
+    const dragMove = (event) => {
       if (active?.held && event.pointerId === active.pointer) {
         const x = Math.max(35, Math.min(innerWidth - 35, event.clientX));
         const y = Math.max(30, Math.min(innerHeight - active.height * .78, event.clientY));
@@ -62,7 +89,16 @@ export default function MiniSiracDrag() {
         active.x = x; active.y = y;
         event.preventDefault();
         wake();
-      } else if (!active?.held) document.body.style.cursor = canGrab() && (hit(event.clientX, event.clientY) || [active, ...parked].some(actor => contains(actor, event.clientX, event.clientY))) ? 'grab' : originalCursor;
+      }
+    };
+    const hoverMove = (event) => {
+      if (active?.held) return;
+      if (!canGrab() || (!targets.size && !active && !parked.length)) {
+        setCursor(originalCursor);
+        return;
+      }
+      const hovering = hit(event.clientX, event.clientY) || [active, ...parked].some(actor => contains(actor, event.clientX, event.clientY));
+      setCursor(hovering ? 'grab' : originalCursor);
     };
     const down = (event) => {
       if (event.button !== 0 || !canGrab() || active?.held) return;
@@ -76,21 +112,24 @@ export default function MiniSiracDrag() {
       if (active && active !== own) parked.push(active);
       if (own && parked.includes(own)) parked.splice(parked.indexOf(own), 1);
       active = { x: event.clientX, y: event.clientY, height, held: true, pointer: event.pointerId, time: 0, tilt: 0, phase: 'grab' };
-      document.body.style.cursor = 'grabbing';
+      ensureSurface(true);
+      window.addEventListener('pointermove', dragMove, { capture: true, passive: false });
+      setCursor('grabbing');
       if (target) window.dispatchEvent(new CustomEvent('mini-sirac-grabbed', { detail: { id: target.id } }));
       last = 0;
       wake();
     };
     const release = (event) => {
       if (!active?.held || (event.pointerId !== undefined && event.pointerId !== active.pointer)) return;
+      window.removeEventListener('pointermove', dragMove, true);
       clickTimer = setTimeout(() => { suppressClick = false; }, 0);
       active.held = false; active.phase = 'release'; active.time = 0;
-      document.body.style.cursor = originalCursor;
+      setCursor(originalCursor);
       wake();
     };
     const resize = () => {
       dpr = Math.min(devicePixelRatio || 1, 2);
-      canvas.width = innerWidth * dpr; canvas.height = innerHeight * dpr;
+      ensureSurface(Boolean(active || parked.length));
       for (const actor of [active, ...parked]) if (actor) { actor.x = Math.min(innerWidth - 35, actor.x); actor.y = Math.min(innerHeight - actor.height * .78, actor.y); }
       wake();
     };
@@ -99,10 +138,16 @@ export default function MiniSiracDrag() {
       if (document.hidden || disposed) { last = 0; return; }
       const delta = last ? Math.min(.1, (now - last) / 1000) : 0;
       last = now;
+      if (!active && !parked.length) {
+        canvas.dataset.phase = 'idle';
+        ensureSurface(false);
+        last = 0;
+        return;
+      }
+      ensureSurface(true);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, innerWidth, innerHeight);
       canvas.style.zIndex = document.querySelector('.mini-crew-stage') ? '99986' : '95';
       canvas.dataset.phase = active ? active.phase : 'idle';
-      if (!active && !parked.length) { last = 0; return; }
       let animating = false;
       for (const actor of [...parked, active].filter(Boolean)) {
         if (!reduced.matches) actor.time += delta;
@@ -135,7 +180,6 @@ export default function MiniSiracDrag() {
         const frame = reduced.matches ? (actor.held && name === 'hold' ? 0 : count - 1) : name === 'hold' ? Math.floor(actor.time * 24) % count : Math.min(count - 1, Math.floor(actor.time * 24));
         actor.tilt *= Math.exp(-delta * 4);
         const width = actor.height * 2 / 3;
-        // Hold the collar at the pointer; release uses a fixed anchor so the landing is retained.
         const collar = contacts[name][actor.held ? frame : 0].collar;
         ctx.save(); ctx.translate(actor.x, actor.y); ctx.rotate(actor.held ? actor.tilt : 0);
         ctx.drawImage(images[name], frame % 12 * 160, Math.floor(frame / 12) * 240, 160, 240, -width / 2, -collar * actor.height, width, actor.height);
@@ -146,6 +190,12 @@ export default function MiniSiracDrag() {
       for (let i = parked.length - 1; i >= 0; i--) if (parked[i].done) parked.splice(i, 1);
       if (active?.done) active = null;
       canvas.dataset.actors = JSON.stringify([...parked, active].filter(Boolean).map(({ x, y, phase, bounds }) => ({ x, y, phase, bounds })));
+      if (!active && !parked.length) {
+        canvas.dataset.phase = 'idle';
+        ensureSurface(false);
+        last = 0;
+        return;
+      }
       if (animating) wake(); else last = 0;
     }
     const click = (event) => { if (suppressClick) { event.preventDefault(); event.stopImmediatePropagation(); } };
@@ -157,23 +207,24 @@ export default function MiniSiracDrag() {
     window.addEventListener('mini-sirac-targets', receive);
     window.addEventListener('mini-sirac-start', reset);
     window.addEventListener('pointerdown', down, true);
-    window.addEventListener('pointermove', move, { capture: true, passive: false });
+    window.addEventListener('pointermove', hoverMove, { capture: true, passive: true });
     window.addEventListener('pointerup', release, true);
     window.addEventListener('pointercancel', release, true);
     window.addEventListener('blur', release);
     window.addEventListener('resize', resize);
     const visibility = () => { if (document.hidden) release({}); last = 0; wake(); };
     document.addEventListener('visibilitychange', visibility);
-    resize();
+    ensureSurface(false);
     return () => {
       disposed = true; loader.dispose(); clearTimeout(clickTimer); cancelAnimationFrame(raf);
       reduced.removeEventListener('change', motionChanged);
       window.removeEventListener('click', click, true);
-      window.removeEventListener('keydown', key); document.body.style.cursor = originalCursor;
+      window.removeEventListener('keydown', key); setCursor(originalCursor);
       window.removeEventListener('mini-sirac-targets', receive);
       window.removeEventListener('mini-sirac-start', reset);
       window.removeEventListener('pointerdown', down, true);
-      window.removeEventListener('pointermove', move, true);
+      window.removeEventListener('pointermove', hoverMove, true);
+      window.removeEventListener('pointermove', dragMove, true);
       window.removeEventListener('pointerup', release, true);
       window.removeEventListener('pointercancel', release, true);
       window.removeEventListener('blur', release);

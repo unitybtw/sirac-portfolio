@@ -19,10 +19,10 @@ const resources = {
             "nav_contact": "contact",
 
             // ── Hero ──────────────────────────────────────────────────────
-            "badge_hire": "Available for indie projects & internships",
+            "badge_hire": "Available for projects & internships",
             "hero_name": "SİRAÇ GÖKTUĞ ŞİMŞEK",
             "hero_title": "Game Developer & Software Engineer",
-            "hero_tagline": "I study Digital Game Design at Istanbul Kultur University. I build 3D games in Unity with custom C# physics, desktop software like Nova Browser with Electron and TypeScript, and performant web systems.",
+            "hero_tagline": "Digital Game Design student at Istanbul Kultur University. Building 3D systems in Unity & C#, Nova Browser with Electron & TypeScript, and native macOS tools in Swift.",
             "hero_location": "İstanbul, TR",
             "btn_explore": "View Projects",
             "btn_repos": "GitHub",
@@ -177,7 +177,7 @@ const resources = {
                 "m_title": "Legend of the Three Masks",
                 "m_desc": "3D adventure game published on Itch.io. Explore levels, find ancient masks, and solve environmental puzzles. Developed in Unity and C#.",
                 "signal_title": "Signal: Audio Feedback Utility",
-                "signal_desc": "A premium macOS menu bar application providing real-time mechanical keyboard audio feedback (15+ sound profiles) with a refined native UI, dynamic audio visualizer, and WPM analytics. Built with Swift and Core Audio.",
+                "signal_desc": "macOS menu bar utility providing real-time mechanical keyboard audio feedback across 15+ profiles with live WPM telemetry. Built with Swift and Core Audio.",
                 "aether_title": "Aether Command: Gesture Controller",
                 "aether_desc": "Touchless gesture-based desktop control app using your Mac's camera. Map movements (Pinch, Fist, Swipes) to system actions. Built with power-efficient tracking and a native AppKit interface.",
                 "badge_released": "RELEASED",
@@ -198,10 +198,10 @@ const resources = {
             "nav_contact": "İletişim",
 
             // ── Hero ──────────────────────────────────────────────────────
-            "badge_hire": "Bağımsız projelere ve stajlara açık",
+            "badge_hire": "Proje ve staj fırsatlarına açık",
             "hero_name": "SİRAÇ GÖKTUĞ ŞİMŞEK",
             "hero_title": "Oyun Geliştirici & Yazılım Mühendisi",
-            "hero_tagline": "İstanbul Kültür Üniversitesi Dijital Oyun Tasarımı öğrencisiyim. Unity ve C# ile 3D aksiyon oyunları geliştiriyor, Electron ve TypeScript ile Nova Browser gibi masaüstü yazılımları mimarilendiriyorum.",
+            "hero_tagline": "İstanbul Kültür Üniversitesi Dijital Oyun Tasarımı öğrencisiyim. Unity ve C# ile 3D sistemler, Electron ve TypeScript ile Nova Browser, Swift ile native macOS araçları geliştiriyorum.",
             "hero_location": "İstanbul, TR",
             "btn_explore": "Projeleri Gör",
             "btn_repos": "GitHub",
@@ -355,7 +355,7 @@ const resources = {
                 "m_title": "Legend of the Three Masks",
                 "m_desc": "Itch.io üzerinde yayınlanmış 3D macera oyunu. Bölümleri keşfet, antik maskeleri bul ve bulmacaları çöz. Unity ve C# ile geliştirildi.",
                 "signal_title": "Signal: Tuş Sesi Geri Bildirimi",
-                "signal_desc": "Yazdığın her tuşa gerçek zamanlı mekanik klavye ses geri bildirimi veren (15+ ses profili), akıcı modern arayüzlü ve WPM takipli macOS menü çubuğu uygulaması. Native Swift ve Core Audio ile geliştirildi.",
+                "signal_desc": "Yazdığın her tuşa gerçek zamanlı mekanik klavye ses geri bildirimi veren (15+ ses profili) ve anlık WPM takibi sunan macOS menü çubuğu aracı. Native Swift ve Core Audio ile geliştirildi.",
                 "aether_title": "Aether Command: Hareket Denetleyici",
                 "aether_desc": "Mac kamerasını kullanarak sistemi el hareketleriyle (Pinch, Fist, Swipes) yönetmeni sağlayan native macOS uygulaması. Düşük güç tüketimli görüntü işleme motoru ve modern masaüstü arayüzüne sahiptir.",
                 "badge_released": "YAYINDA",
